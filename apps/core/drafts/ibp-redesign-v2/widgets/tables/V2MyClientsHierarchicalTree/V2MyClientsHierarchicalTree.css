@@ -1,0 +1,8 @@
+/* my-clients-tree — таблица на общем рендере. Своя раскладка: блок ошибки по
+   data-state и колонка «тулбар над таблицей → тайл с таблицей на остаток»
+   (вариант .dtable-toolbar ДС, ритм 12px) — как у V2MyClientsTable. */
+.lc-my-clients-tree { display: flex; flex-direction: column; gap: var(--space-12); flex: 1 1 auto; min-width: 0; min-height: 0; }
+.lc-my-clients-tree__tile { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; min-width: 0; } /* без тайла: карточка — сама .dtable (Table) */
+.lc-my-clients-tree__error { display: none; }
+.lc-my-clients-tree[data-state="error"] .lc-my-clients-tree__error { display: flex; }
+.lc-my-clients-tree__tools { display: flex; align-items: center; gap: var(--space-12); flex: none; flex-wrap: nowrap; }

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Спецификации на разработку — IBP</title>
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  .dsp-meta { margin: 0; font: var(--type-body-s); color: var(--text-secondary); }
+  .dsp-versions { display: flex; flex-wrap: wrap; gap: var(--space-8); }
+  .dsp-card-actions { display: flex; gap: var(--space-8); margin-top: var(--space-12); }
+  .es[hidden], .grid12[hidden] { display: none; }
+
+  @container screen (max-width: 1240px) {
+    .grid12 > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+</style>
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list">
+      <a class="nav__item nav__item--selected" href="index.html" aria-current="page"><span class="nav__ico"><i data-icon="file-check"></i></span><span class="nav__label">Спецификации на разработку</span></a>
+    </div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span><span class="nav__user-role">Дизайнер</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Спецификации на разработку</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+      <!-- #sec:head -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Спецификации на разработку</h1></div>
+          </div>
+          <div class="phead__subtitle"><span class="phead__meta">Сценарии Post для разработки: шаги, экраны, новые компоненты и снимки состояний</span></div>
+        </div>
+      </div>
+
+      <!-- #sec:content — карточка на каждую спеку; версии (этапы) одной спеки — в её карточке -->
+      <div class="grid12" id="dsp-list"></div>
+
+      <div class="es es--l" id="dsp-empty" hidden>
+        <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <div class="es__body">
+          <p class="es__title">Спецификаций пока нет</p>
+          <p class="es__text">Исходник — refs/&lt;Spec&gt;/&lt;Spec&gt;.dev-spec.md, сборка — node .agents/tools/dev-spec.mjs.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../data/dev-specs.js"></script>
+<script src="../../../../ds-body.js"></script>
+<script>
+/* Экранный скрипт: каталог спек из window.DEV_SPECS (генераты dev-spec.mjs). Спеки с одним названием —
+   версии (этапы) одной спеки: одна карточка, ссылка на каждую. Сама спека — Spec.html?spec=<id>. */
+(function () {
+  'use strict';
+  var all = (window.DEV_SPECS || []).slice();
+  var list = document.getElementById('dsp-list');
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function href(s) { return 'Spec.html?spec=' + encodeURIComponent(s.id); }
+  function byVersion(a, b) { return String(a.version).localeCompare(String(b.version), 'ru', { numeric: true }); }
+
+  if (!all.length) {
+    list.hidden = true;
+    document.getElementById('dsp-empty').hidden = false;
+    return;
+  }
+  var groups = [];
+  all.sort(function (a, b) { return a.title.localeCompare(b.title, 'ru'); }).forEach(function (s) {
+    var g = groups.filter(function (x) { return x.title === s.title; })[0];
+    if (!g) groups.push(g = { title: s.title, items: [] });
+    g.items.push(s);
+  });
+  list.innerHTML = groups.map(function (g) {
+    var items = g.items.sort(byVersion);
+    var last = items[items.length - 1];
+    var versions = items.length > 1
+      ? '<div class="dsp-versions">' + items.map(function (s) {
+        return '<a class="btn btn--outline btn--s" href="' + href(s) + '"><span class="btn__label">' + esc(s.stage || 'Версия ' + s.version) + '</span></a>';
+      }).join('') + '</div>'
+      : '<div class="dsp-card-actions"><a class="btn btn--outline btn--s" href="' + href(last) + '"><span class="btn__label">Открыть</span></a></div>';
+    return '<section class="tile col-4 colw-6">'
+      + '<header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">' + esc(g.title) + '</h2></div></div>'
+      + '<div class="tile__actions"><a class="ibtn ibtn--neutral ibtn--m" href="' + href(last) + '" aria-label="Открыть: ' + esc(g.title) + '"><i data-icon="arrow-right"></i></a></div></header>'
+      + '<div class="tile__body"><p class="dsp-meta">Модуль ' + esc(last.module) + '</p>'
+      + '<p class="dsp-meta">' + (last.version ? 'версия ' + esc(last.version) : '') + (last.date ? ' · ' + esc(last.date) : '') + ' · снимков ' + last.snaps + '</p>'
+      + versions + '</div></section>';
+  }).join('');
+  if (window.dsIcons) window.dsIcons.apply(list);
+})();
+</script>
+</body>
+</html>

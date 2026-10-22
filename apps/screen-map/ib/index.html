@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<!--
+  Карта экранов IB (по образцу карты Post, задача RE0015): майндмап страниц проекта от главной — открыть любую
+  страницу в один клик, не проходя весь пользовательский сценарий. Данные — map-data.js рядом
+  (СГЕНЕРИРОВАНО .agents/tools/screen-map.mjs из map.yaml; правится map.yaml), отрисовщик —
+  map-view.js рантайма панели прототипа (его подключает загрузчик ds-body.js). Своего CSS нет.
+-->
+<html lang="ru">
+<head>
+<script src="../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карта экранов IB — IBP</title>
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Карта IB">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list">
+      <a class="nav__item" href="../../../index.html"><span class="nav__ico"><i data-icon="main-page"></i></span><span class="nav__label">Хаб проектов</span></a>
+    </div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Пётр Константинович</span><span class="nav__user-role">Консультант-аналитик ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="../../../index.html">Хаб проектов</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Карта IB</span>
+      </li>
+    </nav>
+    <main class="screen__content">
+
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <h1 class="phead__title">Карта экранов IB</h1>
+            </div>
+          </div>
+          <p class="phead__subtitle">Все страницы AI Pitcher в один клик — от главной до нити запроса. Страница открывается в состоянии по умолчанию, с демо-данными.</p>
+        </div>
+      </div>
+
+      <div class="pp-map__bar">
+        <label class="sw">
+          <input type="checkbox" class="sw__input" id="map-states" role="switch" aria-checked="false">
+          <span class="sw__control"><span class="sw__thumb"></span></span>
+          <span class="sw__content"><span class="sw__label">Состояния</span>
+            <span class="ds-helper ds-helper--left">Окна, статусы и варианты страниц — под карточками</span></span>
+        </label>
+      </div>
+
+      <div id="screen-map"></div>
+
+    </main>
+  </div>
+</div>
+
+<script src="../../ds-body.js"></script>
+<script src="map-data.js"></script>
+<script>
+(function () {
+  'use strict';
+  /* футер статический: роли «Консультант-аналитик ДИД» в каталоге ДС ibp-home.js
+     нет (HomePage.screen.md модуля banker-app, раздел 13, №12) */
+
+  var host = document.getElementById('screen-map');
+  var sw = document.getElementById('map-states');
+  var KEY = 'screen-map.states';
+  var on = false;
+  try { on = localStorage.getItem(KEY) === '1'; } catch (e) { on = false; }
+  sw.checked = on;
+  sw.setAttribute('aria-checked', String(on));
+
+  var data = window.ScreenMaps && window.ScreenMaps.ib;
+  if (!window.ProtoPanelMap || !data) {
+    host.innerHTML = '<p class="ds-body-s pp-map__empty">Карта не загрузилась: нет map-data.js или рантайма панели прототипа.</p>';
+    return;
+  }
+  var map = window.ProtoPanelMap.render(host, data, {
+    mode: 'mind',
+    base: new URL('../../', location.href).href,
+    here: location.href,
+    states: on,
+    labels: { map: 'Карта экранов IB', states: 'Состояния страницы', empty: 'На карте нет страниц' }
+  });
+  sw.addEventListener('change', function () {
+    sw.setAttribute('aria-checked', String(sw.checked));
+    map.setStates(sw.checked);
+    try { localStorage.setItem(KEY, sw.checked ? '1' : '0'); } catch (e) { /* хранилище закрыто — переключатель живёт до перезагрузки */ }
+  });
+})();
+</script>
+</body>
+</html>

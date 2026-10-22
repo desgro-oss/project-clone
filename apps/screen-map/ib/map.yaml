@@ -1,0 +1,33 @@
+# Карта экранов IB — страницы модулей раздела от главной, в состоянии по умолчанию.
+# Формат и коды КЭ — шапка .agents/tools/screen-map.mjs; README — apps/screen-map/README.md.
+# После правки: node .agents/tools/screen-map.mjs (пересобрать map-data.js).
+# Демо-id — из apps/ib/banker-app/data/report-requests.js: 1 — материал готов, 2 — идёт подготовка, 4 — ответ в диалоге.
+version: 1
+section: ib
+title: Карта экранов IB
+desc: Все страницы AI Pitcher в один клик — от главной до нити запроса
+nodes:
+  - id: main
+    app: banker-app
+    title: Главная
+    page: index.html
+
+  - id: thread
+    app: banker-app
+    title: Новый отчёт
+    page: RequestThread.html
+    parent: main
+    states:
+      - id: example
+        title: Пример запроса в поле
+        do:
+          - click: '#btnExample'
+      - id: ready
+        title: Материал готов
+        page: RequestThread.html?id=1
+      - id: running
+        title: Идёт подготовка
+        page: RequestThread.html?id=2
+      - id: answered
+        title: Ответ в диалоге
+        page: RequestThread.html?id=4

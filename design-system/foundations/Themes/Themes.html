@@ -1,0 +1,524 @@
+<!-- @dsCard group="Foundations" name="Themes" viewport="1440x900" -->
+<!doctype html>
+<html lang="ru">
+<head>
+<script>window.__DS_ROOT = '../../';</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Темы (Themes) — Дизайн-система</title>
+<link rel="stylesheet" href="../../ds.css">
+<link rel="stylesheet" href="Themes.css">
+<link rel="stylesheet" href="../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../docs-kit/ds-toc.css">
+<link rel="stylesheet" href="../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="Themes.page.css">
+<script src="../../docs-kit/ds-theme-boot.js"></script>
+</head>
+<body>
+<main class="page theme-page" data-screen-label="Themes">
+
+  <header class="masthead">
+    <div class="meta"><span>Версия: <b>1.015</b></span><span>Обновлено: <b>08.10.2026</b></span></div>
+    <p class="eyebrow">Дизайн-система · Основы</p>
+    <h1>Темы</h1>
+    <p class="lead">Соберите тему ДС из двух цветов — brand и neutral, проверьте её на живых компонентах и сохраните в файл. Выбранная тема действует на всех страницах ДС.</p>
+  </header>
+
+  <!-- Тема и файл: выбор, состояние, сохранение -->
+  <div class="theme-bar" aria-label="Тема и файл">
+    <div class="theme-bar__group">
+      <span class="menu-anchor theme-pick">
+        <button type="button" class="btn btn--outline btn--m btn--fullwidth" id="theme-pick" data-menu="theme-menu" aria-haspopup="menu"><i data-icon="palette"></i><span class="btn__label" id="theme-pick-label">Тема</span><i data-icon="chevron-down"></i></button>
+        <div class="menu" id="theme-menu" role="menu" aria-label="Темы"></div>
+      </span>
+      <span class="badge badge--s badge--neutral" id="theme-status" role="status"></span>
+    </div>
+    <div class="theme-bar__group">
+      <button type="button" class="btn btn--accent btn--m" id="theme-save" data-tooltip=""><span class="btn__label">Сохранить</span></button>
+      <button type="button" class="btn btn--outline btn--m" id="theme-save-as"><span class="btn__label">Сохранить как…</span></button>
+      <span class="menu-anchor">
+        <button type="button" class="ibtn ibtn--neutral ibtn--l" id="theme-more" data-menu="more-menu" data-menu-align="end" aria-haspopup="menu" aria-label="Ещё действия"><i data-icon="more-dots"></i></button>
+        <div class="menu" id="more-menu" role="menu">
+          <button type="button" class="menu__item" role="menuitem" id="act-connect"><span class="menu__item-icon"><i data-icon="folder"></i></span><span class="menu__item-label" id="act-connect-label">Подключить папку tokens…</span></button>
+          <button type="button" class="menu__item" role="menuitem" id="act-download"><span class="menu__item-icon"><i data-icon="download"></i></span><span class="menu__item-label">Скачать JSON</span></button>
+          <hr class="menu__divider">
+          <button type="button" class="menu__item" role="menuitem" id="act-reset"><span class="menu__item-icon"><i data-icon="refresh"></i></span><span class="menu__item-label">Сбросить ручные правки</span></button>
+        </div>
+      </span>
+    </div>
+  </div>
+
+  <div class="tabs tabs--horiz theme-tabs" role="tablist" id="theme-tabs" aria-label="Разделы страницы">
+    <button type="button" class="tab tab--m tab--selected" role="tab" id="tab-builder" aria-selected="true" tabindex="0" aria-controls="pane-builder"><span class="tab__label">Конструктор</span></button>
+    <button type="button" class="tab tab--m" role="tab" id="tab-docs" aria-selected="false" tabindex="-1" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+  </div>
+
+  <!-- ===================== КОНСТРУКТОР ===================== -->
+  <div id="pane-builder" role="tabpanel" aria-labelledby="tab-builder">
+
+    <section class="theme-section" aria-labelledby="pal-title">
+      <div class="theme-section__head">
+        <h2 class="theme-section__title" id="pal-title">Палитра</h2>
+        <label class="sw sw--dual" id="theme-mode-box" data-tooltip="">
+          <input type="checkbox" class="sw__input" role="switch" id="theme-mode" aria-label="Тёмная тема">
+          <span class="sw__control"><span class="sw__thumb"></span></span>
+          <span class="sw__side sw__side--off">Светлая</span>
+          <span class="sw__side sw__side--on">Тёмная</span>
+        </label>
+      </div>
+      <div class="theme-ramps" id="theme-ramps" aria-label="Растяжки Brand и Neutral"></div>
+      <p class="note note--xs theme-hint">
+        <span class="note__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
+        <span class="note__text">Клик по ступени — правка: растяжка сдвигается за ней. Точка — опорная ступень, кисть — ручная правка одной ступени. Пробел — новая палитра.</span>
+      </p>
+    </section>
+
+    <section class="theme-section" aria-labelledby="ex-title">
+      <div class="theme-section__head">
+        <h2 class="theme-section__title" id="ex-title">Примеры</h2>
+        <span class="theme-section__meta" id="theme-preview-name"></span>
+      </div>
+
+      <div class="theme-examples">
+
+        <!-- 1. Промо -->
+        <section class="tile" aria-labelledby="ex-promo">
+          <header class="tile__header"><div class="tile__header-main">
+            <div class="tile__title-row"><span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="magic-wand-01"></i></span><h3 class="tile__title" id="ex-promo">Новая сделка за 5 минут</h3></div>
+            <p class="tile__subtitle">Агент соберёт материалы и проверит лимиты</p>
+          </div></header>
+          <div class="tile__body theme-ex">
+            <span class="illu theme-ex__illu" data-illu="deals" aria-hidden="true"></span>
+            <p class="ds-body-m">Заполните заявку — система подберёт продукт, посчитает риск и подготовит документы к комитету.</p>
+            <button type="button" class="btn btn--accent btn--m btn--fullwidth"><span class="btn__label">Создать заявку</span></button>
+          </div>
+        </section>
+
+        <!-- 2. Разделы -->
+        <section class="tile" aria-labelledby="ex-apps">
+          <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title" id="ex-apps">Разделы</h3></div></div></header>
+          <div class="tile__body">
+            <div class="theme-ex-apps">
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="deals-possible-deals"></i></span><span class="ds-body-xs">Сделки</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="user-circle"></i></span><span class="ds-body-xs">Клиенты</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="a-risk"></i></span><span class="ds-body-xs">Риски</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="check-shield"></i></span><span class="ds-body-xs">Залоги</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="target"></i></span><span class="ds-body-xs">Лимиты</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="file-check"></i></span><span class="ds-body-xs">Документы</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="reports-1-c"></i></span><span class="ds-body-xs">Отчёты</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="pie-chart"></i></span><span class="ds-body-xs">Аналитика</span></a>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Лимиты -->
+        <section class="tile" aria-labelledby="ex-limits">
+          <header class="tile__header"><div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" id="ex-limits">Лимиты ООО «Орбита»</h3></div>
+            <p class="tile__subtitle">Использование на 07.10.2026</p>
+          </div></header>
+          <div class="tile__body theme-ex">
+            <div class="theme-ex-row"><span class="av av--circular av--m av--accent"><i class="av__icon" data-icon="bank"></i></span>
+              <div class="pbar pbar--accent theme-ex-grow" role="progressbar" aria-valuenow="82" aria-valuemin="0" aria-valuemax="100" aria-label="Кредитный лимит"><div class="pbar__head"><span class="pbar__label">Кредитный лимит</span><span class="pbar__value">8,2 из 10 млрд ₽</span></div><div class="pbar__track"><div class="pbar__fill" style="width:82%"></div></div></div></div>
+            <div class="theme-ex-row"><span class="av av--circular av--m av--accent"><i class="av__icon" data-icon="check-shield"></i></span>
+              <div class="pbar pbar--accent theme-ex-grow" role="progressbar" aria-valuenow="49" aria-valuemin="0" aria-valuemax="100" aria-label="Гарантии"><div class="pbar__head"><span class="pbar__label">Гарантии</span><span class="pbar__value">19,5 из 40 млрд ₽</span></div><div class="pbar__track"><div class="pbar__fill" style="width:49%"></div></div></div></div>
+            <div class="theme-ex-row"><span class="av av--circular av--m av--accent"><i class="av__icon" data-icon="percent-circle"></i></span>
+              <div class="pbar pbar--accent theme-ex-grow" role="progressbar" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" aria-label="Валютные операции"><div class="pbar__head"><span class="pbar__label">Валютные операции</span><span class="pbar__value">3 из 5,5 млрд ₽</span></div><div class="pbar__track"><div class="pbar__fill" style="width:55%"></div></div></div></div>
+          </div>
+        </section>
+
+        <!-- 4. Выбор продукта -->
+        <section class="tile" aria-labelledby="ex-product">
+          <header class="tile__header"><div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" id="ex-product">Продукт</h3></div>
+            <p class="tile__subtitle">Форма финансирования</p>
+          </div></header>
+          <div class="tile__body theme-ex" role="radiogroup" aria-labelledby="ex-product" id="ex-product-list">
+            <article class="tile tile--card" role="radio" aria-checked="false" tabindex="-1"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">Кредит</h4></div><p class="tile__subtitle">Срок до 7 лет, ставка от 14 %</p></div></header></article>
+            <article class="tile tile--card" role="radio" aria-checked="true" tabindex="0"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">Банковская гарантия</h4></div><p class="tile__subtitle">Тендер, исполнение контракта, возврат аванса</p></div></header></article>
+            <article class="tile tile--card" role="radio" aria-checked="false" tabindex="-1"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">Факторинг</h4></div><p class="tile__subtitle">Финансирование под уступку требований</p></div></header></article>
+          </div>
+        </section>
+
+        <!-- 5. Комитеты -->
+        <section class="tile" aria-labelledby="ex-events">
+          <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="calendar"></i></span><h3 class="tile__title" id="ex-events">Комитеты недели</h3></div></div></header>
+          <div class="tile__body theme-ex">
+            <div class="theme-ex-event"><span class="ds-h5-strong theme-ex-event__time">9:15</span><div class="theme-ex-grow"><p class="ds-body-m-strong">Кредитный комитет</p><p class="ds-body-s theme-muted">ООО «Орбита» · гарантия 1,2 млрд ₽</p></div><span class="badge badge--m badge--accent">Сегодня</span></div>
+            <hr class="dvd dvd--h">
+            <div class="theme-ex-event"><span class="ds-h5-strong theme-ex-event__time">14:00</span><div class="theme-ex-grow"><p class="ds-body-m-strong">Риск-комитет</p><p class="ds-body-s theme-muted">Лимит на группу «Волга-Агро»</p></div><span class="badge badge--m badge--neutral">Завтра</span></div>
+            <hr class="dvd dvd--h">
+            <div class="theme-ex-event"><span class="ds-h5-strong theme-ex-event__time">16:30</span><div class="theme-ex-grow"><p class="ds-body-m-strong">Комитет по залогам</p><p class="ds-body-s theme-muted">Переоценка складского комплекса</p></div><span class="badge badge--m badge--neutral">Пт</span></div>
+          </div>
+        </section>
+
+        <!-- 6. Клиент -->
+        <section class="tile tile--headless" aria-label="Клиент">
+          <div class="tile__body theme-ex theme-ex--center">
+            <span class="av av--circular av--xl av--accent"><span class="av__text">ОР</span></span>
+            <div class="theme-ex--center-text">
+              <h3 class="ds-h5-strong">ООО «Орбита»</h3>
+              <p class="ds-body-s theme-muted">Заёмщик · рейтинг BB+ · с 2019 года</p>
+            </div>
+            <div class="theme-ex-actions"><span class="badge badge--m badge--accent">На сопровождении</span><span class="chip chip--s"><span class="chip__label">Агропром</span></span></div>
+            <div class="theme-ex-actions">
+              <button type="button" class="btn btn--outline btn--s"><span class="btn__label">Открыть карточку</span></button>
+              <button type="button" class="btn btn--transparent btn--s"><i data-icon="mail"></i><span class="btn__label">Написать</span></button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. Динамика портфеля -->
+        <section class="tile theme-examples__wide" aria-labelledby="ex-chart-t">
+          <header class="tile__header"><div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" id="ex-chart-t">Динамика портфеля</h3></div>
+            <p class="tile__subtitle">млрд ₽ · первое полугодие 2026</p>
+          </div></header>
+          <div class="tile__body theme-ex">
+            <div class="theme-ex-kpi"><span class="ds-h3">213 млрд ₽</span><span class="badge badge--m badge--success">+20 %</span></div>
+            <div id="ex-chart"></div>
+          </div>
+        </section>
+
+        <!-- 8. Показатели -->
+        <section class="tile" aria-labelledby="ex-kpi">
+          <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title" id="ex-kpi">Показатели месяца</h3></div></div></header>
+          <div class="tile__body theme-ex">
+            <div class="theme-ex-metric"><p class="ds-body-s theme-muted">Сделок за месяц</p><div class="theme-ex-kpi"><span class="ds-h4-strong">1 284</span><span class="badge badge--m badge--success">+12 %</span></div></div>
+            <hr class="dvd dvd--h">
+            <div class="theme-ex-metric"><p class="ds-body-s theme-muted">Одобрение</p><div class="theme-ex-kpi"><span class="ds-h4-strong">58,2 %</span><span class="badge badge--m badge--success">+2,0 п. п.</span></div></div>
+            <hr class="dvd dvd--h">
+            <div class="theme-ex-metric"><p class="ds-body-s theme-muted">Просрочка</p><div class="theme-ex-kpi"><span class="ds-h4-strong">2,4 %</span><span class="badge badge--m badge--error">−0,3 п. п.</span></div></div>
+          </div>
+        </section>
+
+        <!-- 9. Кнопки: все виды и состояния -->
+        <section class="tile theme-examples__wide" aria-labelledby="ex-buttons">
+          <header class="tile__header"><div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" id="ex-buttons">Кнопки · все виды и состояния</h3></div>
+            <p class="tile__subtitle">Основная кнопка — ровно brand 500; наведение и нажатие — ступени 600 и 700</p>
+          </div></header>
+          <div class="tile__body"><div class="theme-ex-buttons" id="ex-buttons-grid"></div></div>
+        </section>
+
+        <!-- 10. Доступ и уведомления -->
+        <section class="tile" aria-labelledby="ex-access">
+          <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title" id="ex-access">Уведомления</h3></div></div></header>
+          <div class="tile__body theme-ex">
+            <label class="sw"><input type="checkbox" class="sw__input" role="switch" checked><span class="sw__control"><span class="sw__thumb"></span></span><span class="sw__content"><span class="sw__label">Решения комитетов</span><span class="ds-helper ds-helper--left">Сразу после голосования</span></span></label>
+            <label class="sw"><input type="checkbox" class="sw__input" role="switch" checked><span class="sw__control"><span class="sw__thumb"></span></span><span class="sw__content"><span class="sw__label">Использование лимитов</span><span class="ds-helper ds-helper--left">При превышении 80 %</span></span></label>
+            <label class="sw"><input type="checkbox" class="sw__input" role="switch"><span class="sw__control"><span class="sw__thumb"></span></span><span class="sw__content"><span class="sw__label">Еженедельный отчёт</span><span class="ds-helper ds-helper--left">По понедельникам в 9:00</span></span></label>
+          </div>
+        </section>
+
+        <!-- 11. Заявки -->
+        <section class="tile theme-examples__wide" aria-labelledby="ex-requests">
+          <header class="tile__header"><div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" id="ex-requests">Заявки</h3><span class="badge badge--m badge--neutral">4</span></div>
+          </div><div class="tile__actions"><button type="button" class="btn btn--accent btn--s"><i data-icon="add"></i><span class="btn__label">Новая заявка</span></button></div></header>
+          <div class="tile__body">
+            <div class="tbl theme-ex-table">
+              <div class="tbl__row tbl__row--head"><div class="th"><span class="th__label">Клиент</span></div><div class="th"><span class="th__label">Продукт</span></div><div class="th"><span class="th__label">Статус</span></div><div class="th"><span class="th__label">Срок</span></div></div>
+              <div class="tbl__row"><div class="tc"><span class="tc__row"><span class="tc__text">ООО «Орбита»</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Гарантия</span></span></div><div class="tc"><span class="chip chip--s chip--accent chip--rounded"><span class="chip__label">На комитете</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">09.10.2026</span></span></div></div>
+              <div class="tbl__row"><div class="tc"><span class="tc__row"><span class="tc__text">АО «Волга-Агро»</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Кредит</span></span></div><div class="tc"><span class="chip chip--s chip--info chip--rounded"><span class="chip__label">В работе</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14.10.2026</span></span></div></div>
+              <div class="tbl__row"><div class="tc"><span class="tc__row"><span class="tc__text">ПАО «Метизный завод»</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Факторинг</span></span></div><div class="tc"><span class="chip chip--s chip--warning chip--rounded"><span class="chip__label">Нужны документы</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">20.10.2026</span></span></div></div>
+              <div class="tbl__row"><div class="tc"><span class="tc__row"><span class="tc__text">ГК «Северный агрохолдинг»</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Кредит</span></span></div><div class="tc"><span class="chip chip--s chip--success chip--rounded"><span class="chip__label">Выдано</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">02.10.2026</span></span></div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 12. Календарь -->
+        <section class="tile" aria-labelledby="ex-period">
+          <header class="tile__header"><div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" id="ex-period">Отчётный период</h3></div>
+            <p class="tile__subtitle">6 — 17 октября 2026</p>
+          </div></header>
+          <div class="tile__body"><div class="theme-ex-calendar" id="ex-calendar"></div></div>
+        </section>
+
+        <!-- 13. Форма заявки -->
+        <section class="tile" aria-labelledby="ex-form">
+          <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title" id="ex-form">Заявка</h3></div></div></header>
+          <div class="tile__body theme-ex">
+            <div class="inp inp--m inp--filled inp--radius-m inp--focus-accent">
+              <label class="ds-label" for="ex-client">Клиент</label>
+              <div class="inp__field"><span class="inp__lead" aria-hidden="true"><i data-icon="client-search"></i></span><input class="inp__control" id="ex-client" value="ООО «Орбита»"></div>
+            </div>
+            <div class="segctrl" role="radiogroup" aria-label="Валюта" data-segctrl>
+              <div class="segctrl__thumb"></div>
+              <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0"><span class="segctrl__label">RUB</span></button>
+              <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1"><span class="segctrl__label">USD</span></button>
+              <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1"><span class="segctrl__label">CNY</span></button>
+            </div>
+            <div class="slr" data-unit=" мес."><div class="slr__head"><label for="ex-term">Срок</label><output class="slr__value" for="ex-term"></output></div><input type="range" class="slr__input" id="ex-term" min="3" max="84" value="36"></div>
+            <label class="cb cb--selected"><input type="checkbox" class="cb__input" checked><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Согласие на запрос в БКИ</span></span></label>
+            <div class="rb-group" role="radiogroup" aria-label="Погашение">
+              <div class="rb-group__items">
+                <label class="rb rb--selected"><input type="radio" class="rb__input" name="ex-pay" checked><span class="rb__box"><i class="rb__mark" data-icon="radio-button-checked"></i></span><span class="rb__content"><span class="rb__label">Аннуитет</span></span></label>
+                <label class="rb"><input type="radio" class="rb__input" name="ex-pay"><span class="rb__box"><i class="rb__mark" data-icon="radio-button-unchecked"></i></span><span class="rb__content"><span class="rb__label">В конце срока</span></span></label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 14. Навигация -->
+        <section class="tile" aria-labelledby="ex-nav">
+          <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title" id="ex-nav">Навигация</h3></div></div></header>
+          <div class="tile__body theme-ex">
+            <nav class="crumbs" aria-label="Хлебные крошки">
+              <li class="crumbs__item"><a class="link link--muted" href="#ex-nav">Главная</a></li>
+              <li class="crumbs__item"><a class="link link--muted" href="#ex-nav">Сделки</a></li>
+              <li class="crumbs__item crumbs__item--current"><span class="crumbs__current" aria-current="page">Орбита</span></li>
+            </nav>
+            <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы сделки">
+              <button type="button" class="tab tab--s tab--selected" role="tab" aria-selected="true" tabindex="0"><span class="tab__label">Сделка</span></button>
+              <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1"><span class="tab__label">Риски</span><span class="tab__badge">3</span></button>
+              <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1"><span class="tab__label">Залоги</span></button>
+            </div>
+            <div class="subtabs subtabs--xs" role="tablist" data-subtabs aria-label="Подразделы сделки">
+              <button type="button" class="subtab" role="tab" aria-selected="true" tabindex="0"><span class="subtab__label">Общее</span></button>
+              <button type="button" class="subtab" role="tab" aria-selected="false" tabindex="-1"><span class="subtab__label">Документы</span></button>
+              <button type="button" class="subtab" role="tab" aria-selected="false" tabindex="-1"><span class="subtab__label">История</span></button>
+            </div>
+            <a class="link link--accent link--m" href="#ex-nav">Все условия сделки</a>
+          </div>
+        </section>
+
+        <!-- 15. Сообщения -->
+        <section class="tile" aria-labelledby="ex-alerts">
+          <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title" id="ex-alerts">Сообщения</h3></div></div></header>
+          <div class="tile__body theme-ex">
+            <div class="alert alert--info alert--m" role="status"><span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span><div class="alert__body"><p class="alert__text">Комитет перенесён на 9:15</p></div></div>
+            <div class="alert alert--success alert--m" role="status"><span class="alert__icon" aria-hidden="true"><i data-icon="check-circle-filled"></i></span><div class="alert__body"><p class="alert__text">Лимит одобрен</p></div></div>
+            <div class="alert alert--warning alert--m" role="status"><span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span><div class="alert__body"><p class="alert__text">Не хватает отчётности за III квартал</p></div></div>
+            <div class="alert alert--error alert--m" role="status"><span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span><div class="alert__body"><p class="alert__text">Превышен лимит на группу</p></div></div>
+            <p class="note note--s note--accent"><span class="note__icon" aria-hidden="true"><i data-icon="clock-timer"></i></span><span class="note__text">Ответ агента обычно готов за 2 минуты.</span></p>
+          </div>
+        </section>
+
+        <!-- 16. Пакеты обслуживания -->
+        <section class="tile theme-examples__wide" aria-labelledby="ex-plans">
+          <header class="tile__header"><div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" id="ex-plans">Пакеты обслуживания</h3></div>
+            <p class="tile__subtitle">Для корпоративных клиентов</p>
+          </div></header>
+          <div class="tile__body"><div class="theme-ex-plans">
+            <section class="tile tile--inset"><div class="tile__body theme-ex">
+              <p class="ds-body-m-strong">Базовый</p><p class="ds-h4-strong">0 ₽ <span class="ds-body-s theme-muted">в месяц</span></p>
+              <p class="ds-body-s theme-muted">Один счёт, выписки и платежи в рублях</p>
+              <button type="button" class="btn btn--outline btn--m btn--fullwidth"><span class="btn__label">Подключить</span></button>
+            </div></section>
+            <section class="tile tile--inset"><div class="tile__body theme-ex">
+              <div class="theme-ex-kpi"><p class="ds-body-m-strong">Корпоративный</p><span class="badge badge--s badge--accent">Выбор клиентов</span></div><p class="ds-h4-strong">9 900 ₽ <span class="ds-body-s theme-muted">в месяц</span></p>
+              <p class="ds-body-s theme-muted">Валютный контроль, лимиты, персональный менеджер</p>
+              <button type="button" class="btn btn--accent btn--m btn--fullwidth"><span class="btn__label">Подключить</span></button>
+            </div></section>
+            <section class="tile tile--inset"><div class="tile__body theme-ex">
+              <p class="ds-body-m-strong">Холдинг</p><p class="ds-h4-strong">24 900 ₽ <span class="ds-body-s theme-muted">в месяц</span></p>
+              <p class="ds-body-s theme-muted">Группа компаний, казначейство, отчётность по группе</p>
+              <button type="button" class="btn btn--outline btn--m btn--fullwidth"><span class="btn__label">Обсудить</span></button>
+            </div></section>
+          </div></div>
+        </section>
+
+        <!-- 17. Документы -->
+        <section class="tile" aria-labelledby="ex-docs">
+          <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title" id="ex-docs">Документы</h3></div></div></header>
+          <div class="tile__body theme-ex">
+            <div class="doccard"><span class="doccard__icon" aria-hidden="true"><i data-icon="document-check"></i></span><div class="doccard__main"><button type="button" class="doccard__title" data-tooltip="ООО «Орбита» — материал к комитету" data-tooltip-truncated="only">ООО «Орбита» — материал к комитету</button><span class="doccard__meta">Детальный · версия 2 · 07.10.2026</span></div></div>
+            <div class="doccard"><span class="doccard__icon" aria-hidden="true"><i data-icon="image-01"></i></span><div class="doccard__main"><button type="button" class="doccard__title" data-tooltip="Презентация для клиента" data-tooltip-truncated="only">Презентация для клиента</button><span class="doccard__meta">PDF · 12 слайдов · 06.10.2026</span></div></div>
+          </div>
+        </section>
+
+        <!-- 18. Этапы сделки -->
+        <section class="tile theme-examples__full" aria-labelledby="ex-steps">
+          <header class="tile__header"><div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" id="ex-steps">Этапы сделки</h3></div>
+            <p class="tile__subtitle">ООО «Орбита» · банковская гарантия 1,2 млрд ₽</p>
+          </div></header>
+          <div class="tile__body theme-ex">
+            <ol class="theme-ex-steps">
+              <li><span class="stepmark stepmark--m stepmark--done" aria-hidden="true"><span class="stepmark__num">1</span><i class="stepmark__icon" data-icon="check"></i></span><span class="ds-body-s-strong">Заявка</span></li>
+              <li><span class="stepmark stepmark--m stepmark--done" aria-hidden="true"><span class="stepmark__num">2</span><i class="stepmark__icon" data-icon="check"></i></span><span class="ds-body-s-strong">Анализ</span></li>
+              <li><span class="stepmark stepmark--m stepmark--current" aria-hidden="true"><span class="stepmark__num">3</span><i class="stepmark__icon" data-icon="check"></i></span><span class="ds-body-s-strong">Комитет</span></li>
+              <li><span class="stepmark stepmark--m" aria-hidden="true"><span class="stepmark__num">4</span><i class="stepmark__icon" data-icon="check"></i></span><span class="ds-body-s theme-muted">Выдача</span></li>
+            </ol>
+            <div class="pbar pbar--accent" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" aria-label="Готовность сделки"><div class="pbar__head"><span class="pbar__label">Готовность</span><span class="pbar__value">62 %</span></div><div class="pbar__track"><div class="pbar__fill" style="width:62%"></div></div></div>
+          </div>
+        </section>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- ===================== ДОКУМЕНТАЦИЯ ===================== -->
+  <div id="pane-docs" role="tabpanel" aria-labelledby="tab-docs" hidden>
+    <div class="theme-docs">
+      <section id="usage"><h2>Как устроены темы</h2>
+        <p>Тема — JSON-файл в папке <code>foundations/Themes/tokens/</code>. Выбранная тема действует на всех страницах ДС; на экранах прототипов её выбирают в панели прототипа. Без выбора действует IBP Legacy — нынешняя ДС без атрибута <code>data-theme</code>.</p>
+        <p>Базовые файлы: <b>IBP Legacy</b> — нынешняя ДС, только светлая; <b>IBP Neo</b> — тема по алгоритму, светлая по эталону «Colors / Core»; <b>Custom</b> — сиреневая. Legacy и Neo закрыты от перезаписи: доработку сохраняйте через «Сохранить как…». Служебная тема панели прототипа живёт отдельно.</p>
+      </section>
+      <section id="files"><h2>Файлы и база</h2>
+        <p>Профиль режима (<code>light</code>, <code>dark</code>) задаёт <code>brand</code> и <code>neutral</code> — цвет опорной ступени, <code>brandStep</code> и <code>neutralStep</code> — саму ступень (по умолчанию 500), <code>adjust</code> — тон, насыщенность, температуру, <code>overrides</code> — ручные правки ступеней и ролей, <code>onFill</code> — текст на заливке. Остальные 17 тонов — фиксированные базовые растяжки <code>base-light.json</code> и <code>base-dark.json</code>. <code>tokens.data.js</code> — зеркало всех JSON для <code>file://</code>.</p>
+      </section>
+      <section id="algorithm"><h2>Алгоритм</h2>
+        <p>Опорная ступень — ровно заданный цвет, остальные строятся по кривой эталона. Светлая — по растяжке «Colors / Core»: светлота пропорционально сдвигается к белому и чёрному, доля насыщенности и сдвиг тона — как у эталона. Тёмная — по общей тёмной шкале: края (50 и 950) на месте, опорная ступень — ровно вход. Цвет вне sRGB теряет насыщенность, тон сохраняется.</p>
+        <p>Правка ступени в конструкторе переносит опорную точку на эту ступень — растяжка сдвигается за ней. Переключатель «Только эта ступень» в пикере оставляет точечную ручную правку.</p>
+        <p>Основная кнопка — ровно brand 500 в обеих темах; наведение и нажатие — ступени 600 и 700. Заливку ради контраста не затемняем: текст на ней — «белый» или «тёмный» в «Настроить», провал виден на вкладке «Контраст» в «Все цвета».</p>
+        <p>«Сгенерировать» (пробел) даёт случайный тон; светлота и насыщенность — как у ступени 500 IBP Legacy (brand #00AA9B, neutral #617C7C). Метод задаёт тон neutral относительно brand.</p>
+      </section>
+      <section id="roles"><h2>Слои токенов</h2>
+        <p>Цвет доходит до компонента по цепочке: <code>--ramp-neutral-50</code> → <code>--color-bg-inverse</code> → <code>--bg-hint</code> → <code>--tip-bg</code>. Тема меняет только первые два слоя.</p>
+        <p><b>Палитра</b> — рампы <code>--ramp-*</code>: 19 тонов по 11 ступеней. Генерируются только brand и neutral, остальные 17 — базовые растяжки.</p>
+        <p><b>Токены темы</b> — 160 ролей <code>--color-*</code>. Роль называет назначение цвета, а не сам цвет: <code>--color-bg-raised</code> — «поднятая поверхность» для модалки, Drawer и поповера. Роль ссылается на ступень рампы, поэтому смена brand или neutral перекрашивает все её места разом. В конструкторе правится роль.</p>
+        <p><b>Токены UI-kit</b> — 119 имён из UI-kit разработки (<code>--primary</code>, <code>--text-primary</code>, <code>--bg-tile</code>…). Компоненты пишут их. В IBP Legacy у них исходные значения, в остальных темах каждое ссылается на свою роль (<code>--bg-tile: var(--color-bg-surface)</code>), поэтому компоненты перекрашиваются без правок. Несколько имён могут вести в одну роль; имя правится через свою роль.</p>
+        <p><b>Токены компонентов</b> — переменные в CSS компонента (<code>--tip-bg</code>, <code>--ddl-bg</code>): настройка одной детали одного компонента. Своего цвета у них нет, тема ими не управляет — они берут значение слоем выше.</p>
+        <p>Статусы и графики фиксированы; акцентные статусы следуют за brand.</p>
+      </section>
+      <section id="saving"><h2>Сохранение</h2>
+        <p>Chromium пишет JSON и зеркало в подключённую папку <code>tokens</code> (File System Access API); разрешение браузер может спросить в новом сеансе. Firefox и Safari: «Скачать JSON», положить файл в <code>tokens</code> и пересобрать зеркало: <code>node design-system/tools/theme-build.mjs</code>. Несохранённое живёт до перезагрузки; перед уходом страница предупреждает.</p>
+      </section>
+      <section id="api"><h2>API</h2>
+        <p><code>DSTheme.get()</code>, <code>DSTheme.set(name, mode)</code>, <code>DSTheme.list()</code>, <code>DSTheme.files()</code>, <code>DSTheme.selection()</code>. Старые id <code>ibp-light</code> и <code>ibp-dark</code> ведут на IBP Neo. Событие <code>ds:themechange</code>.</p>
+      </section>
+      <section id="checks"><h2>Проверки</h2>
+        <p><code>node design-system/tools/theme-build.mjs --check</code> — источники, legacy, контраст, свежесть зеркала и CSS; <code>--selftest</code> — алгоритм; <code>node design-system/tools/theme-files-selftest.mjs</code> — запись, защита базы и откаты.</p>
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- ===================== НИЖНЯЯ ПАНЕЛЬ ===================== -->
+<div class="theme-dock" role="toolbar" aria-label="Конструктор темы" id="theme-dock">
+  <div class="theme-dock__group">
+    <button type="button" class="theme-pill" id="pill-brand" data-kind="brand"><span class="theme-pill__name">Brand</span><span class="theme-pill__hex" id="pill-brand-hex"></span></button>
+    <button type="button" class="theme-pill" id="pill-neutral" data-kind="neutral"><span class="theme-pill__name">Neutral</span><span class="theme-pill__hex" id="pill-neutral-hex"></span></button>
+  </div>
+  <div class="theme-dock__group">
+    <div class="theme-dock__icons">
+    <span class="pop-anchor">
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" id="dock-adjust" data-popover="adjust-pop" data-popover-placement="top" data-popover-align="end" aria-label="Настроить палитру" data-tooltip="Настроить"><i data-icon="settings"></i></button>
+      <div class="pop pop--w-m pop--top pop--end pop--floating" id="adjust-pop" role="dialog" aria-modal="false" aria-labelledby="adjust-title">
+        <div class="pop__head"><div class="pop__head-main"><h3 class="pop__title" id="adjust-title">Настроить палитру</h3></div><span class="pop__close"><button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Закрыть" data-pop-close><i data-icon="close"></i></button></span></div>
+        <div class="pop__body theme-adjust">
+          <div class="slr" data-unit="°"><div class="slr__head"><label for="adjust-hue">Тон</label><output class="slr__value" for="adjust-hue"></output></div><input type="range" class="slr__input" id="adjust-hue" min="-180" max="180" value="0"></div>
+          <div class="slr" data-unit=" %"><div class="slr__head"><label for="adjust-saturation">Насыщенность</label><output class="slr__value" for="adjust-saturation"></output></div><input type="range" class="slr__input" id="adjust-saturation" min="-100" max="100" value="0"></div>
+          <div class="slr" data-unit=""><div class="slr__head"><label for="adjust-temperature">Температура</label><output class="slr__value" for="adjust-temperature"></output></div><input type="range" class="slr__input" id="adjust-temperature" min="-100" max="100" value="0"></div>
+          <div class="theme-adjust__row"><span class="theme-adjust__label"><i data-icon="paint-pour"></i><span class="ds-body-s">Текст на заливке</span></span>
+            <label class="sw sw--dual"><input type="checkbox" class="sw__input" role="switch" id="theme-onfill" aria-label="Тёмный текст на заливке brand"><span class="sw__control"><span class="sw__thumb"></span></span><span class="sw__side sw__side--off">Белый</span><span class="sw__side sw__side--on">Тёмный</span></label></div>
+        </div>
+        <div class="pop__foot"><div class="pop__foot-left"><button type="button" class="btn btn--transparent btn--s" id="adjust-reset"><span class="btn__label">Сбросить настройки</span></button></div></div>
+      </div>
+    </span>
+    <button type="button" class="ibtn ibtn--neutral ibtn--l" id="theme-undo" aria-label="Отменить" data-tooltip="Отменить · ⌘Z"><i data-icon="flip-backward"></i></button>
+    <button type="button" class="ibtn ibtn--neutral ibtn--l" id="theme-redo" aria-label="Повторить" data-tooltip="Повторить · ⇧⌘Z"><i data-icon="flip-forward"></i></button>
+    </div>
+    <div class="btn-group btn-group--outline btn-group--split" role="group" aria-label="Сгенерировать палитру" data-tooltip="Сгенерировать — пробел">
+      <button type="button" class="btn btn--outline btn--m" id="theme-generate"><i data-icon="magic-wand-01"></i><span class="btn__label">Сгенерировать</span></button>
+      <button type="button" class="btn btn--outline btn--m btn--icon-only" id="theme-method-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Метод генерации"><i data-icon="chevron-down"></i></button>
+      <div class="menu" id="method-menu" role="menu" aria-label="Метод генерации"></div>
+    </div>
+    <button type="button" class="btn btn--outline btn--m" id="theme-all" data-drawer="all-colors"><i data-icon="palette"></i><span class="btn__label">Все цвета</span></button>
+    <button type="button" class="btn btn--accent btn--m" id="theme-export" data-modal="export-modal"><i data-icon="upload"></i><span class="btn__label">Экспорт</span></button>
+  </div>
+</div>
+
+<!-- ===================== ВСЕ ЦВЕТА ===================== -->
+<div class="modal-scrim drawer-scrim" id="all-colors" hidden>
+  <aside class="drawer drawer--w5" role="dialog" aria-modal="true" aria-labelledby="all-title">
+    <header class="drawer__head">
+      <div class="drawer__headmain"><p class="drawer__path" id="all-path"></p><h2 class="drawer__title" id="all-title">Все цвета</h2></div>
+      <div class="drawer__acts"><span class="drawer__close"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Закрыть панель" data-modal-close><i data-icon="close"></i></button></span></div>
+    </header>
+    <div class="drawer__body">
+      <div class="theme-all">
+        <div class="inp inp--m"><div class="inp__field"><span class="inp__lead" aria-hidden="true"><i data-icon="search"></i></span><input class="inp__control" id="all-search" placeholder="Найти токен темы или UI-kit" aria-label="Поиск по токенам темы и UI-kit"></div></div>
+        <div class="tabs tabs--horiz" role="tablist" id="all-tabs" aria-label="Цвета темы">
+          <button type="button" class="tab tab--s tab--selected" role="tab" aria-selected="true" tabindex="0" data-all="roles"><span class="tab__label">Токены темы</span></button>
+          <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-all="map"><span class="tab__label">Токены UI-kit</span></button>
+          <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-all="base"><span class="tab__label">Палитра</span></button>
+          <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-all="contrast"><span class="tab__label">Контраст</span></button>
+        </div>
+        <div id="all-roles"></div>
+        <div id="all-map" hidden></div>
+        <div id="all-base" hidden></div>
+        <div id="all-contrast" hidden></div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- ===================== ЭКСПОРТ ===================== -->
+<div class="modal-scrim" id="export-modal" hidden data-modal-guarded="false">
+  <div class="modal modal--w8" role="dialog" aria-modal="true" aria-labelledby="export-title">
+    <header class="modal__head"><h2 class="modal__title" id="export-title">Экспорт темы</h2><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button></header>
+    <div class="modal__body">
+      <div class="theme-export__controls">
+        <div class="segctrl" role="radiogroup" aria-label="Формат" id="export-kind">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-value="css"><span class="segctrl__label">CSS</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-value="json"><span class="segctrl__label">JSON</span></button>
+        </div>
+        <div class="segctrl" role="radiogroup" aria-label="Запись цвета" id="export-format">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-value="hex"><span class="segctrl__label">Hex</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-value="oklch"><span class="segctrl__label">OKLCH</span></button>
+        </div>
+      </div>
+      <pre class="code-wrap theme-code"><code id="export-code"></code></pre>
+    </div>
+    <footer class="modal__foot"><div class="modal__foot-right">
+      <button type="button" class="btn btn--transparent btn--m" id="export-download"><i data-icon="download"></i><span class="btn__label">Скачать JSON</span></button>
+      <button type="button" class="btn btn--accent btn--m" id="export-copy"><i data-icon="copy"></i><span class="btn__label">Копировать</span></button>
+    </div></footer>
+  </div>
+</div>
+
+<!-- ===================== СОХРАНИТЬ КАК ===================== -->
+<div class="modal-scrim" id="save-modal" hidden>
+  <div class="modal modal--w6" role="dialog" aria-modal="true" aria-labelledby="save-title">
+    <header class="modal__head"><h2 class="modal__title" id="save-title">Сохранить тему как…</h2><button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button></header>
+    <div class="modal__body">
+      <div class="inp inp--m"><label class="ds-label" for="save-name">Имя файла</label><div class="inp__field"><input class="inp__control" id="save-name" placeholder="Например, orbit" maxlength="48"></div><span class="ds-helper">Латинские буквы, цифры и дефис</span></div>
+      <div class="inp inp--m"><label class="ds-label" for="save-label">Название темы</label><div class="inp__field"><input class="inp__control" id="save-label" maxlength="80"></div></div>
+      <div class="alert alert--info alert--m" id="save-note" role="note" hidden><span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span><div class="alert__body"><p class="alert__text">Папка tokens не подключена — файл скачается под этим именем. Положите его в папку tokens и выберите «Обновить список из папки» в меню темы.</p></div></div>
+      <div class="alert alert--error alert--m" id="save-error" role="alert" hidden><span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span><div class="alert__body"><p class="alert__text" id="save-error-text"></p></div></div>
+    </div>
+    <footer class="modal__foot"><div class="modal__foot-right">
+      <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+      <button type="button" class="btn btn--accent btn--m" id="save-confirm"><span class="btn__label" id="save-confirm-label">Сохранить тему</span></button>
+    </div></footer>
+  </div>
+</div>
+
+<!-- ===================== НУЖНА ПАПКА ===================== -->
+<div class="modal-scrim" id="folder-modal" hidden>
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="folder-title">
+    <header class="modal__head"><h2 class="modal__title" id="folder-title">Подключите папку tokens</h2><button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button></header>
+    <div class="modal__body"><p class="ds-body-m">Тема сохраняется файлом в <code>design-system/foundations/Themes/tokens/</code>. Выберите эту папку — браузер запомнит её. В Firefox и Safari запись в папку недоступна: скачайте JSON и положите его в папку вручную.</p></div>
+    <footer class="modal__foot"><div class="modal__foot-right">
+      <button type="button" class="btn btn--transparent btn--m" id="folder-download"><span class="btn__label">Скачать JSON</span></button>
+      <button type="button" class="btn btn--accent btn--m" id="folder-connect"><i data-icon="folder"></i><span class="btn__label">Подключить папку</span></button>
+    </div></footer>
+  </div>
+</div>
+
+<!-- ===================== НЕСОХРАНЁННОЕ ===================== -->
+<div class="modal-scrim" id="discard-modal" hidden>
+  <div class="modal modal--w4" role="alertdialog" aria-modal="true" aria-labelledby="discard-title">
+    <header class="modal__head"><h2 class="modal__title" id="discard-title">Есть несохранённые правки</h2><button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button></header>
+    <div class="modal__body"><p class="ds-body-m">Правки текущей темы не сохранены. Переключить тему и потерять их?</p></div>
+    <footer class="modal__foot"><div class="modal__foot-right">
+      <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Остаться</span></button>
+      <button type="button" class="btn btn--accent btn--m btn--danger" id="discard-confirm"><span class="btn__label">Переключить</span></button>
+    </div></footer>
+  </div>
+</div>
+
+<script src="../../ds.js"></script>
+<script src="../../docs-kit/ds-nav.js"></script>
+<script src="ThemeFiles.js"></script>
+<script src="Themes.page.js"></script>
+<script src="../../../apps/proto-panel.js"></script>
+</body>
+</html>

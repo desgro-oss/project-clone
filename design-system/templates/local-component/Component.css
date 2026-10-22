@@ -1,0 +1,32 @@
+/* Локальный компонент <Имя>.
+   Только внутренняя раскладка и показ своих блоков по состоянию и режиму.
+   Цвета, шрифты, отступы, радиусы, тени — токены ДС; своих значений здесь нет.
+   Состояния компонентов ДС отсюда не переопределяются.
+   Префикс lc-component заменить на lc-<имя>. */
+
+/* Перестроение — по СВОЕЙ ширине, а не по ширине окна: один и тот же компонент
+   стоит и на трёх колонках, и на двенадцати. */
+.lc-component { container-type: inline-size; }
+.lc-component__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* Что видно в каком состоянии. База — «данные есть» и «заполнено частично»:
+   та же сетка, незаполненное прочерком. Сетка загрузки несёт два класса сетки,
+   поэтому скрывается правилом с двумя классами. */
+.lc-component__grid.lc-component__loading,
+.lc-component__empty,
+.lc-component__error { display: none; }
+
+.lc-component[data-state="loading"] .lc-component__grid,
+.lc-component[data-state="empty"] .lc-component__grid,
+.lc-component[data-state="error"] .lc-component__grid { display: none; }
+
+.lc-component[data-state="loading"] .lc-component__grid.lc-component__loading { display: grid; }
+.lc-component[data-state="empty"] .lc-component__empty,
+.lc-component[data-state="error"] .lc-component__error { display: block; }
+
+/* Режим прав: в просмотре действия правки не рисуются, а не выключаются. */
+.lc-component[data-mode="view"] .tile__actions { display: none; }
+
+@container (max-width: 480px) {
+  .lc-component__grid { grid-template-columns: minmax(0, 1fr); }
+}

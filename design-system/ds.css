@@ -1,0 +1,85 @@
+/* ============================================================
+   IBP DS — единая точка подключения стилей для экранов.
+   На странице-экране достаточно одного линка:
+   <link rel="stylesheet" href="ds.css">
+   (страницы-документация компонентов подключают CSS компонентов точечно)
+   ============================================================ */
+
+/* Фундамент */
+@import url("foundations/Typography/Typography.css");
+@import url("foundations/Colors/Colors.css");
+@import url("foundations/Colors/Palette.css");
+@import url("foundations/Radius/Radius.css");
+@import url("foundations/Spacing/Spacing.css");
+@import url("foundations/Layout/Layout.css");
+@import url("foundations/Elevation/Elevation.css");
+@import url("foundations/Illustrations/Illustrations.css");
+
+/* Атомы */
+@import url("components/atoms/Buttons/Buttons.css");
+@import url("components/atoms/IconButton/IconButton.css");
+@import url("components/molecules/ButtonGroup/ButtonGroup.css");
+@import url("components/atoms/Link/Link.css");
+@import url("components/atoms/Checkbox/Checkbox.css");
+@import url("components/atoms/Radiobutton/Radiobutton.css");
+@import url("components/atoms/Switch/Switch.css");
+@import url("components/atoms/Slider/Slider.css");
+@import url("components/molecules/ColorPicker/ColorPicker.css");
+@import url("components/atoms/Chip/Chip.css");
+@import url("components/atoms/Badge/Badge.css");
+@import url("components/atoms/ProgressBar/ProgressBar.css");
+@import url("components/atoms/Spinner/Spinner.css");
+@import url("components/atoms/Skeleton/Skeleton.css");
+@import url("components/atoms/Avatar/Avatar.css");
+@import url("components/atoms/Divider/Divider.css");
+@import url("components/atoms/LabelHelper/LabelHelper.css");
+@import url("components/atoms/Keyboard/Keyboard.css");
+@import url("components/atoms/Note/Note.css");
+@import url("components/atoms/StepMarker/StepMarker.css");
+
+/* Молекулы */
+@import url("components/molecules/SegmentControl/SegmentControl.css");
+@import url("components/molecules/Tab/Tab.css");
+@import url("components/molecules/SubTab/SubTab.css");
+@import url("components/molecules/Breadcrumbs/Breadcrumbs.css");
+@import url("components/molecules/Tooltip/Tooltip.css");
+@import url("components/molecules/Toast/Toast.css");
+@import url("components/molecules/ContextMenu/ContextMenu.css");
+@import url("components/molecules/DropdownList/DropdownList.css");
+@import url("components/molecules/ReadOnlyField/ReadOnlyField.css");
+@import url("components/organisms/RiskMetric/RiskMetric.css");
+@import url("components/molecules/Pagination/Pagination.css");
+@import url("components/molecules/Splitter/Splitter.css");
+@import url("components/molecules/Inputs/Inputs.css");
+@import url("components/molecules/Inputs/InputRanges.css");
+@import url("components/molecules/DatePicker/DatePicker.css");
+@import url("components/molecules/NavTile/NavTile.css");
+@import url("components/molecules/EmptyState/EmptyState.css");
+@import url("components/molecules/StepForm/StepForm.css");
+@import url("components/molecules/DocCard/DocCard.css");
+
+/* Организмы */
+@import url("components/organisms/Modal/Modal.css");
+@import url("components/organisms/Drawer/Drawer.css");
+@import url("components/organisms/NavPanel/NavPanel.css");
+@import url("components/organisms/PageHeader/PageHeader.css");
+@import url("components/organisms/Popover/Popover.css");
+@import url("components/organisms/SnackBar/SnackBar.css");
+@import url("components/organisms/Entity/Entity.css");
+@import url("components/organisms/Table/Table.css");
+@import url("components/organisms/TableCell/TableCell.css");
+@import url("components/organisms/TableFilter/TableFilter.css");
+@import url("components/organisms/Table/TableSettings.css");
+@import url("components/organisms/AllocationBar/AllocationBar.css");
+@import url("components/organisms/Chart/Chart.css");
+@import url("components/organisms/Tile/Tile.css");
+@import url("components/organisms/Kanban/Kanban.css");
+@import url("components/organisms/ProductRow/ProductRow.css");
+
+/* Компоненты подкачки */
+@import url("components/molecules/Alert/Alert.css");
+
+/* Темы (RE0005): генерат foundations/Themes/Themes.css. Последним — блоки тем
+   должны перебивать :root компонентов при равной специфичности. Без атрибута
+   data-theme ни одно правило файла не действует; legacy как прежде. */
+@import url("foundations/Themes/Themes.css");

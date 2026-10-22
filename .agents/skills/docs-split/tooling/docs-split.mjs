@@ -1,0 +1,624 @@
+#!/usr/bin/env node
+/* ============================================================
+   DOCS-SPLIT CLI — тулчейн раскатки страниц документации IBP
+   на паттерн «сплиттер + табы» (docs-split).
+
+   Подкоманды:
+     map                 — перегенерировать references/pages-index.md
+                           (структурная карта всех doc-страниц)
+     inject <page>       — вставить CSS компонента (<Имя>.css его папки) в блок
+                           <script type="text/plain" id="src-code-css">
+                           (CSS берётся из файла, модель его не читает)
+     check <page>        — структурные проверки: баланс тегов, остатки
+                           ds-toc/pg-kit, splitpane--app, src-code, panes
+
+   Браузерная подкоманда verify (headless Chrome) удалена 13.09.2026: в рабочем
+   контуре браузер по скрипту запрещён (process.md §9), а rollout с ней краснел всегда.
+
+   Запуск (из корня репо):
+     node .agents/skills/docs-split/tooling/docs-split.mjs <cmd> [page]
+
+   Код выхода: 1 при любой невыполненной проверке, иначе 0.
+   ============================================================ */
+import { readFile, writeFile, readdir } from 'node:fs/promises';
+import { existsSync, readFileSync } from 'node:fs';
+import vm from 'node:vm';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const run = promisify(execFile);
+
+import { need, dsPaths } from '../../../tools/project.mjs';
+/* Корень проекта и ДС — из манифеста project.json (реструктуризация, Ш4). */
+const PRJ = need('docs-split', path.dirname(fileURLToPath(import.meta.url)));
+const ROOT = PRJ.root;
+const DS = PRJ.dsAbs;
+const TOOL = path.dirname(fileURLToPath(import.meta.url));
+/* Раскладка ДС — у модуля путей ДС (задача RE0002): где страницы, стили,
+   рантаймы и спеки, тулчейн не пишет литералами папок; ссылки, которые он
+   вставляет в страницу, считаются от неё до файла. */
+const L = (await dsPaths()).layout(DS);
+const INDEX_MD = L.abs(L.at.specIndex);
+const hrefFrom = (pageAbs, rel) => path.relative(path.dirname(pageAbs), L.abs(rel)).split(path.sep).join('/');
+const one = (list, what) => {
+  if (list.length !== 1) throw new Error('docs-split: ' + what + ' — в спеке ДС не один файл (' + (list.join(', ') || '—') + ')');
+  return list[0];
+};
+const PAGES_INDEX = path.join(TOOL, '..', 'references', 'pages-index.md');
+
+const PAGE_DIRS = ['foundations', 'atoms', 'molecules', 'organisms', 'patterns'];
+
+/* ---------------- helpers ---------------- */
+
+function log(msg) { process.stdout.write(msg + '\n'); }
+function fail(msg) { log('ОШИБКА: ' + msg); process.exit(2); }
+
+async function readUtf8(p) { return readFile(p, 'utf8'); }
+async function writeUtf8(p, s) { return writeFile(p, s, 'utf8'); }
+
+/* компонент → его CSS из манифеста ДС `_index.md` (источник истины) */
+async function loadCssMap() {
+  const map = {};
+  const text = await readUtf8(INDEX_MD);
+  for (const line of text.split('\n')) {
+    const m = line.match(/^\|\s*([^|]+?)\s*\|\s*[^|]*\.md\s*\|\s*([^|]+?\.css)\s*\|/);
+    if (m) map[m[1].trim()] = m[2].trim();
+  }
+  return map;
+}
+
+function kebab(name) {
+  return name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+}
+
+async function resolveCss(pagePath, explicitCss) {
+  if (explicitCss) {
+    const p = path.isAbsolute(explicitCss) ? explicitCss : path.join(ROOT, explicitCss);
+    if (existsSync(p)) return p;
+    const p2 = path.join(DS, explicitCss);
+    if (existsSync(p2)) return p2;
+    fail(`--css файл не найден: ${explicitCss}`);
+  }
+  const name = path.basename(pagePath, '.html');
+  const cssMap = await loadCssMap();
+  if (cssMap[name]) return path.join(DS, cssMap[name]);
+  // fallback: <Имя>.css папки компонента, затем прежние имена — kebab и нижний регистр
+  const cands = [name + '.css', kebab(name) + '.css', name.toLowerCase() + '.css'];
+  for (const c of cands) {
+    const hit = L.styles().find((s) => path.posix.basename(s) === c);
+    if (hit) return L.abs(hit);
+  }
+  fail(`не найден CSS для ${name} — укажи явно: --css <путь до .css от корня ДС, см. node ${PRJ.ds}/${L.at.paths} ${name}>`);
+}
+
+function pagePath(arg) {
+  const p = path.resolve(ROOT, arg);
+  if (!existsSync(p)) fail(`файл не найден: ${arg}`);
+  return p;
+}
+
+/* ---------------- check ---------------- */
+
+async function cmdCheck(pageArg) {
+  const p = pagePath(pageArg);
+  const t = await readUtf8(p);
+  const name = path.basename(p);
+  const results = [];
+  const ok = (cond, label) => results.push([cond, label]);
+
+  // баланс тегов вне <script>-блоков
+  const noScript = t.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+  const bal = (tag) => {
+    const o = (noScript.match(new RegExp('<' + tag + '(\\s[^>]*)?>', 'g')) || []).length;
+    const c = (noScript.match(new RegExp('</' + tag + '>', 'g')) || []).length;
+    return o - c;
+  };
+  ok(bal('div') === 0, `ДС1 баланс <div> (${bal('div')})`);
+  ok(bal('section') === 0, `ДС2 баланс <section> (${bal('section')})`);
+  ok(bal('table') === 0, `ДС3 баланс <table> (${bal('table')})`);
+
+  const count = (re) => (t.match(re) || []).length;
+  const countFrame = (re) => (noScript.match(re) || []).length;
+  ok(count(/<\/body>/gi) === 1, `ДС4 один </body> (${count(/<\/body>/gi)})`);
+  ok(count(/<\/html>/gi) === 1, `ДС5 один </html> (${count(/<\/html>/gi)})`);
+  ok(count(/ds-toc\.js/g) === 0, `ДС6 нет ds-toc.js (${count(/ds-toc\.js/g)})`);
+  ok(count(/pg-kit\.js/g) === 0, `ДС7 нет pg-kit.js (${count(/pg-kit\.js/g)})`);
+  ok(count(/ds-toc\.css/g) === 0, `ДС8 нет ds-toc.css (${count(/ds-toc\.css/g)})`);
+  /* стили Tab и SegmentControl — по имени файла из их спек (модуль путей ДС),
+     с «/» или кавычкой перед именем: `Tab.css` не должен находиться в `SubTab.css` */
+  const linked = (comp) => {
+    const file = path.posix.basename(one(L.cssOf(comp), 'стили ' + comp));
+    const re = new RegExp('["/]' + file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '"');
+    return [file, count(re)];
+  };
+  const [tabCss, tabN] = linked('Tab'), [segCss, segN] = linked('SegmentControl');
+  ok(tabN >= 1, `ДС9 ${tabCss} подключён (${tabN})`);
+  ok(segN >= 1, `ДС10 ${segCss} подключён (${segN})`);
+  ok(count(/\{\s*on:\s*'[^']*'\s*,\s*off:/) === 0, `ДС11 нет {on, off} словарей в DS_SPLIT_SWITCH_LABELS (${count(/\{\s*on:\s*'[^']*'\s*,\s*off:/)})`);
+  /* .splitpane--app считается по КАРКАСУ (noScript), не по всему файлу: правила
+     --app входят в components/molecules/Splitter/Splitter.css, который inject кладёт в src-code-css
+     вкладки «Код» (полный CSS компонента) — упоминания в код-образцах легальны.
+     Запрет паттерна касается каркаса main.ds-split (урок Splitter, 30.08.2026). */
+  ok(countFrame(/splitpane--app/g) === 0, `ДС12 нет .splitpane--app в каркасе (${countFrame(/splitpane--app/g)})`);
+  ok(count(/class="page ds-split"/) === 1, `ДС13 main.page.ds-split (${count(/class="page ds-split"/)})`);
+  ok(count(/docs-split\.js/g) >= 1, `ДС14 docs-split.js подключён (${count(/docs-split\.js/g)})`);
+  ok(count(/id="src-code-(html|css|js)"/g) === 3, `ДС15 3 src-code блока (${count(/id="src-code-(html|css|js)"/g)})`);
+  ok(count(/id="pane-docs"/g) === 1 && count(/id="pane-constructor"/g) === 1 && count(/id="pane-code"/g) === 1, 'ДС16 panes docs/constructor/code');
+
+  /* ДС17 — у каждого таба своя `.docs-layout > .docs-main`. Это ровно то, что
+     кладёт `scaffold` (константы TABS_OPEN и FOOT_CLOSE), но чего `check` не
+     требовал: панели под «Конструктором» и «Кодом» расходились с «Документацией»
+     по ширине и отступам, и дефект дошёл до человека при зелёной проверке
+     (витрины локальных компонентов, 20.09.2026). Правило требуют ds-rules §11. */
+  const paneSlice = (id) => {
+    const at = t.indexOf('id="' + id + '"');
+    if (at < 0) return null;
+    const start = t.lastIndexOf('<div', at);
+    return start < 0 ? null : sliceTag(t, start, 'div');
+  };
+  const noLayout = ['pane-docs', 'pane-constructor', 'pane-code'].filter((id) => {
+    const s = paneSlice(id);
+    return !s || !/class="docs-layout"/.test(s) || !/class="docs-main"/.test(s);
+  });
+  ok(noLayout.length === 0, noLayout.length
+    ? `ДС17 без .docs-layout > .docs-main: ${noLayout.join(', ')} — вёрстка под табами разойдётся`
+    : 'ДС17 у всех трёх табов общий контейнер .docs-layout > .docs-main');
+
+  /* ДС18 — переключатель языка во вкладке «Код» собран компонентом ДС, а не
+     руками. Эталон — та же разметка, что кладёт `scaffold`. Самодельные `.seg`
+     на странице не запрещены (Л12 оставляет их локальным стилям), запрещено
+     собирать ими ЭТОТ переключатель: он часть каркаса вкладки. */
+  const codePane = paneSlice('pane-code') || '';
+  const switchOk = /class="segctrl[^"]*"[^>]*\bdata-segctrl\b/.test(codePane)
+    && /class="segctrl__thumb"/.test(codePane)
+    && (codePane.match(/class="segctrl__item"[^>]*data-lang="/g) || []).length === 3;
+  ok(switchOk, switchOk
+    ? 'ДС18 переключатель языка — штатный segctrl с тремя сегментами'
+    : 'ДС18 во вкладке «Код» нет штатного сегмент-контрола (.segctrl[data-segctrl] + .segctrl__thumb + три .segctrl__item[data-lang])');
+
+  /* ДС19 — инлайновый скрипт компилируется. Конструктор страницы строится
+     скриптом, и синтаксическая ошибка в нём убивает ВСЮ страницу: ни контролов,
+     ни демо, ни табов — а статические проверки этого не видят (витрина карточки
+     контрагента, 20.09.2026). Компиляция без исполнения: разметки и рантаймов
+     здесь нет, выполнять нечего и небезопасно. */
+  const broken = [];
+  for (const m of t.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+    const attrs = m[1] || '';
+    if (/\bsrc=/.test(attrs)) continue;
+    if (/\btype="(?!text\/javascript)/.test(attrs)) continue;   // text/plain — образцы кода, module — не вход vm.Script
+    const lineOffset = t.slice(0, m.index).split('\n').length - 1;
+    try {
+      new vm.Script(m[2], { filename: name, lineOffset });
+    } catch (e) {
+      const line = (e.stack || '').match(new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ':(\\d+)'));
+      broken.push(`строка ${line ? line[1] : '?'}: ${e.message}`);
+    }
+  }
+  ok(broken.length === 0, broken.length
+    ? `ДС19 инлайновый скрипт не компилируется — ${broken.join('; ')}`
+    : 'ДС19 инлайновые скрипты компилируются');
+
+  /* ДС20 — служебный тег темы (RE0005). Страница ДС обязана нести
+     `docs-kit/ds-theme-boot.js` последним в <head>: он ставит `data-theme`
+     до первой отрисовки и подключает CSS тем. Без тега страница молча живёт
+     в legacy — переключатель на неё не попадает. Тег один, и считается по
+     РАЗМЕТКЕ, а не по сырому тексту: упоминание пути в комментарии или в
+     образце вкладки «Код» не должно засчитываться за тег (класс Л82).
+     Исключение — страница на загрузчике приложений (`apps/ds-config.js`):
+     он делает то же (ставит `data-theme` до отрисовки и грузит `ds.css`
+     с темами), поэтому для таких страниц (витрина локальных компонентов,
+     экраны) достаточно загрузчика. */
+  const noComments = t.replace(/<!--[\s\S]*?-->/g, '');
+  const themeTag = (noComments.match(/<script[^>]+src="[^"]*docs-kit\/ds-theme-boot\.js"/g) || []).length;
+  const appBoot = (noComments.match(/<script[^>]+src="[^"]*ds-config\.js"/g) || []).length;
+  ok(themeTag === 1 || appBoot >= 1, `ДС20 тег темы docs-kit/ds-theme-boot.js или загрузчик ds-config.js в <head> (тег ${themeTag}, загрузчик ${appBoot})`);
+
+  let bad = 0;
+  log(`== check ${name} ==`);
+  for (const [cond, label] of results) {
+    log((cond ? 'PASS' : 'FAIL') + '  ' + label);
+    if (!cond) bad++;
+  }
+  log(bad === 0 ? 'ВЕРДИКТ: OK' : `ВЕРДИКТ: FAIL (${bad})`);
+  process.exit(bad === 0 ? 0 : 1);
+}
+
+/* ---------------- inject ---------------- */
+
+/* HTML-эталон из спеки: первый fenced-блок после «### Разметка · HTML» */
+async function loadSpecHtml(pagePath) {
+  const name = path.basename(pagePath, '.html');
+  const specPath = L.abs(L.specOf(name));
+  if (!existsSync(specPath)) return null;
+  const text = await readUtf8(specPath);
+  const idx = text.indexOf('### Разметка · HTML');
+  if (idx < 0) return null;
+  const m = text.slice(idx).match(/```[a-zA-Z]*\n([\s\S]*?)```/);
+  if (!m) return null;
+  return m[1].replace(/\s+$/, '');
+}
+
+async function cmdInject(pageArg, explicitCss, wantHtml) {
+  const p = pagePath(pageArg);
+  const name = path.basename(p);
+  let t = await readUtf8(p);
+  const done = [];
+
+  if (wantHtml) {
+    const html = await loadSpecHtml(p);
+    const spec = L.specOf(path.basename(p, '.html'));
+    if (html === null) fail(`${name}: в ${spec} нет блока «### Разметка · HTML» — вставь src-code-html вручную`);
+    const reHtml = /<script type="text\/plain" id="src-code-html">[\s\S]*?<\/script>/i;
+    if (!reHtml.test(t)) fail(`${name}: блок src-code-html не найден`);
+    const before = t;
+    t = t.replace(reHtml, `<script type="text/plain" id="src-code-html">${html}</script>`);
+    if (t !== before) { done.push(`HTML-эталон из ${spec} (${html.length} байт)`); }
+  }
+
+  const cssPath = await resolveCss(p, explicitCss);
+  const css = await readUtf8(cssPath);
+  const re = /<script type="text\/plain" id="src-code-css">[\s\S]*?<\/script>/i;
+  if (!re.test(t)) fail(`${name}: блок src-code-css не найден`);
+  const before = t;
+  t = t.replace(re, `<script type="text/plain" id="src-code-css">${css.trimEnd()}</script>`);
+  if (t !== before) done.push(`${path.relative(DS, cssPath).split(path.sep).join('/')} (${css.length} байт)`);
+
+  if (!done.length) {
+    log(`== inject ${name} ==`);
+    log('src-code уже актуален, файл не тронут');
+    process.exit(0);
+  }
+  await writeUtf8(p, t);
+  log(`== inject ${name} ==`);
+  done.forEach((d) => log('вставлено: ' + d));
+  process.exit(0);
+}
+
+/* ---------------- scaffold ---------------- */
+
+/* вырезать сбалансированный элемент от индекса '<tag' (startIdx) до закрывающего тега */
+function sliceTag(html, startIdx, tag) {
+  const re = new RegExp('<' + tag + '(\\s[^>]*)?>|</' + tag + '>', 'g');
+  re.lastIndex = startIdx;
+  let depth = 0, m;
+  while ((m = re.exec(html))) {
+    if (m[0][1] === '/') depth--; else depth++;
+    if (depth === 0) return html.slice(startIdx, re.lastIndex);
+  }
+  return null;
+}
+
+/* каркасные константы (см. skeleton.md) */
+const SPL_GRIP = '<span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>';
+const TABS_OPEN = ''
+  + '    <div class="splitpane__panel splitpane__b app-pane-docs">\n'
+  + '      <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">\n'
+  + '        <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>\n'
+  + '        <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>\n'
+  + '        <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>\n'
+  + '      </div>\n'
+  + '\n'
+  + '      <div class="tabs-body">\n'
+  + '        <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">\n'
+  + '          <div class="docs-layout">\n'
+  + '            <div class="docs-main">\n\n';
+
+const FOOT_CLOSE = ''
+  + '            </div><!-- /docs-main -->\n'
+  + '            <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>\n'
+  + '          </div><!-- /docs-layout -->\n'
+  + '        </div><!-- /pane-docs -->\n'
+  + '\n'
+        + '        <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>\n'
+  + '          <div class="docs-layout">\n'
+  + '            <div class="docs-main">\n'
+  + '              <h2>Конструктор</h2>\n'
+  + '@@PC_DESC@@'
+  + '@@PC_BLOCK@@'
+  + '            </div>\n'
+  + '          </div>\n'
+  + '        </div>\n'
+  + '\n'
+  + '        <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>\n'
+  + '          <div class="docs-layout">\n'
+  + '            <div class="docs-main">\n'
+  + '              <h2>Код компонента</h2>\n'
+  + '              <p class="desc">Эталонная разметка, полный CSS компонента и выжимка API для интеграции.</p>\n'
+  + '              <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>\n'
+  + '                <div class="segctrl__thumb"></div>\n'
+  + '                <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>\n'
+  + '                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>\n'
+  + '                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>\n'
+  + '              </div>\n'
+  + '              <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>\n'
+  + '              <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>\n'
+  + '              <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>\n'
+  + '            </div>\n'
+  + '          </div>\n'
+  + '        </div>\n'
+  + '      </div><!-- /tabs-body -->\n'
+  + '    </div><!-- /app-pane-docs -->\n'
+  + '  </div><!-- /splitpane -->\n';
+
+const SRC_CODE_TAIL = ''
+  + '\n'
+  + '<!-- ===== исходники для вкладки «Код» (статично) ===== -->\n'
+  + '<script type="text/plain" id="src-code-html"></script>\n'
+  + '<script type="text/plain" id="src-code-js"></script>\n'
+  + '<script type="text/plain" id="src-code-css"></script>\n';
+
+async function cmdScaffold(pageArg) {
+  const p = pagePath(pageArg);
+  const name = path.basename(p, '.html');
+  let t = await readUtf8(p);
+  if (t.includes('class="page ds-split"')) {
+    log(`== scaffold ${name} ==`);
+    log('уже на docs-split — файл не тронут');
+    process.exit(0);
+  }
+  const warn = [];
+  const ok = (label) => warn.push('OK  ' + label);
+  const miss = (label) => warn.push('MISS ' + label);
+
+  /* 1. masthead — вырезать (встанет внутрь pane-docs) */
+  const mhIdx = t.indexOf('<header class="masthead">');
+  const masthead = mhIdx >= 0 ? sliceTag(t, mhIdx, 'header') : null;
+  if (masthead) { t = t.replace(masthead, '@@MASTHEAD@@'); ok('masthead'); } else miss('masthead');
+
+  /* 2. playground-секция: извлечь стадию, контролы (.pg__controls), #pg-code, desc */
+  let stage = null, controls = null, pgcode = null, pcDesc = null, pgSection = null;
+  let staticControls = null; /* static-режим: .pg__controls целиком (без id) */
+  const pgIdx = t.indexOf('data-screen-label="Playground"');
+  if (pgIdx >= 0) {
+    const secStart = t.lastIndexOf('<section', pgIdx);
+    if (secStart >= 0) {
+      pgSection = sliceTag(t, secStart, 'section');
+      if (pgSection) {
+        t = t.replace(pgSection, '@@PLAYGROUND@@');
+        const s = pgSection;
+        const stIdx = s.indexOf('<div class="pg__stage');
+        if (stIdx >= 0) { stage = sliceTag(s, stIdx, 'div'); ok('демо-стадия'); } else miss('демо-стадия');
+        const cIdx = s.indexOf('id="pg-controls"');
+        const cStatIdx = s.indexOf('<div class="pg__controls"');
+        if (cIdx >= 0) {
+          const cStart = s.lastIndexOf('<div', cIdx);
+          if (cStart >= 0) { controls = sliceTag(s, cStart, 'div'); ok('#pg-controls'); }
+          else { controls = ''; miss('#pg-controls обёртка'); }
+        } else if (cStatIdx >= 0) {
+          staticControls = sliceTag(s, cStatIdx, 'div');
+          if (staticControls) ok('.pg__controls (static)'); else miss('.pg__controls (static)');
+        } else { controls = ''; miss('#pg-controls'); }
+        const gIdx = s.indexOf('id="pg-code"');
+        if (gIdx >= 0) {
+          const gStart = s.lastIndexOf('<p', gIdx);
+          if (gStart >= 0) { pgcode = sliceTag(s, gStart, 'p'); ok('#pg-code'); }
+        } else ok('#pg-code отсутствует (page.js может писать без гварда — проверить)');
+        const dIdx = s.indexOf('<p class="desc">');
+        if (dIdx >= 0) { pcDesc = sliceTag(s, dIdx, 'p'); ok('desc конструктора'); } else miss('desc конструктора');
+      }
+    }
+  }
+  if (!pgSection) miss('playground-секция');
+
+  /* 3. main → ds-split + каркас */
+  const mainRe = new RegExp('<main class="page" data-screen-label="([^"]*)">');
+  const mm = t.match(mainRe);
+  if (!mm) fail(`${name}: <main class="page"> не найден`);
+  const label = mm[1];
+  t = t.replace(mainRe,
+    '<main class="page ds-split" data-screen-label="' + label + '">\n'
+    + '\n'
+    + '  <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">\n'
+    + '    <div class="splitpane__panel splitpane__a app-pane-demo">\n'
+    + '      <div class="demo-stage">\n'
+    + (stage ? '        ' + stage + '\n' : '')
+    + (pgcode ? '        ' + pgcode + '\n' : '')
+    + '      </div>\n'
+    + '    </div>\n'
+    + '\n'
+    + '    <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0">' + SPL_GRIP + '</div>\n'
+    + '\n'
+    + TABS_OPEN
+    + (masthead ? masthead + '\n\n' : ''));
+
+  /* 4. playground-маркер — убрать */
+  t = t.replace('@@PLAYGROUND@@', '');
+  t = t.replace('@@MASTHEAD@@', ''); // уже вставлен выше
+
+  /* 5. футер: закрыть panes. pane-constructor: dynamic — #pg-controls (docs-split.js
+     раскладывает); static — .pg__controls как есть (docs-split.css даёт 2 колонки) */
+  const pcBlock = staticControls
+    ? '              ' + staticControls + '\n'
+    : '              <div class="pg__controls" id="pg-controls">' + (controls ? controls.replace(/^<div class="pg__controls" id="pg-controls">|<\/div>$/g, '') : '') + '</div>\n';
+  t = t.replace('</main>',
+    FOOT_CLOSE.replace('@@PC_DESC@@', pcDesc ? '              ' + pcDesc + '\n' : '')
+      .replace('@@PC_BLOCK@@', staticControls
+        ? '              ' + staticControls + '\n'
+        : '              <div class="pg__controls" id="pg-controls">' + (controls ? controls.replace(/^<div class="pg__controls" id="pg-controls">|<\/div>$/g, '') : '') + '</div>\n')
+    + '</main>');
+
+  /* 6. head: ds-toc.css → 4 файла; убрать pg-kit.css */
+  t = t.replace(/<link rel="stylesheet" href="[^"]*\/ds-toc\.css">\s*/g, '');
+  t = t.replace(/<link rel="stylesheet" href="[^"]*\/pg-kit\.css">\s*/g, '');
+  const need = [one(L.cssOf('Splitter'), 'стили Splitter'), one(L.cssOf('SegmentControl'), 'стили SegmentControl'),
+    one(L.cssOf('Tab'), 'стили Tab'), L.at.docsSplitCss];
+  const add = need.filter((c) => !t.includes(hrefFrom(p, c)));
+  if (add.length) {
+    const ins = add.map((c) => '  <link rel="stylesheet" href="' + hrefFrom(p, c) + '">').join('\n') + '\n';
+    t = t.replace('</head>', ins + '</head>');
+    ok('head: ' + add.map((c) => path.posix.basename(c)).join(', '));
+  }
+
+  /* 7. style: playground-правила */
+  t = t.replace(/\s*\.panel\.pg\s*\{[^}]*\}/g, '');
+  t = t.replace(/\s*\.pg__controls\s*\{[^}]*\}/g, '');
+  t = t.replace(/\s*@media[^{]*\{[^}]*\.pg__controls[^}]*\}/g, '');
+  t = t.replace(/(\.pg__stage\s*\{)([^}]*)(\})/g, (mm2, pre, body, post) => {
+    let b = body.replace(/min-height\s*:[^;]+;?/g, '');
+    if (!/\bflex\s*:/.test(b)) b = ' flex:1; min-height:0; width:100%;' + b;
+    return pre + b + post;
+  });
+
+  /* 8. скрипты: ds-toc/pg-kit убрать; рантаймы до page.js; docs-split после */
+  t = t.replace(/<script src="[^"]*\/ds-toc\.js"><\/script>\s*/g, '');
+  t = t.replace(/<script src="[^"]*\/pg-kit\.js"><\/script>\s*/g, '');
+  const runtimes = [one(L.runtimeOf('Splitter'), 'рантайм Splitter'), one(L.runtimeOf('Tab'), 'рантайм Tab')]
+    .filter((r) => !t.includes(hrefFrom(p, r)));
+  if (runtimes.length) {
+    const firstPage = t.search(/<script src="[^"]*\.page\.js">/);
+    const insRt = runtimes.map((r) => '<script src="' + hrefFrom(p, r) + '"></script>\n').join('');
+    if (firstPage >= 0) t = t.slice(0, firstPage) + insRt + t.slice(firstPage);
+    else t = t.replace('</body>', insRt + '</body>');
+    ok('рантаймы: ' + runtimes.map((r) => path.posix.basename(r)).join(', '));
+  }
+  const tail = '<script>window.DS_SPLIT_SWITCH_LABELS = {};</script>\n'
+    + '<script src="' + hrefFrom(p, L.at.docsSplitJs) + '"></script>\n'
+    + SRC_CODE_TAIL;
+  if (!t.includes('docs-split.js')) t = t.replace('</body>', tail + '</body>');
+
+  /* 9. «Обновлено» → сегодня */
+  const today = new Date().toISOString().slice(0, 10).split('-').reverse().join('.');
+  t = t.replace(/Обновлено:?\s*<b>\d{2}\.\d{2}\.\d{4}<\/b>/, 'Обновлено: <b>' + today + '</b>');
+
+  await writeUtf8(p, t);
+  log(`== scaffold ${name} ==`);
+  warn.forEach((w) => log('  ' + w));
+  log('каркас собран. Дозаполни вручную: словарь DS_SPLIT_SWITCH_LABELS, src-code-js (выжимка API), при необходимости стадию/контролы.');
+}
+
+/* ---------------- rollout ---------------- */
+
+async function cmdRollout(pageArg) {
+  const p = pagePath(pageArg);
+  const rel = path.relative(ROOT, p).split(path.sep).join('/');
+  const tool = path.join(TOOL, 'docs-split.mjs');
+  const node = process.execPath;
+  const steps = [];
+  const t0 = await readUtf8(p);
+  if (!t0.includes('class="page ds-split"')) steps.push(['scaffold', [tool, 'scaffold', rel]]);
+  steps.push(['inject css', [tool, 'inject', rel]]);
+  steps.push(['inject html', [tool, 'inject', rel, '--html']]);
+  steps.push(['check', [tool, 'check', rel]]);
+  let failed = 0;
+  for (const [st, args] of steps) {
+    log('\n=== ' + st + ' ===');
+    try {
+      const { stdout } = await run(node, args, { maxBuffer: 16 * 1024 * 1024, timeout: 150000, windowsHide: true });
+      process.stdout.write(stdout);
+    } catch (e) {
+      if (e.stdout) process.stdout.write(String(e.stdout));
+      if (e.stderr) process.stderr.write(String(e.stderr));
+      failed++;
+      log('шаг ' + st + ' завершился с ошибкой');
+    }
+  }
+  log('\n' + '='.repeat(40));
+  log(failed === 0 ? 'ВЕРДИКТ: OK' : `ВЕРДИКТ: FAIL (${failed} шаг(а))`);
+  process.exit(failed === 0 ? 0 : 1);
+}
+
+/* ---------------- map ---------------- */
+
+async function parsePage(filePath) {
+  const t = await readUtf8(filePath);
+  const name = path.basename(filePath, '.html');
+  const sections = [];
+  const re = /<section class="section"([^>]*)>/g;
+  let m;
+  while ((m = re.exec(t))) {
+    const lbl = (m[1].match(/data-screen-label="([^"]*)"/) || [])[1];
+    sections.push(lbl || '?');
+  }
+  const ctor = t.includes('id="pg-controls"') ? 'dynamic'
+    : /class="ctl-group"/.test(t) ? 'grouped'
+    : /pg__controls/.test(t) ? 'static' : '—';
+  const demo = (t.match(/id="(pg-stage|demo-[a-z0-9-]+)"/i) || [])[1] || '—';
+  const pageJs = [...t.matchAll(/src="(?:[^"]*\/)?([\w-]+\.page\.js)"/g)].map((x) => x[1]);
+  const cssMap = await loadCssMap();
+  const css = cssMap[name] || '—';
+  const status = /class="page ds-split"/.test(t) ? '✅' : '⬜';
+  return { name, sections, ctor, demo, pageJs: pageJs.join(', ') || '—', css, status };
+}
+
+async function cmdMap() {
+  const cssMap = await loadCssMap();
+  const lines = [];
+  lines.push('---');
+  lines.push('belongs_to: docs-split');
+  lines.push('purpose: Структурная карта doc-страниц IBP. Читай карту вместо файла целиком. Генерируется командой map, руками не править.');
+  lines.push('generated: ' + new Date().toISOString().slice(0, 10));
+  lines.push('---');
+  lines.push('');
+  lines.push('# Карта страниц документации');
+  lines.push('');
+  lines.push('Статус: ✅ — раскатано на docs-split, ⬜ — старый формат. Конструктор: dynamic — контролы строит page.js в `#pg-controls` (docs-split.js сам делает две колонки); static — разметка `.ctl-col`/`.toggles` вручную; grouped — `.ctl-group` с двумя колонками в каждой.');
+  lines.push('');
+
+  const allPages = L.pages();
+  for (const dir of PAGE_DIRS) {
+    const files = allPages.filter((x) => x.category === dir).map((x) => x.rel);
+    if (!files.length) continue;
+    lines.push(`## ${dir[0].toUpperCase() + dir.slice(1)} (${files.length})`);
+    lines.push('');
+    lines.push('| Страница | Конструктор | Демо | page.js | CSS | Секций | Статус |');
+    lines.push('|---|---|---|---|---|---|---|');
+    for (const f of files.sort()) {
+      const info = await parsePage(L.abs(f));
+      lines.push(`| ${info.name} | ${info.ctor} | ${info.demo} | ${info.pageJs} | ${info.css} | ${info.sections.length} | ${info.status} |`);
+    }
+    lines.push('');
+  }
+  lines.push('<!-- Примечания (дописывать руками при необходимости) -->');
+  lines.push('');
+
+  await writeUtf8(PAGES_INDEX, lines.join('\n'));
+  log('== map ==');
+  log('pages-index.md перегенерирован: ' + path.relative(ROOT, PAGES_INDEX));
+  process.exit(0);
+}
+
+/* ---------------- --rules ----------------
+
+   Состав проверок печатает сам инструмент, а не ручной список в шапке: перечисление
+   в тексте разъезжается с кодом (Л43, Л50). Отсюда же реестр якорей
+   (`lessons-cli anchors`) берёт пространство `док-сплит` — на эти
+   идентификаторы ссылается журнал уроков. */
+function printRules() {
+  const src = readFileSync(fileURLToPath(import.meta.url), 'utf8');
+  const ids = [...new Set([...src.matchAll(/[`'"]\s*(ДС\d{1,2})(?!\d)/gu)].map((m) => m[1]))];
+  ids.sort((a, b) => parseInt(a.slice(2), 10) - parseInt(b.slice(2), 10));
+  log('== docs-split check: реализованные проверки ==');
+  log('');
+  log('док-сплит:ДС — структура страницы документации (паттерн «сплиттер + табы»):');
+  log('  ' + ids.join(' '));
+  log('');
+  log('Якорь для журнала уроков пишется с пространством имён: док-сплит:ДС17.');
+  log('Пространство кириллическое — латинское имя `lessons-cli check` не валидирует.');
+}
+
+/* ---------------- main ---------------- */
+
+const args = process.argv.slice(2);
+const cmd = args[0];
+if (args.includes('--rules')) { printRules(); process.exit(0); }
+if (!cmd) {
+  log('Использование: node docs-split.mjs <map|scaffold|inject|rollout|check> [page] [--css <путь до .css от корня ДС>] [--html] | --rules');
+  process.exit(1);
+}
+const pageArg = args.slice(1).find((a) => !a.startsWith('--'));
+const cssIdx = args.indexOf('--css');
+const explicitCss = cssIdx >= 0 ? args[cssIdx + 1] : null;
+const wantHtml = args.includes('--html');
+
+try {
+  if (cmd === 'map') await cmdMap();
+  else if (cmd === 'scaffold') await cmdScaffold(pageArg);
+  else if (cmd === 'inject') await cmdInject(pageArg, explicitCss, wantHtml);
+  else if (cmd === 'rollout') await cmdRollout(pageArg);
+  else if (cmd === 'check') await cmdCheck(pageArg);
+  else fail(`неизвестная команда: ${cmd}`);
+} catch (e) {
+  fail(e.message);
+}

@@ -1,0 +1,2221 @@
+#!/usr/bin/env node
+/* ============================================================
+   LESSONS-CLI — инструмент самообучения: проверяет не то, что урок ЗАПИСАН,
+   а то, что он во что-то превратился.
+
+   Зачем. Журнал уроков накапливал правила без проверок: на 06.09.2026 закрепление
+   объявили 2 записи из 38, а из 67 пунктов чек-листов сторожем закрыт 21.
+   Проверка «в файле есть строка про правило» ничего не доказывает — это тот
+   же дефект, что урок Л42 («правило записано, кода нет»), только применённый
+   к самому журналу. Здесь проверка одна: правило обязано ПАДАТЬ на
+   воспроизведённом дефекте и МОЛЧАТЬ на эталоне.
+
+   Подкоманды:
+     gate      — проверки по изменениям одной командой в конце захода: гоняет
+                 только сторожей того, что изменилось со снимка. `--full` —
+                 всё, `--dry` — показать шаги, `--changed <путь,…>` — задать
+                 набор изменений (проверка матрицы). Свежая копия из архива
+                 без снимка проверяет только правки; прерванный прогон
+                 продолжается с места обрыва (RE0018).
+     verify    — прогон фикстур: каждая пара «дефект/эталон» доказывает, что
+                 сторож живой. Код выхода 1, если хоть один не доказан.
+                 `--only <ID>` — одно правило, `--corpus sensor|lint` — один корпус.
+     coverage  — какие пункты чек-листов закрыты сторожем, какие живут только в тексте,
+                 какие признаны неизмеримыми. Код выхода 1, если пункт не
+                 классифицирован (не закрыт и не объявлен суждением).
+     anchors   — реестр живых идентификаторов сторожей: сверка `anchors.json`
+                 с кодом. Код выхода 1 при расхождении. `--write` обновляет.
+     check     — механическая проверка формы записей журнала: номер, поля,
+                 закрепление, якорь есть в реестре, алфавит якоря, связь с
+                 оракулом, единственность владельца ритуала.
+      add       — дозапись урока из черновика: номер, дата, EOL, `updated:`.
+      state     — объём журнала и долг курации.
+      stats     — сигнал об эффекте: что было ПОСЛЕ закрепления — регресс,
+                  обучение, мёртвые правила.
+
+
+   Запуск (из корня репозитория):
+     node .agents/tools/lessons-cli.mjs <подкоманда>
+
+   Кодировка и escape: файл правится редактором, НЕ через шелл — шелл-слой
+   схлопывает обратные слэши и молча ломает регулярки (урок Л51).
+   ============================================================ */
+import { readFileSync, writeFileSync, readdirSync, existsSync, statSync, mkdirSync, rmSync } from 'node:fs';
+import { execFileSync, spawn } from 'node:child_process';
+import os from 'node:os';
+import { includersOf, assembledOf } from './fragments.mjs';
+import { RUNS_DIR, LIMIT, runFileName, readRuns, readRunFile, countLines, rotate, blockersOf } from './runlog.mjs';
+import { need, dsPaths } from './project.mjs';
+import { documentationPaths, isDocPath } from './docs-index.mjs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+/* Корень и каталоги — из манифеста project.json (project.mjs; реструктуризация,
+   шаг Ш4). До этого корень считался «четыре уровня вверх», а ДС, харнес,
+   треки и хаб звались литералами — каждый переезд ломал бы оснастку молча.
+   Нет манифеста — отказ с понятным текстом (гейт без него не определит, что
+   стеречь). */
+const PRJ = need('lessons-cli', HERE);
+const ROOT = PRJ.root;
+const DS = PRJ.dsAbs;          // ДС: абсолютный путь …
+const DS_REL = PRJ.ds;         // … и от корня
+/* Раскладка ДС — у модуля путей ДС (задача RE0002): где страницы, стили,
+   рантаймы, спеки и инструменты ДС, гейт узнаёт у него, а не по префиксам
+   папок, — переезд раскладки не должен молча снять маршруты и проверки. */
+const L = (await dsPaths()).layout(DS);
+const dsKind = (rel) => (rel.startsWith(DS_REL + '/') ? L.kindOf(rel.slice(DS_REL.length + 1)) : null);
+const isDsFile = (rel, at) => rel === DS_REL + '/' + at;
+const isDsPage = (rel) => { const k = dsKind(rel); return !!k && k.kind === 'page'; };
+// категории страниц ДС, которые считает корневой README (компоненты и основы — readme-stats)
+const README_PAGE_CATS = ['atoms', 'molecules', 'organisms', 'foundations'];
+const KIT = PRJ.kitAbs;        // харнес
+const KIT_REL = PRJ.kit;
+const ADAPTER_REL = PRJ.adapter;  // адаптер агентного CLI: один конфиг с путями до харнеса (Ш5, доработка 22.09.2026)
+const TRACK_DIRS = [...new Set(PRJ.tracks.map((t) => t.dir).filter(Boolean))];
+const escRx = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const underDs = (tail) => new RegExp('^' + escRx(DS_REL) + '/' + tail);
+const underKit = (tail) => new RegExp('^' + escRx(KIT_REL) + '/' + tail);
+const SENSOR = path.join(HERE, 'layout-check.mjs');
+const FIXTURES = path.join(HERE, 'fixtures');
+const REGISTRY = path.join(HERE, 'coverage.json');
+const ANCHORS = path.join(HERE, 'anchors.json');
+const LINT_FIXTURES = L.abs(L.at.fixtures);
+/* Корпус экранов лежит ВНЕ дерева ДС не по вкусу, а по определению правила:
+   линтер считает экраном путь, начинающийся с `../` (вне дерева ДС).
+   Правила A7, F6, L4, L5, L6 внутри `design-system/fixtures/` не срабатывают никогда —
+   доказывать их там значило бы доказывать на входе, который им не вход (Л71).
+   С 15.09.2026 корпус лежит в оснастке (подпапка fixtures/lint-screens), а не в
+   удалённой песочнице Projects/test. Сенсорный корпус эту подпапку не читает:
+   verifyCorpus обходит каталог без вложенных. */
+const SCREEN_FIXTURES_REL = PRJ.rel(path.join(HERE, 'fixtures', 'lint-screens'));
+const SCREEN_FIXTURES = path.join(ROOT, SCREEN_FIXTURES_REL);
+const REFS = path.join(KIT, 'skills/screen-review/references');
+const RAW = path.join(REFS, 'lessons-raw.md');
+const CUR = path.join(REFS, 'lessons.md');
+/* Шарды выжимки по scope (Л79). Список объявлен ОДИН раз: до 13.09.2026 он жил
+   в трёх местах — `state`, `journalFiles()` и захардкоженный `[RAW, CUR]` в
+   `check`, — и шарды не попали в `check`: мёртвый якорь в них не ловился (Л43). */
+const SHARDS = [
+  ['docs-split', path.join(KIT, 'skills/docs-split/references/lessons.md')],
+  ['lessons', path.join(KIT, 'skills/lessons/references/lessons.md')],
+];
+/* Предел выжимки — у КАЖДОЙ выжимки отдельно, основной и шардов (Л79): он
+   меряет стоимость чтения на одной задаче. Объявлен в скилле lessons. До
+   21.09.2026 его только печатал `state`, на превышение не краснел никто — и
+   шард `lessons` дошёл до 155 строк молча: предел, превышение которого ничего
+   не краснит, пределом не является. Теперь это БЛОКЕР Л-ПРЕДЕЛ в `check`.
+   Одна константа на `check` и `state`. */
+const DIGEST_LIMIT = { entries: 20, lines: 150 };
+const digestSize = (p) => {
+  const s = rd(p);
+  return { entries: [...s.matchAll(/^### Л\d+\./gm)].length, lines: s.split(/\r?\n/).length };
+};
+const overLimit = (sz) => sz.entries > DIGEST_LIMIT.entries || sz.lines > DIGEST_LIMIT.lines;
+
+const rd = (p) => readFileSync(p, 'utf8');
+const log = (s = '') => console.log(s);
+const today = () => { const d = new Date(); const p = (n) => String(n).padStart(2, '0'); return p(d.getDate()) + '.' + p(d.getMonth() + 1) + '.' + d.getFullYear(); };
+
+/* Прогон сенсора. Он завершается кодом 1 при любом FAIL, поэтому execFileSync
+   бросает — перехватываем и берём stdout: нас интересует не код, а строки. */
+function runSensor(file) {
+  try {
+    return execFileSync(process.execPath, [SENSOR, file], { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+  } catch (e) {
+    return String(e.stdout || '') + String(e.stderr || '');
+  }
+}
+
+/* Сработал ли сторож по этому идентификатору. Метка стоит в начале строки
+   после уровня: «FAIL  Б22 нет сброса…» у сенсора, «BLOCKER R1 …» у линтера.
+   Словари уровней у инструментов разные, само срабатывание — одно и то же;
+   для оракула важно оно, а не тяжесть. */
+function firedOn(out, id) {
+  const rx = new RegExp('^(?:FAIL|WARN|BLOCKER|INFO)\\s+' + id + '(?![0-9.])', 'mu');
+  return rx.test(out);
+}
+
+/* Прогон линтера по фикстуре. Пути линтер разрешает от корня ДС, поэтому
+   запускается оттуда. Ненулевой код — норма для `.bad`, перехватываем. */
+function runLinter(rel) {
+  try {
+    return execFileSync(process.execPath, [L.at.lintCli, rel], { cwd: DS, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+  } catch (e) {
+    return String(e.stdout || '') + String(e.stderr || '');
+  }
+}
+
+/* ---------------- verify ---------------- */
+
+/* Идентификатор правила по имени фикстуры.
+
+   У одного правила вариантов может быть несколько: дефект тот же, а ВХОД
+   разный. `Б15.bad.html` — статическая разметка, `Б15@js.bad.html` — разметка
+   внутри <script>. Без суффикса корпус держал бы ровно один вход на правило,
+   и способность сторожа читать второй доказывалась бы мутацией руками —
+   то есть не доказывалась бы вовсе (класс Л71: правило РАБОТАЕТ, но не
+   ПРИМЕНЯЕТСЯ к половине рабочих экранов).
+
+   Разделитель — «@», а не точка: идентификаторы вида `K2.1` точку уже
+   содержат, и по ней срез разрезал бы сам идентификатор. */
+const idOfFixture = (f) => f.replace(/\.bad\.html$/, '').split('@')[0];
+
+/* Один корпус фикстур: эталон плюс фикстуры `<ID>[@вариант].bad.html`.
+   Инструмент передаётся запускалкой — доказательство устроено одинаково для
+   сенсора и для линтера, различаются только словарь уровней и способ вызова. */
+function verifyCorpus(dir, run, title, only = null) {
+  if (!existsSync(dir)) return { total: 0, bad: 0, missing: title };
+  const files = readdirSync(dir);
+  const baseName = '_base.ok.html';
+  /* `--only <ID>` отбирает фикстуры ДО прогона эталона: корпус, где нужного
+     правила нет, не стоит ни одного запуска. Ради этого флаг и заведён —
+     доказательство откатом одного сторожа во время работы стоит секунду, а
+     не полный корпус (34 сек на 13.09.2026). */
+  const bads = files.filter((f) => f.endsWith('.bad.html') && (!only || idOfFixture(f) === only)).sort();
+  if (only && !bads.length) return { total: 0, bad: 0 };
+  if (!files.includes(baseName)) { log('  нет эталона ' + baseName + ' в ' + title); return { total: 0, bad: 1 }; }
+
+  const baseOut = run(baseName);
+
+  /* Эталон варианта. У варианта входа бывает свой эталон: `Б5@document` —
+     лист-документ, спутник которого не объявляет `kind: document`, и молчать
+     правило обязано не только на экране-эталоне, но и на ТОМ ЖЕ листе с
+     объявленным видом (`_document.ok.html`). Иначе доказано одно «лист без
+     вида краснеет», а «вид снимает Б5» не доказано ничем (заведено 21.09.2026,
+     docs/agent-imp.md, У3б). Эталон варианта добавляется к общему, а не
+     заменяет его: правило не должно шуметь ни там, ни там. */
+  const variantOuts = new Map();
+  const variantBase = (f) => {
+    const v = f.replace(/\.bad\.html$/, '').split('@')[1];
+    const name = v ? '_' + v + '.ok.html' : null;
+    if (!name || !files.includes(name)) return null;
+    if (!variantOuts.has(name)) variantOuts.set(name, run(name));
+    return { name, out: variantOuts.get(name) };
+  };
+  const variantNames = [...new Set(bads.map((f) => '_' + (f.replace(/\.bad\.html$/, '').split('@')[1] || '') + '.ok.html'))].filter((n) => files.includes(n));
+
+  log('== ' + title + ' ==');
+  log('эталон: ' + baseName + (variantNames.length ? ' · эталоны вариантов: ' + variantNames.join(', ') : ''));
+  let bad = 0;
+  /* Печатается ИМЯ ФАЙЛА, а не только идентификатор. У правила с вариантами
+     строк несколько, и все они про один и тот же `Б15`: «ДОКАЗАН Б15» дважды
+     неотличимо, а «НЕ ДОКАЗАН Б15» не сказало бы, какая из фикстур мертва. */
+  for (const f of bads) {
+    const id = idOfFixture(f);
+    const caught = firedOn(run(f), id);
+    // на эталоне того же дефекта быть не должно — иначе правило шумит всегда
+    const quiet = !firedOn(baseOut, id);
+    const vb = variantBase(f);
+    const quietVariant = !vb || !firedOn(vb.out, id);
+
+    if (caught && quiet && quietVariant) {
+      log('  ДОКАЗАН  ' + f + ' → ' + id + ' — падает на дефекте, молчит на эталоне' + (vb ? ' и на эталоне варианта ' + vb.name : ''));
+    } else {
+      bad++;
+      if (!caught) log('  НЕ ДОКАЗАН ' + f + ' → ' + id + ' — дефект внесён, а находки ' + id + ' нет: сторож мёртв либо не видит вход (класс Л48)');
+      if (!quiet) log('  НЕ ДОКАЗАН ' + f + ' → ' + id + ' — правило срабатывает и на эталоне: оно шумит, а не ловит');
+      if (!quietVariant) log('  НЕ ДОКАЗАН ' + f + ' → ' + id + ' — правило срабатывает на эталоне варианта ' + vb.name + ': вариант входа не различается');
+    }
+  }
+  log('');
+  return { total: bads.length, bad };
+}
+
+/* `corpus`: null — все три; 'sensor' — корпус сенсора; 'lint' — оба корпуса
+   линтера (страницы и экраны: правило одно, входы разные, Л71). */
+function verify(only = null, corpus = null) {
+  if (corpus && corpus !== 'sensor' && corpus !== 'lint') { log('--corpus: sensor | lint, получено «' + corpus + '»'); return 2; }
+  log('== verify: доказательство сторожей откатом' + (only ? ' — только ' + only : '') + (corpus ? ' — корпус ' + corpus : '') + ' ==');
+  log('');
+  const none = { total: 0, bad: 0 };
+  const s = corpus === 'lint' ? none : verifyCorpus(FIXTURES, (f) => runSensor(path.join(FIXTURES, f)), 'сенсор layout-check (' + PRJ.rel(FIXTURES) + ')', only);
+  const l = corpus === 'sensor' ? none : verifyCorpus(LINT_FIXTURES, (f) => runLinter(L.at.fixtures + '/' + f), 'линтер ds-lint, страницы (' + DS_REL + '/' + L.at.fixtures + ')', only);
+  const e = corpus === 'sensor' ? none : verifyCorpus(SCREEN_FIXTURES, (f) => runLinter('../' + SCREEN_FIXTURES_REL + '/' + f), 'линтер ds-lint, экраны (' + SCREEN_FIXTURES_REL + ')', only);
+
+  const total = s.total + l.total + e.total, bad = s.bad + l.bad + e.bad;
+  /* Пустой отбор — не «всё доказано»: обход нуля фикстур с зелёным вердиктом
+     неотличим от чистого (Л100). */
+  if (only && total === 0) {
+    log('  НЕ ДОКАЗАН ' + only + ' — фикстур `' + only + '[@вариант].bad.html` нет' + (corpus ? ' в корпусе ' + corpus : '') + ': сторож не доказан ничем');
+    return 1;
+  }
+  log('фикстур: ' + total + ' (сенсор ' + s.total + ' · линтер-страницы ' + l.total + ' · линтер-экраны ' + e.total + '), доказано: ' + (total - bad) + ', не доказано: ' + bad);
+  if (bad === 0) log('Каждое проверенное правило подтверждено откатом, а не наличием строки в файле.');
+  return bad === 0 ? 0 : 1;
+}
+
+/* ---------------- реестр якорей ----------------
+
+   Зачем реестр отдельным файлом, а не грепом на лету: греп по журналу
+   отвечает «такая строка написана», а нужен ответ «такой сторож жив».
+   Идентификаторы берутся из ТОЧКИ ОТЧЁТА каждого инструмента — там, где он
+   печатает находку, — а не из комментариев: наивный греп по `ds-lint.js`
+   даёт 56 идентификаторов, из них пять живут только в комментарии-шапке. */
+
+function lintIds() {
+  const src = rd(L.abs(L.at.linter));
+  const out = new Set();
+  // say('WARN', 'A2', …) и out.push(['BLOCKER', 'P1', …]) — обе формы отчёта
+  for (const m of src.matchAll(/(?:say|out\.push)\(\s*\[?\s*(?:'[A-Z]+'|lvl)\s*,\s*'([A-Z]\d{1,2})'/g)) out.add(m[1]);
+  return [...out].sort(natural);
+}
+
+/* Правила линтера, чей ВХОД — не файл, а репозиторий: реестры (index.html,
+   ds-nav.js, манифест спек), весь CSS ДС, все её скрипты, дерево
+   файлов. Такое правило файловой фикстурой не доказывается в принципе —
+   доказывать его пришлось бы фикстурным РЕПОЗИТОРИЕМ.
+
+   Различаются механически, а не списком: репозиторные правила печатают находку
+   через `out.push` в глобальной секции, страничные — через локальный `say`
+   внутри `pageChecks`. Список руками разъехался бы с кодом на первой же новой
+   проверке; здесь он пересчитывается каждым прогоном. */
+function lintRepoIds() {
+  const src = rd(L.abs(L.at.linter));
+  const at = src.indexOf('function pageChecks');
+  const head = at > 0 ? src.slice(0, at) : src;
+  const tail = at > 0 ? src.slice(at) : '';
+  const ids = (s) => {
+    const set = new Set();
+    for (const m of s.matchAll(/(?:say|out\.push)\(\s*\[?\s*(?:'[A-Z]+'|lvl)\s*,\s*'([A-Z]\d{1,2})'/g)) set.add(m[1]);
+    return set;
+  };
+  const page = ids(tail);
+  // id, встречающийся и там и там, считается страничным: страничный вход у него есть
+  return [...ids(head)].filter((id) => !page.has(id)).sort(natural);
+}
+
+/* Обычный sort ставит B10 перед B2 — реестр читает человек, порядок должен
+   совпадать с тем, как правила пронумерованы. */
+const natural = (a, b) => a.localeCompare(b, 'ru', { numeric: true });
+
+function sensorIds() {
+  const out = execFileSync(process.execPath, [SENSOR, '--rules'], { encoding: 'utf8' });
+  /* Все четыре ряда: Б блокеры, З замечания, К каскад (кириллица),
+     K геометрия (латиница). Ряд, забытый здесь, делает реализованную
+     проверку невидимой для отчёта — так пропали З3 и З7 (урок Л54). */
+  return [...new Set([...out.matchAll(/([БЗКK]\d{1,2}(?:\.\d)?)(?![0-9.])/gu)].map((m) => m[1]))];
+}
+
+/* Структурные проверки страницы документации. Свой инструмент, свой ряд
+   идентификаторов — и своё пространство имён: якорь `док-сплит:ДС17` иначе
+   не проверяется ничем. Имя пространства кириллическое намеренно — разбор
+   неизвестных пространств в `check` читает только кириллицу, и латинское имя
+   прошло бы молча (то же, за что написан Л100). docs-split.mjs обещал это
+   пространство с 24.09.2026, а реестр его не заводил: якорь `док-сплит:…`
+   в журнале ловился бы как Л-ПРОСТРАНСТВО. */
+function docsSplitIds() {
+  const out = execFileSync(process.execPath, [DOCS_SPLIT, '--rules'], { encoding: 'utf8' });
+  return [...new Set([...out.matchAll(/(ДС\d{1,2})(?!\d)/gu)].map((m) => m[1]))];
+}
+
+function auditIds() {
+  const src = rd(L.abs(L.at.specAudit));
+  return [...new Set([...src.matchAll(/section\('Проход (\d)/g)].map((m) => m[1]))];
+}
+
+/* Пункты чек-листов — первая ячейка строки таблицы. */
+function checklistIds(md, letter) {
+  const rx = new RegExp('^\\|\\s*(' + letter + '\\d{1,2})\\s*\\|', 'gmu');
+  return [...new Set([...md.matchAll(rx)].map((m) => m[1]))];
+}
+
+function checkIds() {
+  const srv = rd(path.join(KIT, 'skills/screen-review/SKILL.md'));
+  const cmp = rd(path.join(KIT, 'skills/composition-review/SKILL.md'));
+  return [...checklistIds(srv, 'Б'), ...checklistIds(srv, 'З'), ...checklistIds(srv, 'К'), ...checklistIds(cmp, 'K')];
+}
+
+function anchorsFromCode() {
+  return {
+    сгенерировано: today(),
+    как: 'node ' + PRJ.rel(path.join(HERE, 'lessons-cli.mjs')) + ' anchors --write',
+    зачем: 'Журнал уроков сверяется с этим реестром, а не с грепом по коду. Расхождение реестра и кода — находка команды anchors.',
+    пространства: {
+      'линтер': { источник: DS_REL + '/' + L.at.linter, алфавит: 'латиница', ids: lintIds() },
+      'сенсор': { источник: PRJ.rel(SENSOR) + ' --rules', алфавит: 'кириллица Б/З/К, латинская K — геометрия', ids: sensorIds() },
+      'аудит': { источник: DS_REL + '/' + L.at.specAudit, алфавит: 'номер прохода', ids: auditIds() },
+      'док-сплит': { источник: PRJ.rel(DOCS_SPLIT) + ' --rules', алфавит: 'кириллица ДС', ids: docsSplitIds() },
+      'чек-лист': { источник: 'SKILL.md screen-review и composition-review', алфавит: 'кириллица Б/З/К, латинская K — композиция', ids: checkIds() },
+    },
+  };
+}
+
+const NS_FREE = new Set(['структурно', 'правило']); // якорь без реестра: гарантия ДС / пункт process.md
+
+function cmdAnchors(write) {
+  const live = anchorsFromCode();
+  if (write) {
+    writeFileSync(ANCHORS, JSON.stringify(live, null, 2) + '\n', 'utf8');
+    log('anchors.json перезаписан из кода.');
+    for (const [ns, v] of Object.entries(live.пространства)) log('  ' + ns + ': ' + v.ids.length + ' — ' + v.ids.join(' '));
+    return 0;
+  }
+  if (!existsSync(ANCHORS)) { log('реестра нет. Создать: anchors --write'); return 1; }
+  const saved = JSON.parse(rd(ANCHORS));
+  log('== anchors: реестр против кода ==');
+  log('');
+  let drift = 0;
+  for (const [ns, v] of Object.entries(live.пространства)) {
+    const was = new Set((saved.пространства?.[ns]?.ids) || []);
+    const now = new Set(v.ids);
+    const added = [...now].filter((x) => !was.has(x));
+    const gone = [...was].filter((x) => !now.has(x));
+    log('  ' + ns + ': в коде ' + now.size + ', в реестре ' + was.size);
+    if (added.length) { drift++; log('    ПОЯВИЛОСЬ в коде, нет в реестре: ' + added.join(' ')); }
+    if (gone.length) { drift++; log('    ЕСТЬ в реестре, нет в коде: ' + gone.join(' ') + ' — либо сторож удалён, либо переименован; уроки с таким якорем повисли'); }
+  }
+  log('');
+  if (drift) {
+    log('Реестр разошёлся с кодом. Пока он не обновлён, `check` сверяет журнал');
+    log('с устаревшим списком: якорь на удалённого сторожа выглядит живым.');
+    log('Обновить: anchors --write');
+    return 1;
+  }
+  log('Реестр совпадает с кодом.');
+  return 0;
+}
+
+/* ---------------- coverage ---------------- */
+
+function coverage() {
+  const srv = rd(path.join(KIT, 'skills/screen-review/SKILL.md'));
+  const cmp = rd(path.join(KIT, 'skills/composition-review/SKILL.md'));
+
+  const groups = [
+    ['блокеры screen-review', 'Б', checklistIds(srv, 'Б')],
+    ['замечания screen-review', 'З', checklistIds(srv, 'З')],
+    ['каскад screen-review', 'К', checklistIds(srv, 'К')],
+    ['композиция composition-review', 'K', checklistIds(cmp, 'K')],
+  ];
+
+  const sensor = new Set(sensorIds());
+  const reg = existsSync(REGISTRY) ? JSON.parse(rd(REGISTRY)) : {};
+  const judgment = reg.judgment || {};       // id -> причина, почему статикой не ловится
+  /* id -> «якорь — обоснование» для пунктов, закрытых НЕ сенсором экранов.
+     Графа общая, а не «byLinter»: закрывать пункт может линтер, проход аудита
+     или структурная гарантия ДС, и заводить по колонке на каждый инструмент
+     значит переписывать отчёт при появлении следующего. Пространство имён
+     берётся из самого якоря. */
+  const closedBy = reg.closedBy || {};
+  const mech = new Set(reg.mechanizable || []); // id -> сторож посилен, просто не написан
+
+  log('== coverage: чем закрыт каждый пункт чек-листов ==');
+  log('');
+
+  let all = 0, byCode = 0, byOther = 0, asJudgment = 0, planned = 0;
+  const unclassified = [];
+  const nsOf = (v) => (String(v).match(/^([а-яё-]+):/u) || [, 'другим'])[1];
+
+  for (const [name, , ids] of groups) {
+    const code = ids.filter((id) => sensor.has(id));
+    const other = ids.filter((id) => !sensor.has(id) && closedBy[id]);
+    const judg = ids.filter((id) => !sensor.has(id) && !closedBy[id] && judgment[id]);
+    const plan = ids.filter((id) => !sensor.has(id) && !closedBy[id] && !judgment[id] && mech.has(id));
+    const none = ids.filter((id) => !sensor.has(id) && !closedBy[id] && !judgment[id] && !mech.has(id));
+
+    all += ids.length; byCode += code.length; byOther += other.length; asJudgment += judg.length; planned += plan.length;
+    unclassified.push(...none);
+
+    log(name + ' — всего ' + ids.length);
+    log('  сенсором:    ' + (code.length ? code.join(' ') : '—'));
+    log('  иначе:       ' + (other.length ? other.map((id) => id + ' (' + nsOf(closedBy[id]) + ')').join(' ') : '—'));
+    log('  суждение:    ' + (judg.length ? judg.join(' ') : '—'));
+    log('  посильно:    ' + (plan.length ? plan.join(' ') : '—'));
+    if (none.length) log('  НЕ РАЗМЕЧЕНО: ' + none.join(' '));
+    log('');
+  }
+
+  /* Частичное закрытие печатается отдельно и всегда. Пункт с оговоркой,
+     закрытый молча, читается как закрытый целиком, и оставшаяся половина не
+     попадает ни в один список — ни в рабочий, ни в суждения. */
+  const partial = reg.partial || {};
+  const partialIds = Object.keys(partial);
+  if (partialIds.length) {
+    log('ЗАКРЫТО ЧАСТИЧНО — ' + partialIds.length + ':');
+    for (const id of partialIds) log('  ' + id + ': ' + partial[id]);
+    log('');
+  }
+
+  log('ИТОГО ' + all + ': сенсором ' + byCode + ' · другим инструментом ' + byOther + ' · суждение ' + asJudgment + ' · посильно, не написано ' + planned + ' · не размечено ' + unclassified.length);
+  /* Графа «иначе» появилась не для красоты: без неё отчёт ЗАНИЖАЛ закрытость.
+     Пункт К7 («@import не считается подключением») закрыт правилом A2 в ds-lint
+     и числился «посильным, не написанным» только потому, что coverage смотрел
+     в один инструмент из двух (урок Л67). */
+  log('');
+  if (unclassified.length) {
+    log('Не размечено — это не «плохо», это «решение не принято». Каждый пункт');
+    log('обязан быть либо закрыт сторожем, либо признан суждением с причиной,');
+    log('либо помечен посильным. Разметка — в coverage.json рядом с этим файлом.');
+    return 1;
+  }
+  log('Все пункты классифицированы. «Посильно, не написано» — рабочий список,');
+  log('он и должен уменьшаться; «суждение» — честная граница статики (process.md §9).');
+  return 0;
+}
+
+/* ---------------- brief ----------------
+
+   Короткий чек-лист самопроверки сборщика (RE0019, Э3). Сборщик на шаге 6
+   грузил оба полных чек-листа (~78 тыс. символов), и они уходили модели на
+   каждом следующем ходе; из 81 пункта большинство закрывают сенсор и линтер,
+   которые он и так запускает. Генерат берёт из тех же таблиц только пункты,
+   которые проверяет человек или модель: «суждение», «частично» (с тем, что не
+   закрыто) и посильные, но не написанные. Строки — дословно; приёмщик читает
+   полные чек-листы. Пункты по-прежнему живут только в двух SKILL.md:
+   `coverage`, `anchors` и `check` читают их оттуда, генерат их не задваивает. */
+const SELF_CHECK = path.join(KIT, 'skills/screen-review/references/self-check.md');
+
+function briefText() {
+  const sources = [
+    ['screen-review', 'skills/screen-review/SKILL.md', ['Б', 'З', 'К']],
+    ['composition-review', 'skills/composition-review/SKILL.md', ['K']],
+  ];
+  const sensor = new Set(sensorIds());
+  const reg = existsSync(REGISTRY) ? JSON.parse(rd(REGISTRY)) : {};
+  const judgment = reg.judgment || {}, closedBy = reg.closedBy || {}, partial = reg.partial || {};
+  const mech = new Set(reg.mechanizable || []);
+  // почему пункт остаётся ручным; null — его целиком закрывает инструмент
+  const manual = (id) => partial[id] ? 'частично'
+    : (sensor.has(id) || closedBy[id]) ? null
+      : judgment[id] ? 'суждение' : mech.has(id) ? 'сторожа нет' : 'не размечено';
+
+  let total = 0, kept = 0;
+  const body = [];
+  for (const [name, rel, letters] of sources) {
+    const lines = rd(path.join(KIT, rel)).split(/\r?\n/);
+    const rowRx = new RegExp('^\\|\\s*([' + letters.join('') + ']\\d{1,2})\\s*\\|', 'u');
+    const seen = new Set();
+    let heading = '', header = null;
+    const sections = [];
+    lines.forEach((l, i) => {
+      if (/^## /.test(l)) { heading = l.slice(3).trim(); header = null; return; }
+      if (/^\|/.test(l) && /^\|[\s|:-]+\|$/.test(lines[i + 1] || '')) { header = [l, lines[i + 1]]; return; }
+      const m = l.match(rowRx);
+      if (!m || seen.has(m[1])) return;
+      seen.add(m[1]); total++;
+      const why = manual(m[1]);
+      if (!why) return;
+      kept++;
+      let sec = sections[sections.length - 1];
+      if (!sec || sec.heading !== heading || sec.header !== header) sections.push(sec = { heading, header, rows: [] });
+      sec.rows.push({ id: m[1], why, line: l });
+    });
+    for (const sec of sections) {
+      body.push('## ' + name + ' · ' + sec.heading, '');
+      if (sec.header) body.push(...sec.header);
+      for (const r of sec.rows) body.push(r.line);
+      body.push('');
+      const by = (w) => sec.rows.filter((r) => r.why === w).map((r) => r.id);
+      const kinds = ['суждение', 'сторожа нет', 'не размечено'].filter((w) => by(w).length).map((w) => w + ': ' + by(w).join(' '));
+      if (kinds.length) body.push(kinds.join(' · '), '');
+      const part = sec.rows.filter((r) => r.why === 'частично');
+      if (part.length) {
+        body.push('Закрыто частично — инструмент проверяет не всё; вручную — то, что не закрыто:', '');
+        for (const r of part) body.push('- **' + r.id + '** — ' + partial[r.id]);
+        body.push('');
+      }
+    }
+  }
+  const head = [
+    '# Самопроверка сборщика — короткий чек-лист',
+    '',
+    '> СГЕНЕРИРОВАН — руками не править. Собирает `node ' + PRJ.rel(SELF) + ' brief` из таблиц',
+    '> `screen-review/SKILL.md`, `composition-review/SKILL.md` и разметки `' + PRJ.rel(REGISTRY) + '`;',
+    '> расхождение с источниками ловит `brief --check` в гейте.',
+    '',
+    'Здесь ' + kept + ' пунктов из ' + total + ': те, что инструменты не проверяют или проверяют частично. Остальные ' +
+      (total - kept) + ' закрывают сенсор и линтер — запусти их: `node ' + PRJ.rel(SENSOR) + ' <экран>` и гейт',
+    '`node ' + PRJ.rel(SELF) + ' gate`. Пройди пункты ниже по одному и почини найденное. Строки таблиц — дословно',
+    'из полных чек-листов; метод замера и что дефектом не является — там же, в разделах `composition-review`',
+    '«Как проверять» и «Что дефектом НЕ является», если пункт непонятен. Приёмщик проверяет по полным чек-листам.',
+    '',
+  ];
+  return [...head, ...body].join('\n').replace(/\n+$/, '') + '\n';
+}
+
+function brief(check) {
+  const text = briefText();
+  const rel = PRJ.rel(SELF_CHECK);
+  if (!check) { writeFileSync(SELF_CHECK, text, 'utf8'); log(rel + ' пересобран.'); return 0; }
+  if (existsSync(SELF_CHECK) && rd(SELF_CHECK) === text) { log(rel + ' совпадает с источниками.'); return 0; }
+  log('FAIL ' + rel + (existsSync(SELF_CHECK) ? ' разошёлся с чек-листами или coverage.json' : ' нет') + ' — пересобрать: node ' + PRJ.rel(SELF) + ' brief');
+  return 1;
+}
+
+/* ---------------- check ----------------
+
+   Механическая проверка формы записей. Делит находки на два веса:
+   БЛОКЕР — запись врёт (якорь на несуществующего сторожа, объявленное
+   исполняемое закрепление без фикстуры, задвоенный номер, ритуал описан
+   в двух местах); ЗАМЕЧАНИЕ — запись неполна (нет поля, нестандартный
+   ярлык). Код выхода 1 только на блокерах: неполнота — предмет Э3/Э5,
+   ложь — предмет немедленной правки. */
+
+/* Гомоглифы: `B9` (латинская) и `Б9` — разные сторожа, на экране одинаковы.
+   Поэтому промах по реестру сначала проверяется на подмену алфавита, и
+   сообщение называет причину, а не просто «нет в реестре». */
+const HOMO = { 'А': 'A', 'В': 'B', 'Е': 'E', 'К': 'K', 'М': 'M', 'Н': 'H', 'О': 'O', 'Р': 'P', 'С': 'C', 'Т': 'T', 'У': 'Y', 'Х': 'X' };
+const HOMO_BACK = Object.fromEntries(Object.entries(HOMO).map(([c, l]) => [l, c]));
+const swapAlphabet = (id) => {
+  const h = id[0];
+  const other = HOMO[h] || HOMO_BACK[h];
+  return other ? other + id.slice(1) : null;
+};
+
+const FIX_LEVELS = ['исполняемое', 'временное', 'неизмеримое'];
+
+/* Ярлыки полей. Канон — пять; всё остальное сводится к ним в Э3. */
+const CANON = ['Дата/зона', 'Симптом', 'Причина', 'Правило', 'Закрепление'];
+const OPTIONAL = ['Для приёмки', 'Промоут'];
+/* Без `\b`: граница слова в JS считается по ASCII, после кириллической буквы
+   её нет — `/^Правило\b/` не совпадает НИ С ЧЕМ и молча даёт «правила нет»
+   у всех 92 записей. Тот же класс, что Л51: регулярка синтаксически верна,
+   а совпадений ноль. */
+const RULE_LABELS = /^(Правил[оа]|Решение)/u;
+
+function entriesOf(file) {
+  const src = rd(file);
+  const eol = src.includes('\r\n') ? '\r\n' : '\n';
+  const lines = src.split(/\r?\n/);
+  const out = [];
+  let cur = null;
+  lines.forEach((line, i) => {
+    const m = line.match(/^### Л(\d+)\.\s*(.*)$/);
+    if (m) {
+      cur = { num: Number(m[1]), title: m[2].trim(), line: i + 1, body: [], file };
+      out.push(cur);
+    } else if (cur) cur.body.push(line);
+  });
+  return { entries: out, eol, src };
+}
+
+/* Ярлык поля: `- **Имя:**` и форма с уточнением `- **Закрепление (дата): уровень —**`.
+   Вторая появилась стихийно и ломала наивный греп — поэтому разбирается явно. */
+function fieldsOf(entry) {
+  const labels = [];
+  for (const line of entry.body) {
+    const m = line.match(/^\s*[-*]\s+\*\*([^*]+?)\*\*/u);
+    if (!m) continue;
+    const raw = m[1].trim();
+    const head = raw.split(/[(:]/)[0].trim();
+    labels.push({ raw, head, line });
+  }
+  return labels;
+}
+
+/* Область, где ищутся копии процедуры: каталог харнеса (с Ш5 — `.agents/`),
+   `docs/` и все `.md` в корне. До 21.09.2026 обход шёл по `.opencode/` и
+   одному корневому AGENTS.md —
+   документ процесса, вынесенный в `docs/`, выпал из-под правила, которое сам
+   пересказывает: находка Л-ВЛАДЕЛЕЦ исчезла не потому, что копию убрали, а
+   потому что файл переехал (класс Л100). Корень — целиком, а не AGENTS.md:
+   рядом с ним лежат правила других агентных CLI, и копия процедуры туда
+   вставляется так же легко.
+   Один список на два потребителя — обход `checkOwners` и матрица гейта
+   (правка документа в этой области поднимает `check`). Пока это константа;
+   после реструктуризации область обхода приходит из манифеста проекта
+   (шаг Ш4 плана `docs/restructure-3-repos.md`), а не отсюда. */
+const OWNER_ROOTS = [KIT_REL, PRJ.docs].filter(Boolean);
+const inOwnerArea = (rel) => rel.endsWith('.md') && (!rel.includes('/') || OWNER_ROOTS.some((r) => rel.startsWith(r + '/')));
+
+function checkOwners(findings) {
+  /* Самоприменение Л43: у процедуры один владелец. Файл считается владельцем,
+     если ОПРЕДЕЛЯЕТ все три уровня закрепления; журналы их употребляют, а не
+     определяют, и из проверки исключены. */
+  const owners = [];
+  const consider = (p) => {
+    if (/lessons(-raw)?\.md$/.test(path.basename(p))) return;
+    const rel = path.relative(ROOT, p).replace(/\\/g, '/');
+    if (!inOwnerArea(rel)) return;
+    const t = rd(p);
+    if (FIX_LEVELS.every((l) => t.includes(l))) owners.push(rel);
+  };
+  const walk = (dir) => {
+    if (!existsSync(dir)) return;
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) { if (e.name !== 'node_modules' && e.name !== '.git') walk(p); continue; }
+      consider(p);
+    }
+  };
+  for (const r of OWNER_ROOTS) walk(path.join(ROOT, r));
+  for (const e of readdirSync(ROOT, { withFileTypes: true })) if (e.isFile()) consider(path.join(ROOT, e.name));
+
+  const OWNER = KIT_REL + '/skills/lessons/SKILL.md';
+  const extra = owners.filter((p) => p !== OWNER);
+  if (!owners.includes(OWNER)) findings.push(['БЛОКЕР', 'Л-ВЛАДЕЛЕЦ', OWNER + ' не определяет три уровня закрепления — владельца ритуала нет']);
+  for (const p of extra) findings.push(['БЛОКЕР', 'Л-ВЛАДЕЛЕЦ', p + ' повторно определяет уровни закрепления. У процедуры один владелец (' + OWNER + '), остальные — указатели: копия разъедется молча (урок Л43)']);
+  return owners.length;
+}
+
+/* Л-ПУТЬ — путь в обратных кавычках, которого нет на диске (RE0020 Э4).
+   Выжимку и шарды читают в каждой сессии, и указатель в них — приказ «иди
+   туда». Мёртвый путь молча уводит в пустоту: так `scripts/ds-*` прожил в К13
+   до 14.10.2026, хотя каталога `scripts` в ДС давно нет. Архив не сверяется —
+   пути в истории устаревают законно, запись описывает, как было тогда.
+   Поля — только «Правило» и «Закрепление»: остальные рассказывают о
+   происшествии, а не ведут к правилу.
+   Путём считается не всё со слешем: в тексте полно `text/plain`,
+   `classList.add/remove` и CSS. Берётся первое слово (после префикса
+   пространства `правило:` и до пояснения «§4» / «…»), без шаблонов
+   (`*`, `<…>`, `{…}`, `…`), без схемы и без `../` (от чего он отсчитан —
+   неизвестно); в нём два сегмента и больше, а последний — с расширением или
+   со слешем в конце. Голое имя без слеша (`Table.js`) не сверяется.
+   Корни — проект, ДС, харнес: короткие формы `skills/…/references/` пишутся
+   от харнеса. С Л-ПРОСТРАНСТВО находки не пересекаются: токен с
+   незаведённым префиксом здесь пропускается — о нём уже сказал блокер. */
+const PATH_FIELDS = /^(Правил[оа]|Решение|Закрепление)/u;
+const PATH_ROOTS = [ROOT, DS, KIT];
+function fieldsText(entry, heads) {
+  const out = [];
+  let on = false;
+  for (const line of entry.body) {
+    const m = line.match(/^\s*[-*]\s+\*\*([^*]+?)\*\*/u);
+    if (m) on = heads.test(m[1].split(/[(:]/)[0].trim());
+    if (on) out.push(line);
+  }
+  return out.join('\n');
+}
+function pathOf(token, known) {
+  const ns = token.trim().match(/^([а-яё-]+):/u);
+  if (ns && !known.has(ns[1])) return null;
+  const word = token.trim().slice(ns ? ns[0].length : 0).split(/\s/)[0];
+  if (/[*?<>{}[\]'"…=$|]/u.test(word) || /^[a-z][\w+.-]*:/i.test(word) || /^(\.\.?\/|\/|~)/.test(word)) return null;
+  const p = word.replace(/[#].*$/, '').replace(/:\d+(?::\d+)?$/, '').replace(/[,;:)»]+$/u, '');
+  const core = p.replace(/\/+$/, '');
+  if (!core.includes('/')) return null;
+  if (!p.endsWith('/') && !/\.[a-z0-9]{1,5}$/i.test(core)) return null;
+  return core;
+}
+function checkPathsOf(entry, where, findings, stats, known) {
+  for (const m of fieldsText(entry, PATH_FIELDS).matchAll(/`([^`\n]+)`/gu)) {
+    const p = pathOf(m[1], known);
+    if (!p) continue;
+    stats.paths++;
+    if (PATH_ROOTS.some((r) => existsSync(path.join(r, p)))) continue;
+    findings.push(['ЗАМЕЧАНИЕ', 'Л-ПУТЬ', where + ' — путь `' + p + '` не найден ни от корня проекта, ни от ДС, ни от харнеса: указатель ведёт в пустоту. Перенаправить туда, где правило живёт сейчас']);
+  }
+}
+
+/* Сколько прогонов инструментов записано ПОСЛЕ указанного дня. Считаются все
+   инструменты разом: якорь временного закрепления часто указывает на пункт
+   чек-листа, у которого своего прогона нет вовсе. */
+let runTimes = null;   // журнал читается один раз на прогон, а не на каждую запись
+function runsSince(day) {
+  if (!runTimes) runTimes = readRuns().map((r) => Date.parse(r.t)).filter((n) => !Number.isNaN(n));
+  return runTimes.filter((t) => t >= day + 24 * 3600 * 1000).length;
+}
+
+function cmdCheck() {
+  if (!existsSync(ANCHORS)) { log('реестра якорей нет. Создать: anchors --write'); return 1; }
+  const reg = JSON.parse(rd(ANCHORS)).пространства || {};
+  const known = new Set([...Object.keys(reg), ...NS_FREE]);
+  const fixtures = existsSync(FIXTURES) ? new Set(readdirSync(FIXTURES).filter((f) => f.endsWith('.bad.html')).map(idOfFixture)) : new Set();
+
+  const findings = [];
+  const stats = { entries: 0, withRule: 0, withFix: 0, anchors: 0, refs: 0, paths: 0 };
+  const digests = new Set([CUR, ...SHARDS.map(([, p]) => p)]);
+
+  /* Номера, которые вообще существуют. Собираются по обоим файлам заранее:
+     выжимка ссылается на записи, живущие только в архиве. */
+  const knownNums = new Set();
+  for (const file of journalFiles()) for (const e of entriesOf(file).entries) knownNums.add(e.num);
+
+  /* Даты записей по номеру — из архива: он полон, в выжимке поле срезано.
+     Второй запас — заголовок раздела `## ДД.ММ.ГГГГ — …`: у ранних записей
+     поля «Дата/зона» ещё не было, зато архив разбит на датированные разделы.
+     Дата берётся оттуда, а не назначается: назначить дату задним числом
+     значило бы выдумать данные, а раздел — факт, записанный тогда же. */
+  const dayByNum = new Map();
+  {
+    const rawLines = rd(RAW).split(/\r?\n/);
+    const sectionDay = [];
+    let cur = 0;
+    for (const line of rawLines) {
+      const h = line.match(/^##\s+(\d{2}\.\d{2}\.\d{4})/u);
+      if (h) cur = parseDay(h[1]) || cur;
+      sectionDay.push(cur);
+    }
+    for (const e of entriesOf(RAW).entries) {
+      const own = parseDay(e.body.find((l) => /^\s*[-*]\s+\*\*Дата\/зона:/u.test(l)) || '');
+      const d = own || sectionDay[e.line - 1] || 0;
+      if (d) dayByNum.set(e.num, d);
+    }
+  }
+
+  for (const file of journalFiles()) {
+    const rel = path.relative(ROOT, file).replace(/\\/g, '/');
+    const { entries } = entriesOf(file);
+    const seen = new Map();
+
+    for (const e of entries) {
+      stats.entries++;
+      const where = rel + ':' + e.line + ' Л' + e.num;
+
+      if (seen.has(e.num)) findings.push(['БЛОКЕР', 'Л-НОМЕР', where + ' — номер уже занят записью на строке ' + seen.get(e.num) + '. Ссылка «см. Лn» перестаёт быть однозначной']);
+      seen.set(e.num, e.line);
+
+      const labels = fieldsOf(e);
+      const heads = labels.map((l) => l.head);
+      const text = e.body.join('\n');
+
+      if (heads.some((h) => RULE_LABELS.test(h))) stats.withRule++;
+      else findings.push(['ЗАМЕЧАНИЕ', 'Л-ПРАВИЛО', where + ' — нет поля с правилом. Урок без правила — это запись о происшествии, применить её не к чему']);
+
+      for (const l of labels) {
+        if (CANON.includes(l.head) || OPTIONAL.includes(l.head)) continue;
+        findings.push(['ЗАМЕЧАНИЕ', 'Л-ЯРЛЫК', where + ' — ярлык «' + l.raw + '» вне словаря (' + CANON.join(', ') + '; необязательные: ' + OPTIONAL.join(', ') + ')']);
+      }
+
+      // закрепление: ярлык может нести уровень внутри — «Закрепление (дата): исполняемое —»
+      const fixLabel = labels.find((l) => l.head === 'Закрепление');
+      if (!fixLabel) {
+        findings.push(['ЗАМЕЧАНИЕ', 'Л-ЗАКР', where + ' — нет поля «Закрепление»: во что урок превратился, не сказано']);
+      } else {
+        stats.withFix++;
+        const scope = fixLabel.line + '\n' + (e.body[e.body.indexOf(fixLabel.line) + 1] || '');
+        const level = FIX_LEVELS.find((l) => scope.includes(l));
+        if (!level) findings.push(['БЛОКЕР', 'Л-УРОВЕНЬ', where + ' — «Закрепление» без уровня. Допустимы: ' + FIX_LEVELS.join(' / ')]);
+        else if (level === 'исполняемое') {
+          const sens = [...scope.matchAll(/сенсор:\s*([БЗКK]\d{1,2}(?:\.\d)?)/gu)].map((m) => m[1]);
+          for (const id of sens) {
+            if (!fixtures.has(id)) findings.push(['БЛОКЕР', 'Л-ОРАКУЛ', where + ' — объявлено исполняемое закрепление на сенсор:' + id + ', а пары фикстур ' + id + '.bad.html (или ' + id + '@<вариант>.bad.html) нет. Уровень недоказан и понижается до «временное» (Л42 в новом обличье)']);
+          }
+        }
+        /* Срок жизни «временного». Уровень задуман как расписка «правило пока
+           держится на памяти» — без срока такая расписка становится вечной, и
+           «временное» превращается в способ не писать сторожа. Срок меряется
+           ПРОГОНАМИ, а не календарём: неделя простоя ничего не проверяет, а
+           десять прогонов означают, что случай встречался и повод написать
+           сторожа был. Снимается явным «продлено: причина». */
+        else if (level === 'временное') {
+          /* Дата берётся из записи, а при её отсутствии — из архивной записи с
+             тем же номером. В выжимке «Дата/зона» срезана курацией, и без этой
+             подстановки срок не отсчитывался бы ровно у тех записей, ради
+             которых правило написано: временное закрепление живёт как раз в
+             выжимке. Правило, которое есть, но не применяется, — тот же класс,
+             что Л71. */
+          const own = parseDay((e.body.find((l) => /^\s*[-*]\s+\*\*Дата\/зона:/u.test(l)) || ''));
+          const day = own || dayByNum.get(e.num) || 0;
+          const n = day ? runsSince(day) : 0;
+          if (!day) findings.push(['ЗАМЕЧАНИЕ', 'Л-СРОК', where + ' — временное закрепление без даты ни в записи, ни в архиве: срок не отсчитывается, уровень становится вечным']);
+          else if (n >= HORIZON && !/продлен/iu.test(scope)) {
+            findings.push(['ЗАМЕЧАНИЕ', 'Л-СРОК', where + ' — временное закрепление держится ' + n + ' прогонов (предел ' + HORIZON + '). Либо поднять до исполняемого (сторож + пара фикстур), либо дописать в поле «продлено: причина»']);
+          }
+        }
+      }
+
+      /* якоря известных пространств — сверяются с реестром. Цитата мёртвого
+         идентификатора в ёлочках («линтер:G1» — снятый сторож) якорем не
+         считается: так велит скилл lessons. До 13.09.2026 соглашение было
+         записано, а регулярка ёлочки не исключала — первая же такая цитата
+         дала ложный Л-ЯКОРЬ (класс Л42: правило записано, кода нет). */
+      for (const m of text.matchAll(/(?<!«)(линтер|сенсор|чек-лист|аудит|док-сплит):\s*([^\s`,;)]+)/gu)) {
+        const ns = m[1];
+        let id = m[2].replace(/[.,;:)»]+$/u, '');
+        if (ns === 'аудит') { const d = id.match(/(\d)\s*$/); id = d ? d[1] : id; }
+        stats.anchors++;
+        const ids = new Set(reg[ns]?.ids || []);
+        if (ids.has(id)) continue;
+        const alt = swapAlphabet(id);
+        if (alt && ids.has(alt)) findings.push(['БЛОКЕР', 'Л-АЛФАВИТ', where + ' — якорь ' + ns + ':' + id + ' записан не тем алфавитом; в реестре ' + ns + ':' + alt + '. На экране они неразличимы, а сторожа разные']);
+        else findings.push(['БЛОКЕР', 'Л-ЯКОРЬ', where + ' — якорь ' + ns + ':' + id + ' в реестре не значится: сторожа с таким идентификатором нет']);
+      }
+
+      /* Перекрёстные ссылки «см. Лn». Ссылка на несуществующий номер молча
+         уводит читателя в пустоту, а промах на единицу правдоподобен как
+         нигде: номер присваивает команда в момент дозаписи, и порядок записи
+         не совпадает с порядком, в котором уроки задумывались. */
+      for (const m of text.matchAll(/Л(\d+)/gu)) {
+        const n = Number(m[1]);
+        stats.refs++;
+        if (!knownNums.has(n)) findings.push(['БЛОКЕР', 'Л-ССЫЛКА', where + ' — ссылка на Л' + n + ', записи с таким номером нет ни в архиве, ни в выжимке']);
+      }
+
+      /* Якоря неизвестных пространств — только внутри обратных кавычек и только
+         с КИРИЛЛИЧЕСКИМ именем пространства. Латиницу пришлось исключить:
+         журнал полон CSS-объявлений в кавычках (`flex-grow:1`, `overflow-y:auto`),
+         и они неотличимы от якоря по форме — различает их алфавит. */
+      for (const m of text.matchAll(/`([а-яё-]{3,12}):([^`\s]{1,14})`/gu)) {
+        if (known.has(m[1])) continue;
+        findings.push(['БЛОКЕР', 'Л-ПРОСТРАНСТВО', where + ' — пространство имён «' + m[1] + ':» не заведено. Известные: ' + [...known].join(', ')]);
+      }
+
+      if (digests.has(file)) checkPathsOf(e, where, findings, stats, known);
+    }
+  }
+
+  const owners = checkOwners(findings);
+
+  // предел выжимок — см. DIGEST_LIMIT
+  for (const p of [CUR, ...SHARDS.map(([, sp]) => sp)].filter((f) => existsSync(f))) {
+    const sz = digestSize(p);
+    if (overLimit(sz)) {
+      findings.push(['БЛОКЕР', 'Л-ПРЕДЕЛ', path.relative(ROOT, p).replace(/\\/g, '/') + ' — ' + sz.entries + ' записей / ' + sz.lines +
+        ' строк при пределе ' + DIGEST_LIMIT.entries + ' / ' + DIGEST_LIMIT.lines + '. Курация: вывести закрытое исполняемым сторожем, вынести чужое по адресату (скилл lessons)']);
+    }
+  }
+
+  log('== check: форма записей журнала ==');
+  log('');
+  const blockers = findings.filter((f) => f[0] === 'БЛОКЕР');
+  const warns = findings.filter((f) => f[0] === 'ЗАМЕЧАНИЕ');
+  for (const [lvl, id, msg] of [...blockers, ...warns]) log('  ' + lvl + '  ' + id + '  ' + msg);
+  if (!findings.length) log('  находок нет');
+  log('');
+  /* Счётчики печатаются рядом с находками намеренно: правило, давшее НОЛЬ
+     совпадений на заведомо непустом входе, выглядит как «чисто». Так уже
+     случилось — `/^Правило\b/` не совпало ни с чем, потому что граница слова
+     в JS считается по ASCII (урок Л56). Ноль в этой строке виден сразу. */
+  log('записей ' + stats.entries + ' · с правилом ' + stats.withRule + ' · с закреплением ' + stats.withFix + ' · якорей сверено ' + stats.anchors + ' · ссылок Лn ' + stats.refs + ' · путей в выжимках ' + stats.paths + ' · владельцев ритуала ' + owners);
+  log('БЛОКЕР ' + blockers.length + ' · ЗАМЕЧАНИЕ ' + warns.length);
+  log('');
+  log('БЛОКЕР — запись врёт: якорь на несуществующего сторожа, недоказанное');
+  log('закрепление, задвоенный номер, ритуал в двух местах. Чинится сразу.');
+  log('ЗАМЕЧАНИЕ — запись неполна или устарела: нет поля, ярлык вне словаря,');
+  log('путь в выжимке не найден. Предмет курации.');
+  return blockers.length ? 1 : 0;
+}
+
+/* ---------------- add ----------------
+
+   Черновик пишется редактором (кириллица и регулярки через шелл не проходят),
+   а механику — номер, дату, EOL, `updated:` — делает CLI: именно на ней
+   ошибались руками. Номер берётся как max+1 по ОБОИМ файлам: нумерация
+   немонотонна, «последний в файле» не значит «наибольший». */
+
+function cmdAdd(draftPath) {
+  if (!draftPath || !existsSync(draftPath)) { log('нужен черновик: add --from <файл.md>'); return 2; }
+  let draft = rd(draftPath).replace(/\r\n/g, '\n').trim();
+
+  const head = draft.match(/^### Л([\d_?]+)\./);
+  if (!head) { log('черновик обязан начинаться со строки «### Л_. <заголовок>»'); return 2; }
+
+  const maxOf = (f) => Math.max(0, ...[...rd(f).matchAll(/^### Л(\d+)\./gm)].map((m) => Number(m[1])));
+  const next = Math.max(maxOf(RAW), maxOf(CUR)) + 1;
+  draft = draft.replace(/^### Л[\d_?]+\./, '### Л' + next + '.').replace(/\{дата\}/g, today());
+
+  const src = rd(RAW);
+  const eol = src.includes('\r\n') ? '\r\n' : '\n';
+  const body = draft.split('\n').join(eol);
+  let out = src.replace(/\s+$/, '') + eol + eol + body + eol;
+  // `updated:` в кавычках — иначе YAML читает дату как число и ломается C3
+  out = out.replace(/^updated:.*$/m, 'updated: "' + today() + '"');
+
+  writeFileSync(RAW, out, 'utf8');
+  log('Л' + next + ' дописан в ' + path.relative(ROOT, RAW).replace(/\\/g, '/') + ' (EOL ' + (eol === '\r\n' ? 'CRLF' : 'LF') + ', updated ' + today() + ')');
+  log('');
+  return cmdCheck();
+}
+
+/* ---------------- давность ритуальных прогонов ----------------
+
+   Два сторожа стерегут не файл, а СОСТОЯНИЕ всего репозитория: нейтральность
+   (`vendor-scan.mjs`) и образцы каркаса (`layout-check.mjs --etalons`). У
+   такого сторожа нет естественного повода запуститься: он не привязан к
+   экрану, который сдают на приёмку, и правило «прогони в конце захода» живёт
+   строкой в скилле. Цена строки видна в журнале: у нейтральности 4 прогона,
+   все 11.09.2026 за две с половиной минуты — это откат при написании самого
+   сторожа, — и после ни одного.
+
+   Решение пересмотрено 13.09.2026. Раньше гейта не было намеренно: боялись
+   девятого входа в тулчейн. Замер показал, что дорого не число входов, а число
+   ОТДЕЛЬНЫХ прогонов (06.09: verify 49 раз, check 34, coverage 27 за 18 задач).
+   Теперь оба сторожа запускает `gate` (подкоманда ниже) — когда изменились
+   текстовые файлы или образцы каркаса. Давность здесь остаётся: она видна и
+   тому, кто гоняет подкоманды поштучно.
+
+   Строка ритуала живёт ТОЛЬКО в `lessons/SKILL.md`: находка `Л-ВЛАДЕЛЕЦ`
+   считает владельцем процедуры файл, содержащий все три слова «исполняемое /
+   временное / неизмеримое», и пересказ в AGENTS.md или process.md дал бы
+   блокер. */
+const RITUAL = [
+  ['нейтральность', 'vendor-scan.mjs'],
+  ['эталоны', 'layout-check.mjs --etalons'],
+];
+
+function ritualFreshness() {
+  const runs = readRuns();
+  const last = new Map(), count = new Map();
+  for (const r of runs) {
+    const t = Date.parse(r.t);
+    if (Number.isNaN(t)) continue;
+    count.set(r.tool, (count.get(r.tool) || 0) + 1);
+    const prev = last.get(r.tool);
+    if (!prev || t > prev.t) last.set(r.tool, { t, verdict: r.verdict });
+  }
+
+  log('  давность ритуальных прогонов (их запускает gate при изменениях; пропуск виден здесь):');
+  for (const [tool, how] of RITUAL) {
+    const l = last.get(tool);
+    if (!l) { log('    ' + tool + ' (' + how + '): не прогонялся ни разу'); continue; }
+    const days = Math.floor((Date.now() - l.t) / 86400000);
+    const ago = days <= 0 ? 'сегодня' : days + ' дн. назад';
+    log('    ' + tool + ' (' + how + '): ' + fmtDay(l.t) + ', ' + ago + ' · прогонов ' + count.get(tool) + ' · последний вердикт ' + l.verdict);
+  }
+  log('');
+}
+
+/* ---------------- state ----------------
+   Состояние журнала печатается, а не переписывается вручную: любая записанная
+   в текст цифра устаревает на следующей же правке (этот файл появился ровно
+   потому, что абзац «38 записей / 228 строк» устарел через час). */
+
+function state() {
+  const raw = rd(RAW);
+  const cur = rd(CUR);
+  const nums = (s) => [...s.matchAll(/^### Л(\d+)\./gm)].map((m) => Number(m[1]));
+
+  const live = SHARDS.filter(([, p]) => existsSync(p));
+
+  const inRaw = new Set(nums(raw));
+  const inCur = new Set(nums(cur));
+  /* Присутствие урока считается по ВСЕМ выжимкам, а не только по основной:
+     запись, вынесенная по адресату в шард, промоутирована и долгом не является (Л79). */
+  const present = new Set(inCur);
+  for (const [, p] of live) for (const n of nums(rd(p))) present.add(n);
+
+  const blocks = raw.split(/^(?=### Л\d+\.)/m).filter((b) => /^### Л\d+\./.test(b));
+  const decided = new Map();
+  for (const b of blocks) {
+    const n = Number(b.match(/^### Л(\d+)\./)[1]);
+    const m = b.match(/^- \*\*Промоут:\*\* (.+)$/m);
+    decided.set(n, m ? m[1].trim() : null);
+  }
+
+  const notInCur = [...inRaw].filter((n) => !present.has(n)).sort((a, b) => a - b);
+  /* «Промоут: в выжимке / в шард …» — заявка на включение. Если записи нет ни в
+     одной выжимке, заявка не исполнена — это долг: поле «Промоут» объявляет
+     намерение, а не факт (Л80, Л81). «Не промоутить», «выведен … закреплён …»,
+     «слит в …» и «не держим» — решения, долгом не являющиеся.
+     Долг — всё, где решения нет: раньше долгом считалась только заявка, и текст вне
+     канона без заявки проходил решением молча, а «не в выжимке — …» читался как
+     заявка «в выжимке». Решение ищется по всему полю: у записей, выведенных из
+     шарда, перед ним стоит история («в шарде … Выведен …»). */
+  const settled = (d) => /не промоутить|выведен|слит|не держим/iu.test(d);
+  const debt = notInCur.filter((n) => {
+    const d = decided.get(n);
+    return !d || !settled(d);
+  });
+  const curSize = digestSize(CUR);
+  const mark = (sz) => (overLimit(sz) ? '   СВЕРХ ПРЕДЕЛА — БЛОКЕР Л-ПРЕДЕЛ в check' : '');
+
+  log('== состояние журнала уроков ==');
+  log('');
+  log('  архив:   ' + inRaw.size + ' записей');
+  log('  выжимка: ' + curSize.entries + ' записей / ' + curSize.lines + ' строк   (предел ' + DIGEST_LIMIT.entries + ' / ' + DIGEST_LIMIT.lines + ')' + mark(curSize));
+  log('');
+  log('  долг курации (нет ни в одной выжимке: решение не записано, заявлено, но не внесено, или записано не по канону): ' + debt.length + (debt.length ? ' — ' + debt.map((n) => 'Л' + n).join(' ') : ''));
+
+  const curBlocks = cur.split(/^(?=### Л\d+\.)/m).filter((b) => /^### Л\d+\./.test(b));
+  const withFix = curBlocks.filter((b) => /\*\*Закрепление/.test(b)).length;
+  log('  в выжимке объявили закрепление: ' + withFix + ' из ' + curBlocks.length);
+
+  /* Шарды печатаются рядом с выжимкой, иначе отчёт вводит в заблуждение:
+     «14 записей» звучит как «столько всего читают», а по scope читают ещё два
+     файла. Предел относится к КАЖДОЙ выжимке отдельно — он меряет стоимость
+     чтения на одной задаче, а не объём журнала (урок Л79). */
+  if (live.length) {
+    log('');
+    log('  шарды по scope (предел ' + DIGEST_LIMIT.entries + ' / ' + DIGEST_LIMIT.lines + ' у каждого):');
+    for (const [name, p] of live) {
+      const sz = digestSize(p);
+      log('    ' + name + ': ' + sz.entries + ' записей / ' + sz.lines + ' строк' + mark(sz));
+    }
+  }
+  log('');
+  ritualFreshness();
+
+  /* Долг калибровки сметы контекста. Строку печатает САМ ctx-budget — здесь её
+     только показывают: логика долга у одного владельца, копия разошлась бы с
+     оригиналом (Л43). Долг вердикт не краснит: отсутствие замера — это не ложь
+     модели, а несделанная сверка, и она требует реального захода. */
+  const кб = runGateStep({ args: [CTX_BUDGET, '--calibration-state'], cwd: ROOT });
+  const кбСтрока = кб.out.split(/\r?\n/).find((l) => /калибровка сметы/.test(l));
+  if (кбСтрока) { log('  ' + кбСтрока.trim()); log(''); }
+
+  const over = [CUR, ...live.map(([, p]) => p)].some((p) => overLimit(digestSize(p)));
+  if (over) {
+    log('Выжимка сверх предела. Это не «журнал вырос» — это счётчик несделанных');
+    log('закреплений: столько уроков держатся на памяти агента вместо кода.');
+    log('Краснит `check` (БЛОКЕР Л-ПРЕДЕЛ): предел, превышение которого ничего не краснит, пределом не является.');
+  }
+  if (debt.length >= 3) log('Долг курации >= 3 — курация обязательна (триггер по событию, не по календарю).');
+
+  /* Код выхода — только по долгу курации: предел краснит `check`, второй раз
+     его здесь не считают (один владелец у находки). */
+  return debt.length >= 3 ? 1 : 0;
+}
+
+/* ---------------- stats ----------------
+
+   Вопрос, на который не отвечают ни `verify`, ни `coverage`: что случилось с
+   правилом ПОСЛЕ того, как урок объявили закреплённым. `verify` доказывает, что
+   сторож жив на фикстуре; `coverage` — что пункт чек-листа кем-то закрыт. Оба
+   слепы к полю: сторож может ловить дефект на выдуманной разметке и ни разу не
+   сработать на настоящей, а дефект — вернуться назавтра после закрытия урока.
+
+   Различаются четыре состояния, и различаются машинно:
+     РЕГРЕСС   — код ВЕРНУЛСЯ: на файле, который после закрепления уже
+                 проходил без него. Первое срабатывание на новом файле — это
+                 сторож, поймавший новый экземпляр класса, а не сломанная
+                 починка; агрегатные цели («N файлов», режим `--parity`) к
+                 файлу не привязаны и в пофайловый разбор не идут. Если
+                 последний прогон файла чист, регресс уже закрыт и не
+                 показывается (Л49: всегда красный отчёт не несёт сигнала).
+     ЖИВОЙ     — встречался в последних HORIZON прогонах инструмента.
+     ИСЧЕЗ     — встречался раньше, в последних HORIZON прогонах нет.
+                 Это и есть «обучение»: правило перестало срабатывать.
+     НЕ ВСТРЕЧАЛСЯ — дальше развилка, и она принципиальна:
+                 доказан фикстурой  → норма, правило работает на упреждение;
+                 фикстуры нет        → сторож не доказан и ни разу не сработал.
+                 Приравнивать эти два случая нельзя: первый — цель, второй —
+                 ровно тот дефект «правило записано, кода нет» (Л42), только
+                 переехавший на уровень сторожа.
+
+   Инструмент, у которого нет прогонов, НЕ классифицируется вовсе — иначе
+   пустой журнал объявил бы мёртвыми все правила разом. */
+
+const HORIZON = 10;
+
+/* Журнал прогонов читает `readRuns` из runlog.mjs: там же запись и вращение,
+   у формата хранения один владелец (файл на прогон, каталог runs/). */
+const journalRel = () => path.relative(ROOT, RUNS_DIR).split(path.sep).join('/') + '/';
+
+const parseDay = (s) => {
+  const m = String(s).match(/(\d{2})\.(\d{2})\.(\d{4})/);
+  return m ? Date.UTC(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : null;
+};
+const fmtDay = (ms) => {
+  const d = new Date(ms), p = (n) => String(n).padStart(2, '0');
+  return p(d.getUTCDate()) + '.' + p(d.getUTCMonth() + 1) + '.' + d.getUTCFullYear();
+};
+
+/* Файлы журнала: архив, выжимка и шарды по scope. Шард — такой же журнал,
+   и закрепление, объявленное в нём, обязано проверяться так же (Л79). */
+function journalFiles() {
+  return [RAW, CUR, ...SHARDS.map(([, p]) => p)].filter((p) => existsSync(p));
+}
+
+/* Якорь → день, которым закрепление объявлено.
+
+   Источников ДВА, и второй важнее первого. «Закрепление: исполняемое — `якорь`»
+   объявляет намерение; «Промоут: выведен из выжимки — закреплён `якорь`»
+   объявляет СВЕРШИВШЕЕСЯ закрытие, после которого урок перестали держать в
+   памяти. Ровно эти записи и должны сторожиться на регресс — а первая версия
+   разбора читала только «Закрепление» и не увидела ни одной из 14 выведенных:
+   у выведенного урока правило записано текстом в поле «Правило», а якорь — в
+   «Промоуте». Проверка регресса молчала бы всегда, и молчание читалось бы как
+   «регресса нет» (тот же класс, что Л56).
+
+   День — позднейшая из дат записи и промоута: закрытие объявлено промоутом. */
+function fixationDays() {
+  const days = new Map();
+  for (const file of journalFiles()) {
+    for (const e of entriesOf(file).entries) {
+      const body = e.body.join('\n');
+      const fixLine = e.body.find((l) => /^\s*[-*]\s+\*\*Закрепление/u.test(l)) || '';
+      const promoLine = e.body.find((l) => /^\s*[-*]\s+\*\*Промоут:/u.test(l)) || '';
+      const sources = [];
+      if (/исполняемое/u.test(fixLine)) sources.push(fixLine);   // временное и неизмеримое регресс не сторожат
+      if (/закреплён|закреплена/u.test(promoLine)) sources.push(promoLine);
+      if (!sources.length) continue;
+      const d1 = parseDay((body.match(/^\s*[-*]\s+\*\*Дата\/зона:\*\*\s*(.+)$/mu) || [])[1] || '');
+      const d2 = parseDay(promoLine);
+      const day = Math.max(d1 || 0, d2 || 0);
+      if (!day) continue;
+      for (const m of sources.join('\n').matchAll(/(линтер|сенсор|аудит):\s*([^\s`,;)]+)/gu)) {
+        const id = m[2].replace(/[.,;:)»]+$/u, '');
+        const key = m[1] + ':' + id;
+        const prev = days.get(key);
+        if (!prev || day > prev.day) days.set(key, { day, num: e.num });
+      }
+    }
+  }
+  return days;
+}
+
+/* Корпус фикстур есть не у каждого пространства имён, и это не пробел, а
+   устройство инструмента. `чек-лист:` — вообще не инструмент: он ничего не
+   прогоняет и в журнал прогонов не пишет. `аудит:` прогоняется, но его
+   «коды» — номера проходов-инвентаризаций, а не сторожа: молчащий проход
+   значит «обещаний без кода не нашлось», то есть ЗАКРЫТО, а не «мёртвое
+   правило». Приравнять их к сторожу без фикстуры — соврать в отчёте. */
+const CORPUS = { 'сенсор': [FIXTURES], 'линтер': [LINT_FIXTURES, SCREEN_FIXTURES] };
+const RUN_TOOLS = ['сенсор', 'линтер', 'аудит'];
+
+function fixtureIdsFor(ns) {
+  const ids = new Set();
+  for (const dir of (CORPUS[ns] || [])) {
+    if (!existsSync(dir)) continue;
+    for (const f of readdirSync(dir)) if (f.endsWith('.bad.html')) ids.add(idOfFixture(f));
+  }
+  return ids;
+}
+
+/* Регресс — не «код сработал после закрепления», а «код ВЕРНУЛСЯ»: на файле,
+   который после закрепления уже проходил без него. Первое срабатывание на
+   новом файле — сторож, поймавший новый экземпляр класса, а не сломанная
+   починка. Агрегатные цели («N файлов», `--parity`, «(несколько)») к файлу не
+   привязаны и в пофайловый разбор не идут. Если последний прогон файла чист,
+   регресс закрыт и не показывается (Л49).
+   Возвращается БЛОКЕР, а не замечание: коды прогона берутся через
+   `blockersOf` (runlog.mjs). Замечание — подсказка, и осознанное отклонение
+   человека его законно оставляет: до 01.10.2026 замечания K4/K5 на
+   утверждённой странице сделки держали шаг `stats` красным с 30.09.2026, и
+   красное перестали читать (Л37, урок Л152). */
+const isFileTarget = (t) => /\.html?\b/i.test(String(t || ''));
+
+function findRegressions(runs, fixed) {
+  const byFile = new Map();               // 'инструмент|файл' → прогоны, по времени
+  for (const r of runs) {
+    if (!isFileTarget(r.target)) continue;
+    const k = r.tool + '|' + r.target;
+    if (!byFile.has(k)) byFile.set(k, []);
+    byFile.get(k).push(r);
+  }
+  for (const list of byFile.values()) list.sort((a, b) => Date.parse(a.t) - Date.parse(b.t));
+
+  const out = [];
+  for (const [key, f] of fixed) {
+    const i = key.indexOf(':');
+    const ns = key.slice(0, i), id = key.slice(i + 1);
+    const after = f.day + 24 * 3600 * 1000;
+    let hit = null;
+    for (const [k, list] of byFile) {
+      if (!k.startsWith(ns + '|')) continue;
+      const target = k.slice(ns.length + 1);
+      const rs = list.filter((r) => Date.parse(r.t) >= after);
+      if (!rs.length) continue;
+      const last = rs[rs.length - 1];
+      if (!blockersOf(last).includes(id)) continue;        // последний прогон чист — закрыт
+      const earlierClean = rs.slice(0, -1).some((r) => !blockersOf(r).includes(id));
+      if (earlierClean && !hit) hit = { ns, id, f, last, target };
+    }
+    if (hit) out.push(hit);
+  }
+  return out;
+}
+
+// цель прогона — экран проекта: каталог треков или хаб (пути журнала — от корня проекта)
+const isScreenTarget = (t) => t === PRJ.hubPage || TRACK_DIRS.some((d) => t.startsWith(d + '/'));
+
+function stats() {
+  const runs = readRuns();
+  log('== stats: сигнал об эффекте ==');
+  log('');
+  if (!runs.length) {
+    log('  журнал прогонов пуст: ' + journalRel());
+    log('');
+    log('Он наполняется сам — каждым прогоном сенсора, линтера и аудита на');
+    log('НАСТОЯЩЕМ файле. Фикстуры в журнал не идут намеренно: `verify` даёт');
+    log('срабатывание по определению, и с ними «код появлялся» стало бы верно');
+    log('для любого сторожа, то есть сигнал обнулился бы.');
+    return 0;
+  }
+
+  if (!existsSync(ANCHORS)) { log('реестра якорей нет. Создать: anchors --write'); return 1; }
+  const reg = JSON.parse(rd(ANCHORS)).пространства || {};
+  const fixed = fixationDays();
+
+  const byTool = new Map();
+  for (const r of runs) {
+    if (!byTool.has(r.tool)) byTool.set(r.tool, []);
+    byTool.get(r.tool).push(r);
+  }
+  const times = runs.map((r) => Date.parse(r.t)).filter((n) => !Number.isNaN(n));
+  log('  прогонов: ' + runs.length + '   ' + [...byTool].map(([t, rs]) => t + ' ' + rs.length).join(' · '));
+  if (times.length) log('  период: ' + fmtDay(Math.min(...times)) + ' — ' + fmtDay(Math.max(...times)));
+  log('  журнал: ' + journalRel() + ' (файл на прогон, хранятся последние ' + LIMIT + ' строк)');
+  /* Счётчик печатается рядом с выводом: разбор дат закрепления, давший НОЛЬ,
+     выглядел бы как «регресса нет» — то же, чем обманул `/^Правило\b/` (Л56). */
+  log('  якорей с датой закрепления: ' + fixed.size);
+  log('');
+  log('  «не встречался» считается ОТ НАЧАЛА ЖУРНАЛА, а не за всю историю:');
+  log('  дефект, починенный до ' + (times.length ? fmtDay(Math.min(...times)) : '—') + ', сюда не попадёт по построению.');
+  log('');
+
+  const regress = findRegressions(runs, fixed);
+  let dead = 0, prevented = 0;
+
+  for (const ns of RUN_TOOLS) {
+    const ids = reg[ns]?.ids || [];
+    const rs = byTool.get(ns) || [];
+    const fixtures = fixtureIdsFor(ns);
+    log('— ' + ns + ' (' + ids.length + ' правил, прогонов ' + rs.length + ')');
+    if (!rs.length) {
+      log('    прогонов нет — коды не классифицируются. Пустой журнал не делает');
+      log('    правило мёртвым, он делает вывод невозможным.');
+      log('');
+      continue;
+    }
+    const recent = new Set(rs.slice(-HORIZON).flatMap((r) => r.codes || []));
+    /* Репозиторные правила линтера на экране проекта не выполняются (гейт зовёт
+       линтер с --no-global, RE0019 Э1). Их свежесть — по последним прогонам, где
+       они выполнялись (цель — не экран): иначе окно из экранов дало бы ложное
+       «исчез», то есть ложное «обучение». */
+    const repoRuns = ns === 'линтер' ? rs.filter((r) => !isScreenTarget(r.target || '')) : rs;
+    const recentRepo = new Set(repoRuns.slice(-HORIZON).flatMap((r) => r.codes || []));
+    const ever = new Map();                       // id → последний прогон, где встретился
+    for (const r of rs) for (const c of (r.codes || [])) ever.set(c, r);
+
+    const hasCorpus = Boolean(CORPUS[ns]);
+    const repo = ns === 'линтер' ? new Set(lintRepoIds()) : new Set();
+    const alive = [], gone = [], never = [], unproven = [], noOracle = [];
+    for (const id of ids) {
+      const last = ever.get(id);
+      if (!last) {
+        if (repo.has(id)) noOracle.push(id);
+        else (!hasCorpus || fixtures.has(id) ? never : unproven).push(id);
+        continue;
+      }
+      ((repo.has(id) ? recentRepo : recent).has(id) ? alive : gone).push(id);
+    }
+    dead += unproven.length;
+    if (hasCorpus) prevented += never.length;   // молчащий проход аудита в этот счёт не идёт
+
+    if (alive.length) log('    ЖИВОЙ (в последних ' + HORIZON + ' прогонах): ' + alive.join(' '));
+    if (gone.length) log('    ИСЧЕЗ (встречался раньше): ' + gone.join(' '));
+    if (hasCorpus) {
+      log('    НЕ ВСТРЕЧАЛСЯ, доказан фикстурой: ' + never.length + (never.length ? '  (' + never.join(' ') + ')' : ''));
+      if (unproven.length) log('    НЕ ВСТРЕЧАЛСЯ и фикстуры нет: ' + unproven.length + '  ' + unproven.join(' '));
+      if (noOracle.length) log('    ВХОД — РЕПОЗИТОРИЙ, файловой фикстурой не доказывается: ' + noOracle.length + '  ' + noOracle.join(' '));
+    } else {
+      log('    МОЛЧАЛ: ' + never.length + (never.length ? '  (' + never.join(' ') + ')' : '') + ' — у аудита это ЗАКРЫТО, а не пробел: проход перечисляет обещания без кода, и пустой список значит, что таких нет. Корпуса фикстур у пространства нет по устройству.');
+    }
+    if (rs.length < HORIZON) log('    прогонов меньше ' + HORIZON + ' — деление «живой / исчез» предварительное');
+    log('');
+  }
+
+  log('  РЕГРЕСС: ' + regress.length);
+  for (const r of regress) {
+    log('    ' + r.ns + ':' + r.id + ' — Л' + r.f.num + ' объявил закрепление ' + fmtDay(r.f.day) +
+        ', код снова сработал ' + fmtDay(Date.parse(r.last.t)) + ' на ' + (r.last.target || '—'));
+  }
+  log('');
+  log('Регресс — единственная находка этой команды: закрытый урок не удержал');
+  log('дефект. «Не встречался и фикстуры нет» (' + dead + ') — рабочий список для verify,');
+  log('«не встречался, доказан фикстурой» (' + prevented + ') — норма, а не пробел.');
+  return regress.length ? 1 : 0;
+}
+
+/* ---------------- gate ----------------
+
+   Одна команда в конце захода вместо шести–девяти отдельных прогонов. Гоняет
+   только то, что стережёт ИЗМЕНИВШЕЕСЯ.
+
+   Зачем. Раньше «гейта нет намеренно»: боялись девятого входа в тулчейн. Замер
+   13.09.2026 показал другую цену — не длительность проверок (0,2–0,3 сек, кроме
+   полного verify — 34 сек), а их ЧИСЛО: 06.09 за 18 задач verify прогнан 49
+   раз, сенсор 150, check 34. Каждый отдельный прогон — отдельный ход агента и
+   вывод, оседающий в контексте. Гейт не новый инструмент, а подкоманда этого
+   же файла: он заменяет входы, а не добавляет слой.
+
+   Изменения без git: снимок `gate-snapshot.json` — отпечатки файлов (путь →
+   mtime:размер) и список УПАВШИХ шагов. Снимка нет — прогон полный. Упавший
+   шаг перезапускается в следующем гейте, даже если файлы не менялись: красное
+   не исчезает молча. Отпечатки сохраняются всегда — иначе один старый красный
+   экран или репозиторный шаг заставлял бы перепроверять всё при каждом
+   запуске, и гейт стал бы «всегда красным» (Л37).
+
+   Новая копия из архива (RE0018, 13.10.2026). Во внутренний контур репозиторий
+   переносится только zip-архивом с GitHub: его распаковывают поверх рабочей копии
+   (оттуда — коммит в Bitbucket) или, для теста сборки, каждый раз в новую папку.
+   В новой папке снимка нет, а полный прогон идёт 25–40 мин, агент обрывал его по
+   таймауту, и снимок не появлялся никогда.
+   Архив собирается `git archive`: у всех файлов одно время — время коммита, и
+   распаковщик его восстанавливает. Поэтому без снимка гейт ищет это время
+   (`archiveBaseline`): файлы с ним приняты проверенными — они прошли гейт перед
+   отправкой, — проверяются только остальные, то есть правки после распаковки,
+   включая сделанные до первого гейта. Признака нет (обычный клон, распаковщик
+   не сохранил время) — прогон полный, как раньше.
+
+   Прерванный прогон (RE0018). Результат каждого шага сразу пишется в
+   `gate-progress.json`; следующий запуск берёт оттуда шаги, чьи входы не
+   менялись, и продолжает с места обрыва. Без этого обрыв по таймауту стирал всю
+   работу, и полный прогон повторялся вечно.
+
+   Вердикт читается строкой `ВЕРДИКТ:`, а не кодом выхода (process.md §8). */
+
+/* Снимок гейта — в каталоге состояния проекта (`state` манифеста, вне git):
+   внутри харнеса он пачкал бы подмодуль после каждого прогона (Ш4). */
+const GATE_SNAPSHOT = path.join(PRJ.stateAbs, 'gate-snapshot.json');
+const GATE_PROGRESS = path.join(PRJ.stateAbs, 'gate-progress.json');
+const TOOL_REL = PRJ.rel(HERE);
+const VENDOR = path.join(HERE, 'vendor-scan.mjs');
+const SPEC_AUDIT = L.abs(L.at.specAudit);
+const DS_ICON = L.abs(L.at.iconTool);
+const DOCS_SPLIT = path.join(KIT, 'skills/docs-split/tooling/docs-split.mjs');
+const CTX_BUDGET = path.join(KIT, 'skills/session-plan/tooling/ctx-budget.mjs');
+const REGISTRY_CHECK = path.join(HERE, 'registry-check.mjs');
+const BOOT_BUILD = path.join(HERE, 'boot-build.mjs');
+const THEME_BUILD = path.join(DS, 'tools', 'theme-build.mjs');   // генератор тем ДС (RE0005)
+const HUB_BUILD = path.join(HERE, 'hub-build.mjs');
+const BOOT_DIR = PRJ.boot && PRJ.boot.dir;   // загрузчик ДС (Ш8): сгенерированные теги экрана
+const AGENT_CONFIG = path.join(HERE, 'agent-config.mjs');
+const RUNLOG = path.join(HERE, 'runlog.mjs');
+const FRAGMENTS = path.join(HERE, 'fragments.mjs');
+const MANIFEST_CHECK = path.join(HERE, 'manifest-check.mjs');
+const ASSEMBLE = path.join(HERE, 'assemble.mjs');
+const MODULE_README = path.join(HERE, 'module-readme.mjs');
+const README_STATS = path.join(HERE, 'readme-stats.mjs');
+const DOCS_INDEX = path.join(HERE, 'docs-index.mjs');
+const PROMOTE = path.join(HERE, 'promote.mjs');
+const SCAFFOLD = path.join(HERE, 'scaffold.mjs');
+const PAGE_SNAPSHOT = path.join(HERE, 'page-snapshot.mjs');
+const PROTO_PANEL = path.join(HERE, 'proto-panel.mjs');
+const KIT_BUILD = path.join(HERE, 'kit-build.mjs');
+/* Витрина локальных компонентов (25.09.2026): каталог из манифеста
+   (`localKit.dir`, project.mjs → showcase). Не путать с KIT_REL — это каталог
+   харнеса. С переезда в `apps/local-components/` витрина лежит в каталоге
+   треков, но её страницы — генерат docs-split, а не экраны: в матрице ниже она
+   не «экранная область» и поднимает только свой шаг `kit`. */
+const SHOWCASE_REL = PRJ.showcase;
+const inShowcase = (rel) => Boolean(SHOWCASE_REL) && rel.startsWith(SHOWCASE_REL + '/');
+/* Карта экранов (`screenMap.dir`, задача RE0015): тоже не экраны — сенсор,
+   линтер, сборщик и README модулей её не обходят. Её страницу проверяет сторож
+   хаба (П4, П5, П7: запись хаба держит root на папке карты), сверку карты —
+   генератор screen-map.mjs, шага в гейте нет (решение человека 11.10.2026). */
+const MAP_REL = PRJ.screenMap ? PRJ.screenMap.dir : null;
+const inMap = (rel) => Boolean(MAP_REL) && rel.startsWith(MAP_REL + '/');
+const SELF = fileURLToPath(import.meta.url);
+
+/* Корневые текстовые файлы в отпечаток идут ВСЕ, а не списком: до 21.09.2026
+   здесь были перечислены AGENTS.md и файлы хаба, и правка правил другого
+   агентного CLI рядом с AGENTS.md, как и любого документа в `docs/`, не
+   поднимала ни нейтральность, ни `check` — гейт не видел входа (класс Л100).
+   Исключений нет: снимок с Ш4 лежит в каталоге состояния вне git, и имена
+   файлов в нём следами не становятся. */
+/* Каталоги отпечатка — из манифеста и целиком: ДС, харнес, каталоги треков,
+   документы проекта (Ш4). До этого здесь был список подкаталогов литералами,
+   и всё вне списка менялось мимо гейта — так правка AGENTS.md и шаблона
+   экрана ДС не поднимала ни аудит, ни обход эталонов (класс Л100/Л122).
+   Тяжёлое и чужое (node_modules, uploads) пропускается по имени, каталог
+   состояния в отпечаток не входит — его меняет сам гейт. Адаптер агентного
+   CLI — тоже корень отпечатка (Ш5): это отдельный каталог, и без него правка
+   конфига или указателя на роль шла бы мимо гейта. */
+const GATE_ROOTS = [DS_REL, KIT_REL, ADAPTER_REL, ...TRACK_DIRS, PRJ.docs, BOOT_DIR, SHOWCASE_REL].filter(Boolean);
+/* Конфиг агентного CLI живёт в каталоге адаптера — любой его файл гонит
+   agent-config (матрица ниже). Здесь — места, где конфига быть не должно:
+   корень (второй слой, КФ1) и каталог харнеса (мёртвый конфиг, КФ2). */
+const AGENT_CONFIG_FILES = new Set(['opencode.json', 'opencode.jsonc', KIT_REL + '/opencode.json', KIT_REL + '/opencode.jsonc']);
+// хаб проектов в корне: страница, её спека и реестр
+const HUB_FILES = new Set([PRJ.hubPage, PRJ.hubPage.replace(/\.html$/, '.screen.md'), PRJ.hubRegistry]);
+const GATE_SKIP_DIRS = new Set(['node_modules', '.git', 'uploads', 'screenshots']);
+// журнал прогонов и сам снимок меняет гейт — это не изменение работы. Старые места
+// внутри оснастки (до Ш4) — на случай слияния с веткой, где состояние лежит ещё там
+const gateIgnored = (rel) => rel === TOOL_REL + '/runs.jsonl' || rel.startsWith(TOOL_REL + '/runs/') || rel === TOOL_REL + '/gate-snapshot.json'
+  || rel.startsWith(PRJ.state + '/');
+const TEXT_EXT = /\.(md|json|js|mjs|cjs|html|css|txt|ya?ml|jsonc)$/i;
+
+const toRel = (abs) => path.relative(ROOT, abs).split(path.sep).join('/');
+
+function fingerprint() {
+  const out = {};
+  const walk = (abs) => {
+    let st;
+    try { st = statSync(abs); } catch { return; }
+    if (st.isDirectory()) {
+      for (const e of readdirSync(abs, { withFileTypes: true })) {
+        if (e.isDirectory() && GATE_SKIP_DIRS.has(e.name)) continue;
+        walk(path.join(abs, e.name));
+      }
+      return;
+    }
+    const rel = toRel(abs);
+    if (!gateIgnored(rel)) out[rel] = Math.round(st.mtimeMs) + ':' + st.size;
+  };
+  for (const r of GATE_ROOTS) walk(path.join(ROOT, r));
+  for (const e of readdirSync(ROOT, { withFileTypes: true })) {
+    if (e.isFile() && TEXT_EXT.test(e.name)) walk(path.join(ROOT, e.name));
+  }
+  /* Каталог охватывает все md, включая README состояния и новые папки вне
+     корней манифеста. Обход и исключения общие с генератором (задача 0006). */
+  for (const rel of documentationPaths(PRJ, true)) {
+    const st = statSync(path.join(ROOT, rel));
+    out[rel] = Math.round(st.mtimeMs) + ':' + st.size;
+  }
+  return out;
+}
+
+/* Свежая копия из архива: у файлов архива одно время — время коммита (шапка
+   гейта, RE0018). Признак — самое частое время у большинства файлов. Порог 80 %,
+   а не «все»: правки после распаковки и сгенерированное инструментами время
+   меняют. В обычном клоне время у файлов разное (запись идёт миллисекундами), и
+   признак не срабатывает. Возвращает снимок из файлов архива или null. */
+const ARCHIVE_SHARE = 0.8;
+const ARCHIVE_MIN_FILES = 100;
+function archiveBaseline(now) {
+  const keys = Object.keys(now);
+  if (keys.length < ARCHIVE_MIN_FILES) return null;
+  const count = new Map();
+  for (const k of keys) { const t = now[k].split(':')[0]; count.set(t, (count.get(t) || 0) + 1); }
+  let top = null, n = 0;
+  for (const [t, c] of count) if (c > n) { top = t; n = c; }
+  if (n / keys.length < ARCHIVE_SHARE) return null;
+  const base = {};
+  for (const k of keys) if (now[k].split(':')[0] === top) base[k] = now[k];
+  return base;
+}
+
+/* Страничный скрипт `<Имя>.page.js` и страница `<Имя>.html` лежат в папке
+   компонента; страницу находит модуль путей ДС по имени. Имена сверяются без
+   дефисов и регистра. */
+function pageForScript(rel) {
+  const key = path.basename(rel).replace(/\.page\.js$/, '').replace(/-/g, '').toLowerCase();
+  return L.pages().filter((p) => p.name.toLowerCase() === key).map((p) => toRel(L.abs(p.rel)));
+}
+
+/* Экран спеки: одноимённый `.html` рядом или файл из строки `file:` шапки —
+   тот же порядок поиска, что у сенсора (Б12). */
+function screenOfSpec(rel) {
+  const abs = path.resolve(ROOT, rel);
+  const same = abs.replace(/\.screen\.md$/, '.html');
+  if (existsSync(same)) return [toRel(same)];
+  try {
+    const m = readFileSync(abs, 'utf8').match(/^file:\s*(.+)$/m);
+    const target = m ? path.resolve(ROOT, m[1].trim()) : '';
+    if (target.endsWith('.html') && existsSync(target)) return [toRel(target)];
+  } catch { /* спека не читается — перепроверять нечего */ }
+  return [];
+}
+
+const isDocsSplit = (rel) => {
+  try { return readFileSync(path.resolve(ROOT, rel), 'utf8').includes('class="page ds-split"'); } catch { return false; }
+};
+
+/* Шаги. `args` — аргументы node, `cwd` — откуда запускать (линтер разрешает
+   пути от корня ДС). Идентификатор шага дедуплицирует: пять правок стилей
+   дают один глобальный прогон линтера, а не пять. */
+function gateStep(id, paths = null) {
+  const [kind, target] = [id.slice(0, id.indexOf(':') < 0 ? id.length : id.indexOf(':')), id.includes(':') ? id.slice(id.indexOf(':') + 1) : ''];
+  const abs = target ? path.resolve(ROOT, target) : '';
+  const fromDs = target ? path.relative(DS, abs).split(path.sep).join('/') : '';
+  const dsRel = (rel) => path.relative(DS, path.resolve(ROOT, rel)).split(path.sep).join('/');
+  switch (kind) {
+    /* Пакет страниц ДС в полном режиме. Одним вызовом линтера, а не 65:
+       линтер пишет в журнал прогонов строку на вызов, и 65 чистых страниц
+       вытеснили бы настоящие экраны из окна, по которому `stats` делит коды на
+       «живой» и «исчез», — молчание прочиталось бы как обучение (runlog.mjs,
+       отсечение эталонов; поймано на первом полном гейте 13.09.2026). */
+    case 'lint-pages': {
+      const list = [...(paths || [])].sort();
+      // `log` — какую строку шаг оставит в журнале (цель — как её пишет ds-lint-cli)
+      return { title: 'линтер, страницы ДС пакетом — файлов: ' + list.length, args: [L.at.lintCli, ...list.map(dsRel)], cwd: DS,
+        log: { tool: 'линтер', target: list.length > 3 ? list.length + ' файлов' : list.map(dsRel).join(' ') } };
+    }
+    case 'sensor': return { title: 'сенсор ' + target, args: [SENSOR, abs], cwd: ROOT, log: { tool: 'сенсор', target } };
+    /* Экран вне ДС — без глобальных правил (RE0019, Э1): они читают только ДС,
+       занимают ~3,5 с из ~4 с прогона экрана и на правке экрана не меняются;
+       правку ДС стережёт `lint-global`. Страница ДС — с ними, как раньше. */
+    case 'lint': return { title: 'линтер ' + target, args: [L.at.lintCli, ...(fromDs.startsWith('../') ? ['--no-global'] : []), fromDs], cwd: DS,
+      log: { tool: 'линтер', target: fromDs.startsWith('../') ? target : fromDs } };
+    case 'split': return { title: 'docs-split check ' + target, args: [DOCS_SPLIT, 'check', target], cwd: ROOT };
+    /* Синтаксис изменённого Node-модуля проверяется node --check: падение ловит
+       дефект класса «пример в блочном комментарии закрыл комментарий» РАНЬШЕ,
+       чем он превратится в каскад непонятных FAIL упавшего линтера (Л168). */
+    case 'syntax': return { title: 'node --check ' + target, args: ['--check', abs], cwd: ROOT };
+    case 'lint-global': return { title: 'линтер, глобальные правила', args: [L.at.lintCli], cwd: DS };
+    case 'parity': return { title: 'линтер --parity (доки = код)', args: [L.at.lintCli, '--parity'], cwd: DS };
+    case 'spec-audit': return { title: 'spec-audit', args: [SPEC_AUDIT], cwd: DS };
+    /* Рантайм иконок ДС (задача 0007): у каждой копии глифа свои id внутри SVG,
+       DS_ICONS после ds-icons.js отдаёт копии, ds.js грузит его раньше читателей. */
+    case 'icons-selftest': return { title: 'ds-icon --selftest (рантайм иконок: уникальные id копий)', args: [DS_ICON, '--selftest'], cwd: DS };
+    /* Самопроверка ДС (ds-check.mjs --all): обёртка над линтером, аудитом и
+       иконками. Гоняется, когда правили саму обёртку или kit-link.mjs — модуль,
+       который ищет оснастку для всех инструментов ДС (дыра маршрутов RE0002). */
+    case 'ds-check': return { title: 'ds-check --all (ДС проверяет себя сама)', args: [L.at.check, '--all'], cwd: DS };
+    /* Генерат тем = источник (RE0005): правка файлов foundations/Themes/ врозь
+       с Themes.tokens.js/Ramp.tokens.js не пройдёт молча. */
+    case 'theme-build': return { title: 'theme-build --check (темы = источник)', args: [THEME_BUILD, '--check'], cwd: DS };
+    /* MS0013: алгоритм тем и запись файлов тем проверяются откатом (review-2, Р10). */
+    case 'theme-selftest': return { title: 'theme-build --selftest (алгоритм тем)', args: [THEME_BUILD, '--selftest'], cwd: DS };
+    case 'theme-files-selftest': return { title: 'theme-files-selftest (запись файлов тем)', args: [path.join(DS, 'tools', 'theme-files-selftest.mjs')], cwd: DS };
+    case 'etalons': return { title: 'сенсор --etalons', args: [SENSOR, '--etalons'], cwd: ROOT };
+    case 'verify-sensor': return { title: 'verify --corpus sensor', args: [SELF, 'verify', '--corpus', 'sensor'], cwd: ROOT };
+    case 'verify-lint': return { title: 'verify --corpus lint', args: [SELF, 'verify', '--corpus', 'lint'], cwd: ROOT };
+    case 'anchors': return { title: 'anchors', args: [SELF, 'anchors'], cwd: ROOT };
+    case 'check': return { title: 'check (форма журнала уроков)', args: [SELF, 'check'], cwd: ROOT };
+    case 'stats': return { title: 'stats (регресс)', args: [SELF, 'stats'], cwd: ROOT };
+    case 'coverage': return { title: 'coverage (чек-листы)', args: [SELF, 'coverage'], cwd: ROOT };
+    case 'brief': return { title: 'brief --check (короткий чек-лист сборщика)', args: [SELF, 'brief', '--check'], cwd: ROOT };
+    case 'vendor': return { title: 'vendor-scan (нейтральность)', args: [VENDOR], cwd: ROOT };
+    /* Селфтест нейтральности — откат на временном дереве, по случаю на каждую
+       форму абсолютного пути (posix, windows) и чистые почти-совпадения.
+       Заведён 21.09.2026: образец пути был только windows-формы, и на macOS
+       сторож пропускал posix-путь с вердиктом «чисто» (шапка vendor-scan.mjs). */
+    case 'vendor-selftest': return { title: 'vendor-scan --selftest', args: [VENDOR, '--selftest'], cwd: ROOT };
+    /* Селфтест журнала прогонов — вращение (предел, без разрыва истории),
+       порядок чтения, один файл на прогон гейта. Заведён 21.09.2026 вместе с
+       хранением «файл на прогон» (шапка runlog.mjs). */
+    case 'runlog-selftest': return { title: 'runlog --selftest (журнал прогонов)', args: [RUNLOG, '--selftest'], cwd: ROOT };
+    case 'fragments-selftest': return { title: 'fragments --selftest (фрагмент: вшитый и widgets/)', args: [FRAGMENTS, '--selftest'], cwd: ROOT };
+    /* Манифест проекта (Ш1 реструктуризации): project.json описывает, где ДС,
+       харнес, хаб и треки. Идёт первым: при разошедшемся манифесте остальные
+       шаги падали бы непонятным «файл не найден». */
+    case 'manifest': return { title: 'manifest-check (project.json против диска)', args: [MANIFEST_CHECK], cwd: ROOT };
+    case 'manifest-selftest': return { title: 'manifest-check --selftest', args: [MANIFEST_CHECK, '--selftest'], cwd: ROOT };
+    /* Селфтест сметы контекста. Заведён 14.09.2026: инструмент написали, сторож
+       (обратный тест на известном провале) написали, а звать его забыли — гейт
+       на правку `stages.json` поднимал один vendor-scan. Сторож без вызывающего
+       не сторож; коэффициент можно было изменить мимоходом, и смета начала бы
+       врать молча. */
+    case 'ctx-budget': return { title: 'ctx-budget --selftest (смета контекста)', args: [CTX_BUDGET, '--selftest'], cwd: ROOT };
+    /* Хаб проектов. Реестр hub.js в корне ведётся руками (по file://
+       страница папки не обходит), поэтому забытый проект или концепт молча не появляется
+       на хабе — сторож делает это красным гейтом. Селфтест — откат на
+       временном дереве, гоняется, когда правят самого сторожа. */
+    case 'registry': return { title: 'registry-check (реестр хаба проектов)', args: [REGISTRY_CHECK], cwd: ROOT };
+    case 'registry-selftest': return { title: 'registry-check --selftest', args: [REGISTRY_CHECK, '--selftest'], cwd: ROOT };
+    /* Загрузчик ДС: файлы boot/ сгенерированы из манифеста и руками не
+       правлены — путь до ДС записан ровно в одном месте (Р5, Ш8). */
+    case 'boot': return { title: 'boot-build --check (загрузчик ДС = манифест)', args: [BOOT_BUILD, '--check'], cwd: ROOT };
+    case 'boot-selftest': return { title: 'boot-build --selftest', args: [BOOT_BUILD, '--selftest'], cwd: ROOT };
+    /* Реестр хаба собран из записей приложений (app.json) и руками не
+       правлен (Ш9): запись принадлежит приложению, hub.js — генерат. */
+    case 'hub': return { title: 'hub-build --check (реестр хаба = записи приложений)', args: [HUB_BUILD, '--check'], cwd: ROOT };
+    case 'hub-selftest': return { title: 'hub-build --selftest', args: [HUB_BUILD, '--selftest'], cwd: ROOT };
+    /* Адаптер агентного CLI. Конфиг читается и из корня, и из каталога
+       адаптера — второй файл молча складывает права из двух слоёв; модель в
+       репозитории на другом контуре не стартует (решение 15.09.2026);
+       указатель, разошедшийся с ролью или командой харнеса, прячет её от CLI
+       (Ш5). Подробно — шапка agent-config.mjs. */
+    case 'agent-config': return { title: 'agent-config (адаптер CLI: один конфиг, без модели, указатели сходятся)', args: [AGENT_CONFIG], cwd: ROOT };
+    case 'agent-config-selftest': return { title: 'agent-config --selftest', args: [AGENT_CONFIG, '--selftest'], cwd: ROOT };
+    /* Модульные страницы (24.09.2026): собранный *.preview.html не устарел,
+       метки ведут в widgets/ своего раздела, модуль не берёт виджеты из
+       drafts/. Сборщик общий для всех приложений (шапка assemble.mjs). */
+    case 'assemble': return { title: 'assemble --check (собранные страницы = источники и виджеты)', args: [ASSEMBLE, '--check'], cwd: ROOT };
+    case 'assemble-selftest': return { title: 'assemble --selftest', args: [ASSEMBLE, '--selftest'], cwd: ROOT };
+    /* Витрина локальных компонентов (25.09.2026): страницы `localKit.dir`
+       (apps/local-components/) и реестр собраны из паспортов и файлов виджетов
+       и не устарели, лишних страниц нет (шапка kit-build.mjs). */
+    case 'kit': return { title: 'kit-build --check (витрина = виджеты приложений)', args: [KIT_BUILD, '--check'], cwd: ROOT };
+    case 'kit-selftest': return { title: 'kit-build --selftest', args: [KIT_BUILD, '--selftest'], cwd: ROOT };
+    /* README модуля: есть у каждого <имя>-app, дерево в нём сходится с
+       папкой (24.09.2026, шапка module-readme.mjs). */
+    case 'readme': return { title: 'module-readme --check (README модулей = их папки)', args: [MODULE_README, '--check'], cwd: ROOT };
+    case 'readme-selftest': return { title: 'module-readme --selftest', args: [MODULE_README, '--selftest'], cwd: ROOT };
+    /* Счётчики корневого README: компоненты и основы ДС, глифы, иллюстрации,
+       модули — генерат (01.10.2026, шапка readme-stats.mjs). */
+    case 'readme-stats': return { title: 'readme-stats --check (счётчики README = ДС и приложения)', args: [README_STATS, '--check'], cwd: ROOT };
+    case 'readme-stats-selftest': return { title: 'readme-stats --selftest', args: [README_STATS, '--selftest'], cwd: ROOT };
+    case 'docs-index': return { title: 'docs-index --check (карта документации = md на диске)', args: [DOCS_INDEX, '--check'], cwd: ROOT };
+    case 'docs-index-selftest': return { title: 'docs-index --selftest', args: [DOCS_INDEX, '--selftest'], cwd: ROOT };
+    /* Перенос концепта в модуль (/promote): сам инструмент гоняется только
+       откатом на временном дереве — на рабочем дереве он пишет. */
+    case 'promote-selftest': return { title: 'promote --selftest (перенос концепта в модуль)', args: [PROMOTE, '--selftest'], cwd: ROOT };
+    /* Заготовки виджета и страницы (RE0019, Э4): на рабочем дереве инструмент
+       пишет — гейт гоняет только откат на настоящих шаблонах. */
+    case 'scaffold-selftest': return { title: 'scaffold --selftest (заготовки виджета и страницы)', args: [SCAFFOLD, '--selftest'], cwd: ROOT };
+    /* Панель прототипа (задача 0005): форматы flows.yaml и comments.md,
+       страницы и селекторы сценариев, зеркала и включатель = генератор,
+       рантайм на токенах ДС (коды ПН, шапка proto-panel.mjs). */
+    case 'panel': return { title: 'proto-panel --check (панель прототипа: сценарии, комментарии, зеркала, включатель)', args: [PROTO_PANEL, '--check'], cwd: ROOT };
+    case 'snapshot-selftest': return { title: 'page-snapshot --selftest (сверка сохранности страниц)', args: [PAGE_SNAPSHOT, '--selftest'], cwd: ROOT };
+    case 'panel-selftest': return { title: 'proto-panel --selftest', args: [PROTO_PANEL, '--selftest'], cwd: ROOT };
+    default: throw new Error('неизвестный шаг гейта: ' + id);
+  }
+}
+
+/* Матрица «изменилось → что гонять». Вручную не пересказывается — состав для
+   любого пути печатает `gate --dry --changed <путь>` (Л43). */
+function gateStepsFor(rel, deleted) {
+  const s = [];
+  const add = (...ids) => s.push(...ids);
+  const inFixtures = rel.split('/').includes('fixtures');
+  const html = rel.endsWith('.html');
+
+  // До раннего выхода для удалений: переезд — это удалённый и новый путь.
+  if (isDocPath(rel, PRJ, true) || rel === 'project.json') add('docs-index');
+  if (rel === TOOL_REL + '/docs-index.mjs' || rel === TOOL_REL + '/lessons-cli.mjs') add('docs-index-selftest', 'docs-index');
+
+  // проекты, концепты и сам хаб, в том числе удалённое: реестр хаба мог разойтись с папками;
+  // витрина локальных компонентов внутри apps/ — не экраны (SHOWCASE_REL выше)
+  const screenArea = TRACK_DIRS.some((d) => rel.startsWith(d + '/')) && !inShowcase(rel) && !inMap(rel);
+  if ((screenArea && !inFixtures) || HUB_FILES.has(rel) || (inMap(rel) && rel.endsWith('.html'))) add('registry');
+  // конфиг, в том числе удалённый или появившийся в корне; шапка скилла — КФ4 (видим ли скилл модели);
+  // файл адаптера, роль или команда харнеса, в том числе удалённые, — КФ5 (указатели не разошлись с харнесом)
+  if (AGENT_CONFIG_FILES.has(rel) || (!deleted && underKit('skills/[^/]+/SKILL\\.md$').test(rel))
+    || (ADAPTER_REL && rel.startsWith(ADAPTER_REL + '/')) || underKit('(agents|commands)/[^/]+\\.md$').test(rel)) add('agent-config');
+  // трек приложения и правила треков — КФ7 (продуктовое приложение закрыто от правки без подтверждения)
+  if (rel === 'project.json' || (PRJ.appsDir && rel.startsWith(PRJ.appsDir + '/') && rel.endsWith('/' + PRJ.appsManifest))) add('agent-config');
+  // документ в области владельцев (OWNER_ROOTS): мог стать второй копией процедуры — или унести её владельца
+  if (inOwnerArea(rel)) add('check');
+
+  // манифест: правка самого файла; удаление любого пути — мог пропасть объявленный каталог
+  if (rel === 'project.json' || deleted) add('manifest');
+
+  /* Панель прототипа — до раннего выхода для удалённых путей: удалённая папка
+     панели или страница тоже расходятся с включателем и сценариями. Данные
+     панели, любая страница приложения (селекторы и страницы шагов), запись
+     приложения (название в зеркале), включатель, манифест → panel; рантайм и
+     сам инструмент → ещё и его селфтест. */
+  if (PRJ.panel) {
+    const inApp = PRJ.appsDir && rel.startsWith(PRJ.appsDir + '/');
+    if (inApp && (rel.includes('/' + PRJ.panel.dir + '/') || rel.includes('/' + PRJ.appShape.pages + '/') || rel.endsWith('/' + PRJ.appsManifest))) add('panel');
+    if (rel === PRJ.panel.boot || rel === 'project.json') add('panel');
+    if (rel.startsWith(PRJ.panel.runtime + '/')) add('panel-selftest', 'panel');
+  }
+  if (rel === TOOL_REL + '/proto-panel.mjs') add('panel-selftest', 'panel', 'promote-selftest');
+  // сверка сохранности страниц (MS0013, Р12): сравнение снимков — самопроверкой без браузера
+  if (rel === TOOL_REL + '/page-snapshot.mjs') add('snapshot-selftest');
+
+  /* Счётчики корневого README — тоже до раннего выхода: удалённая страница ДС,
+     иллюстрация или модуль сдвигают число так же, как новые. Сам README,
+     страницы компонентов и основ ДС, глифы, иллюстрации, запись модуля
+     (появился или пропал модуль) → readme-stats; инструмент и обход модулей
+     → ещё и его селфтест. */
+  const dk = dsKind(rel);
+  /* Синтаксис изменённого Node-модуля — node --check: ловит дефект класса
+     «пример в комментарии закрыл сам комментарий» раньше, чем тот станет
+     каскадом непонятных FAIL упавшего линтера (Л168). */
+  if (!deleted && /\.(mjs|cjs)$/.test(rel)) add('syntax:' + rel);
+  /* То же для `.js` приложений (data/*.js, скрипты виджетов): сломанный
+     перевод строки в строковом литерале data/*.js молча убирал все строки
+     таблицы расчёта FV (RE0012, 08.10.2026) — ни сенсор, ни линтер файл не читают. */
+  if (!deleted && screenArea && !inFixtures && rel.endsWith('.js')) add('syntax:' + rel);
+  /* Шрифты — бинарный актив ДС. Статической проверки у них нет (единственный
+     потребитель — url() в Typography.css; ссылки сверены на переезде RE0002);
+     роут к vendor, чтобы правка шрифта не молчала «проверок 0» (дыра RE0002). */
+  if (dk && dk.kind === 'font') add('vendor');
+  if (rel === 'README.md' || rel === 'project.json'
+    || (dk && dk.kind === 'page' && README_PAGE_CATS.includes(dk.category))
+    || isDsFile(rel, L.at.iconsData) || rel.startsWith(DS_REL + '/' + L.at.illustrations + '/')
+    || (PRJ.appsDir && rel.startsWith(PRJ.appsDir + '/') && rel.endsWith('/' + PRJ.appsManifest))) add('readme-stats');
+  if (rel === TOOL_REL + '/readme-stats.mjs' || rel === TOOL_REL + '/module-readme.mjs') add('readme-stats-selftest', 'readme-stats');
+
+  /* рантайм иконок ДС, их данные, порядок загрузки рантаймов, сам инструмент — в том числе удалённые */
+  if ([L.at.iconsRuntime, L.at.iconsData, L.at.entryJs, L.at.iconTool].some((f) => isDsFile(rel, f))) add('icons-selftest');
+
+  /* модуль путей ДС, в том числе удалённый: на нём стоят линтер, аудит, сенсор,
+     иконки и счётчики README — его правка прогоняет их всех (решение владельца
+     01.10.2026, RE0002) */
+  if (isDsFile(rel, L.at.paths)) add('verify-lint', 'anchors', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'readme-stats');
+
+  /* Обёртка самопроверки ДС и связка с оснасткой (kit-link ищет оснастку для
+     линтера/аудита/иконок). Правка любой из них прогоняет самопроверку ДС
+     целиком: обёртка могла сломать вызовы подшагов, kit-link — их адреса.
+     До 01.10.2026 на обе гонялся один vendor-scan — дыра маршрутов, закрыта в
+     RE0002 Э4 (открытый вопрос 8). */
+  if (isDsFile(rel, L.at.check)) add('ds-check');
+  if (isDsFile(rel, L.at.kitLink)) add('ds-check');
+
+  if (deleted) {
+    if (rel.startsWith(DS_REL + '/')) add('lint-global', 'parity');
+    // удалённый виджет оставляет в витрине лишнюю страницу (КТ5)
+    if (SHOWCASE_REL && (screenArea || inShowcase(rel))) add('kit');
+    return s;
+  }
+  // экран: в репозитории — каталоги треков из манифеста (TRACK_DIRS) и хаб; вне репозитория — только через --changed (проверка откатом на копии)
+  if (html && !inFixtures && (screenArea || rel === PRJ.hubPage || rel.startsWith('..'))) {
+    /* Фрагмент модульного экрана инструменты пропускают (fragments.mjs) —
+       проверяется то, во что он вшит: источник и его собранный файл. */
+    const hosts = rel.startsWith('..') ? [] : includersOf(path.resolve(ROOT, rel));
+    if (hosts.length) {
+      for (const h of hosts) {
+        const built = assembledOf(h);
+        for (const t of [h, built].filter(Boolean)) add('sensor:' + toRel(t), 'lint:' + toRel(t));
+      }
+    } else add('sensor:' + rel, 'lint:' + rel);
+  }
+  /* Спека экрана — вход сенсора (шапка — Б12, разделы-журнал — Б32, вид
+     файла `kind` — Б5/Б6/К12), а не только документ для человека: её правка
+     перепроверяет экран, которому она принадлежит. Иначе починенная спека
+     висит ДОЛГОМ до полного гейта (поймано 21.09.2026 на Б32). */
+  if (screenArea && !inFixtures && rel.endsWith('.screen.md')) {
+    for (const h of screenOfSpec(rel)) add('sensor:' + h);
+  }
+  if (rel.startsWith(SCREEN_FIXTURES_REL + '/') || rel.startsWith(DS_REL + '/' + L.at.fixtures + '/')) add('verify-lint', 'anchors');
+
+  if (dk && dk.kind === 'page') add('lint:' + rel);
+  /* Структурная проверка паттерна «сплиттер + табы» — по ПРИЗНАКУ СТРАНИЦЫ, а
+     не по её папке (урок Л135). Пока шаг звался только для страниц ДС, 21
+     страница витрины локальных компонентов на том же паттерне не получала его
+     вовсе: сенсор витрину пропускает (SHOWCASE_REL), шаг `kit` сверяет её с
+     генератором, а не каркас, — у класса файлов не было читателя (Л115). */
+  if (html && !inFixtures && isDocsSplit(rel)) add('split:' + rel);
+  if (dk && dk.kind === 'script' && dk.role === 'page-script') {
+    const pages = pageForScript(rel);
+    if (!pages.length) add('lint-global');
+    for (const p of pages) { add('lint:' + p); if (isDocsSplit(p)) add('split:' + p); }
+  } else if (isDsFile(rel, L.at.linter) || isDsFile(rel, L.at.lintCli)) {
+    add('verify-lint', 'anchors', 'lint-global', 'parity');
+  } else if (isDsFile(rel, L.at.specAudit)) {
+    add('anchors', 'spec-audit');
+  } else if (dk && dk.kind === 'script') {
+    add('lint-global', 'parity', 'etalons');
+  }
+  if ((dk && dk.kind === 'style') || isDsFile(rel, L.at.bundleCss)) add('lint-global', 'parity', 'etalons');
+  if (dk && dk.kind === 'spec') add('parity', 'spec-audit');
+  /* Файлы тем (RE0005, MS0013): генераты Themes.css/Themes.pages.css/Themes.runtime.js
+     и зеркало tokens.data.js, источники Themes.tokens.js/Ramp.tokens.js/ThemeEngine.js
+     и tokens/*.json — правка любого из них сверяется генератором, алгоритм и
+     запись файлов — самопроверками (шаги theme-build, theme-selftest,
+     theme-files-selftest). */
+  if (rel.startsWith(DS_REL + '/foundations/Themes/')) add('theme-build', 'theme-selftest', 'theme-files-selftest');
+  // реестры ДС, которые читают глобальные правила линтера (D1–D4, D9): витрина, правила ведения,
+  // журнал правок и генератор шапки главной (версия и дата выводятся из журнала)
+  if ([L.at.home, 'MAINTAINING.md', 'CHANGELOG.md', L.at.homeTool].some((f) => isDsFile(rel, f))) add('lint-global');
+  // каталог компонентов в AGENTS.md ДС сверяется с манифестом — проход 8 аудита
+  if (rel === DS_REL + '/AGENTS.md') add('spec-audit');
+  // шаблон экрана ДС — единственный каркас экрана, эталон для --etalons (Ш3)
+  if (underDs('templates/screen/[^/]+\\.html$').test(rel)) add('etalons');
+  // шаблон локального компонента ДС — источник канона разделов витрины (RE0004):
+  // правка заголовков «##» меняет канон, и витрина должна пересобраться (шаг kit)
+  if (underDs('templates/local-component/Component\\.md$').test(rel)) add('kit');
+  // заготовки (scaffold.mjs) делаются из шаблонов ДС и шаблонов спек: замена, не нашедшая
+  // своего места в изменённом шаблоне, — ЗГ4 в откате (RE0019, Э4)
+  if (underDs('templates/(local-component|screen)/[^/]+$').test(rel)
+    || underKit('skills/screen-spec/references/(concept-)?template\\.md$').test(rel)) add('scaffold-selftest');
+
+  // корпус экранов линтера — подпапка fixtures оснастки, но сенсор его не читает;
+  // hook-binds.mjs — список хуков З12, часть сенсора (RE0020, Э5)
+  if (rel === TOOL_REL + '/layout-check.mjs' || rel === TOOL_REL + '/hook-binds.mjs' || (rel.startsWith(TOOL_REL + '/fixtures/') && !rel.startsWith(SCREEN_FIXTURES_REL + '/'))) add('verify-sensor', 'anchors', 'etalons');
+  if (rel === TOOL_REL + '/lessons-cli.mjs' || rel === TOOL_REL + '/runlog.mjs') add('verify-sensor', 'verify-lint', 'anchors', 'check', 'coverage', 'stats');
+  if (rel === TOOL_REL + '/anchors.json') add('anchors', 'check');
+  if (rel.startsWith(KIT_REL + '/skills/session-plan/')) add('ctx-budget');
+  if (rel === TOOL_REL + '/registry-check.mjs') add('registry-selftest', 'registry');
+  // загрузчик: его файлы, генератор, манифест (designSystem.mount, boot)
+  if ((BOOT_DIR && rel.startsWith(BOOT_DIR + '/') && !inShowcase(rel) && !inMap(rel)) || rel === 'project.json') add('boot');
+  if (rel === TOOL_REL + '/boot-build.mjs') add('boot-selftest', 'boot');
+  // реестр хаба: записи приложений, сам реестр, манифест (треки, hub.ds, каталог приложений)
+  if (rel === PRJ.hubRegistry || rel === 'project.json'
+    || (PRJ.appsDir && rel.startsWith(PRJ.appsDir + '/') && rel.endsWith('/' + PRJ.appsManifest))) add('hub');
+  if (rel === TOOL_REL + '/hub-build.mjs') add('hub-selftest', 'hub', 'promote-selftest');
+  // приложения: любой файл может сдвинуть дерево README модуля; .html — источник или виджет модульной страницы
+  if ((screenArea && !inFixtures) || rel === 'project.json') add('readme');
+  if ((screenArea && !inFixtures && html) || rel === 'project.json') add('assemble');
+  if (rel === TOOL_REL + '/assemble.mjs') add('assemble-selftest', 'assemble', 'readme-selftest', 'promote-selftest', 'panel-selftest', 'kit-selftest', 'kit');
+  // витрина: паспорт, фрагмент, CSS/JS, фикстуры виджета, страница-хозяин и данные приложения, сама витрина
+  if (SHOWCASE_REL && ((screenArea && !inFixtures) || inShowcase(rel) || rel === 'project.json')) add('kit');
+  if (rel === TOOL_REL + '/kit-build.mjs') add('kit-selftest', 'kit', 'scaffold-selftest');
+  if (rel === TOOL_REL + '/module-readme.mjs') add('readme-selftest', 'readme', 'promote-selftest');
+  if (rel === TOOL_REL + '/promote.mjs') add('promote-selftest');
+  if (rel === TOOL_REL + '/scaffold.mjs') add('scaffold-selftest');
+  // корень и каталоги из манифеста читают все: правка общего модуля — прогон всех его потребителей
+  if (rel === TOOL_REL + '/project.mjs') add('manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'registry-selftest', 'registry', 'runlog-selftest',
+    'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'scaffold-selftest', 'snapshot-selftest', 'panel-selftest', 'panel',
+    'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor', 'etalons', 'ctx-budget', 'check', 'stats');
+  if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
+  if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
+  if (rel === TOOL_REL + '/runlog.mjs') add('runlog-selftest');
+  if (rel === TOOL_REL + '/fragments.mjs') add('fragments-selftest');
+  if (rel === TOOL_REL + '/manifest-check.mjs') add('manifest-selftest', 'manifest');
+  if (underKit('skills/[^/]+/references/[^/]+\\.html$').test(rel)) add('etalons');
+  if (/(^|\/)lessons(-raw)?\.md$/.test(rel) && rel.startsWith(KIT_REL + '/')) add('check', 'stats');
+  if (rel === TOOL_REL + '/coverage.json' || rel === KIT_REL + '/skills/screen-review/SKILL.md' || rel === KIT_REL + '/skills/composition-review/SKILL.md') add('coverage', 'brief');
+  // короткий чек-лист сборщика — генерат из тех же таблиц, разметки и списка правил сенсора (RE0019, Э3)
+  if (rel === TOOL_REL + '/layout-check.mjs' || rel === PRJ.rel(SELF_CHECK) || rel === TOOL_REL + '/lessons-cli.mjs') add('brief');
+  if (TEXT_EXT.test(rel) && !rel.startsWith('..')) add('vendor');
+  return s;
+}
+
+const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'scaffold-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'brief', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'fragments-selftest', 'vendor-selftest', 'vendor'];
+// порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'scaffold-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'syntax', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'fragments-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'theme-build', 'theme-selftest', 'theme-files-selftest', 'ds-check', 'etalons', 'anchors', 'check', 'coverage', 'brief', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const kindOf = (id) => id.split(':')[0];
+
+// строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром
+const FINDING = /^\s*(FAIL|BLOCKER|NEEDS-WORK|НЕ ДОКАЗАН|БЛОКЕР|РЕГРЕСС|ОШИБКА|ВЕРДИКТ|ЖУРНАЛ)|Л-[А-ЯЁ]+|находок: [1-9]|^\s{2}\S+:\d+ — /u;
+
+/* Предел одного шага гейта. Самый долгий шаг — `verify --corpus lint`: 308,9 с на
+   устройстве контура (RE0022, О6) при прежнем пределе 300 с — вечный FAIL и +300 с
+   к каждому гейту. Запас втрое (RE0023, Э1). */
+const GATE_STEP_MS = 900000;
+const stepTimedOut = (sec) => 'FAIL  шаг оборван по пределу ' + (GATE_STEP_MS / 1000) + ' с (прошло ' + Math.round(sec) + ' с): поднять GATE_STEP_MS в lessons-cli.mjs или ускорить шаг\n';
+
+function runGateStep(step) {
+  const t0 = Date.now();
+  let out = '', code = 0;
+  try {
+    out = execFileSync(process.execPath, step.args, { cwd: step.cwd, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, timeout: GATE_STEP_MS, windowsHide: true });
+  } catch (e) {
+    out = String(e.stdout || '') + String(e.stderr || '');
+    code = typeof e.status === 'number' ? e.status : 1;
+    if (e.code === 'ETIMEDOUT') out += stepTimedOut((Date.now() - t0) / 1000);
+  }
+  return { out, code, sec: (Date.now() - t0) / 1000 };
+}
+
+/* То же, что runGateStep, но без блокировки: пофайловые шаги идут пулом
+   (RE0019, Э2). Вывод каждого процесса собирается отдельно; stderr зелёного
+   шага уходит в stderr гейта, как у execFileSync. */
+function runGateStepAsync(step) {
+  return new Promise((resolve) => {
+    const t0 = Date.now();
+    let out = '', err = '', settled = false;
+    const end = (code) => {
+      if (settled) return;
+      settled = true;
+      if (code === 0 && err) process.stderr.write(err);
+      resolve({ out: code === 0 ? out : out + err, code: typeof code === 'number' ? code : 1, sec: (Date.now() - t0) / 1000 });
+    };
+    let child;
+    try { child = spawn(process.execPath, step.args, { cwd: step.cwd, timeout: GATE_STEP_MS, windowsHide: true }); }
+    catch (e) { err = String(e.message); end(1); return; }
+    child.stdout.setEncoding('utf8');
+    child.stderr.setEncoding('utf8');
+    child.stdout.on('data', (d) => { out += d; });
+    child.stderr.on('data', (d) => { err += d; });
+    child.on('error', (e) => { err += String(e.message); end(1); });
+    child.on('close', (code, signal) => {
+      if (code === null && signal && Date.now() - t0 >= GATE_STEP_MS) err += stepTimedOut((Date.now() - t0) / 1000);
+      end(code);
+    });
+  });
+}
+
+// пул пофайловых шагов: процессов не больше, чем ядер, и не больше четырёх
+const GATE_JOBS = Math.max(1, Math.min(4, (os.availableParallelism ? os.availableParallelism() : os.cpus().length) || 1));
+const PER_FILE = new Set(['sensor', 'lint', 'split', 'syntax']);
+
+async function gate() {
+  const full = flag('--full');
+  const dry = flag('--dry');
+  const changedArg = value('--changed');
+  const now = fingerprint();
+  let snapExists = existsSync(GATE_SNAPSHOT);
+  let snap = {}, prevFailed = [];
+  if (snapExists) {
+    try {
+      const j = JSON.parse(rd(GATE_SNAPSHOT));
+      snap = j.files || {};
+      prevFailed = Array.isArray(j.failed) ? j.failed : [];
+    } catch { snapExists = false; }     // битый снимок — как отсутствующий: полный прогон
+  }
+  /* Снимка нет — сначала признак свежей копии из архива: она уже проверена
+     перед отправкой, проверяются только правки после распаковки. */
+  let fromArchive = 0;
+  if (!snapExists && !full && !changedArg) {
+    const base = archiveBaseline(now);
+    if (base) { snap = base; snapExists = true; fromArchive = Object.keys(base).length; }
+  }
+
+  /* Набор изменений. `--changed` подменяет его целиком и снимок не трогает:
+     это режим проверки самой матрицы, а не работы. */
+  let changed = [], deleted = [];
+  if (changedArg) {
+    changed = changedArg.split(',').map((p) => p.trim()).filter(Boolean)
+      .map((p) => { const abs = path.resolve(ROOT, p); return toRel(abs); });
+  } else if (!full && snapExists) {
+    changed = Object.keys(now).filter((k) => now[k] !== snap[k]);
+    deleted = Object.keys(snap).filter((k) => !(k in now));
+  }
+  const isFull = !changedArg && (full || !snapExists);
+
+  const byStep = new Map();          // id шага → пути, которые его вызвали
+  const want = (id, rel) => { if (!byStep.has(id)) byStep.set(id, new Set()); if (rel) byStep.get(id).add(rel); };
+  if (isFull) {
+    for (const rel of Object.keys(now)) {
+      for (const id of gateStepsFor(rel, false)) {
+        if (id.startsWith('lint:') && isDsPage(id.slice(5))) want('lint-pages', id.slice(5));
+        else want(id, rel);
+      }
+    }
+    for (const id of GATE_FULL) want(id, null);
+  } else {
+    for (const rel of changed) for (const id of gateStepsFor(rel, false)) want(id, rel);
+    for (const rel of deleted) for (const id of gateStepsFor(rel, true)) want(id, rel);
+  }
+  /* Изменённый сенсор меняет результат на прежних экранах. Фикстуры не
+     заменяют живой корпус: после правки layout-check старый красный экран
+     нельзя переносить в долг только потому, что его HTML не менялся. */
+  if (!isFull && changed.includes(toRel(SENSOR))) {
+    for (const rel of Object.keys(now).filter((p) => p.endsWith('.html'))) {
+      for (const id of gateStepsFor(rel, false)) {
+        if (id.startsWith('sensor:')) want(id, rel);
+      }
+    }
+  }
+  /* Упавшее в прошлый раз перезапускается на каждом гейте — и репозиторный
+     шаг, и пофайловый (решение человека 15.10.2026, RE0023 Э7). Раньше
+     пофайловый шаг, чей файл не менялся, переносился в долг без запуска: но его
+     результат зависит не только от файла — фрагмент виджета, красный до вшивки,
+     после вшивки сенсор пропускает, а долг жил до `gate --full` (RE0022 О10
+     п. 7). Перезапущенный долг вердикт по-прежнему не краснит (Л37), зелёный —
+     уходит из долга. Пофайловый шаг, которого файл больше не вызывает, и шаг
+     удалённого файла долгом не считаются. В режиме `--changed` долг не
+     подмешивается: там проверяется матрица. */
+  const retried = [];
+  if (!changedArg && !isFull) {
+    for (const id of prevFailed) {
+      if (byStep.has(id)) continue;
+      // Устаревший каталог блокирует и повторный запуск без новых правок.
+      // Перенос в информационный долг сделал бы второй прогон ложно зелёным.
+      if (id === 'docs-index') { want(id, null); continue; }
+      const target = id.includes(':') ? id.slice(id.indexOf(':') + 1) : '';
+      if (target && !(target in now)) continue;          // файл удалён — долга больше нет
+      if (target) {
+        if (gateStepsFor(target, false).includes(id)) { retried.push(id); want(id, target); }
+        continue;
+      }
+      retried.push(id);
+      if (id === 'lint-pages') for (const rel of Object.keys(now)) { if (isDsPage(rel)) want(id, rel); }
+      else want(id, null);
+    }
+  }
+  const ids =[...byStep.keys()].sort((a, b) => GATE_ORDER.indexOf(kindOf(a)) - GATE_ORDER.indexOf(kindOf(b)) || a.localeCompare(b));
+
+  log('== gate: проверки по изменениям ==');
+  if (isFull) log('режим: полный' + (full ? ' (--full)' : ' (снимка нет — первый прогон на этой машине)'));
+  if (fromArchive) log('режим: новая копия из архива — принято проверенными файлов: ' + fromArchive + ' (прошли гейт перед отправкой)');
+  else log('изменено: ' + changed.length + (deleted.length ? ' · удалено: ' + deleted.length : '') + (changedArg ? ' (задано --changed, снимок не обновляется)' : ''));
+  if (!isFull) for (const rel of [...changed, ...deleted].slice(0, 15)) log('  ' + rel + (deleted.includes(rel) ? ' (удалён)' : ''));
+  if (!isFull && changed.length + deleted.length > 15) log('  … и ещё ' + (changed.length + deleted.length - 15));
+  if (retried.length) log('повтор упавшего в прошлом гейте: ' + retried.length);
+  log('');
+
+  const logAfter = () => { for (const l of afterSession(changed)) log(l); };
+
+  if (!ids.length) {
+    log(changed.length + deleted.length ? 'изменения не задевают ни одного сторожа — проверок 0' : 'изменений с прошлого гейта нет — проверок 0');
+    if (!changedArg && !dry && (changed.length || deleted.length || fromArchive || prevFailed.length)) saveSnapshot(now, []);
+    logAfter();
+    log('ВЕРДИКТ: OK');
+    return 0;
+  }
+  if (dry) {
+    log('шаги (--dry, не запускаются): ' + ids.length);
+    for (const id of ids) log('  ' + gateStep(id, byStep.get(id)).title);
+    logAfter();
+    return 0;
+  }
+
+  /* Прогон по НАСТОЯЩЕМУ файлу обязан оставить строку в журнале прогонов: на
+     нём стоит `stats`. Инструмент, который молча не пишет, делает регресс
+     невидимым — так с 12.09.2026 линтер не писал ни одного прогона по экрану
+     (путь `../Projects/…` журнал счёл внешним). Сторож стоит здесь, потому что
+     гейт — единственное место, которое знает, что прогон был настоящим.
+     Один гейт — один файл прогона (runlog.mjs, шапка): путь передаётся
+     инструментам переменной окружения, и «записал ли» проверяется по нему —
+     строкой с целью шага, а не приростом строк: пофайловые шаги идут
+     параллельно, и чужая строка выдала бы себя за свою (RE0019, Э2). */
+  const runFile = path.join(RUNS_DIR, runFileName());
+  process.env.RUNLOG_FILE = runFile;
+  const MUST_LOG = new Set(['sensor', 'lint', 'lint-pages']);
+  const logged = (want) => readRunFile(runFile).some((r) => r.tool === want.tool && r.target === want.target);
+  /* Файл прогона создаёт гейт, до пула. Инструмент вращает журнал, когда
+     сам создаёт файл (runlog.logRun); четыре процесса, создающие его разом,
+     вращали бы одновременно. Пустой файл в конце удаляется — прогон без
+     записей файла не оставлял и раньше. */
+  if (ids.some((id) => MUST_LOG.has(kindOf(id)))) {
+    mkdirSync(RUNS_DIR, { recursive: true });
+    writeFileSync(runFile, '', { flag: 'a' });
+    rotate();
+  }
+  const results = new Array(ids.length);
+  /* Прерванный прогон продолжается (шапка гейта, RE0018): шаг из прогресса
+     не запускается, если его входы не менялись. Пофайловый шаг — его файл не
+     менялся (то же правило, что у долга выше); репозиторный — не менялось
+     ничего. Прогресс пишется после каждого шага: обрыв теряет один шаг, а не
+     весь прогон. `--changed` проверяет матрицу и прогресс не трогает. */
+  const progress = changedArg ? null : loadProgress(now);
+  const done = {};
+  let reused = 0;
+  const finish = (i, id, step, target, r) => {
+    // ПРОПУЩЕН — инструмент сам объявил, что файл не его вход; строки в журнале у пропуска нет по устройству
+    if (MUST_LOG.has(kindOf(id)) && !target.startsWith('..') && !/^ПРОПУЩЕН:/m.test(r.out) && !logged(step.log)) {
+      r.code = r.code || 1;
+      r.out += '\nЖУРНАЛ: прогон по настоящему файлу не записан в журнал прогонов (' + journalRel() + ') — stats его не видит (класс Л100)';
+    }
+    results[i] = { id, step, debt: retried.includes(id), ...r };
+    /* В прогресс — только зелёные шаги. Шаг, на котором оборвали прогон,
+       умирает вместе с гейтом и выглядит упавшим; записанный, он стал бы
+       ложным красным в следующем прогоне (поймано проверкой 13.10.2026). */
+    if (!changedArg && r.code === 0) { done[id] = { code: 0, out: '' }; saveProgress(now, done); }
+  };
+  /* Пофайловые шаги, идущие подряд, — пулом из GATE_JOBS процессов (RE0019,
+     Э2): друг от друга они не зависят. Репозиторные — по одному, как раньше:
+     они читают результат предыдущих (stats — журнал после сенсора и линтера). */
+  const pending = [];
+  ids.forEach((id, i) => {
+    const step = gateStep(id, byStep.get(id));
+    const target = id.includes(':') ? id.slice(id.indexOf(':') + 1) : '';
+    const prev = progress && progress.steps[id];
+    if (prev && (target ? !progress.drift.has(target) : !progress.drift.size)) {
+      results[i] = { id, step, debt: retried.includes(id), out: prev.out, code: prev.code, sec: 0 };
+      done[id] = prev; reused++;
+      return;
+    }
+    pending.push({ i, id, step, target });
+  });
+  for (let k = 0; k < pending.length;) {
+    if (!PER_FILE.has(kindOf(pending[k].id))) {
+      const { i, id, step, target } = pending[k++];
+      finish(i, id, step, target, runGateStep(step));
+      continue;
+    }
+    const batch = [];
+    while (k < pending.length && PER_FILE.has(kindOf(pending[k].id))) batch.push(pending[k++]);
+    let next = 0;
+    const worker = async () => {
+      while (next < batch.length) {
+        const { i, id, step, target } = batch[next++];
+        finish(i, id, step, target, await runGateStepAsync(step));
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(GATE_JOBS, batch.length) }, worker));
+  }
+  /* Вращение в конце прогона: файл гейта растёт уже после того, как его
+     первая строка сдвинула окно, и без второго вызова журнал держался бы
+     в пределе «плюс один прогон» (runlog.mjs, шапка). */
+  rotate();
+  if (existsSync(runFile) && !countLines(runFile)) rmSync(runFile, { force: true });
+  if (reused) log('продолжение прерванного прогона: взято готовыми шагов — ' + reused + ' из ' + ids.length);
+
+  /* Вывод сжат: он оседает в контексте агента. Прошедшие пофайловые шаги
+     сворачиваются в строку на вид проверки; находки печатаются только у
+     упавших. Долг прошлых гейтов — упавшее раньше и не задетое текущей
+     правкой — идёт отдельной строкой и вердикт НЕ краснит: иначе старый
+     красный экран краснил бы каждый гейт, и FAIL перестал бы читаться (Л37). */
+  const fresh = results.filter((r) => !r.debt);
+  const failedNow = fresh.filter((r) => r.code !== 0);
+  const okNow = fresh.filter((r) => r.code === 0);
+  const perFile = PER_FILE;
+  const sec = (s) => s.toFixed(1).replace('.', ',') + ' с';
+
+  if (okNow.length <= 8) {
+    for (const r of okNow) log('OK    ' + r.step.title + '  (' + sec(r.sec) + ')');
+  } else {
+    const groups = new Map();
+    for (const r of okNow) {
+      const k = kindOf(r.id);
+      if (!perFile.has(k)) { log('OK    ' + r.step.title + '  (' + sec(r.sec) + ')'); continue; }
+      const g = groups.get(k) || { n: 0, sec: 0, title: r.step.title.split(' ')[0] + (k === 'split' ? ' check' : '') };
+      g.n++; g.sec += r.sec; groups.set(k, g);
+    }
+    for (const g of groups.values()) log('OK    ' + g.title + ' — файлов: ' + g.n + '  (' + sec(g.sec) + ')');
+  }
+  const limit = failedNow.length > 3 ? 8 : 30;
+  for (const r of failedNow) {
+    log('FAIL  ' + r.step.title + '  (' + sec(r.sec) + ')');
+    const lines = r.out.split(/\r?\n/).filter((l) => FINDING.test(l));
+    const show = (lines.length ? lines : r.out.split(/\r?\n/).filter((l) => l.trim()).slice(-10)).slice(0, limit);
+    for (const l of show) log('      ' + l.trimEnd());
+    if (lines.length > limit) log('      … ещё ' + (lines.length - limit) + ' — полный вывод: node ' + r.step.args.map((a) => path.isAbsolute(a) ? toRel(a) : a).join(' '));
+  }
+
+  const debtRes = results.filter((r) => r.debt);
+  const debtRed = debtRes.filter((r) => r.code !== 0);
+  if (debtRes.length) {
+    log('');
+    log('ДОЛГ прошлых гейтов (текущей правкой не задет, вердикт не меняет): красных ' + debtRed.length + ' · починилось ' + (debtRes.length - debtRed.length));
+    for (const r of debtRed.slice(0, 10)) log('      ' + r.step.title);
+    if (debtRed.length > 10) log('      … и ещё ' + (debtRed.length - 10));
+  }
+
+  // долг курации не зависит от текущей правки и вердикт не краснит, но молча не проходит
+  const st = runGateStep({ args: [SELF, 'state'], cwd: ROOT });
+  const debtLine = st.out.split(/\r?\n/).find((l) => /долг курации/.test(l));
+  /* Тем же приёмом — долг калибровки сметы. Он не зависит ни от правки, ни от
+     вердикта: его нельзя закрыть внутри репозитория, нужен факт реального
+     захода. Поэтому он печатается при закрытии ЛЮБОГО захода, пока не закрыт:
+     напоминание, не требующее, чтобы о нём помнили. «Пока не закрыт» решает
+     сам ctx-budget пометкой ДОЛГ в строке; строка без пометки — состояние для
+     `state`, а не повод для ВНИМАНИЯ (до 21.09.2026 гейт показывал её всегда,
+     и напоминание не снялось бы даже после калибровки). */
+  const калибровка = st.out.split(/\r?\n/).find((l) => /калибровка сметы: ДОЛГ/.test(l));
+
+  if (!changedArg) {
+    saveSnapshot(now, results.filter((r) => r.code !== 0).map((r) => r.id));
+    rmSync(GATE_PROGRESS, { force: true });   // прогон дошёл до конца — продолжать нечего
+  }
+
+  log('');
+  logAfter();
+  if (st.code !== 0 && debtLine) log('ВНИМАНИЕ: ' + debtLine.trim() + ' — курация обязательна (скилл lessons)');
+  if (калибровка) log('ВНИМАНИЕ: ' + калибровка.trim());
+  log(failedNow.length ? 'ВЕРДИКТ: FAIL (' + failedNow.length + ' из ' + fresh.length + ')' : 'ВЕРДИКТ: OK (' + fresh.length + ' шаг.)');
+  return failedNow.length ? 1 : 0;
+}
+
+function saveSnapshot(files, failed) {
+  mkdirSync(path.dirname(GATE_SNAPSHOT), { recursive: true });
+  writeFileSync(GATE_SNAPSHOT, JSON.stringify({ files, failed }) + '\n', 'utf8');
+}
+
+/* Прогресс прерванного прогона: отпечатки на момент прогона и пройденные
+   (зелёные) шаги. Упавшие не хранятся — они перезапускаются. */
+function saveProgress(files, steps) {
+  mkdirSync(path.dirname(GATE_PROGRESS), { recursive: true });
+  writeFileSync(GATE_PROGRESS, JSON.stringify({ files, steps }) + '\n', 'utf8');
+}
+
+/* Прогресс годен, если с момента обрыва менялась только работа — экраны,
+   спеки, документы. Правка ДС, харнеса или инструмента меняет результат и
+   старых шагов, поэтому такой прогресс выбрасывается целиком. Возвращает
+   { steps, drift } — drift: пути, изменившиеся с момента обрыва. */
+function loadProgress(now) {
+  if (!existsSync(GATE_PROGRESS)) return null;
+  let j;
+  try { j = JSON.parse(rd(GATE_PROGRESS)); } catch { return null; }
+  if (!j || !j.files || !j.steps) return null;
+  const drift = new Set();
+  for (const k of Object.keys(now)) if (j.files[k] !== now[k]) drift.add(k);
+  for (const k of Object.keys(j.files)) if (!(k in now)) drift.add(k);
+  const work = (rel) => (PRJ.appsDir && rel.startsWith(PRJ.appsDir + '/')) || (PRJ.docs && rel.startsWith(PRJ.docs + '/'));
+  if ([...drift].some((rel) => !work(rel))) return null;
+  return { steps: j.steps, drift };
+}
+
+/* ПОСЛЕ ЗАХОДА — напоминание о двух шагах, которые гейт не проверяет, но
+   которые должны случиться в конце захода: приёмка и урок (корневой AGENTS.md,
+   «Проверка»). Оба описаны в роли и в скилле, которые читают в начале
+   захода, а срабатывать им — в конце. В CLI, где роли не встроены, заход
+   закрывался одним гейтом, и шаги выпадали молча: с 25.09.2026 ни одна
+   ошибка, замеченная человеком, не стала уроком, и приёмки виджетов
+   страницы сделки не было (урок Л151). Гейт запускают в конце всегда, в любом контуре и
+   с любой моделью, — поэтому напоминание здесь, а не в памятке одного
+   инструмента. Вердикт оно не меняет и проверкой не является. Концепты
+   (`drafts/`) не напоминают: там можно выходить за ДС (решение человека
+   01.10.2026). */
+function afterSession(paths) {
+  const places = PRJ.places, shape = PRJ.appShape;
+  // область модуля: 'pages' | 'widgets' | null — модуль `<раздел>/<имя>-app/`, не концепт и не витрина
+  const moduleArea = (rel) => {
+    if (!PRJ.appsDir || !places || !shape || !rel.startsWith(PRJ.appsDir + '/') || inShowcase(rel) || inMap(rel)) return null;
+    const parts = rel.slice(PRJ.appsDir.length + 1).split('/');
+    const i = parts.findIndex((p) => p.endsWith(places.moduleSuffix));
+    if (i < 1 || parts.slice(0, i).includes(places.drafts)) return null;
+    return [shape.pages, shape.widgets].includes(parts[i + 1]) ? parts[i + 1] : null;
+  };
+  const names = (list) => list.slice(0, 3).map((p) => path.basename(p)).join(', ') + (list.length > 3 ? ' …' : '');
+  const out = [];
+  const ui = paths.filter((rel) => /\.(html|css|js)$/.test(rel) && moduleArea(rel));
+  if (ui.length) out.push('ПОСЛЕ ЗАХОДА: изменены экраны или виджеты модулей (' + names(ui) + ') — сборка или новая структура: приёмка по роли screen-reviewer до отчёта; мелкой правке достаточно гейта (AGENTS.md, «Проверка»)');
+  const journals = paths.filter((rel) => rel === DS_REL + '/CHANGELOG.md' || (rel.endsWith('/CHANGELOG.md') && moduleArea(rel) === shape.widgets));
+  if (journals.length && !paths.includes(toRel(RAW))) out.push('ПОСЛЕ ЗАХОДА: журнал правок изменён (' + names(journals) + '), архив уроков — нет: если чинилась ошибка, в том числе замеченная человеком, — урок: почему так вышло и что не даст повториться (скилл lessons)');
+  return out;
+}
+
+/* ---------------- main ---------------- */
+
+const argv = process.argv.slice(2);
+const cmd = argv[0];
+const flag = (name) => argv.includes(name);
+const value = (name) => { const i = argv.indexOf(name); return i >= 0 ? argv[i + 1] : null; };
+
+if (cmd === 'verify') process.exit(verify(value('--only'), value('--corpus')));
+else if (cmd === 'gate') gate().then((c) => process.exit(c));
+else if (cmd === 'coverage') process.exit(coverage());
+else if (cmd === 'brief') process.exit(brief(flag('--check')));
+else if (cmd === 'anchors') process.exit(cmdAnchors(flag('--write')));
+else if (cmd === 'check') process.exit(cmdCheck());
+else if (cmd === 'add') process.exit(cmdAdd(value('--from')));
+else if (cmd === 'state') process.exit(state());
+else if (cmd === 'stats') process.exit(stats());
+else {
+  log('Использование:');
+  log('  node lessons-cli.mjs gate [--full] [--dry] [--changed <путь,…>] — проверки по изменениям, одной командой в конце захода');
+  log('  node lessons-cli.mjs verify [--only <ID>] [--corpus sensor|lint] — доказать сторожей откатом на фикстурах');
+  log('  node lessons-cli.mjs coverage          — чем закрыт каждый пункт чек-листов');
+  log('  node lessons-cli.mjs brief [--check]   — короткий чек-лист самопроверки сборщика (генерат) / сверка с источниками');
+  log('  node lessons-cli.mjs anchors [--write]  — реестр живых идентификаторов против кода');
+  log('  node lessons-cli.mjs check             — форма записей журнала: якоря, уровни, поля');
+  log('  node lessons-cli.mjs add --from <файл> — дозаписать урок из черновика');
+  log('  node lessons-cli.mjs state             — объём журнала, долг курации, закрепления');
+  log('  node lessons-cli.mjs stats             — что было ПОСЛЕ закрепления: регресс, обучение, мёртвые правила');
+  process.exit(2);
+}

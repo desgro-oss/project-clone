@@ -1,0 +1,14 @@
+/* my-clients-table — таблица на общем рендере. Своя раскладка: блок ошибки по
+   data-state и колонка «тулбар над таблицей → тайл с таблицей на остаток».
+   Ритм 12px между зоной и таблицей — вариант .dtable-toolbar ДС (Table). */
+.lc-my-clients-table { display: flex; flex-direction: column; gap: var(--space-12); flex: 1 1 auto; min-width: 0; min-height: 0; }
+.lc-my-clients-table__tile { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; min-width: 0; } /* без тайла: карточка — сама .dtable (Table) */
+.lc-my-clients-table__error { display: none; }
+.lc-my-clients-table[data-state="error"] .lc-my-clients-table__error { display: flex; }
+.lc-my-clients-table__tools { display: flex; align-items: center; gap: var(--space-12); flex: none; flex-wrap: nowrap; }
+/* Скрытое действие строки «в избранное» — по TableCell ДС: блок .tc__hidden —
+   прямой потомок .tbl__row после замыкающего разделителя, в сетку строки не
+   входит и стоит поверх строки у правого края (TableCell.md, «Скрытые
+   действия»). Без этого он уходил в новый ряд сетки и удваивал высоту строки. */
+.lc-my-clients-table .tbl__row { position: relative; }
+.lc-my-clients-table .tbl__row > .tc__hidden { position: absolute; right: var(--space-8); top: 50%; transform: translateY(-50%); }

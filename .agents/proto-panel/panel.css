@@ -1,0 +1,1010 @@
+/* ============================================================
+   ПАНЕЛЬ ПРОТОТИПА — свои блоки поверх ДС (panel.css).
+
+   Только токены ДС и только селекторы .pp-* и #pp-* — это стережёт ПН10
+   (proto-panel.mjs): цвет литералом, px больше 2 вне условий @media и
+   селектор без префикса — дефект. Внутренности и состояния компонентов ДС
+   здесь не переопределяются: только раскладка своих блоков — кнопка
+   панели, мини-плеер, ручка ширины шторки, липкий ряд табов, узлы и
+   соединители схемы, карточки комментариев, подсветка цели. Почему они
+   свои и что из них кандидат в ДС — README панели, «Кандидаты в ДС».
+   ============================================================ */
+
+/* ---------------- угол страницы: кнопка и мини-плеер ---------------- */
+
+.pp-root {
+  position: fixed;
+  right: var(--space-24);
+  bottom: var(--space-24);
+  z-index: calc(var(--modal-z) + 30); /* выше модалок страницы: панель всегда доступна */
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  pointer-events: none;
+}
+.pp-root > * { pointer-events: auto; }
+/* закреплённая панель: корень панели живёт в корне документа и держится у угла области страницы, а не окна */
+.pp-pinned .pp-root {
+  right: calc(var(--pp-dock-w, 0px) + var(--space-24));
+  bottom: calc(var(--pp-dock-h, 0px) + var(--space-24));
+}
+
+.pp-fab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--space-48);
+  height: var(--space-48);
+  padding: 0;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-circle);
+  background: var(--bg-popup);
+  box-shadow: var(--elevation-2);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.pp-fab:hover { background: var(--bg-table-default-hover); }
+.pp-fab:focus-visible { outline: 2px solid var(--primary); outline-offset: var(--space-2); }
+.pp-fab :is(svg, [data-icon]) { width: var(--space-24); height: var(--space-24); }
+.pp-fab__badge { position: absolute; top: 0; right: 0; display: flex; }
+.pp-fab[hidden],
+.pp-fab__badge[hidden] { display: none; }
+
+.pp-player {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  box-sizing: border-box;
+  height: var(--space-48);
+  padding: var(--space-4) var(--space-8);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  background: var(--bg-popup);
+  box-shadow: var(--elevation-2);
+}
+.pp-player[hidden] { display: none; }
+.pp-player__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  max-width: var(--modal-w-2);
+  padding: var(--space-4) var(--space-8);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-primary);
+  font: var(--type-body-s);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.pp-player__label:hover { background: var(--bg-table-default-hover); }
+.pp-player__label:focus-visible { outline: 2px solid var(--primary); outline-offset: var(--space-2); }
+.pp-player__label:disabled { background: transparent; cursor: default; }
+.pp-player__num { flex: none; }
+.pp-player__title { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.pp-player__warn { display: inline-flex; flex: none; color: var(--error); }
+.pp-player__warn :is(svg, [data-icon]) { width: var(--space-16); height: var(--space-16); }
+.pp-player--error .pp-player__num { color: var(--error); }
+
+/* служебное скрытое: живая область, ссылка скачивания, буфер копирования */
+.pp-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------- шторка: ручка ширины и липкий ряд табов ---------------- */
+
+.pp-drawer { position: relative; }
+
+/* Обёртки резервируют выступ стейт-слоя IconButton M (32px вокруг 20px),
+   чтобы gap задавал расстояние между зонами клика, а не между иконками. */
+.pp-head-acts { gap: var(--space-8); }
+.pp-head-control { display: flex; padding: var(--space-6); }
+
+/* ---------------- рельс инструментов слева от шторки ---------------- */
+
+/* Кнопки переключают содержимое дровера (протопанель / тема). Растёт число
+   инструментов — добавляется кнопка и её панель. Стоит на 8px левее тела. */
+.pp-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  align-self: flex-start;
+  margin: var(--space-24) var(--space-8) 0 0;
+}
+/* IconButton L: слой 40px вокруг иконки 24px — по 8px с каждой стороны. */
+.pp-rail-control { display: flex; padding: var(--space-8); }
+
+/* панель цвета темы: заголовок и список тем */
+.pp-theme__list { display: flex; flex-direction: column; gap: var(--space-8); }
+.pp-theme__row { display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap; }
+.pp-theme__row .pp-theme__item { flex: 1; }
+.pp-theme__item { justify-content: flex-start; }
+.pp-theme__item.is-active { background: var(--primary-bg); }
+
+.pp-grip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 4;
+  width: var(--space-12);
+  cursor: col-resize;
+  touch-action: none;
+}
+.pp-grip::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: transparent;
+  transition: background-color .15s ease;
+}
+.pp-grip:hover::after,
+.pp-grip:focus-visible::after { background: var(--primary); }
+.pp-grip:focus-visible { outline: none; }
+#pp-drawer.pp-resizing,
+#pp-drawer.pp-resizing * { cursor: col-resize; user-select: none; }
+#pp-drawer.pp-resizing .pp-drawer { animation: none; transition: none; }
+
+.pp-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  padding: 0 var(--drawer-pad-x);
+  background: var(--bg-popup);
+}
+.pp-pane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--drawer-body-pad-y) var(--drawer-pad-x);
+}
+.pp-pane[hidden] { display: none; }
+
+.pp-muted { color: var(--text-secondary); }
+.pp-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); }
+.pp-empty { align-self: stretch; }
+
+/* ---------------- User Flows: шапка и блок-схема ---------------- */
+
+.pp-flow { display: flex; flex-direction: column; gap: var(--space-8); }
+.pp-flow__title { color: var(--text-primary); }
+
+.pp-chart { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.pp-step { display: flex; flex-direction: column; }
+.pp-step__card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  /* светлее тела шторки и с альфой: в тёмной служебной теме карточка читается
+     как тайл на странице (решение человека 04.10.2026). Роль --tertiary-bg →
+     --color-bg-tint. */
+  background: var(--tertiary-bg);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.pp-step__card:hover { border-color: var(--border-primary); box-shadow: var(--elevation-2); }
+.pp-step__go {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-12);
+  min-width: 0;
+  padding: var(--space-12) 0 var(--space-12) var(--space-16);
+  border: 0;
+  border-radius: var(--radius-card);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.pp-step__go:focus-visible { outline: 2px solid var(--primary); outline-offset: var(--space-2); }
+.pp-step__menu { display: flex; padding: var(--space-12) var(--space-12) 0 var(--space-4); }
+.pp-step__main { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.pp-step__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-8); }
+.pp-step__title { color: var(--text-primary); }
+.pp-step__mark { color: var(--primary); }
+.pp-step__meta { display: inline-flex; align-items: center; gap: var(--space-4); min-width: 0; color: var(--text-secondary); }
+.pp-step__meta :is(svg, [data-icon]) { flex: none; width: var(--space-16); height: var(--space-16); }
+.pp-step__meta > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pp-step__note {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--text-secondary);
+  white-space: pre-line;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.pp-step__note--full { display: block; -webkit-line-clamp: unset; line-clamp: none; }
+.pp-step__err { display: inline-flex; align-items: flex-start; gap: var(--space-4); color: var(--error); }
+.pp-step__err :is(svg, [data-icon]) { flex: none; width: var(--space-16); height: var(--space-16); }
+.pp-step--current .pp-step__card { border-color: var(--primary); background: var(--primary-bg); }
+.pp-step--error .pp-step__card { border-color: var(--error); }
+
+/* Fix State (задача 0005a): надстрочная подпись STATE NN с чипами, пометки
+   записи, поле названия на месте, черновое состояние — пунктирная рамка. */
+.pp-step__over { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
+.pp-step__overline { color: var(--text-secondary); letter-spacing: .04em; }
+.pp-step__issue { display: inline-flex; align-items: flex-start; gap: var(--space-4); color: var(--warning); }
+.pp-step__issue :is(svg, [data-icon]) { flex: none; width: var(--space-16); height: var(--space-16); }
+.pp-step--draft .pp-step__card { border-style: dashed; }
+.pp-step__go--edit { cursor: default; }
+.pp-rename { display: flex; flex-direction: column; gap: var(--space-8); }
+
+/* шапка таба Flows: выбор сценария, переименование, New flow */
+.pp-flow__row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-8); }
+.pp-flow__pick { flex: 1 1 auto; min-width: 0; }
+.pp-flow__row > .pp-rename { flex: 1 1 100%; }
+
+/* строка рекордера: что сделает Fix State прямо сейчас */
+.pp-rec { display: flex; flex-direction: column; gap: var(--space-4); }
+.pp-rec__line { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-8); margin: 0; color: var(--text-secondary); }
+.pp-rec__dot { display: inline-flex; flex: none; width: var(--space-16); height: var(--space-16); color: var(--error); }
+.pp-rec__dot :is(svg, [data-icon]) { width: 100%; height: 100%; }
+.pp-rec__text { flex: 1 1 0; min-width: 0; }
+.pp-rec__list { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0 0 0 var(--space-24); list-style: none; color: var(--text-secondary); }
+.pp-rec__item { display: flex; align-items: flex-start; gap: var(--space-4); }
+.pp-rec__item--fragile { color: var(--warning); }
+.pp-rec__icon { display: inline-flex; flex: none; width: var(--space-16); height: var(--space-16); }
+.pp-rec__icon :is(svg, [data-icon]) { width: 100%; height: 100%; }
+
+/* Fix State в шапке шторки: у неактивной кнопки тултип живёт на обёртке */
+.pp-fix { display: inline-flex; border-radius: var(--radius-control); }
+.pp-fix:focus-visible { outline: 2px solid var(--primary); outline-offset: var(--space-2); }
+
+.pp-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--space-24);
+  color: var(--text-inactive);
+}
+.pp-link__line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: var(--border-primary);
+  transform: translateX(-50%);
+}
+.pp-link :is(svg, [data-icon]) { position: relative; width: var(--space-16); height: var(--space-16); background: var(--bg-popup); }
+.pp-link__page { position: absolute; left: calc(50% + var(--space-16)); color: var(--text-secondary); white-space: nowrap; }
+
+/* ---------------- Комментарии ---------------- */
+
+.pp-new { display: flex; flex-direction: column; gap: var(--space-8); }
+.pp-new__row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-12); }
+.pp-new__ctx { flex: 1 1 auto; min-width: 0; align-items: center; }
+.pp-new__add { display: inline-flex; flex: none; }
+.pp-filter { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-12); }
+
+.pp-comments { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.pp-comment {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-16) 0;
+  border-top: 1px solid var(--border-light);
+}
+.pp-comment__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); }
+.pp-comment__who { color: var(--text-secondary); }
+.pp-comment__acts { display: flex; align-items: center; gap: var(--space-4); margin-left: auto; }
+.pp-comment__ctx,
+.pp-comment__res,
+.pp-comment__draft { margin: 0; }
+.pp-comment__res { display: flex; align-items: flex-start; gap: var(--space-4); color: var(--text-secondary); }
+.pp-comment__res :is(svg, [data-icon]) { flex: none; width: var(--space-16); height: var(--space-16); color: var(--success); }
+.pp-comment__draft { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); color: var(--text-secondary); }
+.pp-tipwrap { display: inline-flex; border-radius: var(--radius-control); }
+.pp-tipwrap:focus-visible { outline: 2px solid var(--primary); outline-offset: var(--space-2); }
+
+/* текст комментария — безопасный markdown */
+.pp-md { display: flex; flex-direction: column; gap: var(--space-8); color: var(--text-primary); overflow-wrap: anywhere; }
+.pp-md p,
+.pp-md ul,
+.pp-md ol { margin: 0; }
+.pp-md ul,
+.pp-md ol { padding-left: var(--space-24); }
+.pp-code,
+.pp-pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--bg-table-default-focus); }
+.pp-code { padding: 0 var(--space-4); border-radius: var(--radius-xs); }
+.pp-pre { margin: 0; padding: var(--space-8) var(--space-12); overflow-x: auto; border-radius: var(--radius-control); white-space: pre; }
+
+/* окно настроек */
+.pp-subtitle { margin: 0; color: var(--text-primary); }
+
+/* таб «System» (MS0016): переключатели состояния системы и служебные действия */
+.pp-sys { display: flex; flex-direction: column; gap: var(--space-12); }
+.pp-sys__item { display: flex; flex-direction: column; gap: var(--space-8); }
+.pp-sys__head { display: flex; flex-direction: column; gap: var(--space-4); }
+.pp-sys__head > p { margin: 0; }
+.pp-sys__ctrl { display: flex; min-width: 0; }
+.pp-keys { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
+
+/* ---------------- подсветка цели действия (только показ) ---------------- */
+
+.pp-hl {
+  position: fixed;
+  z-index: calc(var(--tip-z) - 1);
+  box-sizing: border-box;
+  border-radius: var(--radius-control);
+  outline: 2px solid var(--primary);
+  outline-offset: var(--space-2);
+  pointer-events: none;
+  animation: pp-pulse .45s ease-out;
+}
+@keyframes pp-pulse {
+  from { outline-offset: var(--space-12); opacity: 0; }
+  to { outline-offset: var(--space-2); opacity: 1; }
+}
+
+/* ---------------- узкий экран, движение, печать ---------------- */
+
+@media (max-width: 640px) {
+  .pp-grip { display: none; }
+  .pp-player__title { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pp-hl { animation: none; }
+  .pp-step__card,
+  .pp-grip::after { transition: none; }
+}
+@media print {
+  .pp-root,
+  .pp-hl,
+  #pp-drawer,
+  .pp-modal { display: none; }
+}
+
+/* ---------------- карта экранов (map-view.js, задача RE0015) ----------------
+   Майндмап страниц проекта: HTML-узлы (Tile Card + Entity ДС) поверх SVG-слоя
+   линий — компонента схемы в ДС нет. Ширина карточки и зазоры — токены, их
+   вычисленные значения читает скрипт раскладки. */
+.pp-map { --pp-map-card: calc(var(--space-48) * 5); min-width: 0; }
+.pp-map__bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-24); margin-block-end: var(--space-16); }
+.pp-map__scroll { overflow: auto; padding: var(--space-4); }
+.pp-map__board { position: relative; column-gap: var(--space-48); row-gap: var(--space-16); }
+.pp-map__edges { position: absolute; left: 0; top: 0; z-index: 0; overflow: visible; pointer-events: none; }
+.pp-map__edge { fill: none; stroke: var(--text-secondary); stroke-width: 1.5; }
+.pp-map__node { position: absolute; left: 0; top: 0; z-index: 1; box-sizing: border-box; width: var(--pp-map-card); }
+.pp-map__link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: var(--radius-s); }
+.pp-map__states { margin-block-start: var(--space-12); }
+.pp-map__state { text-decoration: none; cursor: pointer; }
+.pp-map--tree .pp-map__states { padding-inline-start: var(--space-16); }
+.pp-map__empty { margin: 0; color: var(--text-secondary); }
+
+/* Слои панели выше любых модалок страницы: кнопка (root) < панель (drawer) < её окна */
+#pp-drawer.modal-scrim { z-index: calc(var(--modal-z) + 40); }
+.pp-modal.pp-modal { z-index: calc(var(--modal-z) + 45); }
+
+/* ---------------- закреплённая панель (RE0030) ----------------
+   Панель не перекрывает страницу, а стоит рядом: справа (ширина — по шторке с рельсом) или
+   снизу (высота — переменная --pp-dock-h). Тело страницы — прокручиваемый контейнер у панели
+   и содержащий блок для fixed-слоёв: меню, тултипы и модалки страницы остаются в её
+   видимой области. Классы на корне и теле ставит ui.js вместе с переменными --pp-dock-w и --pp-dock-h. */
+.pp-pinned { overflow: hidden; }
+/* fixed-элементы страницы (метка data-pp-fix, ui.js) остаются на месте при прокрутке тела: сдвиг на величину прокрутки */
+@keyframes pp-fix-y {
+  from { translate: 0 0; }
+  to { translate: 0 var(--pp-fix-y, 0px); }
+}
+.pp-pinned-body [data-pp-fix] {
+  animation: pp-fix-y 1s linear both;
+  animation-timeline: scroll(nearest block);
+}
+.pp-pinned-body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: var(--pp-dock-w, 0);
+  bottom: var(--pp-dock-h, 0);
+  margin: 0;
+  overflow: auto;
+  transform: translateZ(0);
+}
+
+/* Хост плавающих слоёв ДС (поповеры, меню, тултипы, снэкбары): тот же размер, что у тела, но не прокручивается —
+   fixed-слой внутри него не уезжает с прокруткой страницы (ui.js, floatLayers). Выше панели — чтобы тултипы
+   кнопок самой панели не прятались под ней. */
+.pp-float-host {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: var(--pp-dock-w, 0);
+  bottom: var(--pp-dock-h, 0);
+  margin: 0;
+  transform: translateZ(0);
+  pointer-events: none;
+  z-index: calc(var(--modal-z) + 41);
+}
+@media print { .pp-float-host { display: none; } }
+/* Индикатор прокрутки окна из Layout ДС считает по window.innerHeight (это размер области рядом с панелью) и
+   window.scrollY: у закреплённого тела прокручивается оно само, у тела свои полосы — индикатор прячется. */
+.pp-pinned-body > .ds-page-scroll { display: none; }
+
+#pp-drawer.pp-docked {
+  padding: 0;
+  background: var(--drawer-bg);
+  animation: none;
+}
+#pp-drawer.pp-docked .drawer {
+  animation: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+#pp-drawer.pp-docked--right {
+  inset: 0 0 0 auto;
+  width: max-content;
+  border-inline-start: 1px solid var(--border-light);
+}
+#pp-drawer.pp-docked--bottom {
+  inset: auto 0 0 0;
+  height: var(--pp-dock-h);
+  border-block-start: 1px solid var(--border-light);
+}
+#pp-drawer.pp-docked--bottom .drawer {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+}
+/* ручка нижней панели — по верхнему краю */
+.pp-docked--bottom .pp-grip {
+  top: 0;
+  bottom: auto;
+  left: 0;
+  right: 0;
+  width: auto;
+  height: var(--space-12);
+  cursor: row-resize;
+}
+.pp-docked--bottom .pp-grip::after {
+  top: 0;
+  bottom: auto;
+  left: 0;
+  right: 0;
+  width: auto;
+  height: 2px;
+}
+#pp-drawer.pp-docked--bottom.pp-resizing,
+#pp-drawer.pp-docked--bottom.pp-resizing * { cursor: row-resize; }
+@media print {
+  .pp-pinned { overflow: visible; }
+  .pp-pinned-body { position: static; transform: none; }
+}
+
+/* ---------------- Devmode: масштаб и перемещение (RE0030, dev-zoom.js) ----------------
+   Тело страницы — кадр размером с видимую область; масштаб и сдвиг — transform на теле (ui.js
+   закрепляет тело, dev-zoom.js ставит transform). Оверлей и полосы живут в корне документа,
+   вне кадра: масштаб на них не действует. */
+.pp-glyph { display: inline-flex; }
+.pp-glyph svg { width: var(--space-24); height: var(--space-24); }
+.pp-dev { background: var(--bg-table-default-focus); }
+.pp-zoomed .pp-pinned-body { box-shadow: var(--elevation-2); }
+
+.pp-zoom {
+  position: fixed;
+  left: calc((100% - var(--pp-dock-w, 0px)) / 2);
+  bottom: calc(var(--pp-dock-h, 0px) + var(--space-16));
+  z-index: calc(var(--modal-z) + 44);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  box-sizing: border-box;
+  padding: var(--space-4) var(--space-8);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  background: var(--bg-popup);
+  box-shadow: var(--elevation-2);
+  transform: translateX(-50%);
+}
+.pp-zoom__pick { position: relative; display: inline-flex; }
+.pp-zoom__val { min-width: var(--space-64); justify-content: center; }
+.pp-zoom__list {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + var(--space-12));
+  display: flex;
+  flex-direction: column;
+  min-width: var(--space-96);
+  padding: var(--space-4);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  background: var(--bg-popup);
+  box-shadow: var(--elevation-2);
+  transform: translateX(-50%);
+}
+.pp-zoom__list[hidden] { display: none; }
+.pp-tools { display: flex; align-items: center; gap: var(--space-4); }
+.pp-insp { --pp-ruler-cross: var(--error); --pp-ruler-cross-ink: var(--text-on-dark); }
+.pp-zoom__sep { align-self: stretch; width: 1px; margin: var(--space-4) var(--space-4); background: var(--border-light); }
+
+.pp-zbar { position: fixed; z-index: calc(var(--modal-z) + 44); }
+.pp-zbar[hidden] { display: none; }
+.pp-zbar--x { left: 0; right: var(--pp-dock-w, 0px); bottom: var(--pp-dock-h, 0px); height: var(--space-12); }
+.pp-zbar--y { top: 0; right: var(--pp-dock-w, 0px); bottom: var(--pp-dock-h, 0px); width: var(--space-12); }
+.pp-zbar__thumb { position: absolute; border-radius: var(--radius-full); background: var(--text-inactive); opacity: .7; cursor: grab; }
+.pp-zbar__thumb:hover { opacity: 1; }
+.pp-zbar--x .pp-zbar__thumb { top: 2px; bottom: 2px; }
+.pp-zbar--y .pp-zbar__thumb { left: 2px; right: 2px; }
+
+.pp-hand,
+.pp-hand * { cursor: grab; }
+.pp-panning,
+.pp-panning * { cursor: grabbing; user-select: none; }
+@media print {
+  .pp-zoom,
+  .pp-zbar { display: none; }
+}
+
+/* ---------------- Devmode: инспектор вёрстки (RE0030, dev-inspect.js) ----------------
+   Слой .pp-insp — в корне документа поверх страницы, вне её тела: координаты в окне, масштаб не действует.
+   Зоны: margin — предупреждение, padding — успех, content — основной, расстояния — ошибка. Размеры и позиции
+   элементов слоя задаёт скрипт (inline), здесь — только вид. */
+.pp-insp {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: var(--pp-dock-w, 0px);
+  bottom: var(--pp-dock-h, 0px);
+  z-index: calc(var(--modal-z) + 42); /* выше .pp-float-host (+41): рамки и числа видны и на поповерах, меню и списках страницы */
+  overflow: hidden;
+  pointer-events: none;
+}
+.pp-insp[hidden] { display: none; }
+.pp-insp__layer { position: absolute; inset: 0; }
+.pp-insp__layer > * { position: absolute; box-sizing: border-box; }
+.pp-insp__b { border-style: solid; border-color: color-mix(in srgb, var(--text-secondary) 55%, transparent); }
+/* margin и padding — штриховка (у VisBug так же): margin +45°, padding −45°, поверх лёгкая подложка */
+.pp-insp__hm {
+  background:
+    repeating-linear-gradient(45deg, color-mix(in srgb, var(--warning) 75%, transparent) 0 1px, transparent 1px var(--space-6)),
+    color-mix(in srgb, var(--warning) 12%, transparent);
+}
+.pp-insp__hp {
+  background:
+    repeating-linear-gradient(-45deg, color-mix(in srgb, var(--info) 75%, transparent) 0 1px, transparent 1px var(--space-6)),
+    color-mix(in srgb, var(--info) 12%, transparent);
+}
+.pp-insp__c { border: 1px dashed color-mix(in srgb, var(--text-primary) 55%, transparent); }
+.pp-insp__sel { border: 2px solid var(--primary); }
+.pp-insp__col {
+  border-inline: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+.pp-insp__col--on { background: color-mix(in srgb, var(--primary) 22%, transparent); }
+.pp-insp__guide--v { width: 0; border-left: 1px solid var(--primary); }
+.pp-insp__guide--h { height: 0; border-top: 1px solid var(--primary); }
+.pp-insp__hover { border: 1px dashed var(--text-secondary); }
+.pp-insp__gap {
+  background:
+    repeating-linear-gradient(45deg, color-mix(in srgb, var(--success) 75%, transparent) 0 1px, transparent 1px var(--space-6)),
+    color-mix(in srgb, var(--success) 12%, transparent);
+}
+.pp-insp__track { border: 1px dashed color-mix(in srgb, var(--error) 70%, transparent); background: color-mix(in srgb, var(--error) 7%, transparent); }
+.pp-insp__item { border: 1px dashed var(--primary); }
+
+.pp-insp__n {
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-s);
+  color: var(--text-on-dark);
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+}
+.pp-insp__n--m { background: var(--warning-dark); }
+.pp-insp__n--p { background: var(--info-dark); }
+.pp-insp__n--g { background: var(--success-dark); }
+.pp-insp__n--d { background: var(--error); }
+.pp-insp__n--c { background: var(--primary); }
+.pp-insp__n--off { background: var(--text-secondary); }
+
+.pp-insp__line--h { height: 0; border-top: 1px solid var(--error); }
+.pp-insp__line--v { width: 0; border-left: 1px solid var(--error); }
+.pp-insp__line--h::before,
+.pp-insp__line--h::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--space-4) * -1);
+  height: var(--space-8);
+  border-left: 1px solid var(--error);
+}
+.pp-insp__line--h::before { left: 0; }
+.pp-insp__line--h::after { right: 0; }
+.pp-insp__line--v::before,
+.pp-insp__line--v::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--space-4) * -1);
+  width: var(--space-8);
+  border-top: 1px solid var(--error);
+}
+.pp-insp__line--v::before { top: 0; }
+.pp-insp__line--v::after { bottom: 0; }
+
+.pp-insp__tag,
+.pp-insp__size {
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-s);
+  background: var(--primary);
+  color: var(--text-on-dark);
+  white-space: nowrap;
+}
+.pp-insp__tag { transform: translateY(-100%); border-end-start-radius: 0; border-end-end-radius: 0; }
+.pp-insp__tag--in { transform: none; border-radius: 0 0 var(--radius-s) 0; }
+.pp-insp__tag { display: inline-flex; align-items: center; gap: var(--space-4); }
+.pp-insp__ico { display: inline-flex; }
+.pp-insp__ico svg { width: var(--space-12); height: var(--space-12); }
+.pp-insp__tag--hover { background: var(--text-secondary); }
+.pp-insp__size {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 0 var(--space-6);
+  justify-items: start;
+  transform: translate(-50%, var(--space-4));
+}
+.pp-insp__size > :nth-child(3n) { justify-self: end; }
+.pp-insp__size > :nth-child(3n + 1) { opacity: .7; }
+.pp-insp__size--in { transform: translate(-50%, calc(-100% - var(--space-4))); }
+
+.pp-insp__ruler,
+.pp-insp__corner {
+  position: absolute;
+  box-sizing: border-box;
+  border: 0 solid var(--primary);
+  background-color: var(--bg-popup);
+  color: var(--text-secondary);
+  font: var(--type-body-xs);
+}
+.pp-insp__ruler--x { left: var(--space-20); top: 0; right: 0; height: var(--space-20); width: calc(100% - var(--space-20)); border-bottom: 1px solid var(--border-light); }
+.pp-insp__ruler--y { left: 0; top: var(--space-20); bottom: 0; width: var(--space-20); height: calc(100% - var(--space-20)); border-right: 1px solid var(--border-light); }
+.pp-insp__corner { left: 0; top: 0; width: var(--space-20); height: var(--space-20); }
+.pp-insp__ruler[hidden],
+.pp-insp__corner[hidden] { display: none; }
+
+.pp-inspecting:not(.pp-hand):not(.pp-panning) .pp-pinned-body,
+.pp-inspecting:not(.pp-hand):not(.pp-panning) .pp-pinned-body * { cursor: crosshair; }
+
+
+.pp-keys .rof__value { overflow-wrap: anywhere; }
+@media print {
+  .pp-insp,
+  .pp-tips { display: none; }
+}
+
+/* ---------------- Devmode: подсказки у элемента (RE0031, dev-tip.js) ----------------
+   Слой .pp-tips — в корне документа над слоем инспектора и хостом плавающих слоёв ДС (область — только рядом с панелью, её саму не перекрывает). Карточка у курсора кликов не ловит,
+   закреплённая — ловит (кнопки, перетаскивание за шапку). Место карточки задаёт скрипт, здесь — только вид. */
+.pp-tips {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: var(--pp-dock-w, 0px);
+  bottom: var(--pp-dock-h, 0px);
+  z-index: calc(var(--modal-z) + 43); /* над слоем инспектора (+42) и хостом плавающих слоёв (+41): поповеры и меню страницы не перекрывают карточки */
+  overflow: hidden;
+  pointer-events: none;
+}
+.pp-tips__hl { position: absolute; inset: 0; }
+.pp-tips__same { position: absolute; box-sizing: border-box; border: 1px dashed var(--primary); background: color-mix(in srgb, var(--primary) 12%, transparent); }
+.pp-tip {
+  position: absolute;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: max-content;
+  min-width: calc(var(--space-96) * 2);
+  max-width: calc(var(--space-96) * 3);
+  padding: var(--space-8) var(--space-12);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  background: var(--bg-popup);
+  box-shadow: var(--elevation-2);
+  color: var(--text-primary);
+}
+.pp-tip[hidden] { display: none; }
+.pp-tip--pinned { pointer-events: auto; }
+.pp-tip--pinned.is-dragging { box-shadow: var(--elevation-3, var(--elevation-2)); user-select: none; }
+.pp-tip__head { display: flex; align-items: center; gap: var(--space-6); min-height: var(--space-24); }
+.pp-tip--pinned .pp-tip__head { cursor: grab; }
+.pp-tip--pinned.is-dragging .pp-tip__head { cursor: grabbing; }
+.pp-tip__ico { display: inline-flex; color: var(--primary); }
+.pp-tip__ico svg { width: var(--space-16); height: var(--space-16); }
+.pp-tip__name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pp-tip__acts { display: inline-flex; margin-inline-end: calc(var(--space-4) * -1); }
+.pp-tip__cls { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.pp-tip__cl { padding: 0 var(--space-6); border: 0; border-radius: var(--radius-s); background: var(--primary-bg); color: var(--text-primary); font-family: inherit; }
+.pp-tip__cl:is(button) { cursor: pointer; }
+.pp-tip__cl:is(button):hover { background: var(--bg-table-default-hover); }
+.pp-tip__rows { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-4) var(--space-12); align-items: baseline; }
+.pp-tip__row { display: contents; }
+.pp-tip__val { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); overflow-wrap: anywhere; }
+.pp-tip__foot { padding-top: var(--space-4); border-top: 1px solid var(--border-light); }
+
+/* ---------------- Devmode: свойства выбранного элемента (RE0030, dev-pane.js, Э5) ----------------
+   Кто это, box model, блоки CSS с именами токенов, HTML. Цвета зон box model — те же, что у слоя
+   инспектора на странице: margin — предупреждение, border — нейтральный, padding — успех, content — основной. */
+
+.pp-tags { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.pp-tag { padding: 0 var(--space-6); border-radius: var(--radius-s); background: var(--primary-bg); color: var(--text-primary); }
+.pp-tag--state { background: var(--bg-table-default-focus); }
+.pp-links { gap: var(--space-16); }
+.pp-props { display: flex; flex-direction: column; }
+.pp-prop {
+  display: grid;
+  grid-template-columns: calc(var(--space-96) + var(--space-24)) minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-8);
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: var(--space-4) var(--space-8);
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+.pp-prop:hover { background: var(--bg-table-default-hover); }
+.pp-prop:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.pp-prop__k,
+.pp-prop__v { overflow-wrap: anywhere; }
+.pp-prop__v { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-4) var(--space-12); }
+.pp-vp { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-6); }
+.pp-tok { color: var(--primary); }
+.pp-tok--guess { color: var(--text-primary); font-style: italic; }
+.pp-also { flex-basis: 100%; }
+.pp-sw {
+  align-self: center;
+  box-sizing: border-box;
+  width: var(--space-16);
+  height: var(--space-16);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xs);
+  background: var(--pp-sw, transparent);
+}
+.pp-note { margin: 0; }
+.pp-warn { color: var(--warning-dark); }
+.pp-prop--static { cursor: default; }
+.pp-prop--static:hover { background: transparent; }
+.pp-selector { overflow-wrap: anywhere; }
+.pp-codeview { max-height: calc(var(--space-96) * 3); overflow: auto; }
+
+/* Box model: margin — плашки на выносных линиях, border — рамка с радиусами углов, padding — залитый
+   прямоугольник, размер — пунктирная рамка. Цвета те же, что у слоя на странице: margin — warning,
+   padding — info. */
+.pp-bm { display: flex; flex-direction: column; gap: var(--space-4); }
+.pp-bm__fr,
+.pp-bm__b,
+.pp-bm__p {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  justify-items: center;
+}
+.pp-bm__fr { gap: var(--space-2); padding: var(--space-4); }
+.pp-bm__b {
+  grid-area: 2 / 2;
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--space-4);
+  border: 1px solid var(--border-primary);
+  border-radius: min(var(--r-tl, 0px), var(--space-16)) min(var(--r-tr, 0px), var(--space-16)) min(var(--r-br, 0px), var(--space-16)) min(var(--r-bl, 0px), var(--space-16));
+  background: color-mix(in srgb, var(--text-primary) 4%, transparent);
+}
+.pp-bm__p {
+  grid-area: 2 / 2;
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--space-2);
+  border: 1px solid color-mix(in srgb, var(--info) 55%, transparent);
+  background: color-mix(in srgb, var(--info) 18%, transparent);
+}
+.pp-bm__c {
+  grid-area: 2 / 2;
+  box-sizing: border-box;
+  justify-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-8);
+  border: 1px dashed var(--text-secondary);
+  color: var(--text-primary);
+}
+.pp-bm__cap { grid-area: 1 / 2; display: flex; align-items: center; justify-content: space-between; gap: var(--space-12); justify-self: stretch; padding: 0 var(--space-4); color: var(--text-secondary); }
+.pp-bm__cap--p { color: var(--info-dark); }
+
+.pp-bm__n {
+  margin: 0;
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--text-primary);
+  font: var(--type-body-xs);
+  white-space: nowrap;
+}
+.pp-bm__n:is(button) { cursor: pointer; }
+.pp-bm__n:is(button):hover { background: var(--bg-table-default-hover); }
+.pp-bm__n:is(button):focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+.pp-bm__n--bl, .pp-bm__n--pl { grid-area: 2 / 1; }
+.pp-bm__n--br, .pp-bm__n--pr { grid-area: 2 / 3; }
+.pp-bm__n--bb, .pp-bm__n--pb { grid-area: 3 / 2; }
+.pp-bm__r--tl { grid-area: 1 / 1; }
+.pp-bm__r--tr { grid-area: 1 / 3; }
+.pp-bm__r--bl { grid-area: 3 / 1; }
+.pp-bm__r--br { grid-area: 3 / 3; }
+.pp-bm__n--pt { color: var(--info-dark); }
+.pp-bm__n--pl, .pp-bm__n--pr, .pp-bm__n--pb { color: var(--info-dark); }
+
+.pp-bm__m { display: inline-flex; align-items: center; justify-content: center; }
+.pp-bm__m::after { content: ''; background: var(--warning-dark); }
+.pp-bm__m--t { grid-area: 1 / 2; flex-direction: column; }
+.pp-bm__m--b { grid-area: 3 / 2; flex-direction: column-reverse; }
+.pp-bm__m--l { grid-area: 2 / 1; flex-direction: row; }
+.pp-bm__m--r { grid-area: 2 / 3; flex-direction: row-reverse; }
+.pp-bm__m--t::after,
+.pp-bm__m--b::after { width: 1px; height: var(--space-8); }
+.pp-bm__m--l::after,
+.pp-bm__m--r::after { width: var(--space-8); height: 1px; }
+.pp-bm__m .pp-bm__n { background: var(--warning-dark); color: var(--text-on-dark); }
+.pp-bm__m .pp-bm__n:hover { background: var(--warning); }
+
+.pp-bm__s { margin: 0; text-align: center; }
+
+/* ---------------- Devmode: каркас панели (RE0031, dev-pane.js, Э1) ----------------
+   Секции разделены линией, заголовок — переключатель сворачивания; CSS и HTML — блоками кода с подсветкой
+   только токенами: свойство — основной текст, значение — --warning-dark, имя токена — --primary,
+   комментарий — --success-dark курсивом, тег — --primary-dark, атрибут и знаки — вторичный текст. */
+.pp-pane--dev { gap: 0; padding-top: 0; }
+
+.pp-ds { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-12) 0; border-top: 1px solid color-mix(in srgb, var(--text-primary) 28%, transparent); }
+.pp-ds--empty { padding: var(--space-16) 0; }
+.pp-ds__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); min-height: var(--space-24); }
+.pp-ds__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.pp-ds__toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: var(--radius-xs); }
+.pp-ds__chev { display: inline-flex; flex: none; align-items: center; justify-content: center; width: var(--space-16); height: var(--space-16); color: var(--text-secondary); transition: transform .15s ease; }
+.pp-ds__chev i,
+.pp-ds__chev svg { display: block; width: var(--space-16); height: var(--space-16); }
+.pp-ds__toggle[aria-expanded="false"] .pp-ds__chev { transform: rotate(-90deg); }
+.pp-ds__acts { display: inline-flex; align-items: center; gap: var(--space-12); }
+.pp-ds__body { display: flex; flex-direction: column; gap: var(--space-8); }
+
+.pp-did { display: flex; flex-direction: column; gap: var(--space-6); }
+.pp-did__top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-8); }
+.pp-did__name { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.pp-did__name > p { overflow-wrap: anywhere; }
+.pp-dnav { display: inline-flex; align-items: center; gap: var(--space-8); flex: none; }
+.pp-dview { display: inline-flex; align-items: center; gap: var(--space-8); }
+.pp-glyph--s svg { width: var(--space-16); height: var(--space-16); }
+.pp-crumbs { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-6); }
+.pp-crumb--current { color: var(--text-primary); }
+
+.pp-blk { display: flex; flex-direction: column; gap: var(--space-4); }
+.pp-sub { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
+.pp-codebox {
+  margin: 0;
+  padding: var(--space-8) 0;
+  border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+  color: var(--text-primary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.pp-media { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-8); }
+.pp-media__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-8);
+  border: 1px solid transparent;
+  border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.pp-media__card:hover, .pp-media__card:focus-visible { border-color: var(--primary); outline: 0; }
+.pp-media__pic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--space-64);
+  margin-bottom: var(--space-4);
+  overflow: hidden;
+}
+.pp-media__pic [data-icon] { width: var(--space-32); height: var(--space-32); }
+.pp-media__img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.pp-media__name, .pp-media__meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pp-media__dl { position: absolute; top: var(--space-4); right: var(--space-4); display: none; color: var(--primary); }
+.pp-media__dl [data-icon] { width: var(--space-16); height: var(--space-16); }
+.pp-media__card:hover .pp-media__dl, .pp-media__card:focus-visible .pp-media__dl { display: inline-flex; }
+.pp-media__more { margin-top: var(--space-8); }
+.pp-codebox--pre { padding: var(--space-8) var(--space-12); white-space: pre-wrap; overflow-wrap: anywhere; }
+.pp-ln {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: var(--space-2) var(--space-12);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.pp-ln:hover { background: var(--bg-table-default-hover); }
+.pp-ln:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.pp-hl__k { color: var(--text-primary); }
+.pp-hl__v { color: var(--warning-dark); }
+.pp-hl__t { color: var(--primary); }
+.pp-hl__p { color: var(--text-secondary); }
+.pp-hl__c { color: var(--success-dark); font-style: italic; }
+.pp-hl__tag { color: var(--primary-dark); }
+.pp-hl__a { color: var(--text-secondary); }
+
+.pp-colors { display: flex; flex-direction: column; gap: var(--space-8); }
+.pp-color { display: flex; flex-direction: column; gap: var(--space-2); }
+.pp-color__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-8);
+}
+.pp-color__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--space-4) var(--space-8);
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+}
+.pp-color__btn:is(button) { cursor: pointer; }
+.pp-color__btn:is(button):hover { background: var(--bg-table-default-hover); }
+.pp-color__btn:is(button):focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.pp-color__tok { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pp-color__hex { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.pp-sw--round { border-radius: var(--radius-full); }

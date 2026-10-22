@@ -1,0 +1,2321 @@
+#!/usr/bin/env node
+/* ============================================================
+   LAYOUT-CHECK — статическая проверка раскладки экрана приложения (apps/<id>/pages/).
+   Замена скриншотной проверки вёрстки: никакого браузера,
+   никакого рендера, никакого запуска Chrome. Чистый Node.
+
+   Два класса проверок:
+     механика   — блокеры screen-review (Б*): точные, строковые/структурные;
+                   в том числе Б24/Б25 — усечение в таблице без браузера:
+                   помещается ли значение в свою колонку и не шире ли строка
+                   контентной области (уроки Л28–Л30, ~7px/символ body-s).
+     геометрия  — блокеры composition-review (K*): вычисленные
+                   из токенов CSS ДС + эвристика ширины
+                   символа (~8px body-m кириллица, ~7px body-xs).
+
+   Стили экрана — как их применяет браузер (задача 0008): встроенный
+   <style> и локальные файлы, подключённые <link rel="stylesheet"> (CSS
+   тайлов и модалок модульной страницы — widgets/…/<Имя>.css, их подключает
+   ассемблер). Классы из этих файлов для Б4 существуют, колонки сетки полей
+   тайла читаются и из класса в них. Страничное правило З10 смотрит только
+   <style> экрана. Подробно — функция screenStyles.
+
+   ФАКТИЧЕСКИЙ СОСТАВ ПРОВЕРОК ЗДЕСЬ НЕ ПЕРЕЧИСЛЯЕТСЯ — его печатает
+   сам сенсор: `layout-check.mjs --rules`. Ручное перечисление уже
+   разъезжалось с кодом в трёх файлах сразу (урок Л43).
+
+   ОГРАНИЧЕНИЯ (честно, см. process.md §9):
+   - Без рендера не ловятся реальные рендер-баги: сломанная
+     flex-цепочка, фактический overflow. Это компенсируется
+     марковочными правилами (скролл-контейнер обязан
+     flex:1;min-height:0;overflow-y:auto и т.п.) — их проверяет
+     ревьюер по screen-review (К3 и каскад CSS).
+   - Метрики, зависящие от ширины текста (K1, K2.1), — оценки
+     по эвристике; при значении, близком к порогу, вывод
+     «проверить вручную».
+
+   Запуск (из корня репо):
+     node .agents/tools/layout-check.mjs <путь к <Имя>.html> [--width 1920]
+
+   Код выхода: 0 — блокеров нет (замечания допустимы), 1 — есть FAIL.
+   ============================================================ */
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { logRun, codesFrom, failsFrom, isEtalon } from './runlog.mjs';
+import { includersOf, isWidgetFragment } from './fragments.mjs';
+import { need, dsPaths } from './project.mjs';
+import { HOOK_BINDS as HOOK_BIND_ROWS } from './hook-binds.mjs';
+
+/* Корень проекта и каталоги ДС и харнеса — из манифеста project.json
+   (project.mjs; реструктуризация, шаг Ш4), а не «четыре уровня вверх» и не
+   литералом `design-system`. */
+const PRJ = need('layout-check', path.dirname(fileURLToPath(import.meta.url)));
+const ROOT = PRJ.root;
+const DS = PRJ.dsAbs;
+/* Где в ДС токены, стили и рантаймы — у модуля путей ДС (задача RE0002), а
+   не литералами папок: после переезда раскладки литерал молча дал бы пустой
+   набор, и геометрия считалась бы по умолчаниям. */
+const L = (await dsPaths()).layout(DS);
+const isDsScript = (abs) => {
+  if (!abs.startsWith(DS + path.sep)) return false;
+  const k = L.kindOf(path.relative(DS, abs).split(path.sep).join('/'));
+  return !!k && (k.kind === 'script' || k.kind === 'tool');
+};
+
+/* ---------------- токены ДС (источник истины — CSS основ и компонентов ДС) ---------------- */
+
+/* Порог ширины колонки выбора таблицы — min-width .th--select/.tc--select из
+   CSS TableCell (вход правила Б42). Нет правила в CSS — null, Б42 молчит. */
+const SELECT_MIN = (() => {
+  const css = L.cssOf('TableCell');
+  if (css.length !== 1) return null;
+  const m = /\.th--select\s*,\s*\.tc--select\s*\{\s*min-width\s*:\s*(\d+)px/.exec(readFileSync(L.abs(css[0]), 'utf8'));
+  return m ? Number(m[1]) : null;
+})();
+
+/* Геометрия IconButton для Б44: размер в потоке и подложка (::before) по
+   размерам S/M/L — из CSS IconButton. Нет данных — null, Б44 молчит. */
+const IBTN_GEOM = (() => {
+  const css = L.cssOf('IconButton');
+  if (css.length !== 1) return null;
+  const text = readFileSync(L.abs(css[0]), 'utf8');
+  const out = {};
+  for (const s of ['s', 'm', 'l']) {
+    const icon = new RegExp('\\.ibtn--' + s + '\\s*\\{\\s*width\\s*:\\s*(\\d+)px').exec(text);
+    const layer = new RegExp('\\.ibtn--' + s + '::before\\s*\\{\\s*width\\s*:\\s*(\\d+)px').exec(text);
+    if (icon && layer) out[s] = { icon: Number(icon[1]), layer: Number(layer[1]) };
+  }
+  return Object.keys(out).length === 3 ? out : null;
+})();
+
+/* Весь CSS ДС одной строкой — вход Б44 (gap контейнеров компонентов). */
+const DS_CSS_ALL = (() => { try { return L.styles().map((f) => readFileSync(L.abs(f), 'utf8')).join('\n'); } catch (e) { return ''; } })();
+
+/* Длина из CSS: «8px» или «var(--space-8)» (через токены ДС); остальное — 0. */
+function lenPx(v) {
+  const m = /^(\d+(?:\.\d+)?)px$/.exec(v);
+  if (m) return Number(m[1]);
+  const t = /^var\((--[a-z0-9-]+)/.exec(v);
+  if (t) { const r = T.get(t[1]); const n = r && /(\d+(?:\.\d+)?)px/.exec(r); return n ? Number(n[1]) : 0; }
+  return 0;
+}
+
+/* Открывающий тег ближайшего незакрытого предка позиции `at` (обход тегов с
+   конца со стеком закрытий). Пустые элементы не считаются. */
+function parentOpenTag(src, at) {
+  const VOID = /^(?:area|base|br|col|embed|hr|img|input|link|meta|source|track|wbr)$/i;
+  const tags = [...src.slice(0, at).matchAll(/<(\/?)([a-zA-Z][\w-]*)\b[^>]*?(\/?)>/g)];
+  let depth = 0;
+  for (let i = tags.length - 1; i >= 0; i--) {
+    const [whole, close, name, self] = tags[i];
+    if (self || VOID.test(name)) continue;
+    if (close) { depth++; continue; }
+    if (depth === 0) return whole;
+    depth--;
+  }
+  return '';
+}
+
+const TOKEN_FILES = ['Spacing', 'Layout', 'Tile', 'NavPanel'].map((name) => {
+  const css = L.cssOf(name);
+  if (css.length !== 1) throw new Error('layout-check: у ' + name + ' в спеке ДС не один файл стилей (css: ' + (css.join(', ') || '—') + ') — токены сенсора взять неоткуда');
+  return css[0];
+});
+
+function loadTokens() {
+  const raw = {};
+  for (const f of TOKEN_FILES) {
+    const text = readFileSync(L.abs(f), 'utf8');
+    const re = /--([a-z0-9][a-z0-9-]*)\s*:\s*([^;]+);/g;
+    let m;
+    while ((m = re.exec(text))) {
+      const name = m[1];
+      const val = m[2].trim();
+      if (!(name in raw)) raw[name] = val; // первое определение побеждает
+    }
+  }
+  /* имя принимается и с префиксом «--», и без: таблица хранит его без префикса,
+     а вызовы и ссылки var(--…) пишут с ним (до MS0016 поиск с префиксом молча
+     промахивался, и константы сенсора брали запасные значения) */
+  const key = (n) => String(n).replace(/^--/, '');
+  const get = (name) => {
+    let v = raw[key(name)];
+    const seen = new Set();
+    while (v && v.startsWith('var(') && !seen.has(v)) {
+      seen.add(v);
+      const inner = v.match(/^var\((--[a-z0-9-]+)/);
+      if (!inner) break;
+      v = raw[key(inner[1])];
+    }
+    return v;
+  };
+  return { get };
+}
+
+const T = loadTokens();
+const px = (name, fallback) => {
+  const v = T.get(name);
+  const m = v && v.match(/(\d+(?:\.\d+)?)px/);
+  return m ? parseFloat(m[1]) : fallback;
+};
+
+/* геометрические константы (из токенов ДС) */
+const RAIL_W = px('--nav-rail-w', 56);
+const PAD_X = px('--layout-pad-x', 24);         // поля контентной области (space-24)
+const TILE_PAD_X = px('--tile-pad-x', 20);
+const TILE_GAP = px('--tile-gap-col', 16);       // gap сетки и рядов (space-16)
+const ROW_H = 40;                                // метка body-xs (16) + 4 + значение body-m (20)
+const ROW_GAP = 16;
+const CELL_MIN = 240;                            // K5: минимальная ширина ячейки
+const FHD = 1920;                                // K4: от этой ширины малый тайл — приоритет 3 колонки
+const CHAR_W_VALUE = 8;                          // body-m 16px, кириллица (эвристика composition-review)
+const CHAR_W_LABEL = 7;                          // body-xs
+const HEADER_H = 50;                             // шапка тайла (~padding 20/10 + заголовок h5)
+const PAD_BOTTOM = 24;                           // --tile-pad-bottom
+const PAD_TOP = 10;                              // .tile__body padding-top
+
+/* ---------------- helpers ---------------- */
+
+function log(msg) { process.stdout.write(msg + '\n'); }
+function fail(msg) { log('ОШИБКА: ' + msg); process.exit(2); }
+
+const escRx = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+function lineOf(text, index) {
+  return text.slice(0, index).split('\n').length;
+}
+
+/* сбалансированный элемент от индекса '<tag' */
+function sliceTag(html, startIdx, tag) {
+  const re = new RegExp('<' + tag + '(\\s[^>]*)?>|</' + tag + '>', 'g');
+  re.lastIndex = startIdx;
+  let depth = 0, m;
+  while ((m = re.exec(html))) {
+    if (m[0][1] === '/') depth--; else depth++;
+    if (depth === 0) return html.slice(startIdx, re.lastIndex);
+  }
+  return null;
+}
+
+function stripTags(s) {
+  return s.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/* Значение атрибута — литерал, а не половина JS-выражения.
+
+   Сенсор читает разметку ВМЕСТЕ со скриптами: класс и имя иконки, которые
+   рисует рантайм страницы, употреблены по-настоящему. Плата — строки вида
+   `'<i data-icon="' + name + '">'`: регулярка `attr="([^"]+)"` обрывается на
+   первой кавычке и отдаёт кусок выражения. От настоящего значения он
+   синтаксически неотличим, поэтому отсекается весь атрибут, а не токен.
+
+   Цена названа честно: значение, собранное из кусков, сенсор не проверяет
+   вовсе — для этого нужен разбор JS. Общий помощник, а не заплатка по месту:
+   один и тот же дефект вылез сперва у Б4, потом у Б2 (уроки Л70, Л74). */
+function isLiteralAttr(v) {
+  return !/['"+?()]/.test(v);
+}
+
+/* ---------------- стили экрана ---------------- */
+
+/* Стили экрана так, как их применяет браузер (задача 0008): встроенные
+   <style> и локальные файлы, подключённые <link rel="stylesheet">. Модульная
+   страница держит CSS каждого тайла и модалки в его файле
+   (widgets/<группа>/<Имя>/<Имя>.css), ассемблер подключает их в собранную
+   страницу (метка @lc-css). Пока сенсор читал только <style>, на каждой такой
+   странице классы тайлов были для Б4 «выдуманными», а колонки сетки полей не
+   читались — хотя браузер применяет эти файлы наравне со встроенным стилем.
+
+   own — встроенные <style>, как прежний вход styleSrc (из разметки с
+   комментариями, без гашения). linked — файлы из <link rel="stylesheet"> вне
+   HTML-комментариев: href относительный (без схемы, без // и / в начале),
+   файл внутри проекта, не в ДС (её стили подключает загрузчик, поштучный
+   CSS ДС — дефект Б1) и существует. Файл, лежащий рядом, но не
+   подключённый, стилем экрана не считается: его классы браузер не применит. */
+function screenStyles(html, pagePath) {
+  const own = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join('\n');
+  const linked = [];
+  if (pagePath) {
+    const src = html.replace(/<!--[\s\S]*?-->/g, '');
+    const seen = new Set();
+    for (const m of src.matchAll(/<link\b[^>]*>/gi)) {
+      if (!/\brel\s*=\s*["']?stylesheet\b/i.test(m[0])) continue;
+      const href = (m[0].match(/\bhref\s*=\s*["']([^"']+)["']/i) || [])[1];
+      if (!href || /^(?:[a-z][\w+.-]*:|\/)/i.test(href)) continue;
+      const file = path.resolve(path.dirname(pagePath), href.split(/[?#]/)[0]);
+      if (seen.has(file) || !file.startsWith(ROOT + path.sep) || file.startsWith(DS + path.sep) || !existsSync(file)) continue;
+      seen.add(file);
+      linked.push({ href, file, text: readFileSync(file, 'utf8') });
+    }
+  }
+  return { own, linked, all: [own, ...linked.map((l) => l.text)].join('\n') };
+}
+
+/* CSS верхнего уровня: без комментариев и без блоков @media / @container /
+   @supports (и прочих @-правил) — геометрия сенсора считается для широкой
+   раскладки, адаптивные правила её не задают. */
+function topLevelCss(css) {
+  const src = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  let out = '', i = 0;
+  while (i < src.length) {
+    const at = src.indexOf('@', i);
+    if (at < 0) { out += src.slice(i); break; }
+    out += src.slice(i, at);
+    const open = src.indexOf('{', at), semi = src.indexOf(';', at);
+    if (open < 0 || (semi >= 0 && semi < open)) { i = semi < 0 ? src.length : semi + 1; continue; }   // @import …; — без блока
+    let depth = 0, j = open;
+    for (; j < src.length; j++) { if (src[j] === '{') depth++; else if (src[j] === '}' && --depth === 0) break; }
+    i = j + 1;
+  }
+  return out;
+}
+
+/* Колонки сетки полей по классам — из CSS экрана (задача 0008). Правило
+   подходит, если последний составной селектор несёт только классы самой
+   сетки, а классы остальных частей селектора есть у тайла (или у сетки);
+   атрибуты и псевдоклассы не учитываются. Из подходящих правил с
+   `grid-template-columns: repeat(N …)` берётся последнее — каскад при равной
+   специфичности. → (gridClasses[], tileClasses[]) => N | null */
+function gridColsResolver(css) {
+  const rules = [];
+  for (const r of topLevelCss(css).matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const rep = r[2].match(/grid-template-columns\s*:\s*repeat\(\s*(\d+)/);
+    if (rep) rules.push({ selectors: r[1].split(',').map((s) => s.trim()).filter(Boolean), cols: parseInt(rep[1], 10) });
+  }
+  const classesOf = (compound) => [...compound.matchAll(/\.(-?[a-zA-Z_][\w-]*)/g)].map((m) => m[1]);
+  return (gridClasses, tileClasses) => {
+    const own = new Set(gridClasses), around = new Set([...tileClasses, ...gridClasses]);
+    let cols = null;
+    for (const r of rules) {
+      const hit = r.selectors.some((sel) => {
+        const parts = sel.split(/\s*[>+~]\s*|\s+/).filter(Boolean);
+        const last = classesOf(parts.pop() || '');
+        return last.length > 0 && last.every((c) => own.has(c)) && parts.every((p) => classesOf(p).every((c) => around.has(c)));
+      });
+      if (hit) cols = r.cols;
+    }
+    return cols;
+  };
+}
+
+/* ---------------- разбор разметки ---------------- */
+
+/* все тайлы (класс-токен ровно «tile»); opts: inRange, fullText, baseOffset, stackRanges, colsOf */
+function extractTiles(html, opts = {}) {
+  const { inRange, fullText, baseOffset = 0, stackRanges = [], offGridRanges = [], colsOf = null } = opts;
+  const tiles = [];
+  const tagRe = /<([a-z]+)\s[^>]*class="([^"]*)"[^>]*>/g;
+  let m;
+  while ((m = tagRe.exec(html))) {
+    const tokens = m[2].split(/\s+/).filter(Boolean);
+    if (!tokens.includes('tile')) continue; // tile-group/tile-row/tile-stack не тайлы
+    /* Inset (Tile 1.016) — вложенная подложка внутри другой поверхности:
+       в сетку не встаёт, ширину даёт контейнер — не тайл сетки */
+    if (tokens.includes('tile--inset')) continue;
+    const tag = m[1];
+    const el = sliceTag(html, m.index, tag);
+    if (!el) continue;
+    if (inRange && !inRange(m.index)) continue;
+    const absIdx = baseOffset + m.index;
+    const inStack = stackRanges.some((r) => absIdx >= r.idx && absIdx < r.idx + r.html.length);
+    const offGrid = offGridRanges.some((r) => absIdx >= r.idx && absIdx < r.idx + r.html.length);
+    tiles.push(analyzeTile(el, lineOf(fullText || html, absIdx), inStack, offGrid, colsOf));
+  }
+  return tiles;
+}
+
+/* Открывающие теги с их диапазонами — для зон, внутри которых ширина тайла
+   читается не с самого тайла: стопки и внесеточные блоки. */
+function tagRanges(html, re, tag) {
+  const out = [];
+  let m;
+  while ((m = re.exec(html))) {
+    const idx = m.index;
+    const el = sliceTag(html, idx, tag);
+    if (!el) continue;
+    out.push({ html: el, idx, open: m[0] });
+  }
+  return out;
+}
+
+function spanOfClassAttr(openTag) {
+  const cls = (openTag.match(/class="([^"]*)"/) || [])[1] || '';
+  const style = (openTag.match(/style="([^"]*)"/) || [])[1] || '';
+  const sp = style.match(/grid-column\s*:\s*span\s*(\d+)/);
+  if (sp) return parseInt(sp[1], 10);
+  const c = cls.match(/\bcol-(\d+)\b/) || cls.match(/\bcolw-(\d+)\b/);
+  return c ? parseInt(c[1], 10) : null;
+}
+
+/* opts.colsOf — колонки сетки полей из CSS экрана (gridColsResolver), задача 0008 */
+function parseTiles(html, opts = {}) {
+  const { colsOf = null } = opts;
+  /* Стопки считаются ДО рядов: по спеке Tile `.tile-stack` живёт внутри
+     `.tile-row` (колонка тайлов, каждый со своей высотой). Раньше ряды
+     разбирались с пустым stackRanges — тайлы в стопке теряли признак inStack,
+     их span читался с самого тайла (его там нет by design) и ряд давал
+     ложный Б7 «= 0 ≠ 12». */
+  const stackRanges = tagRanges(html, /<div class="tile-stack[^"]*"/g, 'div');
+  /* Внесеточные блоки: ширина задана не колонками, а причиной в data-off-grid
+     (санкционированное исключение из Spacing — «кастомный фиксированный размер
+     … помеченный data-off-grid»). Тайл внутри такого блока колонок не имеет. */
+  const offGridRanges = tagRanges(html, /<div\s[^>]*data-off-grid="[^"]*"[^>]*>/g, 'div');
+
+  const rows = [];
+  const rowRe = /<div class="tile-row[^"]*"/g;
+  let m;
+  while ((m = rowRe.exec(html))) {
+    const idx = m.index;
+    const rowHtml = sliceTag(html, idx, 'div');
+    if (!rowHtml) continue;
+    /* стопки этого ряда — они и есть элементы сетки: их span идёт в сумму Б7 */
+    const stacks = stackRanges
+      .filter((s) => s.idx > idx && s.idx < idx + rowHtml.length)
+      .map((s) => ({ span: spanOfClassAttr(s.open), line: lineOf(html, s.idx) }));
+    rows.push({
+      html: rowHtml, idx, line: lineOf(html, idx), stacks,
+      tiles: extractTiles(rowHtml, { fullText: html, baseOffset: idx, stackRanges, offGridRanges, colsOf }),
+    });
+  }
+  const standalone = extractTiles(html, {
+    inRange: (i) => !rows.some((r) => i >= r.idx && i < r.idx + r.html.length),
+    fullText: html,
+    baseOffset: 0,
+    stackRanges,
+    offGridRanges,
+    colsOf,
+  });
+  return { rows, standalone, stackRanges };
+}
+
+function analyzeTile(el, line, inStack = false, offGrid = false, colsOf = null) {
+  const open = el.match(/^<[a-z]+\s[^>]*class="([^"]*)"/);
+  const cls = open ? open[1] : '';
+  const styleM = el.match(/<[a-z]+\s[^>]*style="([^"]*)"/);
+  const style = styleM ? styleM[1] : '';
+
+  /* ширина: inline grid-column:span N > col-N > colw-N */
+  let span = null;
+  const sp = style.match(/grid-column\s*:\s*span\s*(\d+)/);
+  if (sp) span = parseInt(sp[1], 10);
+  if (span === null) { const c = cls.match(/\bcol-(\d+)\b/); if (c) span = parseInt(c[1], 10); }
+  if (span === null) { const c = cls.match(/\bcolw-(\d+)\b/); if (c) span = parseInt(c[1], 10); }
+
+  const titleM = el.match(/class="tile__title"[^>]*>([^<]*)</);
+  const title = titleM ? titleM[1].trim() : '(без заголовка)';
+
+  /* сетка полей: первая .tile__grid (сбалансированно) */
+  let cols = null;
+  let gridHtml = '';
+  const gRe = /<div class="tile__grid([^"]*)"([^>]*)>/g;
+  const gm = gRe.exec(el);
+  if (gm) {
+    const rep = gm[2].match(/grid-template-columns\s*:\s*repeat\((\d+)/);
+    if (rep) cols = parseInt(rep[1], 10);
+    /* инлайн-стиля нет — колонки из класса сетки в CSS экрана: встроенном
+       <style> или файле тайла (задача 0008) */
+    else if (colsOf) cols = colsOf(['tile__grid', ...gm[1].split(/\s+/).filter(Boolean)], cls.split(/\s+/).filter(Boolean));
+    const g = sliceTag(el, gm.index, 'div');
+    if (g) gridHtml = g;
+  }
+  const body = gridHtml || el;
+
+  /* поля .rof (сбалансированно); ровно токен «rof», не rof__row */
+  const fields = [];
+  const rofRe = /<div class="rof(\s[^"]*)?"[^>]*>/g;
+  let fm;
+  while ((fm = rofRe.exec(body))) {
+    const r = sliceTag(body, fm.index, 'div');
+    if (!r) continue;
+    const fCls = (fm[1] || '').split(/\s+/).filter(Boolean);
+    const full = fCls.includes('tile__grid-full');
+    const clamp = /rof__value--clamp-n/.test(r);
+    const labelM = r.match(/class="ds-label__text"[^>]*>([^<]*)</);
+    const valM = r.match(/<span class="rof__value[^"]*"[^>]*>([\s\S]*?)<\/span>/);
+    const value = valM ? stripTags(valM[1]).trim() : '';
+    fields.push({
+      full, clamp,
+      label: labelM ? labelM[1].trim() : '',
+      value,
+      hasPbar: /\bpbar\b/.test(r),
+      hasChips: /rof__value--chips/.test(r),
+    });
+  }
+
+  /* прямые тяжёлые вставки в сетке (pbar вне .rof) */
+  const directPbars = (body.match(/class="pbar\b/g) || []).length;
+
+  return { el, line, span, title, cols, fields, directPbars, inStack, offGrid };
+}
+
+/* Содержимое строковых литералов внутри <script>, позиция в позицию: код,
+   кавычки и всё за пределами скриптов заменены пробелами, переводы строк
+   сохранены. Длина результата равна длине входа, поэтому `lineOf` по нему
+   даёт настоящие номера строк экрана.
+   Зачем: разметка, собранная JS-склейкой, — предмет тех же правил анатомии,
+   что и статическая (см. `markupInScripts` в checkMechanics). */
+function collectScriptMarkup(src) {
+  const out = new Array(src.length).fill(' ');
+  for (let i = 0; i < src.length; i++) if (src[i] === '\n') out[i] = '\n';
+  for (const m of src.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
+    const body = m[1];
+    const base = m.index + m[0].length - body.length - '</script>'.length;
+    /* Код между литералами заполняется «+», а не пробелом. `isLiteralAttr`
+       уже считает плюс признаком склейки, и атрибут, разорванный выражением
+       (`class="ibtn ibtn--' + sz + ' nav__pin"`), отсеивается ТЕМ ЖЕ
+       контрактом, что у Б2 и Б4, — второго разбора не заводится (Л43).
+       Пробел на этом месте давал ЛОЖНЫЙ Б15: разорванный атрибут выглядел
+       литеральным и терял `ibtn--m` вместе с вырезанным выражением. */
+    for (let k = 0; k < body.length; k++) if (body[k] !== '\n') out[base + k] = '+';
+    let i = 0;
+    while (i < body.length) {
+      const quote = body[i];
+      if (quote !== '"' && quote !== "'" && quote !== '`') { i++; continue; }
+      let j = i + 1;
+      while (j < body.length) {
+        if (body[j] === '\\') { j += 2; continue; }
+        if (body[j] === quote) break;
+        /* незакрытая кавычка до конца строки — это не литерал, а апостроф
+           в комментарии или тексте: дальше не тянем, иначе склеим полфайла */
+        if (quote !== '`' && body[j] === '\n') break;
+        j++;
+      }
+      for (let k = i + 1; k < j && k < body.length; k++) {
+        if (body[k] !== '\n') out[base + k] = body[k];
+      }
+      i = j + 1;
+    }
+  }
+  return out.join('');
+}
+
+/* ---------------- спутник-спека и вид файла ---------------- */
+
+/* Спутник-спека: `<Имя>.screen.md` рядом, а не найдя пару по имени — спека в
+   той же папке, чья YAML-строка `file:` указывает на эту страницу: экран может
+   лежать в своей папке как `index.html`, а спека называться по экрану
+   (`mainPage/index.html` ↔ `mainPage/mainPage.screen.md`). Связь объявлена в
+   самой спеке, гадать по имени незачем. Один поиск на всех потребителей —
+   Б12, Б32 и вид файла (Л43). */
+function specOf(pagePath) {
+  const same = pagePath.replace(/\.html$/i, '.screen.md');
+  if (existsSync(same)) return same;
+  const dir = path.dirname(pagePath);
+  const rel = path.relative(ROOT, pagePath).replace(/\\/g, '/');
+  const owner = readdirSync(dir).filter((n) => n.endsWith('.screen.md')).find((n) => {
+    const m = readFileSync(path.join(dir, n), 'utf8').match(/^file:\s*(.+)$/m);
+    return m && m[1].trim().replace(/\\/g, '/').endsWith(path.basename(pagePath)) && rel.endsWith(m[1].trim().replace(/\\/g, '/'));
+  });
+  return owner ? path.join(dir, owner) : null;
+}
+
+/* Вид файла — строка `kind:` в YAML-шапке спеки (решение владельца 21.09.2026,
+   docs/agent-imp.md, У3б). Сенсор считал экраном приложения любой `.html` в
+   проектах и концептах; лист отчёта — документ, который пользователь получает
+   файлом или видит в превью, — каркаса приложения не имеет и иметь не должен.
+   Отличать фрагмент от экрана сенсор уже умел (fragments.mjs), третьего вида
+   не было — и лист краснел на Б5/Б6 без дефекта.
+   Вид объявляется в спеке, а не списком исключений в сенсоре: список снял бы
+   красноту с одного файла, и следующий документ упёрся бы в то же место.
+     screen   — экран приложения; значение по умолчанию, когда строки нет;
+     document — лист-документ: не применяются проверки, которые предполагают
+                каркас (Б5, К12), Б6 — «ровно один h1» без .phead__title.
+   Остальные правила — те же: подключения, токены, иконки, классы, заглушки,
+   валюта. Неизвестное значение — находка Б12: опечатка в виде иначе молча
+   вернула бы файл в экраны. */
+const KINDS = ['screen', 'document'];
+function kindOf(spec) {
+  if (!spec) return { kind: 'screen', declared: null };
+  const lines = readFileSync(spec, 'utf8').split(/\r?\n/);
+  const end = lines[0] === '---' ? lines.indexOf('---', 1) : -1;
+  const m = end > 0 ? lines.slice(1, end).map((l) => l.match(/^kind:\s*["']?([^"'\s#]+)/)).find(Boolean) : null;
+  return m ? { kind: m[1], declared: m[1] } : { kind: 'screen', declared: null };
+}
+
+/* Стартовая страница, объявленная в спеке: `start_page: true` в YAML-шапке.
+   Структурный признак стартовой (ниже, перед Б5) требует сетку групп .grid12;
+   главная, собранная на своей сетке дашборда (ibp-redesign-v2/HomeBoard:
+   профиль, вкладки, панели), — тоже стартовая, но .grid12 в ней нет.
+   Решение человека 20.10.2026: такую страницу объявляет спека, как и вид
+   файла (`kind:`), а не список исключений в сенсоре. Остальные условия
+   стартовой — без .phead и не больше одной крошки — проверяются как прежде. */
+function startPageDeclared(spec) {
+  if (!spec) return false;
+  const lines = readFileSync(spec, 'utf8').split(/\r?\n/);
+  const end = lines[0] === '---' ? lines.indexOf('---', 1) : -1;
+  return end > 0 && lines.slice(1, end).some((l) => /^start_page:\s*["']?true["']?\s*(#.*)?$/.test(l));
+}
+
+/* ---------------- механика (Б-блокеры) ---------------- */
+
+function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pagePath)) {
+  const res = [];
+  const ok = (cond, label, line) => res.push({ ok: !!cond, label, line, level: cond ? 'ok' : 'fail' });
+  const warn = (label, line) => res.push({ ok: false, label, line, level: 'warn' });
+
+  /* Комментарий — не разметка. Без этого сторож считал живым всё, что просто
+     УПОМЯНУТО в комментарии: `<!-- повесить data-table -->` закрывал Б13, а
+     `<!-- нет сброса body { margin: 0 } -->` закрывал Б22 — ложный PASS на
+     ровном месте. Вскрыто фикстурами (lessons-cli verify), класс Л48:
+     правило верное, вход не отфильтрован.
+     Исключение — `raw`: заглушки (Б9) ищем и в комментариях, «TODO» там
+     означает незаконченный экран ровно так же. */
+  const raw = html;
+  const blank = (m) => m.replace(/[^\n]/g, ' ');   // гасим текст, сохраняя нумерацию строк
+  html = html.replace(/<!--[\s\S]*?-->/g, blank);
+  /* Без комментариев, но СО скриптами: имя иконки в JS-шаблоне — настоящее
+     употребление, его надо валидировать по Icons.md; имя в комментарии —
+     нет. Промежуточный срез нужен именно для этого (Б2). */
+  const noComments = html;
+  /* Собственный <style> экрана — общий вход нескольких правил (З10 и др.).
+     Берётся из `raw`: <style> целиком, без гашения. Объявлен здесь, а не
+     у первого потребителя: правило, которому вход понадобился вторым, иначе
+     заводит свою копию разбора, и копии расходятся (Л43).
+     `screenCss` — все стили экрана, как их применяет браузер: <style> и
+     подключённые файлы тайлов (задача 0008, `screenStyles`). Правило про
+     классы и оформление берёт `screenCss`; правило про страницу целиком
+     (перестроение рядов, З10) — только <style> экрана. */
+  const styleSrc = styles.own;
+  const screenCss = styles.all;
+  /* Содержимое <script> — тоже не разметка. JS-шаблон
+     `'<div class="tbl__row" style="grid-template-columns:' + GRID + '">'`
+     выглядел для сторожа готовой строкой таблицы, а `data-table` в строке
+     кода закрывал Б13 так же, как это делал комментарий. Открывающий тег
+     оставляем: по нему Б1 считает `<script src="…ds.js">`. */
+  html = html.replace(/(<script\b[^>]*>)([\s\S]*?)(<\/script>)/gi, (m, open, inner, close) => open + blank(inner) + close);
+  /* Отдельный вход для правил анатомии и размеров: разметка, собранная
+     JS-склейкой. Гашение выше лишило Б15 половины рабочих экранов —
+     `Portfolio.html` и `mainPage/index.html` строят навигацию в `buildNav()`
+     внутри <script> (40 % и 56 % файла), и мутация `ibtn--m` → `ibtn--s`
+     не поднимала правило вовсе: сторож есть, дефект внесён, сигнала нет
+     (класс Л71 — правило не применяется).
+     Возвращать скрипты в общий `html` НЕЛЬЗЯ: вернутся ровно те ложные
+     срабатывания, ради которых гашение и вводили. Поэтому именованный вход —
+     как `styleSrc` и `noComments` выше; подписывать на него правило поштучно.
+     Граница честная и проверяемая: атрибут-литерал
+     (`class="ibtn ibtn--neutral ibtn--m nav__burger"`) виден, атрибут,
+     склеенный из кусков (`class="tc' + extra + '"`), — нет (Л70). */
+  const markupInScripts = collectScriptMarkup(noComments);
+
+  /* Эталон — шаблон экрана ДС или образец скилла (определение одно, `isEtalon`
+     в runlog.mjs) — не экран проекта: спутника-спеки у него нет по
+     устройству (см. Б12). Вид файла берётся из спеки — у эталона он всегда
+     `screen`. */
+  const etalon = Boolean(pagePath) && isEtalon(pagePath);
+  const spec = pagePath && !etalon ? specOf(pagePath) : null;
+  const { kind, declared: kindDeclared } = kindOf(spec);
+  const isDocument = kind === 'document';
+
+  /* Б1 подключения. Путь к ds.css НЕ фиксирован по числу уровней: экраны
+     приложений лежат на одной глубине (`apps/<id>/pages/` →
+     `../../../design-system/ds.css`, с 22.09.2026), а корневой хаб `index.html`
+     — нет (`design-system/ds.css`); до 22.09.2026 глубина была разной и у
+     экранов (`Concepts/<Имя>/`, `Projects/post/<экран>/`).
+     Раньше здесь была зашита строка `../../../ds.css` — путь структуры до
+     переезда ДС в `DS-IBP/` (01.09.2026; с 21.09.2026 каталог — `design-system/`), из-за чего Б1 падал на ЛЮБОМ экране
+     репозитория, включая заведомо правильные из тогдашней песочницы. */
+  /* С Ш8 (22.09.2026) экран проекта с загрузчиком (`boot` манифеста)
+     подключает ДС двумя тегами загрузчика, а ds.css и ds.js пишет загрузчик
+     сам. Прежняя форма — прямые теги — осталась у эталонов (шаблон ДС
+     ссылается на ДС от собственного места) и у проекта без загрузчика. */
+  const bootForm = Boolean(PRJ.boot) && !etalon;
+  if (bootForm) {
+    const tagCount = (file) => (html.match(new RegExp('<script[^>]*\\bsrc="[^"]*\\b' + escRx(path.basename(file)) + '"', 'g')) || []).length;
+    const heads = tagCount(PRJ.boot.head), bodies = tagCount(PRJ.boot.body);
+    ok(heads === 1, `Б1 ровно один тег загрузчика ${path.basename(PRJ.boot.head)} (${heads})`);
+    ok(bodies === 1, `Б1 ровно один тег загрузчика ${path.basename(PRJ.boot.body)} (${bodies})`);
+    const headAt = html.indexOf(path.basename(PRJ.boot.head)), headEnd = html.search(/<\/head>/i);
+    ok(heads !== 1 || headEnd < 0 || headAt < headEnd, `Б1 ${path.basename(PRJ.boot.head)} — в <head>: он пишет ds.css до собственного <style> экрана`);
+  } else {
+    const dsCssLinks = (html.match(/href="[^"]*\bds\.css"/g) || []);
+    ok(dsCssLinks.length === 1,
+      `Б1 ровно один ds.css (${dsCssLinks.length})`);
+    const dsJsTags = (html.match(/src="(?:[^"]*\/)?ds\.js"/g) || []).length;
+    ok(dsJsTags === 1, `Б1 ровно один ds.js (${dsJsTags})`);
+  }
+  /* Поштучные файлы ДС: ссылка разрешается от папки экрана, а вид файла
+     называет модуль путей ДС — не префикс папки в строке (RE0002: после
+     переезда раскладки литерал папки стилей молча перестал бы что-либо ловить). */
+  const dsKindsOf = (attr) => (pagePath ? [...html.matchAll(new RegExp('\\b' + attr + '="([^"#?]+)', 'g'))] : [])
+    .map((m) => {
+      const abs = path.resolve(path.dirname(pagePath), m[1]);
+      return abs.startsWith(DS + path.sep) ? L.kindOf(path.relative(DS, abs).split(path.sep).join('/')) : null;
+    }).filter(Boolean);
+  ok(!dsKindsOf('href').some((k) => k.kind === 'style'), 'Б1 нет поштучных CSS ДС (только ds.css)');
+  ok(!dsKindsOf('src').some((k) => k.kind === 'script' && k.role !== 'entry'), 'Б1 нет поштучных рантаймов ДС (только ds.js)');
+
+  /* Б34 — путь до ДС записан ровно в одном месте (решение владельца Р5).
+     В экране проекта с загрузчиком нет литерала каталога ДС (адрес — строка
+     DS_PATH в `apps/ds-config.js`, `project.json → designSystem.from`) ни в разметке, ни в стилях, ни в скриптах: корень рантайма,
+     фавикон, ds.css и ds.js ставит загрузчик, дополнительные скрипты ДС —
+     атрибут `data-ds` его тега, фон стартовой страницы —
+     `var(--boot-bg-illustration, none)`. Комментарии не в счёт: подсказка
+     «контекст для правки — <ДС>/…/Kanban.md» ничего не подключает. Литерал в коде
+     значит, что следующий переезд ДС снова потребует правки экранов. */
+  if (bootForm) {
+    const code = noComments.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '));
+    const lit = new RegExp('(^|[^\\w-])' + escRx(PRJ.ds) + '/', 'g');
+    const lines = [...code.matchAll(lit)].map((m) => lineOf(code, m.index + m[1].length));
+    ok(lines.length === 0, lines.length
+      ? `Б34 литерал пути до ДС «${PRJ.ds}/» на строках ${[...new Set(lines)].join(', ')}: ДС подключает загрузчик (${PRJ.boot.head}), путь до неё живёт только в ${PRJ.dsFrom || 'project.json'}`
+      : `Б34 литерала пути до ДС нет — ДС подключает загрузчик`);
+  }
+
+  /* Б2 иконки */
+  ok(!/<svg[\s>]/.test(html), 'Б2 нет инлайн-<svg>');
+  /* Значения атрибутов берутся из разметки СО скриптами — имя иконки в
+     JS-шаблоне употреблено по-настоящему. Но атрибут, собранный склейкой
+     (`data-icon="' + name + '"`), регулярка обрывает на первой кавычке и
+     выдаёт кусок выражения за имя. Отсеивается весь такой атрибут: половина
+     JS-выражения не является значением (тот же приём, что у Б4). */
+  const used = [...noComments.matchAll(/data-icon="([^"]+)"/g)].map((m) => m[1]).filter(isLiteralAttr);
+  const unknown = [...new Set(used.filter((n) => !icons.has(n)))];
+  ok(unknown.length === 0,
+    unknown.length ? `Б2 неизвестные иконки: ${unknown.join(', ')}` : `Б2 иконки из списка Icons.md (${used.length} шт.)`);
+
+  /* Б3 цвета */
+  const hexes = [...html.matchAll(/#[0-9a-fA-F]{3,8}\b/g)].map((m) => lineOf(html, m.index));
+  ok(hexes.length === 0, hexes.length ? `Б3 #hex на строках: ${[...new Set(hexes)].join(', ')}` : 'Б3 нет #hex — цвета токенами');
+  const rgbs = [...html.matchAll(/rgba?\(/g)].map((m) => lineOf(html, m.index));
+  ok(rgbs.length === 0, rgbs.length ? `Б3 rgb() на строках: ${[...new Set(rgbs)].join(', ')}` : 'Б3 нет rgb()');
+
+  /* Стартовая страница (Layout): .grid12 без шапки phead, крошка — не больше
+     одной текущей. Крошек может не быть вовсе: решение человека 15.10.2026
+     (new-dashboard-mvp) — на стартовой странице путь один, зона крошек не нужна. */
+  const crumbItems = [...html.matchAll(/class="(?:[^"]*\s)?crumbs__item(?:\s[^"]*)?"/g)].map((m) => m[0]);
+  const isStartPage = crumbItems.length <= 1
+    && (crumbItems.length === 0 || /\bcrumbs__item--current\b/.test(crumbItems[0]))
+    && (/class="(?:[^"]*\s)?grid12(?=[\s"])/.test(html) || startPageDeclared(spec)) && !/\bphead\b/.test(html);
+
+  /* Б5 каркас. Документу (`kind: document`) каркас приложения не положен —
+     пропуск печатается строкой, молчаливого пропуска нет (process.md §9). */
+  if (isDocument) {
+    ok(true, `Б5 ПРОПУЩЕН: вид document (${path.basename(spec)}) — лист-документ без каркаса приложения по устройству`);
+  } else {
+    for (const [cls, label] of [['nav-layout', '.nav-layout'], ['class="nav ', '.nav'], ['class="screen', '.screen'], ['class="crumbs', '.crumbs'], ['screen__content', 'main.screen__content']]) {
+      if (cls === 'class="crumbs' && isStartPage && !html.includes(cls)) {
+        ok(true, 'Б5 каркас: .crumbs нет — стартовая страница без крошек (решение человека 15.10.2026)');
+        continue;
+      }
+      ok(html.includes(cls), `Б5 каркас: ${label}`);
+    }
+  }
+
+  /* Б31 — анатомия NavPanel: узлы, которые CSS ПРЯЧЕТ, а не отменяет.
+     `.nav--rail .nav__pin{display:none}` и `.nav--rail .nav__logout{display:none}`
+     (nav-panel.css:72-73, :287) — это скрытие в одном режиме, а не отсутствие:
+     панель переключается в drawer/fixed тем же DOM, и недостающий узел там уже
+     не появится. Эталон каркаса и оба экрана в `Projects/test/post` ушли в
+     работу без `.nav__pin`: F5 линтера этот контракт знает, но его корень —
+     `design-system/`, до экранов приложений и до эталонов скиллов он не достаёт.
+     Строка пользователя — ссылка на личный кабинет (NavPanel.md:125), не <div>:
+     иначе футер панели недостижим с клавиатуры. */
+  const navSources = [html, markupInScripts];
+  if (navSources.some((s) => s.includes('class="nav '))) {
+    const hasPin = navSources.some((s) => /nav__pin/.test(s));
+    ok(hasPin, hasPin
+      ? 'Б31 анатомия NavPanel: .nav__pin на месте'
+      : 'Б31 анатомия NavPanel: нет .nav__pin — в rail его прячет CSS, но в drawer/fixed взяться ему неоткуда');
+    const badUser = [];
+    for (const src of navSources) {
+      for (const m of src.matchAll(/<([a-zA-Z]+)[^>]*class="([^"]*)"/g)) {
+        if (!isLiteralAttr(m[2])) continue;   // склейка — см. Б15 выше
+        if (!m[2].split(/\s+/).includes('nav__user')) continue;
+        if (m[1].toLowerCase() !== 'a') badUser.push(`<${m[1]}> (строка ${lineOf(src, m.index)})`);
+      }
+    }
+    if (badUser.length) {
+      ok(false, `Б31 .nav__user — ссылка на личный кабинет (<a href>), а не ${[...new Set(badUser)].join(', ')}`);
+    }
+  }
+
+  /* Б33 — интерактивные Entity подряд без контейнера `.entity-list`.
+     `.entity--interactive` выносит подложку hover наружу: `padding: 8px 10px`
+     компенсирован `margin: -8px -10px` (entity.css). Соседние строки в своём
+     контейнере с зазором меньше 16px накрывают друг друга подложкой; штатный
+     зазор даёт только `.entity-list` (Entity 1.008). Поймано пользователем на
+     хабе проектов 15.09.2026: строки стояли через 4px.
+     Геометрию зазора статика не измерит, поэтому правило структурное: строк
+     несколько — контейнер обязан быть. «Несколько» — две и больше в разметке
+     или хотя бы одна в JS-шаблоне: шаблон строки рендерится циклом. Одиночная
+     статическая строка (карточка объекта) правилу не подпадает. Классы берутся
+     и из разметки, и из литералов скриптов (вход `markupInScripts`, как у Б31). */
+  const classTokens = (src) => [...src.matchAll(/class="([^"]*)"/g)].flatMap((m) => m[1].split(/[\s+]+/));
+  const interStatic = classTokens(html).filter((c) => c === 'entity--interactive').length;
+  const interScript = classTokens(markupInScripts).filter((c) => c === 'entity--interactive').length;
+  if (interStatic >= 2 || interScript >= 1) {
+    const hasEntityList = [html, markupInScripts].some((s) => classTokens(s).includes('entity-list'));
+    ok(hasEntityList, hasEntityList
+      ? 'Б33 интерактивные Entity собраны в .entity-list'
+      : `Б33 интерактивных Entity в разметке ${interStatic}, в JS-шаблонах ${interScript}, а .entity-list нет — подложка hover выносится на 8px (отрицательный margin компонента) и накроет соседнюю строку`);
+  }
+
+  /* Б6 заголовок.
+     Исключение — стартовая страница: по Layout.md её контентная область — один
+     блок, сетка групп .grid12, без PageHeader (решение владельца 13.09.2026;
+     формулировка Layout.md «заголовок — PageHeader, первый блок» противоречила
+     разделу о стартовой). Признак структурный, а не по тексту: в крошках не
+     больше одного пункта (если он есть — текущий; крошек может и не быть —
+     решение человека 15.10.2026), в разметке есть .grid12 и нет .phead.
+     Больше одного h1 не разрешено и стартовой.
+     Документ (`kind: document`): шапки страницы PageHeader у него нет, как нет
+     и каркаса, — остаётся «ровно один h1», заголовок листа. */
+  const h1s = [...html.matchAll(/<h1\b/g)].length;
+  /* isStartPage посчитан выше, перед Б5: стартовая страница опознаётся по
+     .grid12 (или `start_page: true` в спеке — 20.10.2026) без .phead и не
+     больше одной крошки; крошек может не быть вовсе. */
+  if (isDocument) ok(h1s === 1, `Б6 документ: ровно один h1 (${h1s})`);
+  else if (isStartPage) ok(h1s <= 1, `Б6 стартовая страница: не больше одного h1 (${h1s})`);
+  else ok(h1s === 1 && /phead__title/.test(html), `Б6 ровно один h1 в .phead__title (${h1s})`);
+
+  /* Б14 свои классы ширины */
+  const classes = [...html.matchAll(/class="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)).filter(Boolean);
+  const customW = [...new Set(classes.filter((c) =>
+    (/-(half|full|col\d+)$/.test(c) || /-(half|full|col\d+)-/.test(c))
+    && !/^col-\d+$/.test(c) && !/^colw-\d+$/.test(c)
+    && !/^tile__grid-full$/.test(c) && !/__/.test(c)
+  ))];
+  ok(customW.length === 0, customW.length ? `Б14 свои классы ширины: ${customW.join(', ')}` : 'Б14 ширина тайлов — span/col-*');
+
+  /* Б16 зазоры рядов руками */
+  const rowStyle = [...html.matchAll(/<div class="tile-row[^"]*"[^>]*style="([^"]*)"/g)].map((m) => lineOf(html, m.index));
+  ok(rowStyle.length === 0, rowStyle.length ? `Б16 margin/gap на .tile-row (строки ${rowStyle.join(', ')})` : 'Б16 зазоры рядов держит .tile-group');
+  const rowCss = [...html.matchAll(/\.tile-row\s*\{[^}]*\b(margin|gap)\b[^}]*\}/g)].map((m) => lineOf(html, m.index));
+  ok(rowCss.length === 0, rowCss.length ? `Б16 свой CSS зазора .tile-row (строки ${rowCss.join(', ')})` : 'Б16 нет своего CSS зазора .tile-row');
+
+  /* Б9 заглушки */
+  const ph = [...raw.matchAll(/Lorem|TODO|XXX|здесь будет|заглушк/ig)].map((m) => lineOf(raw, m.index));
+  ok(ph.length === 0, ph.length ? `Б9 заглушки на строках: ${[...new Set(ph)].join(', ')}` : 'Б9 контент отрисован, заглушек нет');
+
+  /* Б13 хуки рантаймов */
+  /* Таблицы проверяются ПОЭЛЕМЕНТНО, а не по наличию хука где-нибудь на
+     странице. Общая проверка «есть .tbl и есть data-table» пропускала экран
+     с несколькими таблицами, из которых захукана одна: остальные оставались
+     мёртвыми, а сторож рапортовал «компонент + хук ✓». Вскрыто фикстурой
+     Б13 после того, как в эталон добавили корректную таблицу.
+     Корень таблицы — ЧЛЕН списка классов `tbl`, а не подстрока с `\b`: `\b`
+     считает границей дефис, и собственная сетка экрана `ei-tbl-row` читалась как
+     ещё одна таблица без хука (урок Л233, RE0022 О9). */
+  const tableRoots = [...html.matchAll(/<div[^>]*class="(?:[^"]*\s)?tbl(?:\s[^"]*)?"[^>]*>/g)];
+  const unhooked = tableRoots.filter((m) => !/data-table/.test(m[0])).map((m) => lineOf(html, m.index));
+  if (tableRoots.length) {
+    ok(unhooked.length === 0, unhooked.length
+      ? `Б13 таблица без хука data-table на строках: ${unhooked.join(', ')} (${unhooked.length} из ${tableRoots.length}) — сортировка, выбор строк и тянущиеся колонки не заработают`
+      : `Б13 class="tbl": компонент + хук ✓ (таблиц ${tableRoots.length})`);
+  }
+
+  const hookPairs = [
+    ['modal-scrim', 'data-modal'],
+    // class="tabs: НО НЕ .tabs--vert — вертикальные табы-ЯКОРИ (TableFilter .tfm__nav)
+    // переключают не вьюхи, а прокрутку к секции (aria-current scroll-spy), по спеке
+    // Tab они НЕ role="tablist" и data-tabs им НЕ нужен (урок Л39).
+    ['role="tablist"', 'data-tabs'],
+    ['segctrl', 'data-segctrl'],
+    ['riskmetric', 'data-riskmetric'],
+    ['tile--accordion', 'tile__toggle'],
+  ];
+  const anchorTabs = /class="tabs[^"]*--vert/.test(html);
+  const horizTabs = /class="tabs[^"]*--horiz/.test(html) || html.includes('class="tabs"');
+  const dataTabsPresent = html.includes('data-tabs');
+  for (const [comp, hook] of hookPairs) {
+    const hasComp = comp === 'role="tablist"' ? html.includes(comp) : (comp === 'class="tabs' ? (horizTabs && !anchorTabs) : html.includes(comp));
+    const hasHook = html.includes(hook);
+    if (comp === 'class="tabs' && anchorTabs && !horizTabs) { ok(true, 'Б13 якорные табы (tabs--vert): data-tabs не нужен ✓'); continue; }
+    if (hasComp && !hasHook) ok(false, `Б13 ${comp} есть, хука ${hook} нет`);
+    else if (!hasComp && hasHook) ok(false, `Б13 хук ${hook} есть, компонента нет (мёртвый) — проверить`);
+    else ok(true, `Б13 ${comp || hook}: ${hasComp ? 'компонент + хук ✓' : 'нет'}`);
+  }
+
+  /* Б10 подозрительные фиксированные ширины (>=100px), без max-/min- и без @media/@container */
+  const widthHits = [...html.matchAll(/(?<![\w-])width\s*:\s*(\d{3,})px/g)].filter((m) => {
+    const l = html.slice(0, m.index).split('\n').pop();
+    return !/@(container|media)/.test(l);
+  });
+  const widthLines = widthHits.map((m) => lineOf(html, m.index));
+  if (widthLines.length) warn(`Б10 фиксированные width >=100px на строках: ${[...new Set(widthLines)].join(', ')} (проверить: не блоки сетки)`);
+
+  /* Б17 pbar--floating */
+  const floats = [...html.matchAll(/pbar--floating/g)].map((m) => lineOf(html, m.index));
+  if (floats.length && !/вероятност|скор|probab/i.test(html)) {
+    warn(`Б17 pbar--floating на строках ${floats.join(', ')} — контекст не похож на «вероятность/скор» (проверить)`);
+  }
+
+  /* Б21 селекторы «тег+класс компонента» в <style> перебивают состояния
+     (урок Л23: button.<класс>{background:none} побеждает .класс--selected) */
+  const styleText = (html.match(/<style[\s>][\s\S]*?<\/style>/g) || []).join('\n');
+  const tagClsSel = [...styleText.matchAll(/(?:^|\n)\s*(?:button|a|input)\.[a-z0-9_-]+\s*\{/g)]
+    .map((m) => m[0].replace(/\s*\{\s*$/, '').trim());
+  ok(tagClsSel.length === 0,
+    tagClsSel.length ? `Б21 селекторы тег+класс компонента в <style>: ${[...new Set(tagClsSel)].join(', ')} (перебивают состояния — ${PRJ.ds}/AGENTS.md §4)` : 'Б21 нет button./a./input. селекторов в <style> (состояния не перебиты)');
+
+  /* Б22 сброс body margin (урок Л26: без него UA-дефолт 8px → рамка по периметру
+     и горизонтальный скролл; экран обязан собираться из шаблона с body-reset) */
+  const bodyReset = /body\s*\{[^}]*margin\s*:\s*0/.test(html);
+  ok(bodyReset, bodyReset ? 'Б22 body { margin: 0 } сброшен' : 'Б22 нет сброса body { margin: 0 } (UA-дефолт 8px → рамка и скролл)');
+
+  /* Б23 классы документационного слоя на экране мертвы (урок Л27: их даёт
+     только ds-docs.css, а экран подключает ds.css). Проверка по точным
+     токенам класса, чтобы не цеплять tc--numbers и т.п. */
+  /* 'note' убран 06.10.2026: с Note 1.000 это атом ДС (.note в ds.css) */
+  const docTokens = ['desc', 'tight', 'panel', 'masthead', 'lead', 'eyebrow', 'claim', 'bullets', 'rules', 'guide', 'subhead'];
+  const usedDoc = [];
+  for (const m of html.matchAll(/class="([^"]+)"/g)) {
+    for (const tok of m[1].split(/\s+/)) {
+      if (docTokens.includes(tok) && !usedDoc.includes(tok)) usedDoc.push(tok);
+    }
+  }
+  ok(usedDoc.length === 0,
+    usedDoc.length ? `Б23 док-классы на экране (нет в ds.css): ${usedDoc.join(', ')}` : 'Б23 нет классов документационного слоя');
+
+  /* Б24/Б25 — усечение в таблице, проверяемое БЕЗ браузера.
+
+     Почему статикой: рендер в контуре компании недоступен (process.md §9), а
+     класс дефектов дорогой — 04.09.2026 усечение в таблицах ломалось тремя
+     разными способами, и все три выглядели как правильная разметка
+     (уроки Л28–Л30). Меряем не «стоит ли класс», а помещается ли текст.
+
+     Эвристика та же, что у K1/K2.1: ~7px на символ для body-s (шрифт ячейки
+     .tc — --type-body-s 14/16). Запас 15% — при значении около порога
+     выводим замечание, а не блокер (правило §9 «близко к порогу — проверить
+     вручную»).
+
+     Что НЕ ловится статикой и закрыто линтером ds-lint по CSS: обёртка
+     рантайма, отключающая усечение (B9, урок Л28), и компонент с усекаемой
+     подписью, который не умеет сжиматься (B8, урок Л29).
+
+     Числовая ячейка `.tc--numbers` (без `.tc--wrap`) усекается САМА — с
+     TableCell 2.023 (25.09.2026) ДС держит сумму в одну строку с многоточием
+     и тултипом, класс на подписи ей не нужен. Сенсор этого не знал и назвал
+     бы такую ячейку «вылезающей»: правило ДС поменялось, а копия его знания
+     здесь — нет (урок Л154). Узкая колонка сумм
+     по-прежнему даёт замечание «теряют больше трети». */
+  const CHAR_W_CELL = 7;                   // body-s 14px, кириллица
+  const CELL_PAD = 32;                     // .tc padding 16 + 16
+  const TRUNC_HARD = 1.5;                  // усечено больше трети — колонка систематически узка
+
+  const bleed = [];
+  const tight = new Map();                 // колонка → сколько значений усекается жёстко
+  let rowsChecked = 0;
+
+  for (const row of html.matchAll(/<div class="tbl__row[^"]*"[^>]*style="[^"]*grid-template-columns:([^;"]+)[^>]*>([\s\S]*?)(?=<div class="tbl__row|<\/div>\s*<\/div>)/g)) {
+    const tracks = row[1].trim().split(/\s+(?![^(]*\))/);
+    const cells = [...row[2].matchAll(/<div class="(tc[^"]*)"[^>]*>([\s\S]*?)<\/div>/g)];
+    if (!cells.length) continue;
+    rowsChecked++;
+    const rowLine = lineOf(html, row.index);
+
+    cells.forEach((cell, i) => {
+      const track = tracks[i];
+      if (!track || !/^\d+(\.\d+)?px$/.test(track)) return;   // fr/minmax/auto — ширина неизвестна
+      const cls = cell[1];
+      if (/tc--wrap/.test(cls)) return;                        // перенос разрешён явно — растёт по высоте
+      const inner = cell[2];
+      const textEl = inner.match(/<span class="(tc__text[^"]*)"[^>]*>([^<]*)</);
+      if (!textEl) return;
+      const value = textEl[2].trim();
+      if (!value || value === '—') return;
+      const avail = parseFloat(track) - CELL_PAD;
+      const est = value.length * CHAR_W_CELL;
+      if (est <= avail) return;
+      // числовая ячейка без .tc--wrap усекается ДС сама (TableCell 2.023), см. шапку правила
+      const truncates = /tc__text--truncate/.test(textEl[1]) || /(^|\s)tc--numbers(\s|$)/.test(cls);
+      const item = `строка ${rowLine}, колонка ${i + 1} (${track}): «${value.slice(0, 28)}» ~${est}px / ${Math.round(avail)}px`;
+      if (!truncates) bleed.push(item);
+      else if (est > avail * TRUNC_HARD) {
+        const key = `колонка ${i + 1} (${track})`;
+        tight.set(key, (tight.get(key) || 0) + 1);
+      }
+    });
+  }
+
+  if (rowsChecked) {
+    ok(bleed.length === 0, bleed.length
+      ? `Б24 значение шире своей колонки и без .tc__text--truncate — текст выйдет за ячейку, а непрозрачный фон соседней обрежет его без многоточия: ${bleed.slice(0, 3).join(' · ')}`
+      : `Б24 значения помещаются в колонки или усечены (${rowsChecked} строк)`);
+    for (const [col, n] of tight) {
+      warn(`Б24 ${col}: ${n} из ${rowsChecked} значений теряют больше трети текста — колонка систематически узка; расширить или подтвердить, что смысл читается по началу строки и тултипа достаточно`);
+    }
+  }
+
+  /* Б25 — строка шире контентной области, а таблица не прокручивается:
+     хвост колонок физически недостижим (статический аналог урока Л30). */
+  for (const row of html.matchAll(/<div class="tbl__row[^"]*"[^>]*style="[^"]*grid-template-columns:([^;"]+)/g)) {
+    const tracks = row[1].trim().split(/\s+(?![^(]*\))/);
+    if (!tracks.every((t) => /^\d+(\.\d+)?px$/.test(t))) continue;   // есть fr/minmax — строка тянется
+    const sum = tracks.reduce((a, t) => a + parseFloat(t), 0);
+    const scrollable = /class="(?:[^"]*\s)?tbl--scroll(?=[\s"])/.test(html) || /class="(?:[^"]*\s)?dtable__body(?=[\s"])/.test(html);
+    if (sum > 1816 && !scrollable) {
+      ok(false, `Б25 строка ${lineOf(html, row.index)}: сумма колонок ${Math.round(sum)}px шире контентной области, а горизонтального скролла нет (.tbl--scroll / .dtable__body) — хвост колонок недостижим`);
+    }
+    break;   // достаточно одной строки: треки у всех одинаковые (Б8)
+  }
+
+  /* Б26 валюта — только 3-буквенным кодом ISO 4217 (редполитика, Redpolicy
+     04.09.2026): символы ₽/$/€/¥ и «руб.» на экране запрещены. */
+  const curHits = [...html.matchAll(/[₽$€¥]|руб\./g)].map((m) => lineOf(html, m.index));
+  ok(curHits.length === 0,
+    curHits.length ? `Б26 валюта символом/«руб.» на строках: ${[...new Set(curHits)].join(', ')} (только код ISO 4217 — RUB/USD/EUR/JPY)` : 'Б26 валюта — кодами ISO 4217 (символов и «руб.» нет)');
+
+  /* Б8 — сетка строки совпадает с сеткой шапки, по краям разделители.
+     Строка с другим числом треков сдвигает все данные на колонку: значение
+     уезжает в 8px-желоб, заголовки перестают соответствовать столбцам
+     (урок Л22 — «бардак в таблицах» на JS-рендере). Считаем только строки,
+     объявившие треки: остальные наследуют сетку от контейнера. */
+  const gridRows = [...html.matchAll(/<div class="(tbl__row[^"]*)"[^>]*style="[^"]*grid-template-columns:([^;"]+)/g)]
+    .map((m) => ({ cls: m[1], tracks: m[2].trim().split(/\s+(?![^(]*\))/), line: lineOf(html, m.index), at: m.index }));
+  /* шапка у каждой таблицы своя (`.tbl`): на странице бывает несколько таблиц с разной
+     сеткой (реестр с колонкой действий и без) — строка сверяется с шапкой СВОЕЙ таблицы */
+  const tblStarts = [...html.matchAll(/<div class="tbl[ "]/g)].map((m) => m.index);
+  const tblOf = (at) => tblStarts.filter((i) => i < at).length;
+  const tblGroups = new Map();
+  for (const r of gridRows) { const k = tblOf(r.at); (tblGroups.get(k) || tblGroups.set(k, []).get(k)).push(r); }
+  if (gridRows.length > 1) {
+    const offAll = [];
+    let headTracks = 0;
+    for (const rows of tblGroups.values()) {
+      const head = rows.find((r) => /--head/.test(r.cls)) || rows[0];
+      headTracks = headTracks || head.tracks.length;
+      offAll.push(...rows.filter((r) => r.tracks.length !== head.tracks.length).map((r) => ({ ...r, head: head.tracks.length })));
+    }
+    ok(offAll.length === 0, offAll.length
+      ? `Б8 число колонок расходится с шапкой на строках: ${offAll.map((r) => `${r.line}→${r.tracks.length} (шапка ${r.head})`).join(', ')} — данные сдвинутся на колонку`
+      : `Б8 сетка строк совпадает с шапкой (${headTracks} треков, строк ${gridRows.length}, таблиц ${tblGroups.size})`);
+  }
+  /* Строка берётся ПАРНЫМ разбором (`tagRange`), а не лоокэхедом до
+     `</div></div>`. Канонический вид колонки действий из чит-шита —
+     `<div class="tc"><div class="tc__hidden">…</div></div>`, и лоокэхед
+     обрывал захват строки внутри неё: хвостовой `.tc--separator` в строку не
+     попадал, последней ячейкой оказывался сам `.tc__hidden`, и Б8 давал
+     ЛОЖНЫЙ FAIL на любом реестре с кнопками в строке. Найдено репетицией
+     14.09.2026; эталон корпуса этого входа не нёс, поэтому шум не всплывал.
+     Ячейка — только элемент-ячейка (`tc`, `th` с модификатором или без), но не
+     BEM-элемент `tc__*`: отсюда запрет `_` сразу после. */
+  const sepRows = [...html.matchAll(/<div class="tbl__row[^"]*"[^>]*>/g)];
+  const noSep = sepRows.filter((m) => {
+    const cells = [...tagRange(html, m.index, 'div').inner.matchAll(/<div class="(t[hc](?!_)[^"]*)"/g)].map((c) => c[1]);
+    return cells.length > 2 && !(/--separator/.test(cells[0]) && /--separator/.test(cells[cells.length - 1]));
+  }).map((m) => lineOf(html, m.index));
+  if (sepRows.length) {
+    ok(noSep.length === 0, noSep.length
+      ? `Б8 нет краевых ячеек-разделителей на строках: ${[...new Set(noSep)].slice(0, 5).join(', ')} (строка обязана начинаться и кончаться .tc--separator / .th--separator)`
+      : `Б8 краевые разделители на месте (${sepRows.length} строк)`);
+  }
+
+  /* Б30 — липкую шапку держит sticky на СТРОКЕ (.dtable__body .tbl >
+     .tbl__row--head), а не на ячейке .th: у ячейки блок-контейнер смещения —
+     сама строка, по вертикали двигаться некуда, и шапка уезжает при прокрутке
+     тела. По горизонтали то же правило работает, поэтому на закреплении
+     колонок дефект не виден (урок Л46, Table 1.013). */
+  if (/dtable__body/.test(html)) {
+    const hasHeadRow = /tbl__row[^"]*--head/.test(html);
+    ok(hasHeadRow, hasHeadRow
+      ? 'Б30 строка шапки несёт .tbl__row--head — липкая шапка работает по вертикали'
+      : 'Б30 в .dtable__body нет строки с классом .tbl__row--head — sticky повиснет на ячейке и шапка уедет при прокрутке тела');
+  }
+
+  /* З3 — у кнопки-иконки нет видимого текста, поэтому имя ей даёт только
+     aria-label; без него скринридер читает пустую кнопку. */
+  const iconBtns = [...html.matchAll(/<button[^>]*class="(?:[^"]*\s)?ibtn(?:\s[^"]*)?"[^>]*>/g)];
+  const mute = iconBtns.filter((m) => !/aria-label\s*=/.test(m[0])).map((m) => lineOf(html, m.index));
+  if (iconBtns.length) {
+    if (mute.length) warn(`З3 кнопки-иконки без aria-label на строках: ${[...new Set(mute)].slice(0, 8).join(', ')} (${mute.length} из ${iconBtns.length})`);
+    else ok(true, `З3 у всех кнопок-иконок есть aria-label (${iconBtns.length})`);
+  }
+
+  /* З7 — модалка лежит в конце body и скрыта до открытия, триггер помечен
+     data-modal. Видимая при загрузке модалка перекрывает экран. */
+  const scrims = [...html.matchAll(/<div[^>]*class="(?:[^"]*\s)?modal-scrim(?:\s[^"]*)?"[^>]*>/g)];
+  if (scrims.length) {
+    const shown = scrims.filter((m) => !/\bhidden\b/.test(m[0])).map((m) => lineOf(html, m.index));
+    if (shown.length) warn(`З7 .modal-scrim без атрибута hidden на строках: ${shown.join(', ')} — модалка видна при загрузке`);
+    else ok(true, `З7 модалки скрыты атрибутом hidden (${scrims.length})`);
+    const hasTrigger = /data-modal/.test(html);
+    if (!hasTrigger) warn('З7 модалка есть, а триггера data-modal нет — открыть её нечем');
+  }
+
+  /* Б15 — размерный модификатор берётся из спеки компонента, а не «похожий».
+     Закрыты ИМЕНОВАННЫЕ случаи самого пункта: бургер/пин/выход NavPanel и
+     действия в шапке тайла — все `ibtn--m` (NavPanel.md, Tile.md: «IconButton
+     размер M, 20×20»). Неназванные случаи остаются суждением: «совпадает со
+     спекой» без перечня — это сверка каждого компонента с его спекой, а не
+     строковая проверка. */
+  const sizedM = [];
+  /* Два входа: статическая разметка и разметка из JS-шаблонов. Один и тот же
+     узел попасть в оба не может — в `html` содержимое <script> погашено, —
+     поэтому двойного счёта нет. */
+  for (const src of [html, markupInScripts]) {
+    for (const hook of ['nav__burger', 'nav__pin', 'nav__logout']) {
+      const rx = new RegExp('<button[^>]*class="([^"]*\\b' + hook + '\\b[^"]*)"', 'g');
+      for (const m of src.matchAll(rx)) {
+        if (!isLiteralAttr(m[1])) continue;   // атрибут разорван склейкой — не список классов (Л70)
+        if (!/\bibtn--m\b/.test(m[1])) sizedM.push(`.${hook} (строка ${lineOf(src, m.index)})`);
+      }
+    }
+  }
+  /* Ветка .tile__actions читает только статическую разметку: `tagRange` ищет
+     парный тег, а в погашенном окружении границы блока недостоверны. Действия
+     в шапке тайла, собранные JS-склейкой, остаются непроверенными. */
+  const tileActionOwners = ['article', 'section', 'div'].flatMap((tag) =>
+    tagRanges(html, new RegExp('<' + tag + '[^>]*class="[^"]*\\btile\\b[^"]*"[^>]*>', 'g'), tag))
+    .filter((r) => /class="([^"]*)"/.exec(r.open)[1].split(/\s+/).includes('tile'));
+  for (const acts of html.matchAll(/<div[^>]*class="(?:[^"]*\s)?tile__actions(?:\s[^"]*)?"[^>]*>/g)) {
+    const inner = tagRange(html, acts.index, 'div').inner;
+    /* S — контракт карточки Kanban (.kbcard), а не всех Card.
+       У обычного Tile и Card в списке/модалке действия M (Tile.md).
+       Вложенный Tile читает свой контекст, а не внешний контейнер. */
+    const owner = tileActionOwners.filter((r) => acts.index >= r.idx && acts.index < r.idx + r.html.length)
+      .reduce((nearest, r) => !nearest || r.idx > nearest.idx ? r : nearest, null);
+    const inKanbanCard = owner && /class="([^"]*)"/.exec(owner.open)[1].split(/\s+/).includes('kbcard');
+    const required = inKanbanCard ? /\bibtn--s\b/ : /\bibtn--m\b/;
+    for (const b of inner.matchAll(/<button[^>]*class="((?:[^"]*\s)?ibtn(?:\s[^"]*)?)"/g)) {
+      if (!required.test(b[1])) sizedM.push(`кнопка в .tile__actions (строка ${lineOf(html, acts.index)}, нужен ibtn--${inKanbanCard ? 's' : 'm'})`);
+    }
+  }
+  if (sizedM.length) {
+    ok(false, `Б15 размер не по спеке: ${[...new Set(sizedM)].slice(0, 6).join(', ')}`);
+  }
+
+  /* З11 — ЦЕНА ВЕРДИКТА: сколько разметки сенсор не прочитал.
+
+     Атрибут, разорванный выражением, правила отсеивают целиком и правильно:
+     половина JS-выражения значением не является (`isLiteralAttr`, уроки Л70,
+     Л74, Л103). Но отсев МОЛЧАЛИВЫЙ, и это тот же класс, что Л100: зелёный
+     вердикт на файле, часть которого не читалась, неотличим от зелёного
+     вердикта на прочитанном файле. Цена названа числом и строками; чинить их
+     обязанности нет — уменьшается вынесением постоянной части атрибута из
+     склейки.
+
+     Замечание, а не блокер: склейка законна. Объём сигнала на сегодня — пять
+     атрибутов на репозиторий, и это ровно те шаблоны, которые порождают всю
+     навигацию и все ячейки таблицы.
+
+     ФИКСТУРЫ У ЭТОГО ПРАВИЛА НЕТ И БЫТЬ НЕ МОЖЕТ. Эталон корпуса
+     `_base.ok.html` с 12.09.2026 сам несёт разорванный атрибут — он внесён
+     туда намеренно, как состояние БЕЗ дефекта, которым закреплён урок Л103.
+     `verify` требует от правила молчания на эталоне, а предмет З11 в эталоне
+     присутствует по построению, и убрать его нельзя: на нём держится откат
+     Л103. Доказывается мутацией настоящего экрана, как правила с входом-
+     репозиторием (Л95, Л102). */
+  {
+    const glued = [];
+    let total = 0;
+    for (const m of markupInScripts.matchAll(/([a-zA-Z][\w:-]*)="([^"]*)"/g)) {
+      total++;
+      if (!isLiteralAttr(m[2])) glued.push(lineOf(markupInScripts, m.index));
+    }
+    if (glued.length) {
+      const lines = [...new Set(glued)].sort((a, b) => a - b);
+      warn(`З11 атрибутов в JS-шаблонах не прочитано: ${glued.length} из ${total} (строки ${lines.join(', ')}) — значение собрано склейкой, правило отсеивает такой атрибут целиком`);
+    }
+  }
+
+  /* Б29 — выравнивание пагинатора держит CSS ДС (`margin-left:auto` на
+     `.pgn-row__right`, независимое центрирование `.pgn__pagesize`), а не
+     разметка экрана. Проверяется ровно эта половина пункта: собственный
+     `<style>` не выравнивает пагинатор руками. Структурную половину («правый
+     блок на месте») сторожу не отдаём — на реальном экране колонтитул строит
+     рантайм `DSPagination.footer`, и `.pgn-row` в разметке нет вовсе. */
+  for (const st of raw.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)) {
+    const css = st[1];
+    const at = st.index + st[0].indexOf(css);
+    for (const rule of css.matchAll(/([^{}]*\b(?:pgn-row__right|pgn__pagesize|pgn-row__left)\b[^{}]*)\{([^{}]*)\}/g)) {
+      if (!/margin|align|justify|position|float/.test(rule[2])) continue;
+      warn(`Б29 пагинатор выравнивается вручную (строка ${lineOf(raw, at + rule.index)}): «${rule[1].trim()}» — это держит CSS ДС; ручная правка разъедется с компонентом`);
+    }
+  }
+
+  /* Б36 — слоты сортировки/закрепления TableCell используют IconButton S.
+     Одного th__sort недостаточно: без ibtn остаётся браузерная серая рамка.
+     Проверяются статическая разметка и подключённые JS-шаблоны. */
+  for (const [kind, source] of [['HTML', html], ['JS', markupInScripts]]) {
+    const visibleSource = source.replace(/<!--[\s\S]*?-->/g, '');
+    for (const m of visibleSource.matchAll(/<button\b[^>]*class="([^"]*)"[^>]*>/g)) {
+      if (!isLiteralAttr(m[1])) continue;
+      const classes = m[1].split(/\s+/);
+      if (!classes.some((c) => c === 'th__sort' || c === 'th__pin')) continue;
+      const missing = ['ibtn', 'ibtn--neutral', 'ibtn--s'].filter((c) => !classes.includes(c));
+      ok(!missing.length, missing.length
+        ? `Б36 ${kind}: кнопка TableCell без ${missing.join(', ')} (строка ${lineOf(visibleSource, m.index)}) — слот сортировки/закрепления требует IconButton S neutral`
+        : 'Б36 кнопка TableCell: IconButton S neutral ✓');
+    }
+  }
+
+  /* Б37 — data-kb-collapse принадлежит пункту Menu, а не IconButton
+     шапки. Kanban восстанавливает колонку по триггеру открытия меню. */
+  for (const [kind, source] of [['HTML', html], ['JS', markupInScripts]]) {
+    const visibleSource = source.replace(/<!--[\s\S]*?-->/g, '');
+    for (const m of visibleSource.matchAll(/<button\b[^>]*\bdata-kb-collapse(?=[\s=>])[^>]*>/g)) {
+      const classes = /class="([^"]*)"/.exec(m[0]);
+      if (classes && !isLiteralAttr(classes[1])) continue;
+      const menuItem = classes && classes[1].split(/\s+/).includes('menu__item') && /role="menuitem"/.test(m[0]);
+      ok(menuItem, menuItem ? 'Б37 Kanban collapse: пункт Menu ✓'
+        : `Б37 ${kind}: data-kb-collapse вне button.menu__item[role="menuitem"] (строка ${lineOf(visibleSource, m.index)}) — колонка определяется триггером открытия Menu`);
+    }
+  }
+
+  /* Б38 — значение TableSettings является CSS-селектором, не id.
+     Проверяем разрешимые статикой случаи; сложные/динамические селекторы
+     требуют прогона DOM. Пустой атрибут — штатный автопоиск таблицы. */
+  const tableSettingsMarkup = html + '\n' + markupInScripts;
+  for (const m of tableSettingsMarkup.matchAll(/<button\b[^>]*\bdata-table-settings="([^"]*)"[^>]*>/g)) {
+    const selector = m[1];
+    if (!selector || !isLiteralAttr(selector)) continue;
+    if (/^[A-Za-z_][\w-]*$/.test(selector)) {
+      const found = new RegExp('<' + selector + '(?=[\\s>])', 'i').test(tableSettingsMarkup);
+      ok(found, found ? 'Б38 TableSettings: селектор тега разрешается ✓'
+        : `Б38 data-table-settings="${selector}" не находит элемент: для id нужен #; рантайм вызывает querySelector`);
+    } else if (/^#[A-Za-z_][\w-]*$/.test(selector)) {
+      const found = new RegExp('<[A-Za-z][\\w:-]*\\b[^>]*\\sid="' + selector.slice(1) + '"').test(tableSettingsMarkup);
+      ok(found, found ? 'Б38 TableSettings: селектор id разрешается ✓'
+        : `Б38 data-table-settings="${selector}": целевой id отсутствует в разметке и JS-шаблонах`);
+    }
+  }
+
+  /* Б39 — текстовый слот SegmentControl не содержит ведущую иконку:
+     внутри label глиф display:block оказывается над текстом. */
+  for (const [kind, source] of [['HTML', html], ['JS', markupInScripts]]) {
+    const visibleSource = source.replace(/<!--[\s\S]*?-->/g, '');
+    for (const m of visibleSource.matchAll(/<span\b[^>]*class="(?:[^"]*\s)?segctrl__label(?:\s[^"]*)?"[^>]*>([\s\S]*?)<\/span>/g)) {
+      const nestedIcon = /<i\b[^>]*\bdata-icon\s*=/.test(m[1]);
+      const labelText = m[1].replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+      if (!nestedIcon || !labelText) continue;
+      ok(false, `Б39 ${kind}: иконка внутри текстового segctrl__label (строка ${lineOf(visibleSource, m.index)}) — поставить i и span соседями внутри segctrl__item`);
+    }
+  }
+
+  /* З2 — сортировка: активна не больше чем у одной колонки, и у кнопки
+     сортировки есть непустой ключ. Пустой `data-sort` уходит в событие
+     `sort`, и бэкенд получает запрос без поля сортировки. */
+  /* Б40 — TableCell поворачивает раскрытый twisty на 90°: базовый глиф вправо. */
+  for (const [kind, source] of [['HTML', html], ['JS', markupInScripts]]) {
+    const visibleSource = source.replace(/<!--[\s\S]*?-->/g, '');
+    for (const m of visibleSource.matchAll(/<button\b[^>]*class="(?:[^"]*\s)?tc__twisty(?:\s[^"]*)?"[^>]*>([\s\S]*?)<\/button>/g)) {
+      const icon = m[1].match(/\bdata-icon="([^"]+)"/);
+      if (!icon || !isLiteralAttr(icon[1])) continue;
+      ok(icon[1] === 'chevron-right', icon[1] === 'chevron-right'
+        ? `Б40 ${kind} TableCell tree: базовый глиф chevron-right ✓`
+        : `Б40 ${kind} tc__twisty: ${icon[1]} вместо chevron-right (строка ${lineOf(visibleSource, m.index)}) — CSS раскрытого узла поворачивает кнопку на 90°`);
+    }
+  }
+  const sorted = [...html.matchAll(/aria-sort="(ascending|descending)"/g)];
+  if (sorted.length > 1) {
+    warn(`З2 сортировка активна у ${sorted.length} колонок (строки ${sorted.map((m) => lineOf(html, m.index)).join(', ')}) — одновременно активной может быть одна`);
+  }
+  const emptyKeys = [...html.matchAll(/<button[^>]*class="(?:[^"]*\s)?th__sort(?:\s[^"]*)?"[^>]*>/g)]
+    .filter((m) => !/data-sort="[^"]+"/.test(m[0]))
+    .map((m) => lineOf(html, m.index));
+  if (emptyKeys.length) {
+    warn(`З2 .th__sort без непустого data-sort на строках: ${emptyKeys.join(', ')} — ключ уходит в событие sort, пустой означает «сортировать неизвестно по чему»`);
+  }
+
+  /* З10 — на экране больше одного ряда тайлов, а правила перестроения нет:
+     на узкой раскладке ряды останутся в 12 колонок и уедут за кромку. */
+  const tileRows = [...html.matchAll(/class="(?:[^"]*\s)?tile-row(?:\s[^"]*)?"/g)].length;
+  /* только <style> экрана: @container в файле тайла перестраивает поля внутри
+     тайла, а ряды страницы — нет (задача 0008) */
+  if (tileRows > 1 && !/@container\s+screen\s*\(/.test(styleSrc)) {
+    warn(`З10 рядов тайлов ${tileRows}, а правила перестроения нет — нужен @container screen (max-width: …) в <style> экрана`);
+  }
+
+  /* Б18 — элемент на всю ширину сетки живёт ВНУТРИ .tile__grid и несёт
+     .tile__grid-full. Вынесенный рядом с сеткой блок тащит свои паддинги и
+     разъезжается с колонками соседних полей (урок Л62: паттерн не искали —
+     изобрели замену).
+
+     Считаем структурно, а не по классу: из тела тайла вырезаются поддеревья
+     .tile__grid, и если в остатке осталось поле (.rof / .rof__label) — оно
+     стоит рядом с сеткой. Шапка .tile__head полей не содержит и остатку не
+     мешает. */
+  const strayFields = [], strayBlocks = [];
+  /* Классы, которым CSS экрана (свой <style> и подключённые файлы) даёт
+     ненулевой padding/margin, — вход «блок со своими отступами» у Б18. */
+  /* Ненулевой padding/margin в списке объявлений: значение разбирается по
+     словам, `0` и `auto` отступом не считаются (`margin: 0 auto` — центровка). */
+  const hasSpacing = (decls) => decls.split(';').some((d) => {
+    const i = d.indexOf(':');
+    if (i < 0 || !/^(padding|margin)(-[a-z-]+)?$/i.test(d.slice(0, i).trim())) return false;
+    return d.slice(i + 1).replace(/!important/i, '').trim().split(/\s+/).some((v) => v && !/^(0(px|rem|em|%)?|auto)$/i.test(v));
+  });
+  const spacedClasses = new Set();
+  for (const r of topLevelCss(screenCss).matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    if (!hasSpacing(r[2])) continue;
+    for (const sel of r[1].split(',')) {
+      const last = sel.trim().split(/[\s>+~]+/).pop() || '';
+      /* Отступ псевдоэлемента (`::before`) — не отступ блока, а отступ в
+         состоянии (`:hover`, `:focus`) — не раскладка (ревью RE0023 Р5).
+         Структурные псевдоклассы (`:first-child`, `:not(…)`) отрезаются: правило
+         всё равно задаёт отступ самому блоку. */
+      if (/::|:(before|after|hover|focus|focus-visible|focus-within|active|placeholder)\b/i.test(last)) continue;
+      for (const c of last.replace(/:[\w-]+(\([^)]*\))?/g, '').matchAll(/\.(-?[A-Za-z_][\w-]*)/g)) spacedClasses.add(c[1]);
+    }
+  }
+  for (const t of html.matchAll(/<section[^>]*class="(?:[^"]*\s)?tile(?:\s[^"]*)?"[^>]*>/g)) {
+    const inner = tagRange(html, t.index, 'section').inner;
+    if (!/\btile__grid\b/.test(inner)) continue;      // тайл без сетки полей — таблица, график
+    let rest = inner;
+    for (let guard = 0; guard < 50; guard++) {
+      const g = rest.match(/<div[^>]*class="(?:[^"]*\s)?tile__grid(?:\s[^"]*)?"[^>]*>/);
+      if (!g) break;
+      const r = tagRange(rest, g.index, 'div');
+      rest = rest.slice(0, g.index) + rest.slice(r.end);
+    }
+    if (/class="rof(?:\s|")/.test(rest)) strayFields.push(lineOf(html, t.index));
+    /* Не только поле (RE0023, Э11 (д)): блок рядом с сеткой со СВОИМИ отступами
+       — инлайн или правилом CSS экрана — разъезжается с колонками так же; так
+       прошла Note, положенная соседним блоком (RE0022, приёмка). Смотрятся
+       ПРЯМЫЕ блоки тела тайла: служебные части (`tile__header`, `tile__alert`
+       и прочие `tile__*`) — не контент; контейнер из одних `tile__*`
+       (`tile__body`, `tile__collapsible`) раскрывается, внутрь чужого блока
+       обход не заходит — отступы внутри блока его дело. */
+    const blocks = (src) => {
+      const out = [];
+      let i = 0;
+      for (let guard = 0; guard < 400; guard++) {
+        const m = /<([a-zA-Z][\w-]*)\b([^>]*)>/.exec(src.slice(i));
+        if (!m) break;
+        const at = i + m.index, tag = m[1].toLowerCase();
+        if (/^(br|hr|img|input|meta|link|i|span|svg|path|use|button|a|label|h[1-6]|ds-include)$/.test(tag) || m[0].endsWith('/>')) { i = at + m[0].length; continue; }
+        const r = tagRange(src, at, tag);
+        out.push({ attrs: m[2], inner: r.inner });
+        i = Math.max(r.end, at + m[0].length);
+      }
+      return out;
+    };
+    const walk = (src, depth) => {
+      for (const b of blocks(src)) {
+        const cls = ((b.attrs.match(/\sclass="([^"]*)"/) || [])[1] || '').split(/\s+/).filter(Boolean);
+        if (cls.some((c) => /^tile__(header|alert|toggle|grip)/.test(c))) continue;
+        if (cls.length && cls.every((c) => c.startsWith('tile__'))) { if (depth < 4) walk(b.inner, depth + 1); continue; }
+        const style = (b.attrs.match(/\sstyle="([^"]*)"/) || [])[1] || '';
+        const own = cls.find((c) => spacedClasses.has(c));
+        const why = hasSpacing(style) ? 'инлайн-отступ' : own ? '.' + own + ' (отступ в CSS экрана)' : null;
+        if (why) strayBlocks.push(`строка ${lineOf(html, t.index)}: ${why}`);
+      }
+    };
+    walk(rest, 0);
+  }
+  if (strayFields.length) {
+    ok(false, `Б18 тайлы на строках ${[...new Set(strayFields)].join(', ')}: поле стоит рядом с .tile__grid, а не внутри неё — элемент на всю ширину оформляется классом .tile__grid-full ВНУТРИ сетки`);
+  } else if (strayBlocks.length) {
+    ok(false, `Б18 блок со своими отступами рядом с .tile__grid (${[...new Set(strayBlocks)].slice(0, 4).join('; ')}) — элемент на всю ширину оформляется классом .tile__grid-full ВНУТРИ сетки, без своих паддингов`);
+  } else if (/\btile__grid\b/.test(html)) {
+    ok(true, 'Б18 все поля и блоки тайлов лежат внутри .tile__grid');
+  }
+
+  /* З5 — единый порядок ДД.ММ.ГГГГ по всей ДС. Разнобой в датах читается как
+     разные источники данных и провоцирует ошибку на месяц/день (Л47).
+     Ловим три расхожие подмены; двузначный год отсекаем по границе цифры,
+     иначе `20.04.2024` совпадёт своим началом. */
+  const badDates = [];
+  for (const [rx, what] of [
+    [/\b\d{4}-\d{2}-\d{2}\b/g, 'ISO ГГГГ-ММ-ДД'],
+    [/\b\d{2}\/\d{2}\/\d{4}\b/g, 'через дробь ДД/ММ/ГГГГ'],
+    [/\b\d{2}\.\d{2}\.\d{2}(?!\d)/g, 'двузначный год ДД.ММ.ГГ'],
+  ]) {
+    for (const m of html.matchAll(rx)) badDates.push(`«${m[0]}» (${what}, строка ${lineOf(html, m.index)})`);
+  }
+  if (badDates.length) warn(`З5 дата не в формате ДД.ММ.ГГГГ: ${[...new Set(badDates)].slice(0, 6).join(' · ')}`);
+
+  /* З6 — шапка страницы: не больше трёх кнопок, и ровно одна главная.
+     Проверка на btn--accent включается, только когда в шапке есть текстовые
+     кнопки: шапка из одних кнопок-иконок главной не имеет и требовать её
+     от неё — шум. */
+  for (const h of html.matchAll(/<div[^>]*class="(?:[^"]*\s)?phead__actions(?:\s[^"]*)?"[^>]*>/g)) {
+    const inner = tagRange(html, h.index, 'div').inner;
+    const line = lineOf(html, h.index);
+    const all = [...inner.matchAll(/<button\b/g)].length;
+    const text = [...inner.matchAll(/class="(?:[^"]*\s)?btn(?:\s[^"]*)?"/g)].length;
+    const accent = [...inner.matchAll(/class="(?:[^"]*\s)?btn--accent(?:\s[^"]*)?"/g)].length;
+    if (all > 3) warn(`З6 шапка (строка ${line}): ${all} кнопок — больше трёх, вторичные действия убираются в меню`);
+    if (text >= 1 && accent !== 1) {
+      warn(`З6 шапка (строка ${line}): текстовых кнопок ${text}, главных (btn--accent) ${accent} — главная обязана быть ровно одна`);
+    }
+  }
+
+  /* З9 — у таблицы описано состояние «данных нет». Пустая таблица без
+     EmptyState выглядит как сломанная загрузка: пользователь не отличает
+     «ничего не нашлось» от «не отрисовалось».
+
+     Два условия, без которых правило врёт (обнаружено прогоном по
+     `Portfolio.html`, класс Л48 — правило верное, вход не отфильтрован):
+     · строки может строить рантайм, а содержимое <script> здесь погашено —
+       поэтому «строк в разметке нет» само по себе не значит «таблица пуста»;
+       смотрим в `raw`, собирает ли страница строки скриптом;
+     · EmptyState в ДС — это `.es` (components/molecules/EmptyState/EmptyState.css), а не выдуманный
+       `.empty-state`; проверка по несуществующему классу дала бы находку на
+       экране, где состояние как раз описано. */
+  const rowsFromJs = [...raw.matchAll(/tbl__row/g)].length > [...html.matchAll(/tbl__row/g)].length;
+  for (const b of html.matchAll(/<div[^>]*class="(?:[^"]*\s)?dtable__body(?:\s[^"]*)?"[^>]*>/g)) {
+    const inner = tagRange(html, b.index, 'div').inner;
+    const rows = [...inner.matchAll(/class="(?:[^"]*\s)?tbl__row(?:\s[^"]*)?"/g)].length;
+    const heads = [...inner.matchAll(/class="(?:[^"]*\s)?tbl__row--head(?:\s[^"]*)?"/g)].length;
+    if (rows - heads > 0 || rowsFromJs) continue;         // данные есть в разметке или их строит рантайм
+    const hasEmpty = /class="(?:[^"]*\s)?es(?:\s[^"]*)?"|\bdtable__empty\b|data-empty/.test(html);
+    if (!hasEmpty) {
+      warn(`З9 таблица (строка ${lineOf(html, b.index)}) без строк данных, а состояния «данных нет» на экране нет — нужен EmptyState (.es) или .dtable__empty`);
+    }
+  }
+
+  /* Пункт К10 («остатки flex-раскладки конструктора в <style>») жил здесь
+     один заход и переехал в линтер правилом R4. Причина: его предмет —
+     страница документации, а сенсор такую страницу не принимает вовсе (на
+     ней первыми падают Б1 и Б5 — «нет каркаса экрана»). Правило было
+     написано, доказано фикстурой и при этом не могло сработать ни разу:
+     на экране `.pg__controls` не бывает. Держать его в двух местах нельзя —
+     у правила один владелец (Л43). */
+
+  /* Б4 — класс, которого нет ни в ДС, ни в собственном <style>, не падает и
+     ничем себя не выдаёт: блок просто рендерится без оформления. Это самый
+     дешёвый способ нарушить главное правило проекта («ничего не выдумывать»),
+     потому что выглядит как рабочая разметка.
+
+     Вход: разметка БЕЗ комментариев, но СО скриптами — класс, который вешает
+     рантайм страницы, употреблён по-настоящему. Токены с ${} — куски шаблона,
+     не классы. */
+  const dsClasses = new Set();
+  for (const f of L.styles()) {
+    for (const m of readFileSync(L.abs(f), 'utf8').matchAll(/\.(-?[a-zA-Z][\w-]*)/g)) dsClasses.add(m[1]);
+  }
+  /* Классы самой ДС, без стилей экрана, — вход Б45: собственный класс экрана
+     тот, которого в ДС нет. */
+  const dsOnlyClasses = new Set(dsClasses);
+  /* свои стили экрана — <style> и подключённые файлы тайлов (задача 0008):
+     класс из файла, который страница не подключила, по-прежнему выдуман */
+  for (const m of screenCss.matchAll(/\.(-?[a-zA-Z][\w-]*)/g)) dsClasses.add(m[1]);
+
+  /* Хуки рантаймов: класс без собственных правил в CSS, по которому работает
+     скрипт ДС, — не опечатка. `.nav__burger` правил не имеет вовсе, но его
+     ищет `ds-nav-panel.js`; без этого шага Б4 объявил бы дефектом рабочую
+     разметку на трёх экранах сразу. Набор паттернов зеркалит `collectHooks`
+     линтера — разъедутся, и два правила заспорят об одном классе. */
+  // линтер — в корпусе, как до RE0002 (его хуки разметки — тоже классы ДС)
+  {
+    for (const f of [...L.scripts(), L.at.linter]) {
+      const src = readFileSync(L.abs(f), 'utf8');
+      for (const m of src.matchAll(/closest\(\s*['"]\.([\w-]+)/g)) { dsClasses.add(m[1]); dsOnlyClasses.add(m[1]); }
+      for (const m of src.matchAll(/querySelector(?:All)?\(\s*['"][^'"]*\.([\w-]+)/g)) { dsClasses.add(m[1]); dsOnlyClasses.add(m[1]); }
+      for (const m of src.matchAll(/classList\.(?:add|remove|toggle|contains)\(\s*['"]([\w-]+)/g)) { dsClasses.add(m[1]); dsOnlyClasses.add(m[1]); }
+    }
+  }
+
+  /* Вход — разметка без комментариев, но СО скриптами: класс, который вешает
+     рантайм страницы, употреблён по-настоящему.
+
+     Плата за это — склейка в JS. Атрибут `class="tc' + (extra ? ' ' + extra : '') + '"`
+     обрывается регуляркой на первой кавычке, и в разбор попадают имена
+     ПЕРЕМЕННЫХ — `extraClass`, `tone`, `sel`. От опечатки в классе они
+     синтаксически неотличимы, поэтому отсекается не токен, а весь атрибут:
+     значение со следами конкатенации (кавычка, `+`, скобка, `?`) в разбор
+     не идёт. Класс, собранный из кусков, при этом теряется — граница
+     признаётся честно, ловить его пришлось бы разбором JS. */
+  const isIdent = (c) => /^-?[a-zA-Z][\w-]*$/.test(c);
+  const invented = [];
+  const seenCls = new Set();
+  for (const m of noComments.matchAll(/class="([^"]+)"/g)) {
+    if (!isLiteralAttr(m[1])) continue;                  // склейка в JS, а не список классов
+    for (const c of m[1].split(/\s+/)) {
+      if (!c || seenCls.has(c) || !isIdent(c)) continue;
+      seenCls.add(c);
+      if (dsClasses.has(c) || CLASS_IGNORE.has(c)) continue;
+      if (/^(is-|has-|js-)/.test(c)) continue;            // состояния и хуки ставит рантайм
+      invented.push(`.${c} (строка ${lineOf(noComments, m.index)})`);
+    }
+  }
+  if (dsClasses.size) {
+    ok(invented.length === 0, invented.length
+      ? `Б4 классов нет ни в CSS ДС, ни в <style> экрана, ни в подключённых им CSS-файлах: ${invented.slice(0, 8).join(', ')}${invented.length > 8 ? ` и ещё ${invented.length - 8}` : ''} — блок отрисуется без оформления`
+      : `Б4 все классы разметки существуют в ДС, в <style> экрана или в подключённых CSS-файлах (${seenCls.size}${styles.linked.length ? '; файлов экрана: ' + styles.linked.length : ''})`);
+  }
+
+  /* Б12 — рядом с экраном лежит `<Имя>.screen.md` с заполненной YAML-шапкой.
+     Без него приёмка не знает, что экран обязан показывать, и сверяет
+     разметку сама с собой.
+
+     О фикстурах: спутник заведён только у эталона (`_base.ok.screen.md`).
+     На остальных фикстурах Б12 срабатывает — и это верно, они не экраны;
+     «ровно один дефект» у корпуса держится по каждой проверке отдельно,
+     а не по каждому файлу.
+
+     Эталон (шаблон экрана ДС, образец скилла) — не экран
+     проекта: он никому не сдаётся на приёмку, спутника-спеки у него нет и не
+     должно быть. Остальные правила на нём работать обязаны — ради них он и
+     линтуется, — а Б12 на нём ложный. Пропуск печатается строкой, молчаливого
+     пропуска нет (process.md §9). Поиск спутника — `specOf`, выше. */
+  if (pagePath && etalon) {
+    ok(true, 'Б12 ПРОПУЩЕН: эталон каркаса — спутника-спеки у него нет по устройству');
+  } else if (pagePath) {
+    if (!spec) {
+      ok(false, `Б12 рядом нет ${path.basename(pagePath).replace(/\.html$/i, '.screen.md')} и ни одна спека в папке не объявляет этот файл строкой file: — приёмке не с чем сверять состав экрана`);
+    } else {
+      const head = readFileSync(spec, 'utf8').split(/\r?\n/);
+      const closed = head.indexOf('---', 1);
+      const keys = closed > 0 ? head.slice(1, closed).filter((l) => /^[a-z_]+:\s*\S/.test(l)).length : 0;
+      ok(head[0] === '---' && keys >= 2, keys >= 2 && head[0] === '---'
+        ? `Б12 спутник ${path.basename(spec)} на месте, полей в шапке ${keys}`
+        : `Б12 у ${path.basename(spec)} нет заполненной YAML-шапки (полей ${keys}) — шапка и есть то, что читает приёмка`);
+      if (kindDeclared && !KINDS.includes(kindDeclared)) {
+        ok(false, `Б12 у ${path.basename(spec)} неизвестный вид kind: ${kindDeclared} — допустимы ${KINDS.join(', ')}; с таким значением файл проверяется как экран`);
+      }
+
+      /* Б32 — спека описывает СОСТОЯНИЕ экрана, а не его историю. Разделы
+         «Правки ДД.ММ.ГГГГ» копятся заходами и платятся заново каждой
+         сессией, которая открывает файл: замер 14.09.2026 — в
+         `Portfolio.screen.md` журнал занимал 59 % файла, ≈12 500 токенов,
+         при окне сессии 250 000. История живёт в git; изменилось поведение —
+         правится тот раздел, который его описывает, а не дописывается новый.
+
+         Заголовок разбирается построчно, а не одной регуляркой с `\b`:
+         `\b` определён через [A-Za-z0-9_], между пробелом и кириллической
+         буквой границы нет — условие молча не сработало бы ни разу
+         (класс Л51/Л73: синтаксически валидная регулярка, ноль совпадений). */
+      const JOURNAL_HEADS = ['правки', 'история правок', 'журнал правок', 'changelog'];
+      const journal = [];
+      readFileSync(spec, 'utf8').split(/\r?\n/).forEach((l, i) => {
+        if (!/^#{2,3}\s+/.test(l)) return;
+        const t = l.replace(/^#{2,3}\s+/, '').replace(/^\d+[.)]\s*/, '').trim().toLowerCase();
+        if (JOURNAL_HEADS.some((p) => t.startsWith(p))) journal.push(i + 1);
+      });
+      ok(journal.length === 0, journal.length
+        ? `Б32 в ${path.basename(spec)} разделы-журнал, строки ${journal.slice(0, 5).join(', ')}${journal.length > 5 ? ` и ещё ${journal.length - 5}` : ''} — спека описывает состояние экрана, история живёт в git`
+        : 'Б32 спека описывает состояние — разделов-журнала нет');
+    }
+  }
+
+  /* К12 — на реестре-экране (таблица без тайлов) главная таблица занимает
+     свободную высоту: `.screen--app` + `.dtable--fill`. Иначе таблица растёт
+     по числу строк, а страница скроллится целиком — шапка и колонтитул
+     уезжают. Экраны с тайлами над таблицей правило не трогает: там высота
+     разбирается индивидуально (оговорка самого пункта). Документу растяжка
+     не положена: `.screen--app` — модификатор каркаса, которого у листа нет. */
+  if (isDocument && /class="(?:[^"]*\s)?dtable(?=[\s"])/.test(html) && !/class="(?:[^"]*\s)?tile(?=[\s"])/.test(html)) {
+    ok(true, 'К12 ПРОПУЩЕН: вид document — растяжка по .screen--app предполагает каркас приложения');
+  } else if (/class="(?:[^"]*\s)?dtable(?=[\s"])/.test(html) && !/class="(?:[^"]*\s)?tile(?=[\s"])/.test(html)) {
+    const app = /class="(?:[^"]*\s)?screen--app(?=[\s"])/.test(html);
+    const fill = /class="(?:[^"]*\s)?dtable--fill(?=[\s"])/.test(html);
+    const miss = [!app && '.screen--app на .screen', !fill && '.dtable--fill на .dtable'].filter(Boolean);
+    ok(miss.length === 0, miss.length
+      ? `К12 реестр-экран без растяжки таблицы по высоте: нет ${miss.join(' и ')} — таблица вырастет по числу строк, шапка и колонтитул уедут со страницей`
+      : 'К12 таблица реестра растянута по высоте (.screen--app + .dtable--fill)');
+  }
+
+  /* К13 — ритм экрана-реестра (Layout ДС, инвариант «Вертикальный ритм
+     экрана-реестра — 12px»): шапка → табы/тулбар → таблица стоят через 12px,
+     и задаёт это сам экран строкой ритма для .screen__content в своём <style>.
+     Без неё каркас даёт 24px, и реестр рассыпается на отдельные блоки
+     (MS0016, «Лиды»: две пометки человека на скриншоте). Вход — тот же, что у
+     К12: таблица без тайлов на каркасе приложения (.screen--app). */
+  if (!isDocument && /class="(?:[^"]*\s)?dtable(?=[\s"])/.test(html) && !/class="(?:[^"]*\s)?tile(?=[\s"])/.test(html)
+      && /class="(?:[^"]*\s)?screen--app(?=[\s"])/.test(html)) {
+    const ownCss = (html.match(/<style[\s>][\s\S]*?<\/style>/g) || []).join('\n');
+    const rhythm = /\.screen__content\s*\{[^}]*\bgap\s*:\s*var\(--space-12\)/.test(ownCss);
+    /* Замечание, а не блокер (решение человека 13.10.2026): на момент введения
+       правило находило ещё три реестра postrade с зазором 16px, которые в этом
+       заходе не правятся. Поднять до блокера — когда их приведут к ритму ДС. */
+    if (rhythm) ok(true, 'К13 ритм реестра 12px (.screen__content gap: --space-12)');
+    else warn('К13 реестр без ритма 12px: в <style> экрана нет .screen__content { gap: var(--space-12) } — шапка, тулбар и таблица стоят не через 12px, как требует Layout ДС');
+  }
+
+  /* Б42 — колонка выбора (`.th--select` / `.tc--select`) получает трек не уже
+     порога ДС: у её ячеек min-width из TableCell (124px — значение читается из
+     CSS компонента, не зашито здесь). Трек уже порога ячейку не сужает: она
+     вылезает в соседнюю колонку, следующая ячейка рисуется поверх и закрывает
+     чекбоксы, а вид зависит от того, успел ли рантайм пересчитать треки (MS0016,
+     «Лиды»: трек 40px, «после перезагрузки колонки с чекбоксами нет»). Вход —
+     статические строки .tbl__row со своим grid-template-columns. */
+  if (SELECT_MIN) {
+    const narrow = [];
+    let rows = 0;
+    for (const m of html.matchAll(/<div class="tbl__row\b[^"]*"[^>]*\bstyle="[^"]*grid-template-columns:\s*([^;"]+)/g)) {
+      const after = html.slice(m.index + m[0].length);
+      const next = after.search(/<div class="tbl__row\b/);
+      const body = next < 0 ? after : after.slice(0, next);
+      const cells = [...body.matchAll(/<div class="(?:th|tc)(?:\s[^"]*)?"/g)].map((c) => c[0]);
+      const at = cells.findIndex((c) => /\b(?:th|tc)--select\b/.test(c));
+      if (at < 0) continue;
+      rows++;
+      const track = (m[1].match(/minmax\([^)]*\)|\S+/g) || [])[at] || '';
+      const px = /^(\d+(?:\.\d+)?)px$/.exec(track);
+      if (px && Number(px[1]) < SELECT_MIN) narrow.push(track);
+    }
+    /* Замечание, а не блокер (решение человека 13.10.2026, как у К13): правило
+       нашло тот же трек 44–48px на экранах pretrade и postrade, которые в этом
+       заходе не правятся. Поднять до блокера, когда их приведут к порогу. */
+    if (rows && !narrow.length) ok(true, `Б42 колонка выбора не уже порога ДС (${SELECT_MIN}px)`);
+    else if (rows) warn(`Б42 колонка выбора уже порога ДС: трек ${[...new Set(narrow)].join(', ')} при min-width ${SELECT_MIN}px у .th--select/.tc--select (строк: ${narrow.length}) — ячейка вылезет на соседнюю колонку и чекбоксы закроются`);
+  }
+
+  /* Б43 — панель массовых действий Pagination (`.pgn-bulk`) стоит внутри строки
+     колонтитула `.pgn-row.pgn-row--bulk`: поля 20px, высоту 56px и белую подложку
+     даёт строка, а не панель. Без неё панель прилипает к краям футера таблицы
+     (MS0016, «Лиды»). Вход — статическая разметка: ближайший открытый блок. */
+  {
+    const loose = [];
+    for (const m of html.matchAll(/<div class="pgn-bulk"/g)) {
+      const open = html.lastIndexOf('<div', m.index - 1);
+      const parent = open < 0 ? '' : html.slice(open, html.indexOf('>', open) + 1);
+      if (!/class="(?:[^"]*\s)?pgn-row--bulk(?=[\s"])/.test(parent)) loose.push(lineOf(html, m.index));
+    }
+    if (/class="pgn-bulk"/.test(html)) ok(loose.length === 0, loose.length
+      ? `Б43 панель массовых действий .pgn-bulk вне строки .pgn-row.pgn-row--bulk — нет полей 20px и высоты строки колонтитула`
+      : 'Б43 панель массовых действий стоит в строке .pgn-row--bulk', loose[0]);
+  }
+
+  /* Б44 — подложки соседних IconButton не наезжают друг на друга. Кнопка
+     занимает в потоке размер иконки, а подложка (::before) больше и выступает
+     по бокам (IconButton.md: иконка 24/20/16, подложка 40/32/24 — значения
+     читаются из IconButton.css). Расстояние между иконками соседей (gap
+     контейнера + отступы обёрток) обязано вместить оба выступа; зазор между
+     подложками сверх этого — 0 или чётный, по ситуации (правило человека
+     14.10.2026; MS0016: «Открыть лид» и крестик в шапке Drawer, gap 4px,
+     подложки перекрывались). Вход — соседние кнопки в статической разметке и
+     в одном JS-шаблоне; кнопка, вставленная скриптом в чужой контейнер,
+     статикой не видна — пункт чек-листа composition-review K14. */
+  if (IBTN_GEOM) {
+    const near = [];
+    /* ряд, чей зазор задаёт только CSS ДС, — геометрия компонента (решение человека
+       14.10.2026: зазоры рядов ДС не меняются); правило судит ряды, собранные экраном */
+    const dsOwned = (cls) => !new RegExp('\\.' + cls.replace(/[-]/g, '\\-') + '\\s*\\{[^}]*?\\b(?:column-)?gap\\s*:').test(screenCss)
+      && new RegExp('\\.' + cls.replace(/[-]/g, '\\-') + '\\s*\\{[^}]*?\\b(?:column-)?gap\\s*:').test(DS_CSS_ALL);
+    const cssGap = (cls) => {
+      for (const src of [screenCss, DS_CSS_ALL]) {
+        const m = new RegExp('\\.' + cls.replace(/[-]/g, '\\-') + '\\s*\\{[^}]*?\\b(?:column-)?gap\\s*:\\s*([^;}]+)').exec(src);
+        if (m) { const parts = m[1].trim().split(/\s+(?![^(]*\))/); return lenPx(parts[parts.length - 1]); }
+      }
+      return 0;
+    };
+    /* отступ по классу из CSS экрана и ДС; auto — кнопка отодвинута до упора (булавка NavPanel) */
+    const cssMargin = (cls, side) => {
+      if (/^(?:ibtn|ibtn--[a-z-]+)$/.test(cls)) return 0;
+      for (const src of [screenCss, DS_CSS_ALL]) {
+        const m = new RegExp('(?:^|[\\s,}])\\.' + cls.replace(/[-]/g, '\\-') + '\\s*\\{[^}]*?\\bmargin-' + side + '\\s*:\\s*([^;}]+)').exec(src);
+        if (m) return m[1].trim() === 'auto' ? Infinity : lenPx(m[1].trim());
+      }
+      return 0;
+    };
+    const classesOf = (tag) => ((tag.match(/class="([^"]*)"/) || [])[1] || '').split(/\s+/).filter(Boolean);
+    for (const src of [html, markupInScripts]) {
+      for (const m of src.matchAll(/<(button|a)\b[^>]*\bclass="(?:[^"]*\s)?ibtn(?:\s[^"]*)?"[^>]*>/g)) {
+        const end = src.indexOf('</' + m[1] + '>', m.index);
+        if (end < 0) continue;
+        const rest = src.slice(end + m[1].length + 3, end + m[1].length + 3 + 400);
+        const nx = /^\s*(<\/span>\s*)?(<span\b[^>]*>\s*)?<(?:button|a)\b[^>]*\bclass="((?:[^"]*\s)?ibtn(?:\s[^"]*)?)"/.exec(rest);
+        if (!nx) continue;
+        const size = (c) => ((c.match(/\bibtn--(s|m|l)\b/) || [])[1] || 'm');
+        const s1 = size(m[0]), s2 = size(nx[3]);
+        const g1 = IBTN_GEOM[s1], g2 = IBTN_GEOM[s2];
+        if (!g1 || !g2) continue;
+        /* обёртка первой кнопки — открывающий span прямо перед ней, если за кнопкой он закрыт */
+        let containerAt = m.index, w1 = [];
+        if (nx[1]) {
+          const before = src.slice(Math.max(0, m.index - 300), m.index);
+          const sp = /<span\b[^>]*>\s*$/.exec(before);
+          if (sp) { w1 = classesOf(sp[0]); containerAt = m.index - (before.length - sp.index); }
+        }
+        const w2 = nx[2] ? classesOf(nx[2]) : [];
+        const parent = parentOpenTag(src, containerAt);
+        if (!w1.length && !w2.length && classesOf(parent).some(dsOwned)) continue;
+        const gap = classesOf(parent).reduce((a, c) => Math.max(a, cssGap(c)), 0);
+        /* отступ пары внутри ряда: `.ряд > .ibtn--s + .ibtn--s { margin-left }` (TableCell 2.026) */
+        const pair = classesOf(parent).reduce((a, c) => {
+          for (const css of [screenCss, DS_CSS_ALL]) {
+            const r = new RegExp('\\.' + c.replace(/[-]/g, '\\-') + '\\s*>\\s*\\.ibtn--' + s1 + '\\s*\\+\\s*\\.ibtn--' + s2 + '\\s*\\{[^}]*?\\bmargin-left\\s*:\\s*([^;}]+)').exec(css);
+            if (r) return Math.max(a, lenPx(r[1].trim()));
+          }
+          return a;
+        }, 0);
+        const b1 = classesOf(m[0]), b2 = classesOf(nx[0].slice(nx[0].lastIndexOf('<')));
+        const margins = w1.concat(b1).reduce((a, c) => a + cssMargin(c, 'right'), 0) + w2.concat(b2).reduce((a, c) => a + cssMargin(c, 'left'), 0);
+        const need = (g1.layer - g1.icon) / 2 + (g2.layer - g2.icon) / 2;   // подложки не наезжают; свой зазор между ними — 0 или чётный, по ситуации
+        if (gap + margins + (w1.length || w2.length ? 0 : pair) < need) near.push({ line: lineOf(src, m.index), have: gap + margins + (w1.length || w2.length ? 0 : pair), need, sizes: s1 + '/' + s2, box: classesOf(parent).slice(0, 2).join('.') || '?' });
+      }
+    }
+    if (near.length) warn(`Б44 подложки соседних IconButton наезжают друг на друга: между иконками ${near[0].have}px при нужных ≥${near[0].need}px (${near[0].sizes.toUpperCase()} в .${near[0].box}; выступ подложки с обеих сторон)${near.length > 1 ? `, мест: ${near.length}` : ''} — дать ряду gap или обёртке отступ: подложки не должны наезжать, зазор между ними — 0 или чётный`, near[0].line);
+  }
+
+  /* K12 — адаптивное правило, перебитое инлайн-стилем на том же элементе,
+     не сработает никогда: инлайн выигрывает у любого селектора без
+     !important. Узкая раскладка тихо не отрабатывает. */
+  for (const at of [...screenCss.matchAll(/@container[^{]*\{/g)]) {   // и в файлах тайлов (задача 0008)
+    const body = braceBody(screenCss, at.index + at[0].length - 1);
+    for (const rule of body.matchAll(/\.([\w-]+)[^{}]*\{([^{}]*)\}/g)) {
+      const cls = rule[1];
+      for (const decl of rule[2].matchAll(/([a-z-]+)\s*:/g)) {
+        const prop = decl[1];
+        const rx = new RegExp('<[^>]*class="[^"]*\\b' + cls + '\\b[^"]*"[^>]*style="[^"]*\\b' + prop + '\\s*:', 'g');
+        for (const hit of html.matchAll(rx)) {
+          warn(`K12 @container задаёт ${prop} для .${cls}, а на элементе (строка ${lineOf(html, hit.index)}) тот же ${prop} стоит инлайн — адаптивное правило не сработает никогда`);
+        }
+      }
+    }
+  }
+
+  /* Б35 — пункт-родитель аккордеона в панели навигации не ссылка. Контракт
+     рантайма: `ds-nav-panel.js` перехватывает клик по `.nav__item--acc` и
+     вызывает `preventDefault()` безусловно — в rail разворачивает панель, в
+     остальных режимах переключает `aria-expanded`. Адрес на таком пункте
+     недостижим, а разметка выглядит рабочей: страница компонента, на которую
+     «вёл» родитель, оказалась недоступной из панели (20.09.2026, урок Л137).
+
+     Вход двойной — разметка и литералы скриптов: панели кита и страницы
+     сделки строятся JS-шаблоном (как у Б31 и Б33).
+
+     «Не ссылка» — про адрес, а не про тег: пункт панели, родитель аккордеона
+     тоже, — <a href="#"> из чит-шита. NavPanel оформляет пункт-ссылку; на
+     <button> остаётся рамка браузера. Формулировку прочли как «не тег a» и
+     собрали родителя кнопкой (09.10.2026, урок Л197) — поэтому тег пункта
+     сверяется здесь же. */
+  const accHref = [];
+  const itemTag = [];
+  for (const src of [html, markupInScripts]) {
+    for (const m of src.matchAll(/<a\b[^>]*>/gi)) {
+      const tag = m[0];
+      if (!/class="(?:[^"]*\s)?nav__item--acc(?=[\s"])/.test(tag)) continue;
+      const href = (tag.match(/\shref="([^"]*)"/) || [])[1];
+      if (href === undefined || href === '' || href === '#') continue;
+      if (!isLiteralAttr(href)) continue;
+      accHref.push(`${href} (строка ${lineOf(src, m.index)})`);
+    }
+    for (const m of src.matchAll(/<([a-z][a-z0-9]*)\b[^>]*\sclass="(?:[^"]*\s)?nav__item(?:--[a-z-]+)?(?:\s[^"]*)?"[^>]*>/gi)) {
+      if (m[1].toLowerCase() !== 'a') itemTag.push(`<${m[1].toLowerCase()}> (строка ${lineOf(src, m.index)})`);
+    }
+  }
+  if (/nav__item/.test(html + markupInScripts)) {
+    const bad = [];
+    if (accHref.length) bad.push(`у родителя аккордеона адрес ${accHref.join(', ')} — ds-nav-panel.js отменяет по нему переход; страница открывается под-пунктом, а не родителем`);
+    if (itemTag.length) bad.push(`пункт панели — ${itemTag.join(', ')}, а не <a href="#"> из чит-шита: NavPanel оформляет пункт-ссылку, у другого тега остаётся вид браузера`);
+    ok(bad.length === 0, bad.length ? `Б35 ${bad.join('; ')}` : 'Б35 пункты панели — ссылки, родители аккордеонов не ведут на адрес');
+  }
+
+  /* З12 — разметка с хуком рантайма, собранная скриптом. Рантаймы ДС связывают
+     хуки один раз, на DOMContentLoaded: разметка, нарисованная позже (ответ
+     стора, перерисовка демо, смена фильтра), остаётся мёртвой — ничего не
+     падает, клик просто не работает (Л93).
+
+     Это ЗАМЕЧАНИЕ, а не блокер, и понижение осознанное: статикой не отличить
+     разметку, собранную при разборе страницы (её свяжет штатный проход
+     рантайма), от перерисованной по событию. Блокер на этом различении был бы
+     сторожем на угадывании — он дороже отсутствия сторожа (класс Л72).
+     Сенсор называет случай и цену, решение остаётся за автором — тот же
+     жанр, что З11. */
+  /* хук · как связывают поддерево · что засчитывается вызовом — строки `static`
+     единого списка hook-binds.mjs (его же читает прогон page-run.mjs, ЖВ5). */
+  const HOOK_BINDS = HOOK_BIND_ROWS.filter((h) => h.static).map((h) => [h.hook, h.bind, h.accepted]);
+  if (pagePath) {
+    const pageDir = path.dirname(pagePath);
+    /* Скрипты страницы: инлайновые и подключённые локальные, каждый ОТДЕЛЬНО.
+       Рантаймы ДС сюда не входят — в них хук и привязка лежат рядом по
+       устройству, и любой экран выглядел бы связанным.
+
+       Хук и вставку сводим в пределах ОДНОГО скрипта: разметка с хуком в одном
+       файле и `innerHTML` в другом — разные конструкции, и пара из них ложная.
+       Проверено на ките: футер панели с `data-modal` собирает страница, а
+       `innerHTML` зовёт `kit-nav.js`; в объединении это выглядело дефектом,
+       которого нет. Вызов привязки при этом ищется по ВСЕМ скриптам страницы —
+       связать поддерево может и соседний файл. */
+    const parts = [...raw.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map((m) => m[1]);
+    const linkedScripts = [];
+    for (const m of raw.matchAll(/<script\b[^>]*\ssrc="([^"]+)"/gi)) {
+      const href = m[1];
+      if (/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(href) || !isLiteralAttr(href)) continue;
+      const abs = path.resolve(pageDir, href);
+      if (!existsSync(abs) || isDsScript(abs)) continue;
+      parts.push(readFileSync(abs, 'utf8'));
+      linkedScripts.push({ href, src: parts[parts.length - 1] });
+    }
+    const allSrc = parts.join('\n');
+    const missed = new Map();
+    for (const src of parts) {
+      /* `innerHTML = ''` — это очистка контейнера, а не вставка разметки:
+         связывать в ней нечего. Без этой оговорки правило сводило очистку
+         в одном месте скрипта с хуком в другом (витрина карточки).
+         Пустота проверяется РАЗБОРОМ найденного, а не отрицательным
+         просмотром вперёд: `\s*` перед ним отступает на пробел, и `= ''`
+         проходит как непустое присваивание. */
+      const writes = [...src.matchAll(/\.innerHTML\s*\+?=\s*(\S{0,2})/g)].map((m) => m[1]);
+      const insertsMarkup = writes.some((w) => !/^(?:''|""|``)/.test(w)) || /insertAdjacentHTML\s*\(/.test(src);
+      if (!insertsMarkup) continue;
+      /* Литералы достаются тем же разбором, что у Б15 и Б31: второй разбор
+         строк JS завёл бы вторую границу «что считать разметкой». */
+      const markup = collectScriptMarkup('<script>' + src + '</script>');
+      for (const [hook, bind, accepted] of HOOK_BINDS) {
+        /* Хук засчитывается только В РАЗМЕТКЕ — после открывающего тега.
+           Строка-селектор `'[data-modal="new-deal-scrim"]'` содержит ту же
+           подстроку, но разметкой не является и связывать в ней нечего
+           (реестр сделок, ложная пара 21.09.2026). */
+        const inMarkup = new RegExp('<[a-zA-Z][^<>]{0,400}' + hook + '=').test(markup);
+        if (inMarkup && !allSrc.includes(accepted)) missed.set(hook, bind);
+      }
+    }
+    if (missed.size) {
+      warn(`З12 скрипт страницы собирает и вставляет разметку с хуками ${[...missed.keys()].join(', ')}, а вызова ${[...missed.values()].join(', ')} на странице нет — если разметка рисуется после загрузки, рантайм её не свяжет (Л93)`);
+    }
+
+    /* Б41 — строка колонтитула и колонтитул Pagination (`DSPagination.row` /
+       `.footer`, старые имена `PGN_buildRow` / `PGN_buildFooter`) принимают
+       ВЛОЖЕННЫЕ опции: `{ pager:{ total, page, pageSize, … }, info, … }`.
+       Плоский объект `{ total, page, pageSize }` ошибки не даёт: пагинатор
+       берёт значения по умолчанию ДС (800 строк по 50) и рисует «1 из 16» при
+       девяти строках (MS0016, «Лиды»). Ключи читаются только верхнего уровня
+       объекта: вложенные тела скобок вырезаются до разбора. Вход — те же
+       скрипты страницы, что у З12: инлайновые и подключённые локальные. */
+    const PAGER_KEYS = new Set(['total', 'page', 'pageSize', 'pageSizeOptions', 'showPageSize', 'compact', 'onChange', 'onPageSizeChange']);
+    const flatCalls = [];
+    let pagerCalls = 0;
+    for (const src of parts) {
+      for (const m of src.matchAll(/\b(DSPagination\.(?:row|footer)|PGN_build(?:Row|Footer))\s*\(\s*\{/g)) {
+        pagerCalls++;
+        let body = braceBody(src, m.index + m[0].length - 1);
+        for (let prev = ''; prev !== body;) { prev = body; body = body.replace(/\{[^{}]*\}|\[[^[\]]*\]|\([^()]*\)/g, ''); }
+        const keys = [...body.matchAll(/(?:^|,)\s*([A-Za-z_$][\w$]*)\s*:/g)].map((k) => k[1]);
+        const flat = keys.filter((k) => PAGER_KEYS.has(k));
+        if (flat.length) flatCalls.push(`${m[1]}({ ${flat.join(', ')} })`);
+      }
+    }
+    if (pagerCalls) ok(flatCalls.length === 0, flatCalls.length
+      ? `Б41 опции пагинатора переданы плоско: ${flatCalls.join('; ')} — row/footer читают их из pager:{…}, иначе рисуются значения по умолчанию ДС (800 строк по 50)`
+      : 'Б41 вызовы row/footer Pagination передают опции пагинатора в pager:{…}');
+
+    /* Б45 — обратная сторона Б4 (RE0023, Э11 (а)). Б4 ищет классы разметки без
+       CSS и тем подталкивает удалять «лишние»; обратное не проверял никто: класс,
+       по которому скрипт ищет узел (`querySelector`, `closest`, `matches`),
+       обязан быть в разметке, иначе обработчик молча не находит узел и кнопка
+       мертва (RE0022, приёмка контрольной сборки). Проверяются СОБСТВЕННЫЕ
+       классы экрана — которых нет в ДС: узлы ДС строит рантайм. Селектор — только
+       литерал целиком, без склейки. «Есть в разметке» — имя встречается в
+       странице без <style> или в любом её скрипте вне самих селекторов: в
+       атрибуте class, в JS-шаблоне, в `classList.add`, в `className`. */
+    const SELECTOR_CALL = /\b(?:querySelector(?:All)?|closest|matches)\(\s*(['"`])((?:(?!\1)[^\\\n])*)\1\s*\)/g;
+    const sought = new Map();
+    for (const s of [{ href: 'встроенный <script>', src: parts.slice(0, parts.length - linkedScripts.length).join('\n') }, ...linkedScripts]) {
+      for (const m of s.src.matchAll(SELECTOR_CALL)) {
+        if (m[2].includes('${')) continue;
+        for (const c of m[2].replace(/\[[^\]]*\]/g, '').matchAll(/\.(-?[A-Za-z_][\w-]*)/g)) {
+          if (dsOnlyClasses.has(c[1]) || CLASS_IGNORE.has(c[1])) continue;
+          if (!sought.has(c[1])) sought.set(c[1], s.href);
+        }
+      }
+    }
+    if (sought.size) {
+      const where = (noComments.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '') + '\n' + linkedScripts.map((l) => l.src).join('\n')).replace(SELECTOR_CALL, '');
+      const lost = [...sought].filter(([c]) => !new RegExp('(^|[^\\w-])' + c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\w-])').test(where));
+      ok(lost.length === 0, lost.length
+        ? `Б45 скрипт ищет классы, которых нет в разметке страницы и её скриптов: ${lost.slice(0, 6).map(([c, f]) => '.' + c + ' (' + path.basename(f) + ')').join(', ')} — узел не найдётся, обработчик молча не сработает`
+        : `Б45 классы, которые ищут скрипты страницы, есть в разметке (${sought.size})`);
+    }
+
+    /* Б47 — класс из собственного <style> экрана, которого нет ни в разметке,
+       ни в скриптах страницы (урок Л243). Блок убирали с экрана, а его CSS
+       оставался: мёртвые правила копились с каждым решением заказчика и
+       уехали в модуль, где спека описала их как часть экрана. Б4 смотрит с
+       другой стороны (класс разметки без CSS), Б45 — класс, который ищет
+       скрипт. Вход — только селекторы <style> экрана, не значения (`.6`,
+       `url(x.png)`); классы ДС и хуков рантаймов не проверяются — их вешает
+       ДС. «Есть» — как у Б45: имя в странице без <style> или в её локальном
+       скрипте. Экран с <ds-include> вшивает разметку виджетов, которой в
+       исходнике нет, — правило его пропускает. Уровень WARN: класс, склеенный
+       в скрипте из кусков (`'msg--' + role`), литералом не виден. */
+    if (!/<ds-include\b/i.test(raw)) {
+      const ownCss = styleSrc.replace(/\/\*[\s\S]*?\*\//g, '');
+      const declared = new Set();
+      for (const m of ownCss.matchAll(/([^{};]+)\{/g)) {
+        const prelude = m[1].trim();
+        if (!prelude || prelude.startsWith('@')) continue;
+        for (const c of prelude.replace(/\[[^\]]*\]/g, '').matchAll(/\.(-?[A-Za-z_][\w-]*)/g)) {
+          if (!dsOnlyClasses.has(c[1]) && !CLASS_IGNORE.has(c[1])) declared.add(c[1]);
+        }
+      }
+      if (declared.size) {
+        const where = noComments.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '') + '\n' + linkedScripts.map((l) => l.src).join('\n');
+        const dead = [...declared].filter((c) => !new RegExp('(^|[^\\w-])' + c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\w-])').test(where));
+        if (dead.length) warn(`Б47 в <style> экрана правила для классов, которых нет ни в разметке, ни в скриптах страницы: ${dead.slice(0, 8).map((c) => '.' + c).join(', ')}${dead.length > 8 ? ' и ещё ' + (dead.length - 8) : ''} — мёртвый CSS; блок убирают вместе с его стилями (Л243)`);
+        else ok(true, `Б47 классы <style> экрана есть в разметке или скриптах (${declared.size})`);
+      }
+    }
+
+    /* Б46 — относительная ссылка внутри экрана ведёт на существующий файл
+       (RE0023, Э11 (г)). Реестр хаба сверяет только ссылки хаба; переход со
+       страницы на страницу, сломанный переездом или копией, не видел никто —
+       копию страницы в RE0022 спас ручной diff. Вход — `<a href>` разметки и
+       JS-шаблонов, литералом; якорь, адрес со схемой и путь от корня сайта —
+       не файлы проекта. Запрос и якорь от пути отрезаются. */
+    const dead = [];
+    const anchors = [
+      ...[...html.matchAll(/<a\b[^>]*\shref="([^"]*)"/gi)].map((m) => [m[1], 'строка ' + lineOf(html, m.index)]),
+      ...[...collectScriptMarkup(noComments).matchAll(/<a\b[^>]*\shref="([^"]*)"/gi)].map((m) => [m[1], 'в скрипте']),
+      ...linkedScripts.flatMap((l) => [...collectScriptMarkup('<script>' + l.src + '</script>').matchAll(/<a\b[^>]*\shref="([^"]*)"/gi)].map((m) => [m[1], path.basename(l.href)])),
+    ];
+    for (const [href, at] of anchors) {
+      const h = href.trim();
+      if (!h || h.startsWith('#') || /^(?:[a-z][a-z0-9+.-]*:|\/)/i.test(h)) continue;
+      /* Запрос и якорь отрезаются ДО проверки на склейку: `?` в `isLiteralAttr` —
+         признак JS-выражения, и ссылка `Lead.preview.html?id=1` отбрасывалась бы
+         целиком (ревью RE0023 Р2). На склейку проверяется только путь. */
+      const file = h.split(/[?#]/)[0];
+      if (!file || !isLiteralAttr(file) || file.includes('${')) continue;
+      let rel = file;
+      try { rel = decodeURIComponent(file); } catch { /* как есть */ }
+      if (!existsSync(path.resolve(pageDir, rel))) dead.push(h + ' (' + at + ')');
+    }
+    if (anchors.length) {
+      ok(dead.length === 0, dead.length
+        ? `Б46 ссылки ведут на несуществующие файлы: ${[...new Set(dead)].slice(0, 6).join(', ')} — переход сломан`
+        : 'Б46 относительные ссылки ведут на существующие файлы');
+    }
+  }
+
+  return res;
+}
+
+/* Тело блока от открывающей `{` на позиции `at` до парной `}`. Нужно там, где
+   у правила есть вложенность: @container содержит обычные правила, и наивный
+   `[^}]*` обрывается на первой же внутренней скобке. */
+function braceBody(src, at) {
+  let depth = 0;
+  for (let i = at; i < src.length; i++) {
+    if (src[i] === '{') depth++;
+    else if (src[i] === '}') { depth--; if (depth === 0) return src.slice(at + 1, i); }
+  }
+  return src.slice(at + 1);
+}
+
+/* Классы, которые не принадлежат ни одному компоненту ДС и живут в разметке
+   как общие слова. Список зеркалит CLASS_IGNORE линтера — если он разъедется,
+   Б4 и правило A2 начнут спорить об одном и том же классе. */
+const CLASS_IGNORE = new Set(['page', 'section', 'masthead', 'meta', 'lead', 'eyebrow', 'crumb', 'desc', 'panel', 'row', 'col', 'grid', 'card', 'note', 'name', 'c', 'n', 'is-off']);
+
+/* Содержимое парного тега и его конец — надстройка над `sliceTag`, который
+   уже умеет считать глубину. Отдельный разборщик здесь заводить нельзя: два
+   парсера одной разметки разъедутся на первом же исключении (урок Л43,
+   у правила один владелец). Нужно там, где важна ВЛОЖЕННОСТЬ, а не совпадение
+   строки: Б18 отличает поле внутри сетки от поля рядом с ней. */
+function tagRange(src, at, tag) {
+  const el = sliceTag(src, at, tag);
+  if (!el) return { inner: src.slice(src.indexOf('>', at) + 1), end: src.length };
+  const open = el.indexOf('>') + 1;
+  const close = el.lastIndexOf('</');
+  return { inner: el.slice(open, close), end: at + el.length };
+}
+
+/* ---------------- геометрия (K-блокеры) ---------------- */
+
+function runGeometry(rows, standalone, width) {
+  const contentW = width - RAIL_W - 2 * PAD_X;
+  const colW = (contentW - 11 * TILE_GAP) / 12;
+  const tileW = (n) => n * colW + (n - 1) * TILE_GAP;
+  const inner = (n) => tileW(n) - 2 * TILE_PAD_X;
+  const k5 = (n) => Math.max(1, Math.min(4, Math.floor(inner(n) / CELL_MIN)));
+  const cellW = (tileN, cols) => (inner(tileN) - (cols - 1) * TILE_GAP) / cols;
+
+  function rowsOf(t, cols) {
+    const fields = t.fields.filter((f) => !f.full);
+    const fullRows = t.fields.filter((f) => f.full).length;
+    return Math.ceil(fields.length / cols) + fullRows + t.directPbars;
+  }
+  function heightOf(t) {
+    if (t.span === null) return 0;
+    const cols = t.cols || k5(t.span);
+    const rows = rowsOf(t, cols);
+    return HEADER_H + PAD_TOP + rows * ROW_H + (rows - 1) * ROW_GAP + PAD_BOTTOM;
+  }
+
+  function analyzeTile(t) {
+    const out = [];
+    if (t.span === null && t.inStack) {
+      const cols = t.cols || '—';
+      out.push({ level: 'info', label: `«${t.title}» (строка ${t.line}): в стопке (tile-stack) — ширина от стопки, полей ${t.fields.length}, колонок ${cols} — ширинные проверки (K1/K4/K5) неприменимы` });
+      return out;
+    }
+    if (t.span === null && t.offGrid) {
+      out.push({ level: 'info', label: `«${t.title}» (строка ${t.line}): внесеточный блок (data-off-grid) — ширина задана причиной, а не колонками; ширинные проверки неприменимы` });
+      return out;
+    }
+    if (t.span === null) {
+      out.push({ level: 'fail', label: `тайл «${t.title}» (строка ${t.line}): ширина не читается (нет span/col-N)` });
+      return out;
+    }
+    const fields = t.fields.filter((f) => !f.full);
+    const tw = tileW(t.span);
+    const inn = inner(t.span);
+    let cols = t.cols;
+    const k5rec = k5(t.span);
+    if (cols === null && t.fields.length > 0) {
+      out.push({ level: 'warn', label: `«${t.title}»: нет repeat(N) в .tile__grid — колонки не читаются, взять K5=${k5rec}` });
+      cols = k5rec;
+    } else if (cols === null) {
+      cols = k5rec; // тайл без сетки полей (таблица/список) — колонки не нужны
+    }
+    const cw = cellW(t.span, cols);
+
+    /* K5: ширина ячейки */
+    if (t.cols !== null && t.cols > k5rec) {
+      out.push({ level: 'warn', label: `K5 «${t.title}»: ${t.cols} колонки → ячейка ${Math.round(cw)}px < ${CELL_MIN}px (рекомендация ${k5rec})` });
+    } else if (t.cols !== null && t.cols < k5rec && fields.length >= 4) {
+      out.push({ level: 'warn', label: `K5 «${t.title}»: ${t.cols} колонки при рекомендации ${k5rec} — помещается больше` });
+    }
+
+    /* K4: ширина по объёму. Объём — это поля ReadOnlyField или таблица/график
+       (чек-лист composition-review, K4). Тайл без полей и без таблицы — список,
+       колонка навигации — под правило не подпадает: переносить в нём нечего, а
+       ширину задаёт раскладка экрана. Раньше минимум 4 колонки требовался и от
+       такого тайла: хаб проектов (15.09.2026) с тремя колонками по 3 из 12 и
+       списками Entity получал ложный FAIL «0 полей на 3 колонках».
+       Малый тайл (1–5 полей) — 3 или 4 колонки: на FHD и выше приоритет 3,
+       ниже FHD — 4, и тайл на 3 колонках получает замечание, а не блокер
+       (решение человека 30.09.2026; до того было «от 4», и «Сроки сделки»
+       на 3 колонках по ТЗ держали страницу сделки красной). */
+    const fcount = t.fields.length;
+    const hasTable = /class="tbl|chart-host/.test(t.el);
+    const small = !hasTable && fcount > 0 && fcount <= 5;
+    const expected = hasTable ? 12 : (fcount >= 10 ? 8 : fcount >= 6 ? 6 : 3);
+    if (fcount === 0 && !hasTable) {
+      out.push({ level: 'info', label: `K4 «${t.title}»: полей и таблицы нет — ширина по объёму неприменима` });
+    } else if (t.span < expected && t.span <= 4) {
+      out.push({ level: 'fail', label: `K4 «${t.title}» (строка ${t.line}): ${fcount} полей на ${t.span} колонках — положено от ${expected}${small ? ' (3 или 4; на FHD и выше приоритет 3)' : ''} (поля переносятся)` });
+    } else if (small && t.span === 3 && width < FHD) {
+      out.push({ level: 'warn', label: `K4 «${t.title}»: ${fcount} полей на 3 колонках при ширине ${width}px — ниже FHD приоритет 4 колонки` });
+    } else if (t.span === 12 && fcount <= 5 && !hasTable) {
+      out.push({ level: 'warn', label: `K4 «${t.title}»: тайл на всю ширину под ${fcount} полей — пустота справа` });
+    }
+
+    /* K9: сколько полей помещается в один тайл, прежде чем он перестаёт
+       читаться. Пороги из чек-листа композиции: до 10 — норма, 11–12 —
+       замечание (нужна подгруппировка), 13 и больше — блокер.
+
+       Реализована ЧИСЛОВАЯ половина пункта. Вторая половина — «блоков в зоне
+       не больше 7–8» — не закрыта: «зона» структурно не определена (ряд?
+       экран? визуальный блок?), и додумывать её значило бы запрещать то, что
+       не запрещено (урок Л72). Разрыв объявлен в coverage.json. */
+    if (fcount >= 13) {
+      out.push({ level: 'fail', label: `K9 «${t.title}» (строка ${t.line}): ${fcount} полей в одном тайле — от 13 читается как список, а не как карточка; разбить или сгруппировать` });
+    } else if (fcount >= 11) {
+      out.push({ level: 'warn', label: `K9 «${t.title}»: ${fcount} полей — нужна подгруппировка (подзаголовок, разделитель) либо разбиение на два тайла` });
+    }
+
+    /* K2 / K2.1: длинные значения */
+    for (const f of fields) {
+      if (!f.value) continue;
+      const estW = f.value.length * CHAR_W_VALUE;
+      const lines = Math.ceil(estW / cw);
+      if (lines >= 2) {
+        if (f.full || f.clamp) continue;
+        out.push({
+          level: lines >= 3 ? 'fail' : 'warn',
+          label: `K2.1 «${t.title}» (строка ${t.line}): «${f.value.slice(0, 20)}…» ~${estW}px / ячейка ${Math.round(cw)}px → ~${lines} строк — дать .tile__grid-full или clamp`,
+        });
+      }
+    }
+
+    /* K1: пустота у правой кромки (оценка по эвристике) */
+    if (!(cols === 1 && t.span <= 4) && fields.length) {
+      const colWidest = new Array(cols).fill(0);
+      let i = 0;
+      for (const f of fields) {
+        const w = Math.max(f.label.length * CHAR_W_LABEL, f.value.length * CHAR_W_VALUE);
+        if (w > colWidest[i % cols]) colWidest[i % cols] = w;
+        i++;
+      }
+      const lastWidest = colWidest[cols - 1] || 0;
+      const air = cw - lastWidest;
+      if (air > 0.5 * tw && air > 250) {
+        out.push({ level: 'fail', label: `K1 «${t.title}» (строка ${t.line}): воздух ~${Math.round(air)}px > 250px и > половины тайла — оценка, проверить вручную` });
+      } else if (air > 200) {
+        out.push({ level: 'warn', label: `K1 «${t.title}»: воздух ~${Math.round(air)}px (близко к порогу)` });
+      }
+    }
+
+    const rows = rowsOf(t, cols);
+    out.push({ level: 'info', label: `«${t.title}»: span ${t.span} → ${Math.round(tw)}px (внутр. ${Math.round(inn)}), колонок ${cols} (K5=${k5rec}), полей ${t.fields.length} → ~${rows} строк, высота ~${Math.round(heightOf(t))}px` });
+
+    return out;
+  }
+
+  const results = [];
+  for (const row of rows) {
+    let sum = 0;
+    const parts = [];
+    for (const t of row.tiles) {
+      if (t.span === null) { results.push(...analyzeTile(t)); continue; }
+      sum += t.span;
+      parts.push(`${t.title}(${t.span})`);
+      results.push(...analyzeTile(t));
+    }
+    /* Стопка — такой же элемент сетки ряда, как тайл: её span и идёт в сумму,
+       а тайлы внутри ширины не объявляют (спека Tile, «.tile-stack»). */
+    for (const s of (row.stacks || [])) {
+      if (s.span === null) continue;
+      sum += s.span;
+      parts.push(`стопка(${s.span})`);
+    }
+    /* Метка с идентификатором Б7 — иначе проверка есть, а в `--rules` и в
+       отчёте покрытия её не видно, и пункт числится незакрытым (класс Л50). */
+    /* Недобор до 12 — норма (Spacing: «Ряд набирается до 12, недобор — норма»):
+       тайл может стоять в ряду один на 3, 4, 6 колонок. Дефект — только
+       переполнение: ряд шире сетки. До 10.10.2026 сенсор требовал ровно 12 и
+       противоречил ДС (урок про Б7). */
+    const ok = sum <= 12;
+    results.push({ level: ok ? 'info' : 'fail', label: `Б7 ряд (строка ${row.line}): ${parts.join(' + ')} = ${sum} ${ok ? '≤ 12 ✓' : '> 12'}` });
+  }
+  for (const t of standalone) results.push(...analyzeTile(t));
+
+  /* K6: сопоставимость соседей в ряду (оценка) */
+  for (const row of rows) {
+    const ts = row.tiles.filter((t) => t.span !== null);
+    for (let i = 0; i < ts.length; i++) {
+      for (let j = i + 1; j < ts.length; j++) {
+        const a = heightOf(ts[i]);
+        const b = heightOf(ts[j]);
+        const diff = Math.abs(a - b);
+        if (diff > 160) {
+          results.push({ level: 'warn', label: `K6 (оценка) «${ts[i].title}» vs «${ts[j].title}» (строка ${row.line}): расхождение ~${diff}px (>160) — вероятная несопоставимость, проверить` });
+        } else if (diff > 120) {
+          results.push({ level: 'warn', label: `K6 (оценка) «${ts[i].title}» vs «${ts[j].title}» (строка ${row.line}): расхождение ~${diff}px — на грани (порог 120), проверить` });
+        }
+      }
+    }
+  }
+
+  return { results, colW, contentW };
+}
+
+/* ---------------- --rules: фактический список реализованных проверок ----------------
+   Источник истины — сам файл: идентификатор, стоящий В НАЧАЛЕ строкового литерала
+   метки. Комментарии и кросс-ссылки на чужое пространство имён (каскад К3 из
+   screen-review) сюда не попадают — они литерал не начинают.
+   Зачем: ручное перечисление проверок уже разошлось в трёх местах (process.md §9,
+   screen-review/SKILL.md, MAINTAINING.md) — урок Л43, одно правило у нескольких
+   владельцев. Описание заменяется вызовом команды. */
+function printRules() {
+  const src = readFileSync(fileURLToPath(import.meta.url), "utf8");
+  const found = new Map();
+  /* Ряды идентификаторов: Б — блокеры, З — замечания (оба screen-review),
+     К — каскад screen-review, K — геометрия composition-review. Кириллические
+     и латинские буквы здесь визуально почти неразличимы, поэтому они заданы
+     кодовыми точками, а не начертанием: Б U+0411, З U+0417, К U+041A. */
+  const NS = {
+    'Б': 'сенсор:Б — блокеры (чек-лист screen-review)',
+    'З': 'сенсор:З — замечания (чек-лист screen-review)',
+    'К': 'сенсор:К — каскад (чек-лист screen-review)',
+    'K': 'сенсор:K — геометрия (чек-лист composition-review)',
+  };
+  for (const m of src.matchAll(/['"`]\s*([БЗКK]\d{1,2}(?:\.\d)?)(?!\d)/gu)) {
+    const id = m[1];
+    const ns = NS[id[0]];
+    if (!found.has(ns)) found.set(ns, new Set());
+    found.get(ns).add(id);
+  }
+  const num = (x) => parseFloat(x.replace(/^[^0-9]+/, ""));
+  log("== layout-check: реализованные проверки ==");
+  for (const [ns, set] of found) {
+    log("");
+    log(ns + ":");
+    log("  " + [...set].sort((a, b) => num(a) - num(b)).join(" "));
+  }
+  log("");
+  log("Якорь для журнала уроков пишется с пространством имён: сенсор:Б24, сенсор:K1.");
+  log("Кириллическая Б и латинская K — разные ряды; латинские B* принадлежат ds-lint.js.");
+}
+
+/* ---------------- проверка одного файла ----------------
+
+   Вынесена из `main()` ради обхода каталога (`--etalons`). До этого тело
+   проверки завершало ПРОЦЕСС в двух местах: `fail()` при ненайденном файле и
+   ветка <ds-include> при шаблоне-исходнике. Обход оборвался бы на первом же
+   таком файле — и оборвался бы МОЛЧА, с нулевым кодом выхода: остальные
+   эталоны выглядели бы проверенными (класс Л100 — молчание читается как
+   чистота).
+
+   Здесь ни одна ветка процесс не завершает. Печать, код выхода и запись в
+   журнал прогонов — дело вызывающего; отчёт возвращается строками, из них же
+   вызывающий берёт сработавшие коды. */
+/* Правила страницы, которые к невшитому фрагменту widgets/ не применяются (Э8 RE0023). */
+const WIDGET_SKIP = /^(Б1|Б5|Б6|Б12|Б22|Б46|К12)\s/;
+
+function checkOne(pageArg, width) {
+  const p = path.resolve(ROOT, pageArg);
+  const name = path.basename(p);
+  const printed = [];
+  const say = (s) => printed.push(s);
+
+  if (!existsSync(p)) {
+    say('ОШИБКА: файл не найден: ' + pageArg);
+    return { status: 'ошибка', path: p, printed, fails: 0, warns: 0 };
+  }
+  const html = readFileSync(p, 'utf8');
+
+  /* Шаблон-исходник — не собранный экран. Файл с активной (вне комментария)
+     меткой <ds-include> собирается ассемблером (Projects/test/post/assemble.mjs),
+     и проверять надо результат, а не источник: у источника нет ни разметки
+     включённых фрагментов, ни смысла экранных проверок (Б12 «нет спутника-
+     спеки» на источнике — ложный FAIL). Пропуск печатается строкой ПРОПУЩЕН:,
+     молчаливого пропуска нет (process.md §9). */
+  const noComments = html.replace(/<!--[\s\S]*?-->/g, '');
+  if (/<ds-include\b/i.test(noComments)) {
+    say(`== layout-check ${name} ==`);
+    say('ПРОПУЩЕН: ' + pageArg + ' — шаблон-исходник с неразвёрнутыми <ds-include>; проверять собранный файл (результат assemble.mjs).');
+    return { status: 'пропущен', path: p, printed, fails: 0, warns: 0 };
+  }
+
+  /* Фрагмент — не экран: модалка или таблица без <html>, которую источник
+     вшивает через <ds-include>. Проверяется в собранном файле. Определение и
+     причина — fragments.mjs. */
+  const hosts = includersOf(p);
+  if (hosts.length) {
+    say(`== layout-check ${name} ==`);
+    say('ПРОПУЩЕН: ' + pageArg + ' — фрагмент, вшивается в ' + hosts.map((h) => path.relative(ROOT, h).split(path.sep).join('/')).join(', ') + '; проверять собранный файл.');
+    return { status: 'пропущен', path: p, printed, fails: 0, warns: 0 };
+  }
+
+  /* иконки из foundations/Icons/Icons.md (формат: строка имён через ·) */
+  const iconsText = readFileSync(L.abs(L.specOf('Icons')), 'utf8');
+  const iconsSection = iconsText.slice(iconsText.indexOf('## Все глифы'));
+  const icons = new Set(iconsSection.split('·').map((s) => s.trim()).filter(Boolean));
+
+  /* Виджет приложения без вшивки — тоже фрагмент (RE0023, Э8): каркаса он не
+     несёт, поэтому правила страницы — загрузчик и ds.css/ds.js (Б1), каркас
+     (Б5), h1 в шапке (Б6), сброс body (Б22), спека экрана (Б12; у виджета —
+     паспорт `<Имя>.md`), относительные ссылки (Б46; пути — от страницы),
+     растяжка реестра по высоте окна (К12; у модалки с таблицей нет `.screen`,
+     ревью RE0023 Р1) — к нему не применяются, пропуск печатается строкой.
+     Остальное — цвета, классы, хуки, иконки — проверяется: вшивки ещё нет, и
+     другого прогона у фрагмента нет. CSS виджета `<Имя>.css` рядом сборщик
+     подключает сам — для Б4 он считается подключённым. */
+  const widget = isWidgetFragment(p);
+
+  /* стили экрана один раз — механике и геометрии (задача 0008) */
+  const styles = screenStyles(html, p);
+  if (widget) {
+    const css = p.replace(/\.html$/i, '.css');
+    if (existsSync(css) && !styles.linked.some((l) => l.file === css)) {
+      const text = readFileSync(css, 'utf8');
+      styles.linked.push({ href: path.basename(css), file: css, text });
+      styles.all += '\n' + text;
+    }
+  }
+  let mech = checkMechanics(html, icons, p, styles);
+  if (widget) {
+    mech = mech.filter((r) => !WIDGET_SKIP.test(r.label));
+    mech.unshift({ ok: true, level: 'ok', label: 'Б1 Б5 Б6 Б12 Б22 Б46 К12 ПРОПУЩЕН: фрагмент widgets/ без вшивки — каркаса страницы и высоты окна не несёт, относительные пути считаются от страницы; правила страницы проверяются в собранной странице' });
+  }
+  const { rows, standalone } = parseTiles(html, { colsOf: gridColsResolver(styles.all) });
+  const geo = runGeometry(rows, standalone, width);
+
+  const all = [...mech, ...geo.results];
+  const fails = all.filter((r) => r.level === 'fail');
+  const warns = all.filter((r) => r.level === 'warn');
+
+  /* Печатаемое собирается в массив: из него же берутся сработавшие коды для
+     журнала прогонов. Разбирать собственный отчёт дешевле, чем вести второй
+     перечень идентификаторов рядом с первым — такие перечни расходятся (Л43). */
+  say(`== layout-check ${name} (ширина ${width}) ==`);
+  say('[механика]');
+  for (const r of mech) say((r.level === 'ok' ? 'PASS  ' : r.level === 'warn' ? 'WARN  ' : 'FAIL  ') + r.label);
+  say(`[геометрия] контент ${Math.round(geo.contentW)}px, колонка ${Math.round(geo.colW * 10) / 10}px`);
+  for (const r of geo.results) say((r.level === 'info' ? '  ·   ' : r.level === 'warn' ? 'WARN  ' : 'FAIL  ') + r.label);
+  say('');
+  say(fails.length === 0 ? `ВЕРДИКТ: OK (замечаний: ${warns.length})` : `ВЕРДИКТ: FAIL (${fails.length} блокер, ${warns.length} замечание)`);
+
+  return { status: fails.length === 0 ? 'OK' : 'FAIL', path: p, printed, fails: fails.length, warns: warns.length };
+}
+
+/* ---------------- --etalons: образцы каркаса ----------------
+
+   С образца начинается каждая сборка экрана. Разъехавшийся образец
+   разъезжается сразу во всём, что от него произошло (Л69), а прогонять его по
+   одному некому — этот режим обходит все образцы разом. Где они лежат:
+     - шаблон экрана ДС, `design-system/templates/screen/*.html` — с 21.09.2026
+       единственный каркас: в него слит эталон, живший в харнесе
+       (скилл `screen-assembly`, файл `skeleton.html` в его `references`), — два образца расходились
+       молча (реструктуризация, шаг Ш3);
+     - образцы скиллов, `.agents/skills/<скилл>/references/*.html`, — если
+       скилл заведёт свой.
+
+   ЧИСЛО НАЙДЕННОГО ПЕЧАТАЕТСЯ, и пустой обход — это FAIL. Обход, не нашедший
+   ни одного файла, неотличим по выводу от обхода, нашедшего десять чистых:
+   зелёный вердикт на пустом множестве — буквально Л100. Сегодня образец ровно
+   один, и это стоит видеть в выводе, а не обнаруживать.
+
+   В журнал прогонов режим не пишет: отсечение — `isEtalon` в runlog.mjs, там
+   же причина. */
+function etalons(width) {
+  const found = [];
+  const htmlIn = (dir) => {
+    if (!existsSync(dir)) return;
+    for (const f of readdirSync(dir)) if (f.endsWith('.html')) found.push(path.join(dir, f));
+  };
+  htmlIn(path.join(DS, 'templates', 'screen'));
+  const base = path.join(PRJ.kitAbs, 'skills');
+  if (existsSync(base)) {
+    for (const skill of readdirSync(base, { withFileTypes: true })) {
+      if (skill.isDirectory()) htmlIn(path.join(base, skill.name, 'references'));
+    }
+  }
+  found.sort();
+
+  log('== layout-check --etalons: образцы каркаса (шаблон экрана ДС, образцы скиллов) ==');
+  log('эталонов найдено: ' + found.length);
+  log('');
+  if (!found.length) {
+    log('ВЕРДИКТ: FAIL — обход не нашёл ни одного эталона.');
+    log('Пустой обход с зелёным вердиктом неотличим от чистого (Л100): либо');
+    log('сместился глоб, либо образцы унесли из references/.');
+    process.exit(1);
+  }
+
+  let bad = 0, skipped = 0, warns = 0;
+  for (const abs of found) {
+    const rel = path.relative(ROOT, abs).split(path.sep).join('/');
+    const r = checkOne(rel, width);
+    log('--- ' + rel);
+    for (const s of r.printed) log(s);
+    log('');
+    if (r.status === 'FAIL' || r.status === 'ошибка') bad++;
+    if (r.status === 'пропущен') skipped++;
+    warns += r.warns;
+  }
+
+  log('== итог --etalons ==');
+  log('эталонов ' + found.length + ' · с блокерами ' + bad + ' · пропущено ' + skipped + ' · замечаний ' + warns);
+
+  /* В журнал идёт ОДНА строка на обход, а не строка на файл, и без кодов.
+     Пофайловые прогоны отсечены в `isEtalon` — десяток таких строк вытеснил
+     бы настоящие экраны из окна HORIZON инструмента «сенсор». Сводная строка
+     живёт под СВОИМ именем инструмента, в окно сенсора не входит и нужна
+     ровно для одного: чтобы `lessons-cli state` мог сказать, когда эталоны
+     прогонялись в последний раз. Коды не пишутся намеренно — под именем вне
+     RUN_TOOLS их никто не классифицирует, а лежали бы они как готовые данные
+     о живости правил, которыми не являются. */
+  logRun({ tool: 'эталоны', target: 'эталоны скиллов', verdict: bad === 0 ? 'OK' : 'FAIL', codes: [] });
+  process.exit(bad === 0 ? 0 : 1);
+}
+
+/* ---------------- main ---------------- */
+
+function main() {
+  const args = process.argv.slice(2);
+  if (args.includes("--rules")) { printRules(); return; }
+  const wIdx = args.indexOf('--width');
+  const width = wIdx >= 0 ? parseInt(args[wIdx + 1], 10) : 1920;
+  if (args.includes('--etalons')) { etalons(width); return; }
+
+  // значение `--width` — не путь: без этой оговорки `--width 1920` без файла
+  // уходило проверять несуществующий «1920»
+  const pageArg = args.find((a, i) => !a.startsWith('--') && !(wIdx >= 0 && i === wIdx + 1));
+  if (!pageArg) fail('использование: node layout-check.mjs <путь к <Имя>.html> [--width 1920] | --etalons | --rules');
+
+  const r = checkOne(pageArg, width);
+  for (const s of r.printed) log(s);
+  if (r.status === 'ошибка') process.exit(2);
+  if (r.status === 'пропущен') process.exit(0);
+
+  logRun({
+    tool: 'сенсор',
+    target: r.path,
+    verdict: r.status,
+    codes: codesFrom(r.printed.join('\n')),
+    fails: failsFrom(r.printed.join('\n')),   // регресс — только по блокерам (runlog.mjs, шапка)
+  });
+  process.exit(r.fails === 0 ? 0 : 1);
+}
+
+main();

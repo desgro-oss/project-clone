@@ -1,0 +1,8 @@
+{
+  "id": "banker-app",
+  "track": "product",
+  "title": "AI Pitcher",
+  "desc": "Origination: новый отчёт в чате, история запросов, подготовка материала",
+  "home": "pages/index.html",
+  "icon": "ai-stars"
+}

@@ -1,0 +1,95 @@
+{
+  "_": "Демо-данные страницы карточки в витрине — значения с макета «Card-Fininstrument», по типу ФИ. Форма — FinInstrumentCardView (data/fin-instruments-store.js); подписи суммы и строк узлов сценарий берёт из PRODUCT_DETAIL_LABELS по amountField, как стор. Состояние «Не заполнено» — только поля, заданные при создании (имя, тип, тип отчётности); «Заполнено» — они же + data; Значения — рыба, правятся по ходу дизайна.",
+
+  "reportingLabel": "МСФО и РСБУ",
+
+  "parties": {
+    "counterparty": {
+      "id": "CP-FI-1", "name": "КГ ГАЗНЕФТЕХИМПРОМСТРОЙ НЕДВИЖИМОСТЬ",
+      "risk": { "rating": 26, "zone": "green", "ratingDate": "24.10.2025", "zoneDate": "24.10.2025", "segment": "Крупный бизнес", "profile": "Проектный" }
+    },
+    "reserveCounterparty": {
+      "id": "CP-FI-2", "name": "Промстрой холдинг",
+      "risk": { "rating": 26, "zone": "red", "ratingDate": "24.10.2025", "zoneDate": "24.10.2025", "segment": "Крупный бизнес", "profile": "Непроектный" }
+    },
+    "allocationCounterparty": {
+      "id": "CP-FI-3", "name": "Федеральное государственное унитарное предприятие публичное акционерное общество «Новейшие технологии строительства»",
+      "risk": { "rating": 26, "zone": "watchlist", "ratingDate": "24.10.2025", "zoneDate": "24.10.2025", "segment": "Крупный бизнес", "profile": "Непроектный" }
+    }
+  },
+
+  "types": {
+    "LOAN": {
+      "label": "Кредит",
+      "name": "1-Кредит-199",
+      "amountField": "limitAmount",
+      "data": {
+        "balance": "SBI Voskhod Capital", "currency": "RUB", "fvAcLabel": "Инвестиции в АК",
+        "amount": 2500000, "signedAt": "2024-04-22", "plannedMaturityAt": "2024-12-22",
+        "isDkkk": true, "rwaCodes": ["6002-1,5%", "6005-5%"],
+        "nodes": [
+          { "id": "FX.LOAN.1", "number": "1.1.1.1.", "name": "Транш", "signedAt": "2024-04-22", "amount": 800000 },
+          { "id": "FX.LOAN.2", "number": "1.1.1.2.", "name": "Транш", "signedAt": "2024-04-22", "amount": 800000, "repaidAt": "2021-01-12" }
+        ]
+      }
+    },
+
+    "SHARES": {
+      "label": "Акции",
+      "name": "2-Акции-266",
+      "amountField": "purchaseCost",
+      "data": {
+        "balance": "SBI Voskhod Capital", "currency": "RUB", "fvAcLabel": "Инвестиции в АК", "targetIrr": 17.03,
+        "amount": 2500, "signedAt": "2024-04-22", "plannedMaturityAt": "2024-12-22",
+        "isDkkk": true, "hasLinkedUnconditionalOption": true, "rwaCodes": ["6002-1,5%"],
+        "nodes": [
+          { "id": "FX.SHARES.1", "number": "2.1.1.", "name": "Акции", "signedAt": "2024-04-22", "amount": 800000 }
+        ]
+      }
+    },
+
+    "ADDITIONAL_YIELD": {
+      "label": "Доп. доходность",
+      "name": "3-Доп. доходность-127",
+      "amountField": "strikePrice",
+      "data": {
+        "balance": "SBI Voskhod Capital", "currency": "RUB", "fvAcLabel": "Инвестиции в АК",
+        "amount": 2500, "signedAt": "2024-04-22", "plannedMaturityAt": "2024-12-22",
+        "isDkkk": true, "rwaCodes": ["6002-1,5%", "6005-5%", "6005.21-3%"],
+        "nodes": [
+          { "id": "FX.AY.1", "number": "2.1.1.", "name": "Акции", "signedAt": "2024-04-22", "amount": 800000 },
+          { "id": "FX.AY.2", "number": "3.1.1.1.", "name": "Пут: РЕПО", "signedAt": "2024-04-22", "amount": 800000, "repaidAt": "2021-01-12" },
+          { "id": "FX.AY.3", "number": "3.1.1.2.", "name": "Пут: РЕПО", "signedAt": "2024-04-22", "amount": 800000, "isIfrsOption": true }
+        ]
+      }
+    },
+
+    "REPO": {
+      "label": "РЕПО",
+      "name": "4-РЕПО-212",
+      "amountField": "strikePrice",
+      "data": {
+        "balance": "SBI Voskhod Capital", "currency": "RUB", "fvAcLabel": "Инвестиции в АК",
+        "amount": 2500, "signedAt": "2024-04-22", "plannedMaturityAt": "2024-12-22",
+        "isDkkk": true, "rwaCodes": ["6002-1,5%"],
+        "nodes": [
+          { "id": "FX.REPO.1", "number": "3.1.1.2.", "name": "Пут: РЕПО", "signedAt": "2024-04-22", "amount": 800000 }
+        ]
+      }
+    },
+
+    "RECEIVABLES": {
+      "label": "Дебиторская задолженность",
+      "name": "2-1-Дебиторская задолженность-001",
+      "amountField": "purchaseCost",
+      "data": {
+        "balance": "SBI Voskhod Capital", "currency": "RUB", "fvAcLabel": "Инвестиции в АК",
+        "amount": 2500, "signedAt": "2024-04-22", "plannedMaturityAt": "2024-12-22",
+        "isDkkk": true, "rwaCodes": ["6002-1,5%"],
+        "nodes": [
+          { "id": "FX.RECV.1", "number": "2.1.1.", "name": "Дебиторская задолженность", "signedAt": "2024-04-22", "amount": 800000 }
+        ]
+      }
+    }
+  }
+}

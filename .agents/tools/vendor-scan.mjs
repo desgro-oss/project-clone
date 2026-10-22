@@ -1,0 +1,423 @@
+/* ============================================================
+   VENDOR-SCAN — сторож нейтральности репозитория.
+
+   Зачем. Репозиторий уезжает на рабочий контур, и следов посторонних
+   агентных инструментов в нём быть не должно: ни имён вендоров и моделей,
+   ни служебных каталогов, ни абсолютных путей с машины автора. Правило
+   существовало текстом и нарушалось трижды (путь к внешнему плану в
+   `apps/postrade/deals-app/data/`, два URL в скилле композиции) — текст правилом
+   не является, пока его никто не проверяет.
+   (Глоб-шаблоны в этой шапке записаны с многоточием: последовательность
+   «звёздочка-слэш» закрыла бы блочный комментарий на середине файла.)
+
+   Почему не проходом `spec-audit.mjs`. У аудита корень — `design-system/`, он
+   физически не видит каталог харнеса и `apps/`, то есть ровно те места,
+   где следы и нашлись. Сторож, не достающий до входа, — это класс Л100
+   («правило, у которого отняли вход, молчит»), и повторять его здесь
+   нельзя. Корень — из манифеста проекта (project.mjs; реструктуризация,
+   шаг Ш4), как у всей оснастки. Из дот-каталогов обходится ровно один —
+   каталог харнеса, и его имя тоже берётся из манифеста (`agentKit.mount`):
+   иначе на переезде харнеса (Ш5) сторож молча перестал бы его видеть — тот
+   же класс «у правила отняли вход».
+
+   Пути, а не только содержимое (01.10.2026). Обход читает текст файлов и
+   не заходит в посторонние дот-каталоги, поэтому памятка стороннего агентного
+   CLI в корне (имя ассистента — в ИМЕНИ файла) и его служебный каталог
+   лежали в git и в `main` с 22.09.2026 и уезжали бы на рабочий контур, а
+   сторож давал «чисто»: у правила отняли вход (класс Л100, урок Л153). Теперь каждый
+   путь, который git отслеживает или заберёт в коммит (не игнорируемый),
+   сверяется со стоп-словами — имя вендора, ассистента, семейства моделей.
+   Список даёт git; нет git — проверки путей нет, обход прежний.
+
+   Почему шаблоны собраны из кусков. Сторож, написавший стоп-слова
+   литералами, находит сам себя: файл правила стал бы первым нарушителем.
+   Склейка — не украшение, а условие работоспособности. Образцы путей в
+   селфтесте собраны так же: иначе этот файл носил бы в себе настоящие с виду
+   пути, и первая же его копия в другой репозиторий стала бы находкой.
+
+   Абсолютный путь ловится в ДВУХ формах, и обе держит селфтест (21.09.2026).
+   До этого образец был только windows-формы, а работа идёт на macOS: файл
+   с posix-путём сторож пропускал с вердиктом «чисто» — правило выглядело
+   охраняемым, и на него полагались при написании документов.
+     posix   — `/Users/` или `/home/`, за ними имя пользователя и каталог.
+               Слева — начало строки или символ, который не бывает частью
+               имени хоста или каталога: пробел, кавычки, обратная кавычка
+               markdown, скобка, `=`, `/` из `file:///`. Поэтому путь на
+               чужом хосте (`https://…/Users/…`) и относительный путь
+               (`../home/…`) находками не считаются;
+     windows — `C:\Users\`, за ним имя и каталог; то же с удвоенными
+               слэшами (строка JSON) и с прямыми.
+   Путь без имени пользователя (`/Users/…` в тексте) находкой не считается:
+   он ничего не выдаёт и нужен, чтобы описывать само правило. Примеры в этой
+   шапке записаны именно так — полный пример стал бы находкой в первой же
+   копии файла, которую обходит не он сам.
+
+   Что СОЗНАТЕЛЬНО не считается нарушением:
+   - имя протокола и имя npm-пакета шлюза (`@ai-sdk/openai-compatible` и
+     «…-совместимый API» в `.agents/README.md`). Политика запрещает
+     выдавать, каким агентным инструментом пользуются вне рабочего контура,
+     а это — описание корпоративного шлюза и техническое имя зависимости:
+     убрать их значит сломать инструкцию по настройке. Решение владельца
+     от 11.09.2026;
+   - `node_modules/` — чужой код, репозиторием не авторствуется.
+   - игнор-лист из манифеста (`vendorScan.ignore`, сейчас `.zcodeignore` и
+     `tmp`) — файлы и каталоги машины, которых нет в репозитории (они в
+     `.gitignore`): конфиг стороннего инструмента разработки и рабочие
+     записи экрана; решение владельца от 25.09.2026. Игнор-лист прятал бы и
+     настоящие следы, поэтому в нём только то, что не попадает в git;
+   - черновые каталоги из манифеста (`scratch`, сейчас `docs/misc`) — рабочие
+     заметки и выгрузки, которые периодически чистятся целиком; решение
+     владельца от 24.09.2026.
+   - пути, которые git игнорирует (.gitignore, исключения репозитория и
+     глобальные) и которые не отслеживаются, — не содержимое репозитория: в
+     коммит они не попадают и на рабочий контур не уезжают. Список отдаёт сам
+     git; нет git или корень не репозиторий — обход прежний. Отслеживаемый
+     файл сторож видит, даже если он подпадает под шаблон игнора. Решение
+     владельца от 24.09.2026.
+
+   Запуск:
+     node .agents/tools/vendor-scan.mjs
+     node vendor-scan.mjs --root <каталог>   — обход другого дерева
+     node vendor-scan.mjs --selftest         — откат на временном дереве
+   Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1.
+   ============================================================ */
+import { readFileSync, readdirSync, mkdirSync, writeFileSync, rmSync, mkdtempSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import path from 'node:path';
+import os from 'node:os';
+import { fileURLToPath } from 'node:url';
+import { project } from './project.mjs';
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const PRJ = project(HERE);
+const REPO = PRJ.root || process.cwd();
+const SELF = path.resolve(fileURLToPath(import.meta.url));
+
+/* Дот-каталоги, которые обходятся: каталог харнеса и адаптер агентного CLI
+   по манифесту (Ш5: адаптер — отдельный каталог, и без него сторож не видел
+   бы конфиг адаптера) и тот, где лежит сам сторож, — если он
+   внутри обходимого корня. Остальные дот-каталоги (служебные каталоги git и
+   посторонних инструментов, состояние гейта) не обходятся. */
+function dotDirsFor(root) {
+  const out = new Set();
+  const p = project(root);
+  if (!p.error && p.root === path.resolve(root)) {
+    for (const d of [p.kit, p.adapter]) if (d && d.startsWith('.')) out.add(d.split('/')[0]);
+  }
+  const self = path.relative(root, HERE).split(path.sep)[0];
+  if (self && self.startsWith('.') && self !== '..') out.add(self);
+  return out;
+}
+
+const SKIP_DIRS = new Set(['node_modules', '.git', 'uploads']);
+const TEXT_EXT = new Set(['.md', '.json', '.js', '.mjs', '.cjs', '.html', '.css', '.txt', '.yml', '.yaml', '.jsonc']);
+
+/* Стоп-слова: имя вендора, имя ассистента, два имени семейств моделей и
+   служебный каталог. Собраны склейкой — см. шапку. */
+const A = 'anthr' + 'opic';
+const B = 'cla' + 'ude';
+const C = 'op' + 'us';
+const D = 'son' + 'net';
+const U = 'Us' + 'ers';
+const H = 'ho' + 'me';
+const PATH_WHAT = 'абсолютный путь с машины автора';
+const VENDOR_NAME = { re: new RegExp(A, 'i'), what: 'имя вендора' };
+const ASSISTANT_NAME = { re: new RegExp(B, 'i'), what: 'имя ассистента' };
+const PATTERNS = [
+  VENDOR_NAME,
+  ASSISTANT_NAME,
+  { re: new RegExp('\\b' + C + '\\b', 'i'), what: 'имя семейства моделей' },
+  { re: new RegExp('\\b' + D + '\\b', 'i'), what: 'имя семейства моделей' },
+  // posix — граница слева см. шапку; буквы любого алфавита считаются частью имени
+  { re: new RegExp('(^|[^\\p{L}\\p{N}_.~-])/(' + U + '|' + H + ')/[^/\\s"\'`]+/', 'u'), what: PATH_WHAT },
+  // windows — одинарные, удвоенные (JSON) и прямые слэши
+  { re: new RegExp('[A-Za-z]:(?:\\\\{1,2}|/)' + U + '(?:\\\\{1,2}|/)[^\\\\/\\s"\'`]+[\\\\/]', 'i'), what: PATH_WHAT },
+];
+
+/* Черновые каталоги из манифеста (`scratch`, решение владельца 24.09.2026):
+   заметки и выгрузки, которые периодически чистятся, — не содержимое
+   репозитория, сторож их не обходит. Пути — от корня обхода. */
+function scratchFor(root) {
+  const p = project(root);
+  return new Set(!p.error && p.root === path.resolve(root) ? p.scratch : []);
+}
+
+/* Игнор-лист из манифеста (`vendorScan.ignore`, решение владельца 25.09.2026):
+   файлы и каталоги машины вне репозитория, сторож их не читает. Пути — от
+   корня обхода. */
+function ignoreFor(root) {
+  const p = project(root);
+  return new Set(!p.error && p.root === path.resolve(root) ? p.vendorIgnore || [] : []);
+}
+
+/* Неотслеживаемые пути, которые git игнорирует, — от корня обхода (см. шапку).
+   Каталог, игнорируемый целиком, git отдаёт одной строкой со слэшем на конце. */
+function ignoredFor(root) {
+  try {
+    const out = execFileSync('git', ['-C', root, 'ls-files', '--others', '--ignored', '--exclude-standard', '--directory', '-z'],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    return new Set(out.split('\0').filter(Boolean));
+  } catch {
+    return new Set();
+  }
+}
+
+function walk(dir, acc, dotDirs, root = dir, scratch = scratchFor(root), ignore = ignoreFor(root), ignored = ignoredFor(root)) {
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    if (e.name.startsWith('.') && e.isDirectory() && !dotDirs.has(e.name)) continue;
+    const p = path.join(dir, e.name);
+    const rel = path.relative(root, p).split(path.sep).join('/');
+    if (ignore.has(rel)) continue;
+    if (e.isDirectory()) {
+      if (SKIP_DIRS.has(e.name)) continue;
+      if (scratch.has(rel) || ignored.has(rel + '/')) continue;
+      walk(p, acc, dotDirs, root, scratch, ignore, ignored);
+    } else if (TEXT_EXT.has(path.extname(e.name).toLowerCase()) && !ignored.has(rel)) {
+      acc.push(p);
+    }
+  }
+  return acc;
+}
+
+/* Пути, которые уйдут в репозиторий: отслеживаемые и неотслеживаемые, но не
+   игнорируемые git (см. шапку, «Пути, а не только содержимое»). Отслеживаемый
+   файл попадает в список, даже если подпадает под шаблон игнора. */
+function repoPathsFor(root) {
+  try {
+    const out = execFileSync('git', ['-C', root, 'ls-files', '--cached', '--others', '--exclude-standard', '-z'],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    return [...new Set(out.split('\0').filter(Boolean))];
+  } catch {
+    return [];
+  }
+}
+
+// в пути ищутся имена, а не абсолютные пути: путь от корня абсолютным не бывает
+const NAME_PATTERNS = PATTERNS.filter((p) => p.what !== PATH_WHAT);
+
+function scan(root, dotDirs = dotDirsFor(root)) {
+  const hits = [];
+  const scratch = [...scratchFor(root)], ignore = [...ignoreFor(root)];
+  const under = (rel, dirs) => dirs.some((d) => rel === d || rel.startsWith(d + '/'));
+  for (const rel of repoPathsFor(root)) {
+    if (under(rel, scratch) || under(rel, ignore)) continue;
+    const seen = new Set();
+    for (const p of NAME_PATTERNS) {
+      if (seen.has(p.what) || !p.re.test(rel)) continue;
+      seen.add(p.what);
+      hits.push({ rel, n: 0, what: p.what + ' в пути', line: rel });
+    }
+  }
+  for (const file of walk(root, [], dotDirs)) {
+    if (path.resolve(file) === SELF) continue;          // см. шапку: иначе сторож ловит сам себя
+    let text;
+    try { text = readFileSync(file, 'utf8'); } catch { continue; }
+    const rel = path.relative(root, file).replace(/\\/g, '/');
+    text.split(/\r?\n/).forEach((line, i) => {
+      // одна находка на строку и вид: posix- и windows-образец видят `C:/Users/…` оба
+      const seen = new Set();
+      for (const p of PATTERNS) {
+        if (seen.has(p.what) || !p.re.test(line)) continue;
+        seen.add(p.what);
+        hits.push({ rel, n: i + 1, what: p.what, line: line.trim().slice(0, 120) });
+      }
+    });
+  }
+  return hits;
+}
+
+/* ---------------- selftest: откат на временном дереве ---------------- */
+
+function put(root, rel, text) {
+  const p = path.join(root, rel);
+  mkdirSync(path.dirname(p), { recursive: true });
+  writeFileSync(p, text, 'utf8');
+}
+
+// образцы путей — склейкой, см. шапку
+const POSIX_USER = '/' + U + '/someone/Work/secret-project/file.md';
+const POSIX_HOME = '/' + H + '/someone/project/notes.md';
+const WIN = 'C:' + '\\' + U + '\\someone\\Work\\file.md';
+// памятка и служебный каталог стороннего CLI — тоже склейкой
+const NAME_FILE = B.toUpperCase() + '.md';
+const NAME_DIR = '.' + B;
+
+const CASES = [
+  { name: 'чистое дерево и почти-совпадения', expect: null,
+    mutate: (r) => put(r, 'docs/near.md', [
+      'Путь вида `/' + U + '/…` в тексте ничего не выдаёт.',
+      'Ссылка https://example.com/' + U + '/someone/page/ — путь на чужом хосте.',
+      'Относительный путь ../' + H + '/someone/x/ — не абсолютный.',
+      'Windows без имени: `C:\\' + U + '\\…`.',
+    ].join('\n')) },
+  { name: 'posix: шапка спеки', expect: 'x.screen.md — ' + PATH_WHAT,
+    mutate: (r) => put(r, 'apps/x/pages/x.screen.md', '---\nsource: ' + POSIX_USER + '\n---\n') },
+  { name: 'posix: обратные кавычки markdown', expect: 'b.md — ' + PATH_WHAT,
+    mutate: (r) => put(r, 'docs/b.md', 'Исходник — `' + POSIX_HOME + '`.\n') },
+  { name: 'posix: file:///', expect: 'index.html — ' + PATH_WHAT,
+    mutate: (r) => put(r, 'index.html', '<a href="file://' + POSIX_USER + '">план</a>\n') },
+  { name: 'windows: обратные слэши', expect: 'w.md — ' + PATH_WHAT,
+    mutate: (r) => put(r, 'docs/w.md', 'Файл: ' + WIN + '\n') },
+  { name: 'windows: строка JSON', expect: 'w.json — ' + PATH_WHAT,
+    mutate: (r) => put(r, 'data/w.json', JSON.stringify({ source: WIN }) + '\n') },
+  { name: 'windows: прямые слэши', expect: 'w.js — ' + PATH_WHAT,
+    mutate: (r) => put(r, 'data/w.js', "const src = '" + WIN.replace(/\\/g, '/') + "';\n") },
+  { name: 'имя вендора', expect: 'v.md — имя вендора',
+    mutate: (r) => put(r, 'v.md', 'Сделано в ' + A + '.\n') },
+  /* Каталог харнеса — дот-каталог, и обходится он потому, что назван в
+     манифесте (Ш4): переименованный харнес обязан остаться видимым, а
+     посторонний дот-каталог — невидимым. */
+  { name: 'каталог харнеса из манифеста обходится', expect: 'kit2/rules.md — имя вендора',
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, '.kit2/rules.md', 'Сделано в ' + A + '.\n');
+    } },
+  { name: 'адаптер агентного CLI из манифеста обходится', expect: 'cli2/agents/role.md — имя вендора',
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2', adapter: '.cli2' }, hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, '.cli2/agents/role.md', 'Сделано в ' + A + '.\n');
+    } },
+  { name: 'черновой каталог из манифеста не обходится', expect: null,
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, scratch: ['docs/misc'], hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, 'docs/misc/notes.md', 'Исходник — `' + POSIX_HOME + '`.\n');
+    } },
+  { name: 'рядом с черновым каталогом — обходится', expect: 'docs/misc2/notes.md — ' + PATH_WHAT,
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, scratch: ['docs/misc'], hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, 'docs/misc2/notes.md', 'Исходник — `' + POSIX_HOME + '`.\n');
+    } },
+  /* Игнор-лист из манифеста (25.09.2026): названные файл и каталог не читаются,
+     соседний каталог — читается. */
+  { name: 'игнор-лист из манифеста: файл и каталог не читаются', expect: null,
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, vendorScan: { ignore: ['local.md', 'tmp'] }, hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, 'local.md', 'Сделано в ' + A + '.\n');
+      put(r, 'tmp/notes.md', 'Исходник — `' + POSIX_HOME + '`.\n');
+    } },
+  { name: 'рядом с игнор-листом — читается', expect: 'tmp2/notes.md — имя вендора',
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, vendorScan: { ignore: ['local.md', 'tmp'] }, hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, 'tmp2/notes.md', 'Сделано в ' + A + '.\n');
+    } },
+  { name: 'посторонний дот-каталог не обходится', expect: null,
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, '.other/notes.md', 'Сделано в ' + A + '.\n');
+    } },
+  { name: 'node_modules не обходится', expect: null,
+    mutate: (r) => put(r, 'node_modules/pkg/readme.md', 'source: ' + POSIX_USER + '\n') },
+];
+
+/* Игнор git — только если git есть: без него сторож обходит всё, и кейсы
+   проверяли бы не то. Проверка git — в селфтесте, не при импорте. */
+const GIT_CASES = [
+  { name: 'каталог из .gitignore не обходится', expect: null,
+    mutate: (r) => {
+      gitInit(r, '/local/\n');
+      put(r, 'local/notes.md', 'Сделано в ' + A + '.\n');
+    } },
+  { name: 'рядом с каталогом из .gitignore — обходится', expect: 'local2/notes.md — имя вендора',
+    mutate: (r) => {
+      gitInit(r, '/local/\n');
+      put(r, 'local2/notes.md', 'Сделано в ' + A + '.\n');
+    } },
+  /* Пути (01.10.2026): имя в имени файла и посторонний дот-каталог, которые
+     уйдут в коммит, — находки; исключённые из git — нет. */
+  { name: 'имя ассистента в имени файла, который уйдёт в коммит', expect: NAME_FILE + ' — имя ассистента в пути',
+    mutate: (r) => {
+      gitInit(r, '');
+      put(r, NAME_FILE, '# Памятка\n');
+    } },
+  { name: 'служебный каталог стороннего CLI в git', expect: NAME_DIR + '/launch.json — имя ассистента в пути',
+    mutate: (r) => {
+      gitInit(r, '');
+      put(r, NAME_DIR + '/launch.json', '{}\n');
+      execFileSync('git', ['add', '-A'], { cwd: r, stdio: 'ignore' });
+    } },
+  { name: 'отслеживаемый файл под шаблоном игнора — всё равно находка', expect: NAME_FILE + ' — имя ассистента в пути',
+    mutate: (r) => {
+      gitInit(r, '/' + NAME_FILE + '\n');
+      put(r, NAME_FILE, '# Памятка\n');
+      execFileSync('git', ['add', '-f', NAME_FILE], { cwd: r, stdio: 'ignore' });
+    } },
+  { name: 'исключённые из git файл и каталог — не находка', expect: null,
+    mutate: (r) => {
+      gitInit(r, '/' + NAME_FILE + '\n/' + NAME_DIR + '/\n');
+      put(r, NAME_FILE, '# Памятка\n');
+      put(r, NAME_DIR + '/launch.json', '{}\n');
+    } },
+];
+
+function hasGit() {
+  try { execFileSync('git', ['--version'], { stdio: 'ignore' }); return true; } catch { return false; }
+}
+
+function gitInit(root, ignore) {
+  execFileSync('git', ['init', '-q'], { cwd: root, stdio: 'ignore' });
+  writeFileSync(path.join(root, '.gitignore'), ignore, 'utf8');
+}
+
+function selftest() {
+  const out = ['== vendor-scan --selftest =='];
+  const cases = hasGit() ? CASES.concat(GIT_CASES) : CASES;
+  if (cases === CASES) out.push('git не найден — кейсы игнора git пропущены');
+  let failed = 0;
+  for (const c of cases) {
+    const root = mkdtempSync(path.join(os.tmpdir(), 'vendor-scan-'));
+    try {
+      put(root, 'AGENTS.md', '# Правила проекта\n\nТекст без следов.\n');
+      if (c.mutate) c.mutate(root);
+      const hits = scan(root).map((h) => h.rel + ' — ' + h.what);
+      const pass = c.expect === null
+        ? hits.length === 0
+        : hits.some((h) => h.endsWith(c.expect));
+      if (!pass) failed++;
+      // префикс FAIL — его показывает гейт (фильтр FINDING в lessons-cli.mjs)
+      out.push((pass ? 'ok    ' : 'FAIL  ') + c.name + ' — ' + (hits.length ? hits.join(' | ') : 'находок нет'));
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  }
+  out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + cases.length + ')' : 'OK (кейсов: ' + cases.length + ')'));
+  console.log(out.join('\n'));
+  process.exit(failed ? 1 : 0);
+}
+
+/* ---------------- main ---------------- */
+
+async function main() {
+  const args = process.argv.slice(2);
+  if (args.includes('--selftest')) return selftest();
+  const rIdx = args.indexOf('--root');
+  const root = rIdx >= 0 ? path.resolve(args[rIdx + 1]) : REPO;
+  const hits = scan(root);
+
+  console.log('== vendor-scan: нейтральность репозитория ==');
+  // корень печатается относительно места запуска: абсолютный путь в выводе,
+  // сохранённом в файл репозитория, стал бы находкой этого же сторожа
+  console.log('корень: ' + (path.relative(process.cwd(), root) || '.'));
+  if (!hits.length) {
+    console.log('\nчисто — следов посторонних инструментов нет');
+  } else {
+    console.log('\nнаходок: ' + hits.length);
+    for (const h of hits) console.log(`  ${h.rel}:${h.n} — ${h.what}\n      ${h.line}`);
+    console.log('\nКаждая находка — либо правится, либо получает явное исключение');
+    console.log('в шапке этого файла с причиной и датой решения владельца.');
+  }
+  console.log('ВЕРДИКТ: ' + (hits.length ? 'FAIL (находок: ' + hits.length + ')' : 'OK'));
+
+  /* Журнал прогонов — мягко: сторож обязан работать и без оснастки уроков.
+     Чужое дерево (--root) — не работа над репозиторием, в журнал не идёт. */
+  if (root === REPO) {
+    try {
+      const { logRun } = await import('./runlog.mjs');
+      logRun({ tool: 'нейтральность', target: 'репозиторий', verdict: hits.length ? 'FAIL' : 'OK', codes: hits.length ? ['V1'] : [] });
+    } catch { /* оснастки нет — сторож работает как работал */ }
+  }
+
+  process.exit(hits.length ? 1 : 0);
+}
+
+// импорт модуля не должен запускать обход
+if (process.argv[1] && path.resolve(process.argv[1]) === SELF) main();

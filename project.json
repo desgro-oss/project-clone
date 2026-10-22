@@ -1,0 +1,70 @@
+{
+  "contract": 1,
+  "id": "ibp-prototypes",
+  "name": "Прототипы IBP",
+  "purpose": "интерактивные прототипы на дизайн-системе IBP; результат работы агента",
+
+  "designSystem": {
+    "from": "apps/ds-config.js",
+    "source": { "type": "inline" }
+  },
+  "agentKit": {
+    "mount": ".agents",
+    "tools": ".agents/tools",
+    "adapter": ".opencode",
+    "source": { "type": "inline" }
+  },
+
+  "boot": { "dir": "apps", "head": "apps/ds-config.js", "body": "apps/ds-body.js", "generated": true },
+  "protoPanel": { "runtime": ".agents/proto-panel", "boot": "apps/proto-panel.js", "dir": "proto-panel" },
+
+  "hub": {
+    "page": "index.html",
+    "registry": "hub.js",
+    "registryFormat": "script-global",
+    "generatedFrom": "apps",
+    "managed": false,
+    "ds": { "id": "ds-ibp", "title": "Дизайн-система IBP", "desc": "Документация основ и компонентов", "icon": "layer-01" }
+  },
+
+  "localKit": {
+    "dir": "apps/local-components", "registry": "apps/local-components/kit-data.js", "id": "local-kit",
+    "title": "Локальные компоненты", "desc": "Тайлы, окна и поповеры модулей: как работают, из чего собраны, зачем",
+    "icon": "layout-grid-01",
+    "categories": ["Общие", "Сделка", "Транш", "Расчет FV", "Другое"],
+    "kits": [
+      { "id": "local-kit-post", "section": "postrade", "title": "Локальные компоненты Post", "desc": "Тайлы, окна и поповеры модулей Post: как работают, из чего собраны, зачем", "icon": "layout-grid-01" },
+      { "id": "local-kit-pre", "section": "pretrade", "title": "Локальные компоненты Pre", "desc": "Тайлы, окна и поповеры модулей Pre: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Другое"] },
+      { "id": "local-kit-core", "section": "core", "title": "Локальные компоненты Core", "desc": "Тайлы, окна и поповеры модулей Core: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Сделка", "Инструменты", "Другое"] },
+      { "id": "local-kit-ib", "section": "ib", "title": "Локальные компоненты IB", "desc": "Тайлы, окна и поповеры модулей IB: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Другое"] },
+      { "id": "local-kit-common", "section": "common", "title": "Локальные компоненты Общие", "desc": "Тайлы, окна и поповеры, общие для разделов: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Другое"] }
+    ]
+  },
+
+  "screenMap": {
+    "dir": "apps/screen-map",
+    "maps": [
+      { "id": "screen-map-post", "section": "postrade", "title": "Карта Post", "desc": "Все страницы Post в один клик: от главной до транша и расчета FV", "icon": "tree-view", "after": "deals-app" },
+      { "id": "screen-map-ib", "section": "ib", "title": "Карта IB", "desc": "Все страницы AI Pitcher в один клик: от главной до нити запроса", "icon": "tree-view", "after": "banker-app" }
+    ]
+  },
+
+  "state": ".agent-state",
+  "docs": "docs",
+  "scratch": ["docs/misc"],
+  "vendorScan": { "ignore": [".zcodeignore", "tmp"] },
+
+  "apps": { "dir": "apps", "manifest": "app.json" },
+  "appShape": {
+    "pages": "pages", "widgets": "widgets", "data": "data", "refs": "refs",
+    "widgetGroups": ["tiles", "tables", "modals", "context-menus", "popovers"]
+  },
+  "appPlaces": { "moduleSuffix": "-app", "drafts": "drafts" },
+
+  "tracks": [
+    { "id": "product", "title": "Проекты", "hubGroup": "projects", "custom": "forbidden", "agentEdit": "ask",
+      "desc": "соответствует настоящей системе, строго на ДС" },
+    { "id": "rnd", "title": "Концепты", "hubGroup": "concepts", "custom": "by-spec", "agentEdit": "allow",
+      "desc": "R&D: кастом допустим, если ТЗ прямо просит" }
+  ]
+}

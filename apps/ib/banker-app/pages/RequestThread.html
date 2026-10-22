@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<!-- Экран «Новый отчёт» / нить запроса (RequestThread) раздела «AI Pitcher».
+     Собран на компонентах IBP DS по ТЗ: БТ-3 (диалог), БТ-4 (история
+     запросов слева), БТ-6 (уточнения и управление выполнением), БТ-7 (шаги
+     подготовки).
+     По умолчанию открывается пустой нитью — это точка входа в раздел.
+     Конструктора запроса в поле ввода в MVP нет: объект анализа и задачу
+     пользователь пишет текстом.
+     Контекст для правки: design-system/specs/_cheatsheet.md. CSS компонентов не читать. -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Новый отчёт — AI Pitcher — IBP</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; scrollbar-gutter: stable; }
+  body {
+    margin: 0;
+    font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-page);
+  }
+
+  /* ── Раскладка этого экрана ──────────────────────────────────────────────
+     Только grid / flex / gap и только на токенах. Ни цвета, ни размера шрифта,
+     ни «px на глаз»: плашки даёт Tile, строки истории — Entity, текст —
+     утилиты типографики ДС.
+
+     Панель истории — колонка на всю высоту между меню и рабочей областью.
+     Крошки и шапка страницы остаются над контентом, а не над панелью: так на
+     узком экране панель прячется целиком, не задевая остальную раскладку. */
+  .app-shell     { display: flex; height: 100vh; }
+  .app-shell > .screen { flex: 1; min-width: 0; }
+
+  /* ── Панель «Недавние запросы» — локальный компонент направления ───────────
+     Компонента «список нитей» в ДС нет; панель собрана из Button, LabelHelper,
+     Entity, Chip, IconButton и ContextMenu, остальное — раскладка и состояния
+     самой панели. Все значения — токенами ДС.
+     Фон — как у рабочей области (--bg-page, им .screen красит страницу):
+     белая панель сливалась с белым боковым меню. */
+  .hist {
+    flex: 0 0 320px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-page);
+    border-right: 1px solid var(--border-light);
+  }
+  /* Кнопка «Новый отчёт», подпись и поиск закреплены над списком и не
+     прокручиваются; прокручивается только список. Чтобы строки не съезжали
+     относительно шапки, у скролл-контейнера место под полосу зарезервировано
+     всегда (scrollbar-gutter: stable), а правый паддинг уменьшен на её ширину:
+     8px полосы + 8px паддинга = те же 16px. Пока список прокручен, под
+     шапкой линия — как у шапки модалки ДС. */
+  .hist__acts    { flex: none; display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-16) var(--space-16) var(--space-12); }
+  .hist__head    { flex: none; display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-4) var(--space-16) var(--space-12); border-bottom: 1px solid transparent; transition: border-color .15s ease; }
+  .hist__head.is-scrolled { border-bottom-color: var(--border-light); }
+  .hist__label-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
+  .hist__count   { flex: none; white-space: nowrap; font: var(--type-body-xs); color: var(--text-secondary); }
+  .hist__body    { flex: 1; min-height: 0; overflow-y: auto; scrollbar-gutter: stable; display: flex; flex-direction: column; gap: var(--space-16); padding: var(--space-4) calc(var(--space-16) - var(--space-8)) var(--space-16) var(--space-16); }
+  .hist__list    { display: flex; flex-direction: column; gap: var(--space-4); }
+
+  /* ── Поиск по чатам — локальный компонент направления ────────────────────
+     Простой поиск по текстовым совпадениям в названии запроса.
+     Совпадения подсвечены в строке, пустой результат — отдельным состоянием. */
+  .hsearch       { display: flex; align-items: center; gap: var(--space-8); height: calc(var(--space-32) + var(--space-4)); padding: 0 var(--space-6) 0 var(--space-12); background: var(--bg-tile); border: 1px solid var(--border-light); border-radius: var(--radius-m); transition: border-color .15s ease, box-shadow .15s ease; }
+  .hsearch:hover { border-color: var(--border-primary); }
+  .hsearch:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent); }
+  .hsearch__ico  { flex: none; display: flex; width: 16px; height: 16px; color: var(--text-secondary); transition: color .15s ease; }
+  .hsearch__ico > [data-icon] { width: 100%; height: 100%; }
+  .hsearch:focus-within .hsearch__ico { color: var(--primary); }
+  .hsearch__control { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; font: var(--type-body-s); color: var(--text-primary); }
+  .hsearch__control::placeholder { color: var(--text-inactive); opacity: 1; }
+  .hsearch__control::-webkit-search-cancel-button { display: none; }
+  .hsearch__clear { flex: none; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: var(--radius-s); background: transparent; color: var(--text-secondary); cursor: pointer; }
+  .hsearch__clear:hover { background: var(--bg-table-default-hover); color: var(--text-primary); }
+  .hsearch__clear[hidden] { display: none; }
+  .hsearch__clear > [data-icon] { width: 16px; height: 16px; }
+  .hist__hl      { color: inherit; background: color-mix(in srgb, var(--primary) 18%, transparent); border-radius: var(--radius-2xs); box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 18%, transparent); }
+  .hist__empty   { display: flex; flex-direction: column; align-items: center; gap: var(--space-8); padding: var(--space-32) var(--space-16); text-align: center; font: var(--type-body-s); color: var(--text-secondary); }
+  .hist__empty[hidden] { display: none; }
+  .hist__empty-ico { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--primary-bg); color: var(--primary); }
+  .hist__empty-ico > [data-icon] { width: 20px; height: 20px; }
+
+  /* Строка списка — собственная обёртка вокруг Entity. Состояния (наведение,
+     текущая нить) задаёт она, а не компонент: состояние компонента задаёт
+     только сам компонент, а у Entity выбор рассчитан на 6 % от --primary и
+     на такой подложке не читается. */
+  /* Наведение — как у пункта бокового меню, но на тон темнее. В меню это
+     --bg-table-default-hover на белом; на фоне панели (--bg-page) он не виден.
+     Локальный токен --hist-row-hover — смесь цвета текущей нити
+     (--bg-table-default-focus) с фоном панели: тот же зелёно-серый оттенок,
+     заметно светлее выбранной строки. Кандидат в ДС: подсветка строки
+     на фоне страницы. */
+  .hist          { --hist-row-hover: color-mix(in srgb, var(--bg-table-default-focus) 45%, var(--bg-page)); }
+  .hist__item    { padding: var(--space-8) var(--space-12); border-radius: var(--radius-m); cursor: pointer; transition: background-color .15s ease; }
+  .hist__item:hover { background: var(--hist-row-hover); }
+  .hist__item:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+  .hist__item[aria-current="true"] { background: var(--bg-table-default-focus); }
+
+  /* Нить — скролл-колонка (flex:1; min-height:0; overflow-y:auto — обязательная
+     форма скролл-контейнера, чек-лист К3) и закреплённый под ней композер. */
+  /* У пустой нити шапки нет: заголовок появляется с первым запросом */
+  .phead[hidden] { display: none; }
+  .thr           { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: var(--space-16); }
+  /* Пол области сообщений: когда композер с длинным текстом перестаёт
+     помещаться в окно, нить уступает место не до нуля, а до минимума. */
+  .thr__scroll   { flex: 1; min-height: var(--space-96); overflow-y: auto; scrollbar-gutter: stable; display: flex; flex-direction: column; }
+  /* Нить идёт сверху вниз, как в современных AI-чатах: короткий диалог
+     стоит у верха области, а не прижат к полю ввода. margin слева/справа
+     держит колонку по центру */
+  .thr__col      { max-width: 880px; width: 100%; margin: 0 auto; padding-top: var(--space-8); display: flex; flex-direction: column; gap: var(--space-24); }
+
+  /* ── Сообщения нити — раскладка привычных AI-чатов ──────────────────────
+     Сообщение пользователя — бабл справа, без аватара и имени: пользователь
+     знает, кто он. Ответ AI Pitcher — текст на всю колонку под тихой строкой
+     с глифом. Время — самым мелким стилем и бледным цветом, чтобы не спорило
+     с текстом. Появляется только новое сообщение, а не вся нить заново. */
+  .msg           { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
+  .msg--user     { align-items: flex-end; }
+  .msg__bubble   { display: flex; flex-direction: column; gap: var(--space-8); max-width: min(80%, 640px); padding: var(--space-10) var(--space-16); color: var(--text-primary); background: color-mix(in srgb, var(--primary) 9%, var(--bg-tile)); border-radius: var(--radius-3xl) var(--radius-3xl) var(--radius-s) var(--radius-3xl); }
+  .msg__bubble .ds-body-m { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg__time     { font: var(--type-body-xs); color: var(--text-inactive); }
+  .msg--user > .msg__time { padding-right: var(--space-4); }
+  .msg__meta     { display: flex; align-items: center; gap: var(--space-6); }
+  .msg__ico      { display: flex; flex: none; width: 16px; height: 16px; color: var(--primary); }
+  .msg__ico > [data-icon] { width: 100%; height: 100%; }
+  .msg__name     { font: var(--type-body-s-strong); color: var(--text-primary); }
+  .msg__meta > .msg__time::before { content: "·"; margin-right: var(--space-6); }
+  .msg__body     { display: flex; flex-direction: column; gap: var(--space-12); min-width: 0; }
+  .msg.is-new    { animation: msgIn .4s cubic-bezier(.22, 1, .36, 1) both; }
+  .msg--user.is-new > .msg__bubble { transform-origin: right bottom; animation: msgBubbleIn .4s cubic-bezier(.22, 1, .36, 1) both; }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } }
+  @keyframes msgBubbleIn { from { transform: scale(.94); } }
+
+  /* ── Индикатор «AI Pitcher думает» — локальный компонент направления ────
+     Подготовка материала идёт на стороне агентной системы до 30 минут и
+     пошагово не показывается. В нити остаётся спокойная строка: маленький
+     лоадер, мягко переливающаяся фраза и прошедшее время.
+     Вращающийся лоадер заперт в собственной рамке (contain: strict): без неё
+     углы поворачиваемого квадрата расширяли прокручиваемую область нити,
+     полоса прокрутки мигала и весь чат дёргался по горизонтали.
+     В прототипе клик по строке завершает подготовку. */
+  .think         { display: inline-flex; align-items: center; gap: var(--space-10); align-self: flex-start; padding: var(--space-4) var(--space-8) var(--space-4) 0; font: var(--type-body-m); color: var(--text-secondary); text-align: left; cursor: pointer; background: none; border: 0; border-radius: var(--radius-m); }
+  .think:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .think__loader { flex: none; display: block; width: 16px; height: 16px; contain: strict; }
+  .think__loader::before { content: ""; display: block; box-sizing: border-box; width: 100%; height: 100%; border: 2px solid color-mix(in srgb, var(--primary) 20%, transparent); border-top-color: var(--primary); border-radius: var(--radius-full); animation: thinkSpin .9s linear infinite; }
+  .think__text   { color: transparent; background: linear-gradient(90deg, var(--text-secondary) 0%, var(--text-secondary) 40%, var(--text-inactive) 50%, var(--text-secondary) 60%, var(--text-secondary) 100%); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; animation: thinkShimmer 3.2s ease-in-out infinite; transition: opacity .3s ease; }
+  .think__text.is-out { opacity: 0; }
+  .think__time   { font: var(--type-body-xs); color: var(--text-inactive); font-variant-numeric: tabular-nums; }
+  .think-row    { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-8); }
+  @keyframes thinkSpin { to { transform: rotate(360deg); } }
+  @keyframes thinkShimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+  /* ── Карточка материала в нити ───────────────────────────────────────────
+     Файл как вложение на всю ширину колонки: глиф, название, параметры
+     и кнопка «Скачать — MD». */
+  .doc           { display: flex; align-items: center; gap: var(--space-12); padding: var(--space-12); background: var(--bg-tile); border: 1px solid var(--border-light); border-radius: var(--radius-xl); transition: border-color .15s ease, box-shadow .2s ease; }
+  .doc:hover     { border-color: var(--border-primary); box-shadow: 0 4px 16px color-mix(in srgb, var(--text-primary) 6%, transparent); }
+  .doc__ico      { flex: none; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-m); color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, var(--bg-tile)); }
+  .doc__ico > [data-icon] { width: 22px; height: 22px; }
+  .doc__main     { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+  .doc__title    { display: block; max-width: 100%; overflow: hidden; font: var(--type-body-m-strong); color: var(--text-primary); white-space: nowrap; text-overflow: ellipsis; }
+  .doc__meta     { overflow: hidden; font: var(--type-body-xs); color: var(--text-secondary); white-space: nowrap; text-overflow: ellipsis; }
+  .doc__acts     { flex: none; display: flex; align-items: center; gap: var(--space-8); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .msg, .msg *, .think *, .think__loader::before { animation: none !important; transition: none !important; }
+  }
+  .thr__text     { display: flex; flex-direction: column; gap: var(--space-8); }
+  .thr__row      { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); }
+  /* Картинка в ответе (пасхалка прототипа, send()): в собственном размере
+     файла, не шире колонки; без рамки и подложки, скругление — как у
+     карточки материала .doc */
+  .thr__pic      { display: block; align-self: flex-start; max-width: 100%; height: auto; border-radius: var(--radius-xl); }
+
+  /* ── Композер — локальный компонент направления ──────────────────────────
+     Поле запроса и ряд действий под ним — одна карточка. Компонента в ДС нет:
+     поверхности, рамки, радиусы и типографика — токены ДС, остальное —
+     кандидат в новый компонент.
+
+     Под прозрачным textarea лежит «зеркало» — тот же текст той же
+     гарнитурой. Поле и зеркало стоят в одной ячейке грида: высоту задаёт
+     зеркало, и поле растёт по тексту без скрипта. */
+  .thr__compose  { max-width: 880px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: var(--space-8); }
+
+  .cmp {
+    --cmp-ring: color-mix(in srgb, var(--primary) 14%, transparent);
+    --cmp-ease: cubic-bezier(.22, 1, .36, 1);
+    --cmp-shadow: 0 1px 2px color-mix(in srgb, var(--text-primary) 6%, transparent), 0 8px 24px color-mix(in srgb, var(--text-primary) 6%, transparent);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-tile);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--cmp-shadow);
+    transition: border-color .2s ease, box-shadow .3s ease;
+  }
+  .cmp:has(.cmp__control:focus) { border-color: var(--primary); box-shadow: 0 0 0 4px var(--cmp-ring), var(--cmp-shadow); }
+
+  .cmp__main     { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-12) var(--space-12) var(--space-12) var(--space-16); }
+
+  .cmp__field    { position: relative; display: grid; max-height: 240px; overflow-y: auto; }
+  .cmp__field > .cmp__mirror,
+  .cmp__field > .cmp__control {
+    grid-area: 1 / 1;
+    min-height: var(--space-48);
+    margin: 0;
+    padding: var(--space-4) 0;
+    border: 0;
+    font: var(--type-body-m);
+    letter-spacing: normal;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+  .cmp__mirror   { color: transparent; pointer-events: none; }
+  .cmp__control  { display: block; width: 100%; height: 100%; resize: none; overflow: hidden; outline: 0; background: transparent; color: var(--text-primary); caret-color: var(--primary); }
+  .cmp__control::placeholder { color: var(--text-inactive); opacity: 1; }
+
+  .cmp__row      { display: flex; align-items: center; gap: var(--space-8); }
+  .cmp__clear[hidden] { display: none; }
+  .cmp__clear    { animation: cmpPop .3s var(--cmp-ease) both; }
+  @keyframes cmpPop { from { opacity: 0; transform: scale(.6) rotate(-90deg); } }
+  /* Срок подготовки — слева в ряду действий; занимает свободное место
+     и на узкой колонке переносится, не выталкивая кнопки */
+  .cmp__note     { flex: 1; min-width: 0; margin: 0; display: flex; align-items: center; gap: var(--space-8); font: var(--type-body-s); color: var(--text-secondary); }
+  .cmp__note-ico { flex: none; display: flex; width: 18px; height: 18px; color: var(--primary); }
+  .cmp__note-ico > [data-icon] { width: 100%; height: 100%; }
+
+  .cmp__hint     { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4) var(--space-16); font: var(--type-body-xs); color: var(--text-secondary); }
+  .cmp__hint kbd { display: inline-block; min-width: 18px; padding: 0 var(--space-4); font: inherit; text-align: center; color: var(--text-secondary); background: var(--bg-tile); border: 1px solid var(--border-light); border-bottom-width: 2px; border-radius: var(--radius-s); }
+
+  /* Приветствие пустой нити: два абзаца текста — у тела пустого состояния
+     ДС ширина 420px, текст в неё не помещался. Строки абзаца выравниваются
+     по длине (balance вместо pretty из ДС): иначе по краю повисали тире
+     и короткий хвост «и прочее». Абзацы — отдельные .es__text, не <br>:
+     после <br> Chrome вторую часть не выравнивает. Короткие слова и тире
+     привязаны к соседним неразрывным пробелом прямо в тексте. */
+  .thr__start .es--l .es__body { max-width: 760px; }
+  .thr__start .es--l .es__text { text-wrap: balance; }
+  /* Кнопка «Показать пример запроса» исчезает с первым символом в поле.
+     Место резервируется (visibility вместо display), чтобы центрированный
+     блок «С чего начнём?» не прыгал при исчезновении кнопки. */
+  .es__actions #btnExample[hidden] { display: inline-flex; visibility: hidden; pointer-events: none; }
+
+
+  @media (prefers-reduced-motion: reduce) {
+    .cmp, .cmp *, .cmp *::after { animation: none !important; transition: none !important; }
+  }
+
+  /* Стартовое состояние нити центрируется в свободной высоте.
+     Парное [hidden] обязательно: объявленный display (0,1,0) перебивает
+     UA-правило [hidden]{display:none} (0,0,0), и атрибут молча перестаёт
+     работать — то же соглашение, что у компонентов ДС. */
+  .thr__start    { flex: 1; min-height: 0; display: flex; align-items: safe center; justify-content: center; }
+  .thr__start[hidden] { display: none; }
+
+  /* Полосы прокрутки внутри блоков — тот же рецепт, что у тела модалки ДС
+     (modal.css): 8px, бегунок --border-light со скруглением. Общего класса
+     полосы прокрутки в ДС нет.
+     Бегунок виден только во время прокрутки: класс is-scrolling ставит скрипт
+     экрана на событии scroll и снимает через секунду тишины. Под курсором
+     бегунок тоже проявляется — чтобы его можно было взять мышью. Место под
+     полосу зарезервировано всегда, контент при появлении бегунка не сдвигается.
+     Firefox не знает ::-webkit-scrollbar — ему тонкая полоса того же цвета. */
+  .hist__body::-webkit-scrollbar,
+  .thr__scroll::-webkit-scrollbar,
+  .screen__content::-webkit-scrollbar,
+  .cmp__field::-webkit-scrollbar { width: var(--space-8); }
+  .cmp__field::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: var(--radius-m); }
+  .hist__body::-webkit-scrollbar-thumb,
+  .thr__scroll::-webkit-scrollbar-thumb,
+  .screen__content::-webkit-scrollbar-thumb { background: transparent; border-radius: var(--radius-m); }
+  .hist__body.is-scrolling::-webkit-scrollbar-thumb,
+  .thr__scroll.is-scrolling::-webkit-scrollbar-thumb,
+  .screen__content.is-scrolling::-webkit-scrollbar-thumb,
+  .hist__body::-webkit-scrollbar-thumb:hover,
+  .thr__scroll::-webkit-scrollbar-thumb:hover,
+  .screen__content::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+  @supports not selector(::-webkit-scrollbar) {
+    .hist__body, .thr__scroll, .screen__content { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+    .hist__body.is-scrolling, .thr__scroll.is-scrolling, .screen__content.is-scrolling { scrollbar-color: var(--border-light) transparent; }
+  }
+
+  /* Узкий экран: панель прячется целиком — в мобильной версии она уйдёт
+     под кнопку. Порог считается от окна, панель лежит вне .screen. */
+  @media (max-width: 1200px) {
+    .hist { display: none; }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+
+  <nav class="nav nav--rail" aria-label="Главное меню">
+    <div class="nav__top">
+      <button class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list">
+      <a class="nav__item" href="index.html"><span class="nav__ico"><i data-icon="main-page"></i></span><span class="nav__label">Главная</span></a>
+      <div class="nav__block">
+        <div class="nav__block-label">Origination</div>
+        <a class="nav__item nav__item--selected" href="RequestThread.html" aria-current="page"><span class="nav__ico"><i data-icon="ai-stars"></i></span><span class="nav__label">AI Pitcher</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="sales-projects"></i></span><span class="nav__label">Проекты продаж CIB</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="dcm-potentials"></i></span><span class="nav__label">Потенциалы DCM</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="calc"></i></span><span class="nav__label">Калькулятор</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="funds"></i></span><span class="nav__label">Фонды</span></a>
+      </div>
+      <div class="nav__block">
+        <div class="nav__block-label">Pipeline</div>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="dcm-pipeline"></i></span><span class="nav__label">DCM Pipeline</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="payments-ib"></i></span><span class="nav__label">Реестр платежей IB</span></a>
+      </div>
+      <div class="nav__block">
+        <div class="nav__block-label">Клиенты и задачи</div>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="factory-01"></i></span><span class="nav__label">Клиенты</span></a>
+        <a class="nav__item" href="#" aria-label="Задачи, 7"><span class="nav__ico"><i data-icon="tasks"></i></span><span class="nav__label">Задачи</span><span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">7</span></span></a>
+      </div>
+    </div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Пётр Константинович</span><span class="nav__user-role">Консультант-аналитик ДИД</span></span>
+      </a>
+      <button class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <!-- Панель истории и рабочая область — одна строка: панель занимает всю
+       высоту между меню и контентом, крошки живут внутри .screen и стоят
+       только над контентом. -->
+  <div class="app-shell">
+
+    <!-- ── Панель «Недавние запросы» (БТ-4.1) ────────────────────────────── -->
+    <aside class="hist" aria-label="Недавние запросы">
+      <div class="hist__acts">
+        <button class="btn btn--accent btn--m btn--fullwidth" data-act="new-report"><i data-icon="add"></i><span class="btn__label">Новый отчёт</span></button>
+      </div>
+      <div class="hist__head">
+        <div class="hist__label-row">
+          <span class="ds-label"><span class="ds-label__text">Недавние запросы</span></span>
+          <span class="hist__count" id="histCount" aria-live="polite"></span>
+        </div>
+        <div class="hsearch" role="search">
+          <span class="hsearch__ico" aria-hidden="true"><i data-icon="search"></i></span>
+          <input class="hsearch__control" id="histSearch" type="search" placeholder="Поиск по чатам" aria-label="Поиск по недавним запросам" autocomplete="off">
+          <button type="button" class="hsearch__clear" id="histSearchClear" aria-label="Очистить поиск" hidden><i data-icon="close"></i></button>
+        </div>
+      </div>
+      <div class="hist__body">
+        <div class="hist__list" id="histList" role="list"></div>
+        <div class="hist__empty" id="histEmpty" hidden>
+          <span class="hist__empty-ico" aria-hidden="true"><i data-icon="file-search"></i></span>
+          <span>Ничего не нашлось</span>
+          <button type="button" class="btn btn--transparent btn--xs" id="histEmptyReset"><span class="btn__label">Сбросить поиск</span></button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="screen screen--app">
+
+      <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+        <li class="crumbs__item"><a class="link link--muted" href="index.html">Главная</a></li>
+        <li class="crumbs__item"><a class="link link--muted" href="RequestThread.html">AI Pitcher</a></li>
+        <li class="crumbs__item crumbs__item--current">
+          <span class="crumbs__current" aria-current="page">Новый отчёт</span>
+        </li>
+      </nav>
+
+      <main class="screen__content">
+
+          <div class="phead">
+            <div class="phead__main">
+              <div class="phead__title-row">
+                <div class="phead__title-group">
+                  <h1 class="phead__title" id="hdTitle">Новый отчёт</h1>
+                </div>
+              </div>
+              <!-- Параметры запроса: заполняются, когда нить принадлежит
+                   существующему запросу; у новой нити их ещё нет. -->
+              <div class="phead__subtitle" id="hdMeta"></div>
+            </div>
+            <!-- Кебаб с меню запроса (тем же, что у строки списка) —
+                 появляется, когда у нити есть запрос -->
+
+            <div class="phead__actions" id="hdActions"></div>
+          </div>
+
+          <div class="thr">
+
+            <div class="thr__scroll" id="thrScroll">
+
+              <!-- Стартовое состояние новой нити (БТ-3.1, БТ-4.2 шаг 1) -->
+              <div class="thr__start" id="thrStart">
+                <div class="es es--l">
+                  <span class="illu es__illu" data-illu="dcm-potentials" aria-hidden="true"></span>
+                  <div class="es__body">
+                    <p class="es__title">С чего начнём?</p>
+                    <p class="es__text">Подготовлю отчет по&nbsp;компании, группе или бенефициару, а&nbsp;также по&nbsp;рынку&nbsp;— к&nbsp;встрече с&nbsp;клиентом или для поиска сделок.</p>
+                    <p class="es__text">Напишите, по&nbsp;кому или по&nbsp;какому рынку нужен отчет и&nbsp;какой продуктовый фокус интересует. Можно добавить детали: цель встречи, интересующих покупателей и&nbsp;прочее.</p>
+                  </div>
+                  <div class="es__actions">
+                    <button class="btn btn--outline btn--m" id="btnExample"><i data-icon="message-text"></i><span class="btn__label">Показать пример запроса</span></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Сообщения нити рисует скрипт экрана -->
+              <div class="thr__col" id="thrMsgs"></div>
+
+            </div>
+
+            <!-- ── Композер (БТ-3.2, БТ-3.4, БТ-6.1) ─────────────────────────────── -->
+            <div class="thr__compose">
+              <div class="cmp" id="cmp">
+                <div class="cmp__main">
+                  <div class="cmp__field">
+                    <div class="cmp__mirror" id="cmpMirror" aria-hidden="true"></div>
+                    <textarea class="cmp__control" id="cmpInput" rows="2" placeholder="Введите свой запрос..." aria-label="Текст запроса" aria-describedby="cmpHint"></textarea>
+                  </div>
+                  <div class="cmp__row">
+                    <!-- Срок подготовки (БТ-7, БТ-8) -->
+                    <p class="cmp__note">
+                      <span class="cmp__note-ico" aria-hidden="true"><i data-icon="clock-timer"></i></span>
+                      <span>Подготовка отчета обычно занимает до 30 минут. Работа продолжится, даже если закрыть окно.</span>
+                    </p>
+                    <button type="button" class="ibtn ibtn--neutral ibtn--m cmp__clear" id="btnClear" aria-label="Очистить поле" data-tooltip="Очистить поле" hidden><i data-icon="close"></i></button>
+                    <button type="button" class="btn btn--accent btn--s btn--icon-only" id="btnSend" aria-label="Отправить" data-tooltip="Отправить"><i data-icon="arrow-up"></i></button>
+                  </div>
+                </div>
+              </div>
+              <p class="cmp__hint" id="cmpHint"><span><kbd>Enter</kbd> — отправить</span><span><kbd>Shift</kbd> + <kbd>Enter</kbd> — новая строка</span></p>
+            </div>
+
+          </div>
+
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- ── Кебаб-меню запроса (БТ-4.8) ───────────────────────────────── -->
+<!-- Одно меню на строки списка и шапку: рантайм находит его по id и ставит от
+     триггера. Без обёртки .menu-anchor — она inline-flex и прямым ребёнком body
+     давала строку текста, из-за чего страница прокручивалась на 20px. -->
+<div id="hist-menu" class="menu menu--floating" role="menu" hidden>
+  <div class="menu__label">Запрос</div>
+  <button type="button" class="menu__item" role="menuitem" data-modal="rename-scrim">
+    <span class="menu__item-icon"><i data-icon="edit"></i></span><span class="menu__item-label">Переименовать</span>
+  </button>
+  <button type="button" class="menu__item" role="menuitem" id="miDuplicate">
+    <span class="menu__item-icon"><i data-icon="copy"></i></span><span class="menu__item-label">Дублировать</span>
+  </button>
+  <hr class="menu__divider">
+  <button type="button" class="menu__item menu__item--danger" role="menuitem" data-modal="delete-scrim">
+    <span class="menu__item-icon"><i data-icon="trash"></i></span><span class="menu__item-label">Удалить</span>
+  </button>
+</div>
+
+<!-- ── Модалка переименования (БТ-4.8) ──────────────────────────────────── -->
+<div class="modal-scrim" id="rename-scrim" hidden data-modal-guarded>
+  <div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="rename-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rename-title">Переименовать запрос</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="renameField"><span class="ds-label__text">Название запроса</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="renameField" value="ГК «Северный агрохолдинг» — выход миноритария" aria-describedby="rename-help">
+        </div>
+        <span class="ds-helper ds-helper--left" id="rename-help">Название видно в истории запросов</span>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button class="btn btn--accent btn--m" data-modal-close><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- ── Модалка удаления (БТ-4.8: удаление обратимо) ─────────────────────── -->
+<div class="modal-scrim" id="delete-scrim" hidden>
+  <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="delete-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="delete-title">Удалить запрос?</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="ds-body-m">Вся история диалога, все версии материалов и приложенные файлы будут удалены.</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button class="btn btn--accent btn--m btn--danger" id="btnDelete" data-modal-close><span class="btn__label">Удалить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+
+<script src="../../../ds-body.js"></script>
+<script src="../data/report-requests.js"></script>
+<script>
+/* ============================================================================
+   Скрипт экрана «Новый отчёт» / нить запроса.
+
+   Рантаймы ДС дают всё штатное поведение компонентов (модалки, меню, тултипы,
+   панель навигации, чипы). Здесь — только то, чего в ДС нет и не может быть,
+   потому что это модель данных и сценарий продукта, а не компонент:
+
+   · панель истории запросов и её строки (БТ-4.1);
+   · последовательность сообщений нити и её перерисовка (БТ-3.1);
+   · постепенное появление ответа (БТ-3.8);
+   · индикатор «AI Pitcher думает» на время подготовки материала (БТ-7);
+   · развилка «ответить в диалоге / собрать новую версию» (БТ-6.3).
+
+   Состояние экрана задаётся параметром адреса:
+     без параметров — новая пустая нить (точка входа в раздел);
+     ?id=N          — открыт запрос N из истории;
+     ?run=1         — первый запрос истории сразу в ходе подготовки.
+
+   После каждой перерисовки поддерева рантаймы связываются заново (урок Л93).
+   ========================================================================= */
+(function () {
+  'use strict';
+
+  /* Корень ДС для рантайма иллюстраций (window.__DS_ROOT) задан тегом в начале
+     <head>: из этого скрипта значение приходило позже первого запроса файла. */
+
+  var USER = { name: 'Александров Пётр', initials: 'АП' };
+  var OBJECT = 'ГК «Северный агрохолдинг»';
+
+  /* ── История запросов: последние 10 (БТ-4.1) ──────────────────────────── */
+  /* Демо-данные — ../data/report-requests.js (типы — там же). Строка истории
+     держит поля в виде, удобном отрисовке: kind — параметры запроса для шапки,
+     upd — подпись даты обновления, state — состояние строчными. */
+  var STATE_BY_CODE = { READY: 'ready', RUNNING: 'running', ANSWERED: 'answer' };
+  var DEMO_NOW = new Date(window.REPORT_DEMO_NOW);
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+  function dateLabel(d) { return pad2(d.getDate()) + '.' + pad2(d.getMonth() + 1) + '.' + d.getFullYear(); }
+  function timeLabel(d) { return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
+  function minutesWord(n) {
+    var m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return 'минуту';
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'минуты';
+    return 'минут';
+  }
+  /* «12 минут назад» в пределах часа, «сегодня, 09:05», «вчера, 17:40», дальше — дата */
+  function updatedLabel(iso) {
+    var d = new Date(iso);
+    var min = Math.round((DEMO_NOW - d) / 60000);
+    if (min >= 0 && min < 60) return min + ' ' + minutesWord(min) + ' назад';
+    var yesterday = new Date(DEMO_NOW); yesterday.setDate(yesterday.getDate() - 1);
+    if (dateLabel(d) === dateLabel(DEMO_NOW)) return 'сегодня, ' + timeLabel(d);
+    if (dateLabel(d) === dateLabel(yesterday)) return 'вчера, ' + timeLabel(d);
+    return dateLabel(d);
+  }
+
+  var HIST = window.MOCK_REPORT_REQUESTS.map(function (r) {
+    return {
+      id: r.requestId,
+      title: r.title,
+      kind: r.objectName ? [r.objectName].concat(r.focusNames).join(' · ') : 'Пользовательский промпт',
+      object: r.objectName,
+      focus: r.focusNames.join(', '),
+      versions: r.versionCount,
+      upd: updatedLabel(r.updatedAt),
+      state: STATE_BY_CODE[r.statusCode]
+    };
+  });
+  /* В панели истории два статуса: идёт подготовка и готовый материал.
+     Ответы в диалоге чипом не помечаются (MVP). */
+  var HIST_CHIP = {
+    ready:   { cls: ' chip--success', label: window.REPORT_REQUEST_STATUS_LABELS.READY },
+    running: { cls: ' chip--info',    label: window.REPORT_REQUEST_STATUS_LABELS.RUNNING }
+  };
+
+  /* ── Состояние нити ───────────────────────────────────────────────────── */
+  var S = {
+    msgs: [],
+    versions: [
+      { n: 1, date: '11.09.2026, 14:20', note: 'Исходный материал по запросу' },
+      { n: 2, date: '12.09.2026, 09:05', note: 'Учтена презентация менеджмента: пересчитан peers-мультипликатор' }
+    ],
+    hasMaterial: false,
+    running: false,
+    openId: null,
+    pristine: false,   /* новая пустая нить — адрес без параметров */
+    params: { volume: 'Детальный' },
+    runTitle: null
+  };
+
+  /* ── Утилиты ──────────────────────────────────────────────────────────── */
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  /* Демо-время: дата фиксирована под «рыбу» нити, часы берутся реальные —
+     иначе новые сообщения выглядят старше уже лежащих в нити. */
+  function now() {
+    return dateLabel(DEMO_NOW) + ', ' + timeLabel(new Date());
+  }
+  function el(id) { return document.getElementById(id); }
+
+  /* Пересборка поддерева через innerHTML отвязывает рантаймы ДС —
+     связываем заново одной функцией из единственного места (урок Л93). */
+  function rebind(scope) {
+    if (window.dsIcons) window.dsIcons.apply(scope);
+    if (window.DSMenu) window.DSMenu.bindAll(scope);
+    if (window.DSModal) window.DSModal.bindAll(scope);
+    if (window.DSTile) window.DSTile.wireAll(scope);
+    if (window.DSTabs) window.DSTabs.wireAll(scope);
+    if (window.DSChip) window.DSChip.refresh(scope);
+  }
+
+  /* ── Панель истории ───────────────────────────────────────────────────── */
+  /* Подсветка совпадений поиска: каждое вхождение каждого слова запроса */
+  function hl(str, words) {
+    if (!words.length) return esc(str);
+    var low = str.toLowerCase(), on = [];
+    words.forEach(function (w) {
+      for (var i = low.indexOf(w); i !== -1; i = low.indexOf(w, i + 1)) {
+        for (var j = i; j < i + w.length; j++) on[j] = true;
+      }
+    });
+    var out = '', open = false;
+    for (var k = 0; k < str.length; k++) {
+      if (!!on[k] !== open) { out += open ? '</mark>' : '<mark class="hist__hl">'; open = !open; }
+      out += esc(str.charAt(k));
+    }
+    return out + (open ? '</mark>' : '');
+  }
+
+  function histHTML(h, words) {
+    var c = HIST_CHIP[h.state];
+    var selected = h.id === S.openId;
+    /* Ведущего элемента у строки истории нет: колонка узкая — каждый лишний
+       слот съедает ширину названия запроса. Наведение и «текущая нить» — на
+       обёртке .hist__item, а не на Entity: состояние компонента задаёт только
+       сам компонент. */
+    return '<div class="hist__item" role="listitem"' +
+      (selected ? ' aria-current="true"' : '') + ' tabindex="0" data-thread="' + h.id + '">' +
+      '<div class="entity entity--s">' +
+      '<div class="entity__main">' +
+        '<div class="entity__titles">' +
+          '<div class="entity__labelrow"><span class="entity__label entity__label--truncate">' + hl(h.title, words) + '</span></div>' +
+        '</div>' +
+        '<div class="entity__subs"><span class="entity__subs-list">обновлён ' + esc(h.upd) + '</span></div>' +
+        (c ? '<div class="entity__chips"><span class="chip chip--s' + c.cls + '"><span class="chip__label">' + c.label + '</span></span></div>' : '') +
+      '</div>' +
+      '<div class="entity__actions">' +
+        '<button class="ibtn ibtn--neutral ibtn--s" aria-label="Действия с запросом «' + esc(h.title) + '»" aria-haspopup="menu" data-menu="hist-menu"><i data-icon="more-dots"></i></button>' +
+      '</div></div></div>';
+  }
+
+  /* Поиск по чатам: все слова запроса должны встретиться в названии */
+  function drawHist() {
+    var raw = el('histSearch').value;
+    var words = raw.toLowerCase().split(/\s+/).filter(Boolean);
+    var list = words.length
+      ? HIST.filter(function (h) {
+          var hay = h.title.toLowerCase();
+          return words.every(function (w) { return hay.indexOf(w) !== -1; });
+        })
+      : HIST;
+    el('histList').innerHTML = list.map(function (h) { return histHTML(h, words); }).join('');
+    el('histEmpty').hidden = list.length > 0;
+    el('histCount').textContent = words.length ? list.length + ' из ' + HIST.length : '';
+    el('histSearchClear').hidden = !raw;
+    rebind(el('histList'));
+  }
+
+  /* ── Разметка сообщения ───────────────────────────────────────────────── */
+  function msgHTML(m) {
+    if (m.role === 'user') {
+      return '<article class="msg msg--user"><div class="msg__bubble">' + m.html + '</div>' +
+        '<time class="msg__time">' + esc(m.time) + '</time></article>';
+    }
+    return '<article class="msg"><div class="msg__meta">' +
+      '<span class="msg__ico" aria-hidden="true"><i data-icon="ai-stars"></i></span>' +
+      '<span class="msg__name">AI Pitcher</span><time class="msg__time">' + esc(m.time) + '</time></div>' +
+      '<div class="msg__body">' + m.html + (m.think ? thinkingCard() : '') + '</div></article>';
+  }
+
+  function render() {
+    var host = el('thrMsgs');
+    host.innerHTML = S.msgs.map(msgHTML).join('');
+    /* анимируется только что добавленное сообщение, а не перерисовка */
+    if (S.animateLast && host.lastElementChild) host.lastElementChild.classList.add('is-new');
+    S.animateLast = false;
+    el('thrStart').hidden = S.msgs.length > 0;
+    rebind(host);
+    var sc = el('thrScroll');
+    sc.scrollTop = sc.scrollHeight;
+  }
+
+  /* extra.think — под сообщением висит индикатор подготовки */
+  function push(role, html, extra) {
+    S.msgs.push({ role: role, html: html, time: now(), think: !!(extra && extra.think) });
+    S.animateLast = true;
+    render();
+    return S.msgs.length - 1;
+  }
+  function replace(i, html) { S.msgs[i].html = html; render(); }
+
+  /* Заголовок экрана: пока нить пуста — «Новый отчёт»; после первого сообщения —
+     суть запроса; у открытого запроса и при подготовке — имя запроса. */
+  /* Параметры запроса под заголовком — объект и фокусы запроса;
+     у вопроса без объекта —
+     «Пользовательский промпт». Рядом — дата обновления запроса. */
+  function setMeta(h) {
+    var meta = el('hdMeta');
+    if (!h) { meta.innerHTML = ''; return; }
+    meta.innerHTML =
+      '<span class="phead__meta"><span class="phead__meta-ico"><i data-icon="target"></i></span>' + esc(h.kind) + '</span>' +
+      '<span class="phead__meta"><span class="phead__meta-ico"><i data-icon="calendar"></i></span>Обновлён ' + esc(h.upd) + '</span>';
+    rebind(meta);
+  }
+
+  /* Кебаб справа в шапке — у любой нити с запросом, с тем же меню, что у
+     строки списка. У пустой нити его нет. «Новый отчёт» — кнопка над
+     списком в панели. */
+  function setActions(on) {
+    var acts = el('hdActions');
+    acts.innerHTML = on
+      ? '<button class="btn btn--outline btn--m btn--icon-only" aria-label="Действия с запросом" aria-haspopup="menu" aria-expanded="false" data-menu="hist-menu"><i data-icon="more-dots"></i></button>'
+      : '';
+    rebind(acts);
+  }
+
+  function setTitle(text) {
+    el('hdTitle').closest('.phead').hidden = false;
+    el('hdTitle').textContent = text;
+    /* Крошки ведёт ds-breadcrumbs.js: он один раз запоминает пункты и на
+       каждое изменение ширины (ресайз окна) перерисовывает трейл из этой
+       копии. Текст, записанный прямо в .crumbs__current, при этом стирается —
+       меняем пункт в его api. */
+    var trail = document.querySelector('[data-breadcrumbs]');
+    var api = trail && trail.__dsBreadcrumbs;
+    if (api && api.items.length) {
+      api.items[api.items.length - 1].text = text;
+      api.refresh();
+    } else {
+      var crumb = document.querySelector('.crumbs__current');
+      if (crumb) crumb.textContent = text;
+    }
+  }
+
+  /* ── Новый запрос из первого сообщения ───────────────────────────────────────────────
+     Пока пользователь печатает, экран остаётся пустой нитью. С отправкой
+     первого сообщения запрос встаёт первой строкой в «Недавних запросах»,
+     заголовок и крошка показывают его суть — начало сообщения, справа
+     появляется кебаб. */
+  function requestTitle(q) {
+    var t = q.replace(/\s+/g, ' ').trim().replace(/[\s?!.,:;…]+$/, '');
+    if (!t) return 'Новый запрос';
+    if (t.length > 64) t = t.slice(0, 64).replace(/\s+\S*$/, '') + '…';
+    return t.charAt(0).toUpperCase() + t.slice(1);
+  }
+
+  function createRequest(q, kindLine) {
+    var h = { id: 'new', title: requestTitle(q), kind: kindLine || 'Пользовательский промпт', versions: 0, upd: 'только что', state: 'answer' };
+    S.openId = h.id;
+    HIST.unshift(h);
+    if (HIST.length > 10) HIST.pop();
+    setTitle(h.title);
+    setActions(true);
+    drawHist();
+  }
+
+  /* ── Текстовые блоки ──────────────────────────────────────────────────── */
+  function text(t) { return '<div class="thr__text"><p class="ds-body-m">' + t + '</p></div>'; }
+
+  function sources(list) {
+    return '<div class="thr__row"><span class="ds-body-xs">Источники:</span><div class="chiplist chiplist--s">' +
+      list.map(function (s) { return '<span class="chip chip--s"><span class="chip__label">' + esc(s) + '</span></span>'; }).join('') +
+      '</div></div>';
+  }
+
+  function answerActions(id) {
+    return '<div class="thr__row">' +
+      '<button class="btn btn--transparent btn--s" data-act="copy" data-i="' + id + '"><i data-icon="copy"></i><span class="btn__label">Копировать</span></button>' +
+      '</div>';
+  }
+
+  /* ── Карточка готового материала (БТ-1, БТ-4.6) ───────────────────────── */
+  function docCard() {
+    var v = S.versions[S.versions.length - 1];
+    return '<div class="doc">' +
+      '<span class="doc__ico" aria-hidden="true"><i data-icon="document-check"></i></span>' +
+      '<div class="doc__main">' +
+        '<span class="doc__title">' + esc(OBJECT) + ' — материал с идеями</span>' +
+        '<span class="doc__meta">' + esc(S.params.volume) + ' · версия ' + v.n + ' · ' + esc(v.date) + '</span>' +
+      '</div>' +
+      '<div class="doc__acts">' +
+        '<button type="button" class="btn btn--outline btn--s" data-act="dl" data-fmt="Материал, MD"><i data-icon="download"></i><span class="btn__label">Скачать — MD</span></button>' +
+      '</div></div>';
+  }
+
+  /* ── Развилка уточнения (БТ-6.3) ──────────────────────────────────────── */
+  function forkCard() {
+    return text('Уточнение принято. Ответить в этой нити, не трогая документ, или пересобрать материал новой версией?') +
+      '<div class="thr__row">' +
+      '<button class="btn btn--outline btn--s" data-act="fork-answer"><i data-icon="message-text"></i><span class="btn__label">Ответить в диалоге</span></button>' +
+      '<button class="btn btn--outline btn--s" data-act="fork-version"><i data-icon="refresh"></i><span class="btn__label">Собрать новую версию</span></button>' +
+      '</div>';
+  }
+
+  /* ── AI Pitcher думает (БТ-7) ─────────────────────────────────────────────
+     Материал готовится на стороне агентной системы до 30 минут; пошагово
+     показать это продукт не может. В нити остаётся сообщение с индикатором:
+     фразы сменяются раз в три секунды, счётчик времени тикает каждую. Узлы
+     ищутся заново на каждом тике — нить перерисовывается целиком. */
+  var THINK = ['Собираю данные…', 'Смотрю отчётность…', 'Навожу справки…', 'Изучаю рынок и конкурентов…', 'Сверяю с данными Банка…', 'Подбираю продуктовые идеи…', 'Проверяю выводы…'];
+  var think = { i: 0, start: 0, timer: null };
+
+  function elapsed() {
+    var sec = Math.max(0, Math.floor((Date.now() - think.start) / 1000));
+    return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+  }
+  function thinkingCard() {
+    return '<div class="think-row"><button type="button" class="think" data-act="finish" title="Прототип: нажмите, чтобы завершить подготовку" aria-label="AI Pitcher готовит материал. Прототип: нажмите, чтобы завершить подготовку">' +
+      '<span class="think__loader" aria-hidden="true"></span>' +
+      '<span class="think__text" data-think aria-hidden="true">' + THINK[think.i] + '</span>' +
+      '<span class="think__time" aria-hidden="true"><span data-think-time>' + elapsed() + '</span></span></button></div>';
+  }
+  function startThinking() {
+    if (think.timer) return;
+    var tick = 0;
+    think.timer = setInterval(function () {
+      each('[data-think-time]', function (n) { n.textContent = elapsed(); });
+      if (++tick % 3) return;
+      think.i = (think.i + 1) % THINK.length;
+      each('[data-think]', function (n) {
+        n.classList.add('is-out');
+        setTimeout(function () { n.textContent = THINK[think.i]; n.classList.remove('is-out'); }, 300);
+      });
+    }, 1000);
+  }
+
+  /* Завершение подготовки. Настоящий сигнал придёт от агентной системы;
+     в прототипе — клик по индикатору. Индикатор сменяется сообщением
+     с карточкой материала. */
+  function finishRun() {
+    if (!S.msgs.some(function (m) { return m.think; })) return;
+    S.msgs.forEach(function (m) { m.think = false; });
+    clearInterval(think.timer); think.timer = null;
+    S.running = false; S.hasMaterial = true;
+    setTitle(S.runTitle || el('hdTitle').textContent);
+    var h = HIST.filter(function (x) { return x.id === S.openId; })[0];
+    if (h) { h.state = 'ready'; h.versions = Math.max(1, h.versions); drawHist(); }
+    push('agent', text('Готово — материал по ' + esc(OBJECT) + ' собран: ключевые показатели, возможности для продуктов, инсайты, риски и позиция на встречу.') + docCard());
+    if (window.DSSnack) {
+      window.DSSnack.show({
+        tone: 'success',
+        title: 'Материал готов',
+        text: OBJECT + ' — материал с идеями.'
+      });
+    }
+  }
+
+  /* p — параметры запуска: объект, название и строка params для шапки.
+     Без params запрос помечается как пользовательский промпт. */
+  function startRun(intro, p) {
+    p = p || {};
+    if (p.object) OBJECT = p.object.name;
+    S.running = true;
+    S.runTitle = p.title || (p.object ? OBJECT + ' — материал с идеями' : (S.runTitle || OBJECT + ' — выход миноритария'));
+    var kind = p.params || 'Пользовательский промпт';
+    setTitle(S.runTitle);
+    setMeta({ kind: kind, upd: 'только что' });
+    setActions(true);
+    /* запрос, созданный первым сообщением, получает имя и тип из параметров */
+    if (S.openId === 'new' && HIST[0] && HIST[0].id === 'new') {
+      HIST[0].title = S.runTitle; HIST[0].kind = kind; HIST[0].state = 'running';
+      drawHist();
+    }
+    if (window.DSToast) window.DSToast.show({ message: 'Подготовка материала запущена', kind: 'bar', duration: 3000 });
+    think.start = Date.now(); think.i = 0;
+    push('agent', text(intro + ' Это займёт до 30 минут. Как будет готово, сообщу в чате и уведомлю по выбранным каналам.'), { think: true });
+    startThinking();
+  }
+
+  /* ── Ответ на вопрос без отчёта (БТ-3.3, БТ-3.8) ──────────────────────── */
+  var ANSWER = 'Net Debt / EBITDA группы — 3,4x на конец 2025 года при EBITDA 9,1 млрд RUB и выручке 48,2 млрд RUB. ' +
+               'Пик погашений валютного долга приходится на 2027–2028 годы: 4,8 млрд RUB и 6,1 млрд RUB соответственно. ' +
+               'Ковенантный порог по действующим выпускам — 4,0x, запас по нему сокращается третий квартал подряд.';
+
+  function typeAnswer(i, full, tail) {
+    var pos = 0;
+    var iv = setInterval(function () {
+      pos = Math.min(full.length, pos + 4);
+      replace(i, text(esc(full.slice(0, pos))));
+      if (pos >= full.length) { clearInterval(iv); replace(i, text(esc(full)) + tail); }
+    }, 24);
+  }
+
+  /* ── Отправка сообщения ───────────────────────────────────────────────── */
+  function send() {
+    var q = field.value.trim();
+    if (!q) {
+      if (window.DSSnack) window.DSSnack.show({ tone: 'warning', title: 'Пустое сообщение', text: 'Введите вопрос или опишите задачу.' });
+      return;
+    }
+    /* первое сообщение новой нити создаёт запрос */
+    if (S.pristine && S.openId === null) createRequest(q);
+    field.value = '';
+    paint();
+
+    push('user', '<p class="ds-body-m">' + esc(q) + '</p>');
+
+    /* Пасхалка прототипа, в продукт не переносится: на «хот кореянки»
+       (регистр и лишние пробелы не важны) вместо ответа — предупреждение
+       и картинка под ним. Размер картинки задан атрибутами: место под неё
+       занято сразу, и нить докручивается до её низа, не дожидаясь загрузки. */
+    if (q.toLowerCase().replace(/\s+/g, ' ').indexOf('хот кореянки') !== -1) {
+      var i0 = push('agent', text('<span class="ds-body-m">Ищу данные…</span>'));
+      setTimeout(function () {
+        typeAnswer(i0, 'Я вижу вы не работаете! Ваш запрос отправлен к вашему руководителю.',
+          '<img class="thr__pic" src="../refs/girl.jpg" width="450" height="438" alt="Портрет девушки">');
+      }, 700);
+      return;
+    }
+
+    /* Подготовку отчёта запускает только ключевая фраза
+       «[Сделай] отчёт по компании | группе | бенефициару | рынку <название>»
+       (регистр и «е/ё» не важны). Название — текст после слова до первой
+       запятой или точки с запятой: дальше идут фокус и детали
+       («Отчет по группе «Черкизово», фокус — M&A, …»). Название становится
+       объектом и строкой параметров; у рынка объект — «Рынок <название>».
+       Всё остальное — вопрос в диалоге. */
+    var report = q.match(/(?:^|[^а-яё])(?:сделай\s+)?отч[её]т\s+по\s+(компании|группе|бенефициару|рынку)\s+([^,;]+)/i);
+    /* точка в конце отбрасывается, кроме точки инициала («Токарев П. А.») */
+    var name = report ? report[2].trim().replace(/[\s!?…]+$/, '').replace(/([^\s.]{2,})\.+$/, '$1') : '';
+    if (name) {
+      var subj = report[1].toLowerCase();
+      var object = subj === 'рынку' ? 'Рынок ' + name : name;
+      setTimeout(function () {
+        startRun('Принял, готовлю отчёт по ' + subj + ' ' + esc(name) + '.', { object: { name: object }, params: object });
+      }, 500);
+      return;
+    }
+
+    if (S.hasMaterial) {
+      setTimeout(function () { push('agent', forkCard()); }, 600);
+      return;
+    }
+
+    var i2 = push('agent', text('<span class="ds-body-m">Ищу данные…</span>'));
+    setTimeout(function () {
+      typeAnswer(i2, ANSWER, sources(['Отчётность МСФО 2025', 'Раскрытие эмитента', 'Данные Банка', 'Отраслевой обзор 2026']) + answerActions(i2));
+    }, 700);
+  }
+
+  /* ── Делегирование действий ───────────────────────────────────────────── */
+  document.addEventListener('click', function (e) {
+    /* строка истории: клик мимо кебаба открывает запрос */
+    var row = e.target.closest('[data-thread]');
+    if (row && !e.target.closest('.entity__actions')) {
+      /* текущий запрос уже открыт — переходить некуда */
+      if (row.getAttribute('data-thread') !== String(S.openId)) location.href = 'RequestThread.html?id=' + row.getAttribute('data-thread');
+      return;
+    }
+
+    var t = e.target.closest('[data-act]');
+    if (!t) return;
+    var act = t.getAttribute('data-act');
+
+    if (act === 'fork-answer') {
+      push('agent', text('EBITDA-маржа группы — 18,9 % против 14–16 % у трёх ближайших конкурентов. Разрыв держится на вертикальной интеграции по кормам. Документ не изменялся.') +
+        sources(['Отчётность МСФО 2025', 'Презентация менеджмента']));
+    }
+    else if (act === 'fork-version') {
+      var n = S.versions.length + 1;
+      S.versions.push({ n: n, date: now(), note: 'Уточнение из нити: добавлен сценарий частичного выхода' });
+      startRun('Собираю версию ' + n + ' с учётом уточнения. Параметры взяты из запроса — предыдущие версии сохранены без изменений.');
+    }
+    else if (act === 'finish') { finishRun(); }
+    else if (act === 'new-report') { location.href = 'RequestThread.html'; }
+    else if (act === 'dl') {
+      /* у части форматов есть файл-пример — он и скачивается */
+      var href = t.getAttribute('data-href');
+      if (href) {
+        var a = document.createElement('a');
+        a.href = href; a.download = '';
+        document.body.appendChild(a); a.click(); a.remove();
+      }
+      if (window.DSToast) window.DSToast.show({ message: t.getAttribute('data-fmt') + ' — файл сформирован и промаркирован', kind: 'bar', tone: 'success', duration: 3000 });
+    }
+    else if (act === 'copy') {
+      if (window.DSSnack) window.DSSnack.show({ tone: 'success', title: 'Скопировано', text: 'Текст ответа скопирован в буфер обмена.' });
+    }
+  });
+
+  /* строка истории с клавиатуры */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var row = e.target.closest && e.target.closest('[data-thread]');
+    if (!row || e.target.closest('.entity__actions')) return;
+    e.preventDefault();
+    if (row.getAttribute('data-thread') !== String(S.openId)) location.href = 'RequestThread.html?id=' + row.getAttribute('data-thread');
+  });
+
+  /* ── Поле запроса ─────────────────────────────────────────────────────── */
+  var field = el('cmpInput');
+  var fieldBox = document.querySelector('.cmp__field');
+
+  function each(sel, fn, root) { Array.prototype.forEach.call((root || document).querySelectorAll(sel), fn); }
+
+  /* Зеркало поля: тот же текст — по нему поле растёт в высоту */
+  function paint() {
+    var v = field.value;
+    /* символ нулевой ширины держит последнюю пустую строку в зеркале */
+    el('cmpMirror').innerHTML = esc(v) + '​';
+    el('btnClear').hidden = !v;
+    /* пример запроса — только над пустым полем: он заменил бы начатый текст,
+       поэтому уходит с первым символом и возвращается, когда поле стёрто */
+    el('btnExample').hidden = !!v;
+  }
+
+  field.addEventListener('input', function () {
+    paint();
+    if (field.selectionEnd === field.value.length) fieldBox.scrollTop = fieldBox.scrollHeight;
+  });
+
+  /* ── Кнопки экрана ────────────────────────────────────────────────────── */
+  /* Enter отправляет, Shift + Enter — новая строка */
+  function sendOnEnter(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+  }
+
+  el('btnSend').addEventListener('click', send);
+  el('btnClear').addEventListener('click', function () {
+    field.value = '';
+    paint();
+    if (window.DSTooltip) window.DSTooltip.hideAll();
+    field.focus();
+  });
+  field.addEventListener('keydown', sendOnEnter);
+  el('btnExample').addEventListener('click', function () {
+    field.value = 'Отчет по группе «Черкизово», фокус — M&A, интересуют покупки в регионах';
+    paint();
+    field.focus();
+  });
+
+  /* ── Поиск по чатам ───────────────────────────────────────────────────── */
+  function clearHistSearch() { el('histSearch').value = ''; drawHist(); el('histSearch').focus(); }
+  el('histSearch').addEventListener('input', drawHist);
+  el('histSearch').addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && el('histSearch').value) { e.preventDefault(); clearHistSearch(); }
+  });
+  el('histSearchClear').addEventListener('click', clearHistSearch);
+  el('histEmptyReset').addEventListener('click', clearHistSearch);
+  el('miDuplicate').addEventListener('click', function () {
+    if (window.DSSnack) window.DSSnack.show({ tone: 'success', title: 'Запрос дублирован', text: 'Создана копия запроса с теми же вводными и файлами.' });
+  });
+  el('btnDelete').addEventListener('click', function () {
+    if (window.DSSnack) window.DSSnack.show({
+      tone: 'info', title: 'Запрос удалён', text: 'Восстановить можно в течение 30 дней.',
+      buttons: [{ label: 'Отменить удаление', variant: 'outline' }]
+    });
+  });
+
+  /* ── Состояние экрана по адресу ───────────────────────────────────────── */
+  /* Чаты «Ответ в диалоге»: короткий вопрос и ответ без подготовки материала */
+  var DIALOGS = {};
+  window.MOCK_REQUEST_DIALOGS.forEach(function (d) {
+    var at = new Date(d.askedAt);
+    DIALOGS[d.requestId] = { time: dateLabel(at) + ', ' + timeLabel(at), q: d.question, a: d.answer, src: d.sourceNames };
+  });
+
+  /* Тексты демо-нити. Объект стоит после двоеточия или тире, а не после «по»:
+     в данных он в именительном падеже («Бенефициар Токарев П. А.»). */
+  function reportAsk(object, focus) {
+    return 'Нужен отчет: ' + object + (focus ? ', фокус — ' + focus.charAt(0).toLowerCase() + focus.slice(1) : '');
+  }
+  /* точка в конце фразы — без второй точки после инициала */
+  function sentence(t) { return /[.!?…]$/.test(t) ? t : t + '.'; }
+  function acceptText(object) { return 'Принял, готовлю отчёт. Объект — ' + sentence(object); }
+
+  function seedOpened(h) {
+    S.openId = h.id;
+    S.hasMaterial = h.state === 'ready';
+    setTitle(h.title);
+    setMeta(h);
+    setActions(true);
+    var d = DIALOGS[h.id];
+    if (d) {
+      S.msgs = [
+        { role: 'user', time: d.time, html: '<p class="ds-body-m">' + esc(d.q) + '</p>' },
+        { role: 'agent', time: d.time, html: text(esc(d.a)) + sources(d.src) + answerActions(1) }
+      ];
+      render();
+      return;
+    }
+    /* Нить запроса с отчётом: объект и фокус — из строки истории */
+    if (h.object) OBJECT = h.object;
+    S.msgs = [
+      { role: 'user', time: '11.09.2026, 14:02', html: '<p class="ds-body-m">' + esc(reportAsk(OBJECT, h.focus)) + '</p>' },
+      { role: 'agent', time: '11.09.2026, 14:02', html:
+        text(esc(acceptText(OBJECT)) + ' Это займёт до 30 минут.') }
+    ];
+    if (h.state === 'ready') {
+      S.msgs.push({ role: 'agent', time: '12.09.2026, 09:05', html:
+        text('Материал готов: ключевые показатели, возможности для продуктов, инсайты, риски и позиция на встречу.') + docCard() });
+    }
+    if (h.state === 'running') {
+      think.start = Date.now() - 7 * 60 * 1000;
+      S.running = true;
+      S.msgs.push({ role: 'agent', time: '12.09.2026, 11:40', think: true, html:
+        text('Работаю над отчётом. Как будет готово, сообщу в чате.') });
+      startThinking();
+    }
+    render();
+  }
+
+  /* ── Полосы прокрутки: видны только во время прокрутки ───────────────── */
+  function autoHideScrollbar(node) {
+    var timer = null;
+    node.addEventListener('scroll', function () {
+      node.classList.add('is-scrolling');
+      clearTimeout(timer);
+      timer = setTimeout(function () { node.classList.remove('is-scrolling'); }, 1000);
+    }, { passive: true });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.hist__body, .thr__scroll, .screen__content'), autoHideScrollbar);
+
+  /* Шапка панели закреплена над списком: пока список прокручен, под ней линия */
+  var histBody = document.querySelector('.hist__body'), histHead = document.querySelector('.hist__head');
+  histBody.addEventListener('scroll', function () {
+    histHead.classList.toggle('is-scrolled', histBody.scrollTop > 0);
+  }, { passive: true });
+
+  var params = new URLSearchParams(location.search);
+  paint();
+
+  if (params.get('run')) {
+    var first = HIST[0];
+    S.openId = first.id;
+    first.state = 'running';
+    drawHist();
+    if (first.object) OBJECT = first.object;
+    push('user', '<p class="ds-body-m">' + esc(reportAsk(OBJECT, first.focus)) + '</p>');
+    startRun(esc(acceptText(OBJECT)), { params: first.kind });
+  } else if (params.get('id')) {
+    var opened = HIST.filter(function (h) { return String(h.id) === params.get('id'); })[0];
+    /* неизвестный id — та же пустая нить, что без параметров */
+    if (opened) seedOpened(opened);
+    else { S.pristine = true; el('hdTitle').closest('.phead').hidden = true; render(); }
+    drawHist();
+  } else {
+    S.pristine = true;
+    el('hdTitle').closest('.phead').hidden = true;
+    drawHist();
+    render();
+  }
+})();
+</script>
+</body>
+</html>

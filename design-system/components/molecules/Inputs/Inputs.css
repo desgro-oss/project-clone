@@ -1,0 +1,314 @@
+/* ============================================================
+   INPUT — семейство полей ввода: InputText · InputDate · InputAutocomplete
+   Общий компонент подкачки Input_Content (поле с рамкой) + слои
+   Text_MASTER (prefix / text / postfix) и Input_Action (крестик,
+   информер, календарь, шеврон).
+   Зависимости: colors.css, typography.css, radius.css,
+   label-helper.css (метка/хелпер), chip.css (чипы автокомплита).
+   Размеры: M (базовый, 40px) · S (Table Edit, 32px).
+   ============================================================ */
+
+/* Парные `[hidden]` — правило B11 линтера.
+   Браузерное `[hidden] { display: none }` живёт в UA-стиле со специфичностью
+   (0,0,0), а правило класса ниже — (0,1,0): класс побеждает, и атрибут `hidden`
+   на компоненте молча перестаёт работать. Разметка при этом выглядит правильной,
+   скрипт исправно ставит атрибут, а элемент виден. Этот дефект чинили поштучно
+   шесть раз (Modal 1.005, TableCell 2.015, Tab 1.010, EmptyState 1.002,
+   InputText 1.010, Chip 1.015), после чего закрыли на уровне соглашения:
+   корень компонента, объявивший `display`, объявляет и пару к нему. */
+.inp[hidden],
+.inp-ext[hidden] { display: none; }
+
+.inp {
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%; /* ширину задаёт контейнер; своего ограничения у поля нет */
+}
+/* Размер M — модификатор, а не молчаливый дефолт базового класса.
+   Было наоборот: `--inp-*` жили в `.inp`, селектора `.inp--m` не существовало,
+   и класс, который разметка вешала руками, не делал ничего. Пара `M / S` в
+   спеке при этом объявлялась симметричной, а рантайм класс намеренно не
+   ставил — три источника противоречили друг другу, и линтер справедливо
+   ругался на «класс без правил в CSS».
+   Теперь размер объявляется явно: `.inp` без `.inp--m` или `.inp--s` размера
+   не имеет. Пропуск ловит правило линтера B12. */
+.inp--m {
+  --inp-h: 40px;
+  --inp-px: 12px;
+  --inp-gap: 8px;
+  --inp-icon: 20px;
+  --inp-font: var(--type-body-m);
+}
+/* размер S (Table Edit) — прямыми свойствами на потомках (не через --inp-* в модификаторе) */
+.inp--s .inp__field { height: 32px; padding: 0 10px; gap: 6px; font: var(--type-body-s); }
+.inp--s.inp--multiline .inp__field { min-height: 32px; }
+.inp--s .inp__lead { width: 18px; height: 18px; }
+.inp--s .inp__act  { width: 18px; height: 18px; }
+.inp--fullwidth { width: 100%; }
+/* Выравнивание текста в поле: всегда по левому краю. Поле не наследует выравнивание
+   контейнера (.tc--numbers, .tc--right, шапка th--right) — вправо только явным
+   модификатором .inp--right. */
+.inp__control { text-align: left; }
+.inp--right .inp__control { text-align: right; }
+
+
+/* метка и хелпер — компоненты подкачки LabelHelper */
+.inp > .ds-label { margin-bottom: 4px; }
+.inp > .ds-helper { margin-top: 4px; }
+
+/* ---------- поле (Input_Content) ---------- */
+.inp__field {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  gap: var(--inp-gap);
+  height: var(--inp-h);
+  padding: 0 var(--inp-px);
+  background: var(--bg-tile);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-field);
+  font: var(--inp-font);
+  color: var(--text-primary);
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+.inp__field:hover,
+.inp.is-hover .inp__field { border-color: var(--primary); }
+/* Фокус — обводка 2px (общая для всех состояний *-focus): бордер остаётся
+   1px, второй пиксель рисует внутренняя тень того же цвета. Толщину бордера
+   фокус не меняет — иначе поле с высотой по содержимому (многострочное,
+   чипы) вырастало на 2px и толкало соседей, а у поля фиксированной высоты
+   сдвигался текст на 1px (до 1.015, решение человека 25.09.2026).
+   Снаружи — светлое кольцо 3px ступени -light тона (16 %): заметное, как в
+   прототипе AI Pitcher (решение человека 05.10.2026, задача MS0010i); до
+   этого кольцо было 4–10 % и почти не читалось. */
+.inp__field:focus-within,
+.inp.is-focus .inp__field {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary), 0 0 0 3px var(--st-primary-light);
+}
+
+/* многострочный вариант (InputText) */
+.inp--multiline .inp__field {
+  height: auto;
+  min-height: var(--inp-h);
+  padding-top: 9px;
+  padding-bottom: 9px;
+  align-items: flex-start;
+}
+.inp--multiline .inp__acts { align-self: flex-start; }
+
+/* ---------- состояния ---------- */
+.inp--error .inp__field { border-color: var(--error); }
+.inp--error .inp__field:focus-within,
+.inp--error.is-focus .inp__field {
+  border-color: var(--error);
+  box-shadow: inset 0 0 0 1px var(--error), 0 0 0 3px var(--st-red-light);
+}
+.inp--warning .inp__field { border-color: var(--warning); }
+.inp--warning .inp__field:focus-within,
+.inp--warning.is-focus .inp__field {
+  border-color: var(--warning);
+  box-shadow: inset 0 0 0 1px var(--warning), 0 0 0 3px var(--st-orange-light);
+}
+.inp--disabled { pointer-events: none; }
+.inp--disabled .inp__field {
+  background: var(--st-disabled-light);
+  border-color: var(--border-light);
+  color: var(--text-inactive);
+}
+.inp--disabled .inp__lead,
+.inp--disabled .inp__prefix,
+.inp--disabled .inp__postfix,
+.inp--disabled .inp__summary,
+.inp--disabled .inp__act { color: var(--text-inactive); }
+.inp--disabled .inp__control { color: var(--text-inactive); }
+/* очистка недоступна и не показывается в Disabled — сброса значения быть не может */
+.inp--disabled .inp__act[aria-label="Очистить поле"],
+.inp--disabled .inp__act[aria-label="Очистить"] { display: none; }
+
+/* ---------- контейнер поля + оверлей тултипа ---------- */
+/* .inp__box оборачивает поле и служит якорем для тултипа ошибки/предупреждения. */
+.inp__box { position: relative; width: 100%; }
+/* ПРАВИЛО: тултип (*-focus) не смещает хелпер — лежит поверх потока,
+   z-index всегда выше поля и его компонентов: слой тултипа ДС (--tip-z,
+   максимальный, объявлен в tooltip.css). */
+.inp__box > .tip {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: var(--tip-z);
+}
+
+/* ---------- текстовый слой (Text_MASTER) ---------- */
+.inp__lead {
+  flex: none;
+  width: var(--inp-icon);
+  height: var(--inp-icon);
+  color: var(--secondary); /* иконки в полях — Active · secondary */
+  display: inline-flex;
+}
+.inp__lead :is(svg,[data-icon]){ width: 100%; height: 100%; }
+
+.inp__prefix,
+.inp__postfix {
+  flex: none;
+  color: var(--text-inactive);
+  white-space: nowrap;
+}
+
+.inp__control {
+  flex: 1 1 60px;
+  min-width: 40px;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  font: inherit;
+  color: var(--text-primary);
+  outline: none;
+}
+.inp__control::placeholder { color: var(--text-inactive); opacity: 1; }
+textarea.inp__control { resize: none; line-height: 20px; }
+/* растягивание по вертикали — за угол в правом нижнем углу поля (стандартный resize-хват браузера) */
+.inp--resizable .inp__field { padding: 0; align-items: stretch; }
+.inp--resizable textarea.inp__control {
+  resize: vertical;
+  min-height: var(--inp-h);
+  padding: 9px var(--inp-px);
+  border-radius: inherit;
+}
+.inp--resizable .inp__field:has(.inp__acts) textarea.inp__control {
+  padding-right: calc(var(--inp-px) + var(--inp-icon) + var(--inp-gap));
+}
+.inp--resizable .inp__acts { position: absolute; top: 9px; right: var(--inp-px); }
+.inp--resizable .inp__box { position: relative; }
+
+/* ---------- хелпер + счётчик символов в одной строке (maxLength) ---------- */
+.inp__foot { display: flex; align-items: flex-start; gap: 12px; margin-top: 4px; }
+.inp__foot .ds-helper { flex: 1 1 auto; margin-top: 0; min-width: 0; }
+.inp__counter {
+  flex: none;
+  margin-left: auto;
+  font: var(--type-body-xs);
+  color: var(--text-inactive);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.inp__counter--limit { color: var(--error); }
+.inp--disabled .inp__counter { color: var(--text-inactive); }
+
+/* сводка выбранного (InputAutocomplete): «Value 1, +4» */
+.inp__summary { flex: none; white-space: nowrap; color: var(--text-primary); }
+
+/* стек чипов внутри поля (InputAutocomplete · Chips) */
+.inp__chips {
+  flex: 0 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+.inp__chips .chip { flex: none; }
+.inp__chips .chip:last-child { flex: 0 1 auto; min-width: 48px; }
+/* чип-счётчик «+N» (ds-input.js) стоит последним, но сжиматься не должен:
+   правило последнего чипа выше рассчитано на значение переменной длины,
+   а счётчик — короткая фиксированная подпись, обязанная показаться целиком */
+.inp__chips .chip--fit:last-child { flex: none; min-width: 0; }
+/* ...а сжимаемым становится последнее ВИДИМОЕ значение (его помечает ds-input.js):
+   когда в поле не влезает даже одно значение вместе с «+N», оно усекается
+   эллипсисом внутри плашки, а не выталкивает счётчик за границу поля.
+   Через :nth-last-child это не выражается — в счёт попали бы и скрытые чипы. */
+.inp__chips .chip[data-inp-last] { flex: 0 1 auto; min-width: 48px; }
+
+/* ---------- действия (Input_Action) ---------- */
+.inp__acts {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+.inp__act {
+  flex: none;
+  width: var(--inp-icon);
+  height: var(--inp-icon);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--secondary); /* иконки-действия в полях — Active · secondary */
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+  transition: color .15s ease;
+}
+.inp__act :is(svg,[data-icon]){ width: 100%; height: 100%; }.inp__act:hover { color: var(--secondary-dark); }
+.inp__act:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.inp__act--static { cursor: default; color: var(--secondary); }
+.inp__act--static:hover { color: var(--secondary); }
+/* [hidden] той же специфичности (0,1,0), что и .inp__act { display: inline-flex },
+   подключается позже базового UA-стиля и без явного правила проигрывает каскад.
+   Крестиком очистки по значению управляет ds-input.js через атрибут hidden —
+   без этой строки он не прятался бы вовсе. Тот же класс дефекта, что чинили
+   в Modal 1.005, TableCell 2.015, Tab 1.010, EmptyState 1.002. */
+.inp__act[hidden] { display: none; }
+.inp__act--chev { transition: color .15s ease, transform .15s ease; }
+.inp.is-open .inp__act--chev { transform: rotate(180deg); }
+
+/* ---------- внешний стек чипов (InputAutocomplete · Chips Ext) ---------- */
+.inp-ext {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* ============================================================
+   Опции поля (с InputText 1.017 / InputDate 1.017 /
+   InputAutocomplete 1.019; решение человека 06.10.2026).
+   Действуют на всё семейство: любое .inp, включая поля диапазонов.
+   Новые правила стоят в конце файла: строки прежних правил не
+   сдвигаются (их держат точечные правила тем).
+   ============================================================ */
+
+/* ---------- скругление углов ----------
+   По умолчанию --radius-field (4). M — --radius-control (8): как у кнопок
+   и полей прототипа AI Pitcher («Объект анализа», «Поиск по чатам»).
+   Капсула — --radius-pill, как chip--rounded; у многострочного поля
+   капсула не держит текст в углах, поэтому там она — M. */
+.inp--radius-m .inp__field { border-radius: var(--radius-control); }
+.inp--rounded .inp__field { border-radius: var(--radius-pill); }
+.inp--rounded.inp--multiline .inp__field { border-radius: var(--radius-control); }
+
+/* ---------- заливка (.inp--filled) ----------
+   Поле на фоне страницы, как было у «Объект анализа» в прототипе: в покое
+   фон --bg-page и рамка --border-light, на наведении рамка --border-primary;
+   в фокусе — фон, рамка и кольцо обычного поля (заливка снимается).
+   Ошибка и предупреждение красят рамку своими правилами поверх заливки,
+   недоступность — свой фон. */
+.inp--filled:not(.inp--disabled):not(.is-focus) .inp__field:not(:focus-within) {
+  background: var(--bg-page);
+}
+.inp--filled:not(.inp--error):not(.inp--warning):not(.inp--disabled):not(.is-focus) .inp__field:not(:focus-within) {
+  border-color: var(--border-light);
+}
+.inp--filled:not(.inp--error):not(.inp--warning):not(.inp--disabled):not(.is-focus) .inp__field:not(:focus-within):hover,
+.inp--filled.is-hover:not(.inp--error):not(.inp--warning):not(.inp--disabled):not(.is-focus) .inp__field:not(:focus-within) {
+  border-color: var(--border-primary);
+}
+
+/* ---------- акцентная иконка в фокусе (.inp--focus-accent) ----------
+   Иконка слева в фокусе — тон Primary, вместе с рамкой (как «Поиск по
+   чатам» в прототипе). В ошибке и предупреждении иконка не меняется. */
+.inp--focus-accent .inp__lead { transition: color .15s ease; }
+.inp--focus-accent:not(.inp--error):not(.inp--warning) .inp__field:focus-within .inp__lead,
+.inp--focus-accent.is-focus:not(.inp--error):not(.inp--warning) .inp__lead {
+  color: var(--primary);
+}
+@media (prefers-reduced-motion: reduce) {
+  .inp--focus-accent .inp__lead { transition: none; }
+}

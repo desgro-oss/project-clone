@@ -1,0 +1,17 @@
+/* Профиль и вкладки закреплены сверху и общие для обеих вкладок (решение
+   пользователя 20.10.2026); прокручивается содержимое панели. */
+/* Отступы главной (решение пользователя 20.10.2026): сверху — как поля слева
+   и справа; профиль → вкладки → панель — 12px; снизу поля нет — прокручиваемая
+   панель доходит до края экрана, нижний отступ даёт сам дашборд. */
+.screen__content:has(> #home-tabs) { padding-top: var(--layout-pad-x); padding-bottom: 0; gap: var(--space-12); }
+#home-profile { flex: none; }
+#home-tabs { flex: none; }
+.home-panel { flex: 1; min-height: 0; min-width: 0; }
+.home-projects { display: flex; flex-direction: column; gap: var(--space-16); padding-bottom: var(--layout-pad-bottom); } /* прежнее нижнее поле экрана — канбан его перекрывает до края */
+#home-dashboard-content { min-width: 0; }
+@media (max-height: 700px) {
+  /* Низкое окно: прокручивается вся главная, без обрезки общей шапки. */
+  .screen--app:has(#home-tabs) { height: auto; min-height: 100vh; overflow: visible; }
+  .home-projects .lead-board { min-height: 60vh; }
+  .home-projects .lead-registry { min-height: 60vh; }
+}

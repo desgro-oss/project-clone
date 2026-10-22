@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<!--
+  ИСТОЧНИК страницы сделки. Двойным кликом открывают НЕ этот файл, а собранный
+  Deal.preview.html: тайлы здесь стоят метками <ds-include>, а рантайм-инклуд
+  ДС тянет фрагменты через fetch, который по file:// не работает.
+
+    node .agents/tools/assemble.mjs        — пересобрать после правки любого модуля
+
+  Страница держит только перечень тайлов и их место в сетке. Разметка тайла и
+  его паспорт живут в своей папке: apps/postrade/deals-app/widgets/<группа>/<Имя>/.
+  Правка, касающаяся содержимого тайла, делается в модуле, а не здесь.
+-->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сделка — IBP</title>
+<!-- @lc-css --><!-- сюда ассемблер вставляет CSS подключённых локальных компонентов -->
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body {
+    margin: 0;
+    font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-page);
+  }
+
+  /* ---------- Секция «Общая информация» ----------
+     Сворачиваемого заголовка раздела в ДС нет: Tile-аккордеон живёт только
+     внутри .tile (ds-tile.js ищет closest('.tile')), а здесь заголовок стоит
+     на фоне страницы. Секция собрана из атомов ДС — IconButton + токен
+     типографики; переключение делает экранный скрипт. Находка «нет компонента
+     SectionAccordion» записана в Deal.screen.md, §6. */
+  .gen { display: flex; flex-direction: column; gap: var(--space-12); }
+  .gen__head { display: flex; align-items: center; gap: var(--space-8); }
+  .gen__title { margin: 0; font: var(--type-h5-strong); color: var(--text-primary); }
+  .gen__chevron { transition: transform .15s ease; }
+  .gen__toggle[aria-expanded="false"] .gen__chevron { transform: rotate(180deg); }
+  @media (prefers-reduced-motion: reduce) { .gen__chevron { transition: none; } }
+
+  /* Две колонки блока: слева сетка тайлов, справа тайл фиксированной ширины.
+     Парное [hidden] — соглашение ДС: правило display у класса (0,1,0) иначе
+     перебивает UA-правило [hidden] (0,0,0) и сворачивание молча ломается. */
+  .gen__body { display: flex; align-items: stretch; gap: var(--space-16); }
+  .gen__body[hidden] { display: none; }
+  .gen__main { flex: 1; min-width: 0; }
+  /* display:grid — единственный ребёнок (тайл) тянется на всю высоту колонки
+     сам, без правил экрана на .tile.
+     contain: size — колонка не отдаёт ряду высоту своего содержимого: высоту
+     блока задаёт левая секция (не меньше 400px из ТЗ), длинный степпер
+     прокручивается внутри тайла (RE0026, решение человека 16.10.2026). */
+  .gen__side { flex: 0 0 320px; min-height: 400px; display: grid; contain: size; }
+
+  /* ---------- Перестроение ----------
+     Настоящий механизм («адаптивно, а не по брейкпоинтам») ещё не описан — см.
+     Deal.screen.md, §6. До него — штатная пара .col-N/.colw-N из Spacing и
+     пороги по ширине РАБОЧЕЙ ОБЛАСТИ (контейнер screen из Layout): закрепление
+     боковой панели сужает контент, не меняя окна. Сами пороги — выбор этого
+     экрана, а не правило ДС: общих брейкпоинтов в ДС нет, порог задаёт экран. */
+  /* ---------- Минимальная высота тайла ----------
+     200px — решение человека 21.09.2026 (закрыт вопрос «H min со схемы
+     раскладки» в паспортах тайлов). Задаёт страница: это параметр раскладки,
+     а не компонента. Минимум — вид по умолчанию для всех тайлов, в том числе
+     заглушек (решение человека 22.09.2026): ряд выше только тогда, когда
+     содержимое наполненного тайла больше, и соседи по ряду тянутся за ним
+     сами (Tile). Поэтому тайл без состава полей — строка по центру, а не
+     EmptyState: его иллюстрация и отступы давали ≈324px и тянули весь ряд.
+     Карточки окна КНР (Card — тоже .tile) стоят вне .screen__content и правило
+     не получают. */
+  .screen__content .tile { min-height: 200px; }
+  /* Исключение — ряд «Сведения о проекте»: он один в своём ряду, соседей,
+     за которыми тянуться, нет, и тайл по макету компактный — высота по
+     содержимому (решение человека 28.09.2026). */
+  #row-project-info .tile { min-height: 0; }
+
+  @container screen (max-width: 1560px) {
+    .gen__body { flex-direction: column; }
+    /* под левой секцией тянуться не за кем — высота по содержимому (RE0026) */
+    .gen__side { flex: 0 0 auto; contain: none; }
+  }
+  @container screen (max-width: 1240px) {
+    .tile-row > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+
+  <!-- Боковое меню строится экранным скриптом из ibp-home.js по роли -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="MainPage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="Portfolio.html">Текущий портфель ДИД</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page" id="deal-crumb">Сделка</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- ── Шапка страницы ─────────────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <h1 class="phead__title" id="deal-title">Сделка</h1>
+              <!-- Окно «Редактирование сделки» (DealTitleModal) — то же, что
+                   «Новая сделка» в реестре, только заполненное: номер и
+                   наименование. guarded — в окне ввод, клик мимо его не закрывает. -->
+              <button type="button" class="ibtn ibtn--neutral ibtn--s phead__edit"
+                      data-modal="deal-title-scrim" data-modal-guarded
+                      aria-label="Редактировать номер и наименование сделки"><i data-icon="edit"></i></button>
+            </div>
+            <!-- Чипы статусов заполняет экранный скрипт из DealsStore:
+                 сделка · Operations · ЦУП. Мониторинг на странице сделки не показывается. -->
+            <div class="phead__chips" id="deal-chips"></div>
+          </div>
+          <!-- Подзаголовок — только у погашенной сделки; заполняет экранный скрипт. -->
+          <div class="phead__subtitle" id="deal-subtitle" hidden>
+            <span class="phead__subtitle-ico" aria-hidden="true"><i data-icon="check-circle-filled"></i></span>
+            <span id="deal-subtitle-text"></span>
+          </div>
+        </div>
+        <div class="phead__actions" data-actions-overflow>
+          <button type="button" class="btn btn--outline btn--m">
+            <i data-icon="calc"></i><span class="btn__label">Расчет задолженности</span></button>
+          <button type="button" class="btn btn--outline btn--m">
+            <span class="btn__label">Плановые платежи</span><i data-icon="arrow-right"></i></button>
+          <button type="button" class="btn btn--outline btn--m">
+            <span class="btn__label">Чек-листы</span><i data-icon="arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- ── Общая информация ───────────────────────────────────────────── -->
+      <section class="gen">
+        <div class="gen__head">
+          <button type="button" class="ibtn ibtn--neutral ibtn--m gen__toggle"
+                  aria-expanded="true" aria-controls="gen-body" aria-label="Свернуть">
+            <i data-icon="chevron-up" class="gen__chevron"></i>
+          </button>
+          <h2 class="gen__title">Общая информация</h2>
+        </div>
+
+        <div class="gen__body" id="gen-body">
+
+          <!-- Левая секция: 12 колонок, зазоры между рядами держит .tile-group -->
+          <div class="gen__main tile-group">
+
+            <div class="tile-row">
+              <ds-include src="../widgets/tiles/CounterpartiesTile/CounterpartiesTile.html" class="col-3 colw-6" id="tile-knr" state="loading" mode="edit"></ds-include>
+              <ds-include src="../widgets/tiles/DealPeriodTile/DealPeriodTile.html" class="col-3 colw-6" id="tile-deal-terms" state="loading" mode="edit"></ds-include>
+              <ds-include src="../widgets/tiles/DealTeamTile/DealTeamTile.html" class="col-6 colw-12" id="tile-deal-team" state="loading" mode="edit"></ds-include>
+            </div>
+
+            <div class="tile-row">
+              <ds-include src="../widgets/tiles/DealDescriptionTile/DealDescriptionTile.html" class="col-6 colw-12" id="tile-deal-description" state="loading" mode="edit"></ds-include>
+              <ds-include src="../widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.html" class="col-6 colw-12" id="tile-deal-fin-metrics" state="loading" mode="view"></ds-include>
+            </div>
+
+            <!-- Третий ряд опционален: сведения о проекте есть у сделок деска
+                 «Недвижимость» — это проекты недвижимости (заказчик
+                 23.09.2026). Деск лежит в команде сделки, поэтому ряд
+                 показывает или прячет страница (fillTeam), а не сам тайл:
+                 модули друг друга не знают. -->
+            <div class="tile-row" id="row-project-info">
+              <ds-include src="../widgets/tiles/ProjectInformationTile/ProjectInformationTile.html" class="col-12" id="tile-project-info" state="loading" mode="edit"></ds-include>
+            </div>
+
+          </div>
+
+          <!-- Правая колонка: ширина 320 и минимальная высота 400 — из ТЗ, вне
+               12-колоночной сетки, поэтому помечена data-off-grid (Spacing). -->
+          <div class="gen__side" data-off-grid="Заведение сделки — фиксированные 320px по ТЗ">
+            <ds-include src="../widgets/tiles/Navigator/Navigator.html" id="tile-navigator" state="loading" mode="edit"></ds-include>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── Табы разделов сделки ───────────────────────────────────────── -->
+      <div class="tabs tabs--horiz" role="tablist" id="deal-tabs" data-tabs>
+        <button type="button" class="tab tab--m tab--selected" role="tab" id="tab-fin"
+                aria-selected="true" aria-controls="panel-fin" tabindex="0">
+          <span class="tab__label">Финансовые данные</span>
+        </button>
+        <button type="button" class="tab tab--m" role="tab" id="tab-cpt"
+                aria-selected="false" aria-controls="panel-cpt" tabindex="-1">
+          <span class="tab__label">Контрагенты</span><span class="tab__badge">9</span>
+        </button>
+        <button type="button" class="tab tab--m" role="tab" id="tab-col"
+                aria-selected="false" aria-controls="panel-col" tabindex="-1">
+          <span class="tab__label">Обеспечения</span><span class="tab__badge">9</span>
+        </button>
+      </div>
+
+      <!-- Финансовые данные -->
+      <div class="tile-group" id="panel-fin" role="tabpanel" aria-labelledby="tab-fin" data-tabpanel>
+        <!-- Первый ряд: высота каждого тайла по своему контенту, а не по соседу.
+             Способ из спеки Tile: тайл лежит в .tile-stack — у flex-колонки
+             align-self:stretch тянет ширину, не высоту. -->
+        <div class="tile-row">
+          <div class="tile-stack col-6 colw-12">
+            <ds-include src="../widgets/tiles/DealProductTreeTile/DealProductTreeTile.html" id="tile-deal-products" state="loading" mode="edit"></ds-include>
+          </div>
+          <div class="tile-stack col-6 colw-12">
+            <ds-include src="../widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.html" id="tile-fin-instruments" state="loading" mode="edit"></ds-include>
+          </div>
+        </div>
+        <!-- Второй ряд: один тайл в 6 колонок (тайл «Влияние на ЭПС/ВБС» снят 10.10.2026) -->
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.html" class="col-6 colw-12"></ds-include>
+        </div>
+      </div>
+
+      <!-- Контрагенты -->
+      <div class="tile-group" id="panel-cpt" role="tabpanel" aria-labelledby="tab-cpt" data-tabpanel hidden>
+        <div class="tile-row">
+          <ds-include src="../widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.html" class="col-12"></ds-include>
+        </div>
+      </div>
+
+      <!-- Обеспечения -->
+      <div class="tile-group" id="panel-col" role="tabpanel" aria-labelledby="tab-col" data-tabpanel hidden>
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/DealRelatedCollateralsTile/DealRelatedCollateralsTile.html" class="col-12"></ds-include>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Окно шапки страницы: «Редактирование сделки» — номер и наименование;
+     открывает карандаш у заголовка. -->
+<ds-include src="../widgets/modals/DealTitleModal/DealTitleModal.html"></ds-include>
+<!-- Модальные окна тайла «КНР» (CounterpartiesTile → InstrumentsCounterpartiesModal). Скримы живут в конце body, а не внутри тайла:
+     вложенный в скрытый родитель скрим не показать. Окно подтверждения —
+     отдельным фрагментом, потому что у фрагмента один корневой элемент. -->
+<ds-include src="../widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.html"></ds-include>
+<ds-include src="../widgets/modals/InstrumentsCounterpartiesModal/KNRConfirmModal.html"></ds-include>
+<!-- Шаблон карточки контрагента для окна «КНР»: подчасть окна, лежит в его
+     папке. Им же рисует карточки участников окно «Документы по сделке»
+     (режим select). Вшивается отдельной меткой — сборщик не раскрывает метки
+     внутри фрагмента. -->
+<ds-include src="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.html"></ds-include>
+<!-- Эталон карточки ФИ: подчасть тайла «Финансовые инструменты», лежит в его
+     папке. Карточки списка рисует FinInstrumentCard.js; метка подключает её
+     стили. Отдельной меткой — сборщик не раскрывает метки внутри фрагмента. -->
+<ds-include src="../widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.html"></ds-include>
+<!-- Окно правки тайла «Сроки сделки» — тоже в конце body, по той же причине. -->
+<ds-include src="../widgets/modals/DealPeriodModal/DealPeriodModal.html"></ds-include>
+<!-- Окно тайла «Команда сделки»: правка и просмотр — один скрим, режим ему
+     ставит скрипт окна по режиму тайла, который его открыл. -->
+<ds-include src="../widgets/modals/DealTeamModal/DealTeamModal.html"></ds-include>
+<!-- Артефакты тайла «Описание сделки»: окно правки и просмотра (один скрим,
+     режим по тайлу), два шага документов ЭКД — выбор участника и документы
+     (подчасть окна, своя метка), поповер «Связанные сделки» (его ставит у
+     ссылки-триггера рантайм ДС, место в разметке роли не играет). -->
+<ds-include src="../widgets/modals/DealDescriptionModal/DealDescriptionModal.html"></ds-include>
+<ds-include src="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.html"></ds-include>
+<ds-include src="../widgets/modals/CounterpartiesEcmModal/EcmModal/EcmModal.html"></ds-include>
+<ds-include src="../widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.html"></ds-include>
+<!-- Окно тайла «Финансовые метрики сделки»: только просмотр — ОСЗ, резервы
+     по ФИ и переоценка по Equity инструментам, которых в тайле нет. -->
+<ds-include src="../widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.html"></ds-include>
+<!-- Окно тайла «Сведения о проекте»: правка; открывают карандаш и
+     «Заполнить» тайла. -->
+<ds-include src="../widgets/modals/DealProjectInformationModal/DealProjectInformationModal.html"></ds-include>
+<!-- Окна тайла «Финансовые инструменты»: создание и изменение карточки ФИ.
+     Открывают их события тайла fiaction, данные окна берут из
+     FinInstrumentsStore. -->
+<ds-include src="../widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.html"></ds-include>
+<ds-include src="../widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.html"></ds-include>
+<!-- Окна тайла «Продукты сделки»: выбор продуктов ДИД, продуктов и
+     инструментов, погашение, перенос инструмента, связь с ФИ и общее
+     подтверждение удаления и назначения основного (вложенный скрим — сосед
+     остальных, а не потомок, поэтому последним). Открывают их события тайла
+     ptreeaction, данные окна берут из ProductTreeStore. -->
+<ds-include src="../widgets/modals/DidProductsModal/DidProductsModal.html"></ds-include>
+<ds-include src="../widgets/modals/ProductsModal/ProductsModal.html"></ds-include>
+<ds-include src="../widgets/modals/InstrumentsModal/InstrumentsModal.html"></ds-include>
+<ds-include src="../widgets/modals/RepaymentModal/RepaymentModal.html"></ds-include>
+<ds-include src="../widgets/modals/InstrumentTransferModal/InstrumentTransferModal.html"></ds-include>
+<ds-include src="../widgets/modals/LinkChangeModal/LinkChangeModal.html"></ds-include>
+<ds-include src="../widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.html"></ds-include>
+<!-- Окна тайла «Заведение сделки» (Navigator): назначение ответственного ЦУП,
+     приём на мониторинг РМ/ПМ/ПМЗ, направление на передачу, погашение сделки,
+     причина ввода изменений. Открывает их тайл по полю modal перехода
+     статусной модели — через openModal, который даёт страница
+     (fillNavigator). -->
+<ds-include src="../widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.html"></ds-include>
+<ds-include src="../widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.html"></ds-include>
+<ds-include src="../widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.html"></ds-include>
+<ds-include src="../widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.html"></ds-include>
+<ds-include src="../widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.html"></ds-include>
+
+<script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
+<script src="../data/deals-store.js"></script>
+<!-- справочник сотрудников для списков окна «Команда сделки»: сами назначения
+     лежат в записи сделки, здесь только кандидаты -->
+<script src="../data/mock-team.js"></script>
+<!-- контрагенты сделки: база, адаптер хранения и стор — до рантаймов, как у
+     сделок. Стор подключается после deals-store.js: он переносит сохранённые
+     КНР в DealsStore. Хранение — data/API.md -->
+<script src="../data/mock-counterparties.js"></script>
+<script src="../data/post-api.js"></script>
+<script src="../data/counterparties-store.js"></script>
+<!-- финансовые метрики сделок для тайла и окна «Финансовые метрики сделки» -->
+<script src="../data/mock-financial-metrics.js"></script>
+<!-- дерево продуктов сделки: справочники продуктов, карточки ФИ, деревья
+     сделок и стор. Стор — после deals-store.js и post-api.js: сохранённые
+     деревья он берёт из PostApi и переносит производные поля дерева
+     (основной продукт ДИД, продукты, балансы) в запись сделки, их читает
+     реестр портфеля -->
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/mock-fin-instruments.js"></script>
+<script src="../data/mock-deal-trees.js"></script>
+<script src="../data/product-tree-store.js"></script>
+<!-- карточки ФИ сделки: стор — после стора дерева и стора контрагентов, баланс,
+     валюту, суммы и список инструментов карточки он считает из прикреплённых узлов
+     дерева, контрагентов берёт из базы. Хранение — data/API.md -->
+<script src="../data/fin-instruments-store.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<!-- после ds.js и синхронно: его DSTabs.tabs(...) должен успеть раньше
+     автопривязки wireAll на DOMContentLoaded.
+     Рендер карточки — до модалки: она им рисует свои колонки. -->
+<script src="../widgets/modals/DealTitleModal/DealTitleModal.js"></script>
+<script src="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<!-- тайл раньше окна: окно рисует бары функцией тайла -->
+<script src="../widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script src="../widgets/modals/DealProjectInformationModal/DealProjectInformationModal.js"></script>
+<script src="../widgets/tiles/ProjectInformationTile/ProjectInformationTile.js"></script>
+<!-- тайл «Продукты сделки» и его окна: общий слой двух колонок живёт в
+     ProductsModal.js, поэтому он раньше окон «Продукты ДИД» и «Инструменты» -->
+<script src="../widgets/tiles/DealProductTreeTile/DealProductTreeTile.js"></script>
+<script src="../widgets/modals/ProductsModal/ProductsModal.js"></script>
+<script src="../widgets/modals/DidProductsModal/DidProductsModal.js"></script>
+<script src="../widgets/modals/InstrumentsModal/InstrumentsModal.js"></script>
+<script src="../widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script src="../widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
+<!-- тайл «Финансовые инструменты» и его окна: общий слой полей окон ФИ живёт в
+     окне создания, поэтому оно раньше окна изменения; карточка — раньше тайла:
+     тайл рисует ею список -->
+<script src="../widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.js"></script>
+<script src="../widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
+<script src="../widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
+<script src="../widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
+<!-- Тайл «Заведение сделки» — статусы по модели (data/deal-status-model.js);
+     переходы пишет в DealsStore страница (fillNavigator). Окна тайла
+     регистрируются в PostNavigatorModals; согласующего и ответственного они
+     показывают «ФИО номер» по контракту окна «Команда сделки», поэтому идут
+     после DealTeamModal.js. -->
+<script src="../widgets/tiles/Navigator/Navigator.js"></script>
+<script src="../widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.js"></script>
+<script src="../widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.js"></script>
+<script src="../widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.js"></script>
+<script src="../widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.js"></script>
+<script src="../widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.js"></script>
+<script>
+/* Экранный скрипт. Делает только то, чего рантаймы ДС не делают:
+   меню по каталогу ролей, данные сделки (шапка и тайлы), переключение
+   панелей табов и сворачивание секции (компонента «заголовок-аккордеон» в ДС
+   нет).
+   Скрипт синхронный и стоит после ds.js — поэтому его DSTabs.tabs(...) успевает
+   раньше автопривязки wireAll (она на DOMContentLoaded), и onChange не теряется. */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'current-portfolio';
+  /* строка пользователя в футере меню ведёт на хаб проектов (корневой index.html).
+     Футер отдаёт IBPHome.footerHTML с зашитым href="#" — подменяем ссылку
+     здесь, каталог ДС не трогаем. Проверяет сторож registry-check.mjs. */
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../index.html" aria-label="Хаб проектов"';
+
+  function ic(name) { return '<i data-icon=\'' + name + '\'></i>'; }
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function itemHTML(it) {
+    /* пункт с тайлом-со-ссылками — аккордеон-родитель (под-пункты = ссылки тайла) */
+    if (it.tile && it.tile.links && it.tile.links.length) {
+      var sub = '<div class="nav__sub" id="nav-sub-' + it.id + '"><div class="nav__sub-in">'
+        + it.tile.links.map(function (l) { return '<a class="nav__item" href="#"><span class="nav__label">' + l + '</span></a>'; }).join('')
+        + '</div></div>';
+      return '<a class="nav__item nav__item--acc" href="#" aria-expanded="false" aria-controls="nav-sub-' + it.id + '">'
+        + '<span class="nav__ico">' + ic(it.icon) + '</span>'
+        + '<span class="nav__label">' + it.label + '</span>'
+        + '<span class="nav__caret">' + ic('chevron-down') + '</span></a>' + sub;
+    }
+    var badge = it.badge
+      ? '<span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">' + it.badge + '</span></span>'
+      : '';
+    /* пункт «Текущий портфель» ведёт на реестр: со страницы сделки он остаётся
+       рабочим переходом на уровень выше, а не мёртвой ссылкой */
+    var href = (it.id === SELECTED_ID) ? 'Portfolio.html' : '#';
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="' + href + '"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span>' + badge + '</a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+      + '</div>';
+    s += '<div class="nav__list">';
+    s += '<a class="nav__item" href="MainPage.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    IBPHome.itemsFor(role).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '">';
+      s += '<div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>';
+    s += (window.IBPHome && window.IBPHome.footerHTML)
+      ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">'
+        + '<a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">'
+        + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+        + '<span class="nav__user-text">'
+        + '<span class="nav__user-name">Александров Петр Константинович</span>'
+        + '<span class="nav__user-role">' + role + '</span>'
+        + '</span></a>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>'
+        + '</div>';
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  }
+
+  /* Сделка, которую открыли: номер приходит параметром ?id= — его ставит реестр
+     текущего портфеля при двойном клике по строке. Данные читаются из общего
+     DealsStore (той же базы, что рисует таблицу портфеля), поэтому наименование
+     и номер на обоих экранах совпадают по построению. Открытие файла без
+     параметра — просмотр каркаса: берётся первая сделка списка. */
+  function currentDeal() {
+    var id = null;
+    try { id = new URLSearchParams(window.location.search).get('id'); } catch (e) { id = null; }
+    var deal = (id != null && id !== '') ? window.DealsStore.byId(id) : null;
+    return deal || window.DealsStore.list()[0] || null;
+  }
+
+  /* Три чипа-статуса: сделка · Operations · ЦУП. Статус мониторинга на странице
+     сделки не показывается (ТЗ 19.09.2026). Тон берётся из DealsStore.statusTone —
+     того же словаря, что красит колонки статусов в реестре портфеля: словарь
+     один, поэтому чип в таблице и чип в шапке не могут разойтись. */
+  function fillChips(deal) {
+    var box = document.getElementById('deal-chips');
+    if (!box) return;
+    var rows = [
+      { value: deal.status, letter: '' },
+      { value: deal.statusOps, letter: 'О' },
+      { value: deal.statusTsup, letter: 'Ц' }
+    ];
+    box.innerHTML = rows.map(function (r) {
+      if (!r.value) return '';
+      var av = r.letter
+        ? '<span class="chip__avatar av av--circular"><span class="av__text">' + esc(r.letter) + '</span></span>'
+        : '';
+      return '<span class="chip chip--rounded chip--s ' + window.DealsStore.statusTone(r.value) + '">'
+        + av + '<span class="chip__label">' + esc(r.value) + '</span></span>';
+    }).join('');
+  }
+
+  /* Подзаголовок шапки у погашенной сделки: тот же текст, что у строки узла
+     дерева и сабхедера карточки ФИ (PRODUCT_DETAIL_LABELS.repaidAt), дата —
+     repayDate записи сделки (ДД.ММ.ГГГГ). */
+  function fillSubtitle(deal) {
+    var box = document.getElementById('deal-subtitle');
+    if (!box) return;
+    var repaid = deal.status === 'Погашена';
+    box.hidden = !repaid;
+    if (!repaid) return;
+    var label = (window.PRODUCT_DETAIL_LABELS || {}).repaidAt || 'Фактическая дата погашения';
+    document.getElementById('deal-subtitle-text').textContent = label + (deal.repayDate ? ' ' + deal.repayDate : '');
+  }
+
+  /* Номер, под которым сделку открыли. Сторы КНР и дерева продуктов
+     открыты по нему и держат его, даже если номер сменили в окне
+     «Редактирование сделки»: DealsStore помнит прежний номер псевдонимом. */
+  var openedId = null;
+
+  function fillDeal() {
+    var deal = currentDeal();
+    if (!deal) return;
+    openedId = String(deal.id);
+    fillTitle(deal);
+    fillChips(deal);
+    fillSubtitle(deal);
+    applyMode(deal);
+    watchStatus(deal);
+    fillKnr(deal);
+    fillTerms(deal);
+    fillTeam(deal);
+    fillDescription(deal);
+    fillFinMetrics(deal);
+    fillProjectInfo(deal);
+    fillProducts(deal);
+    fillFinInstruments(deal);
+    fillNavigator(deal);
+  }
+
+  /* Заголовок «номер. наименование», третья крошка и заголовок вкладки —
+     из записи сделки. Окно «Редактирование сделки» (DealTitleModal) модули
+     не знают, связывает его страница: окно берёт номер и наименование при
+     открытии, сверяет их с реестром через DealsStore.exists — исключая эту
+     сделку — и отдаёт правку сюда, страница пишет её в стор, шапка
+     перерисовывается по событию стора. Запись правится на месте, поэтому
+     deal.id после смены номера — уже новый номер. */
+  function paintTitle(d) {
+    var num = 'Сделка № ' + d.id;
+    document.getElementById('deal-title').textContent = d.id + '. ' + (d.name || '');
+    paintCrumb(num);
+    document.title = num + ' — IBP';
+  }
+
+  /* Текущая крошка. До привязки рантайма крошек (DOMContentLoaded) она ещё
+     разметка экрана — #deal-crumb. Привязанный рантайм читает звенья один раз
+     и перерисовывает список сам (#deal-crumb пропадает), поэтому после
+     переименования текст меняется в его звеньях (api.items) и список
+     перерисовывается (api.refresh) — ds-breadcrumbs.js. */
+  function paintCrumb(text) {
+    var cur = document.getElementById('deal-crumb');
+    if (cur) { cur.textContent = text; return; }
+    var ol = document.querySelector('[data-breadcrumbs]');
+    var api = ol && window.DSBreadcrumbs ? window.DSBreadcrumbs.bind(ol) : null;
+    if (!api || !api.items.length) return;
+    api.items[api.items.length - 1].text = text;
+    api.refresh();
+  }
+
+  function fillTitle(deal) {
+    paintTitle(deal);
+    if (window.PostDealTitleModal) {
+      window.PostDealTitleModal.bind(document.getElementById('deal-title-scrim'), {
+        get: function () { return { id: deal.id, name: deal.name }; },
+        exists: function (q) { return window.DealsStore.exists(Object.assign({ except: deal.id }, q)); },
+        save: function (patch) { window.DealsStore.update(deal.id, patch); }
+      });
+    }
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal === deal) paintTitle(d.deal);
+    });
+  }
+
+  /* Режим правки страницы. Статус сделки сильнее роли: в статусе, который не
+     допускает правку сущностей (DealsStore.isEditable), вся страница — только
+     просмотр, какой бы ни была роль. Режим — входной атрибут компонента
+     (data-mode): его ставит страница, а свой вид в просмотре каждый компонент
+     держит сам (действия правки не рисуются). Окно КНР — такой же компонент.
+     Статус правку не закрыл — режимы остаются теми, что пришли с фрагментами.
+     Кнопка переименования — разметка самого экрана, её прячет экран.
+
+     Статус меняется на самой странице (тайл «Заведение сделки»), поэтому
+     режим обратим: исходный режим компонента запоминается при первом проходе
+     (data-mode-own) и возвращается, когда статус снова допускает правку
+     («Ввод изменений», «Корректировка»). Навигатор режимом статуса не
+     выключается: его действия — процесс, их задаёт статусная модель (в
+     «Активной» сделку гасят и вводят изменения). Дерево продуктов и карточки
+     ФИ кладут режим в разметку при отрисовке — после смены их перерисовывают. */
+  function applyMode(deal) {
+    var view = !window.DealsStore.isEditable(deal);
+    var changed = false;
+    /* карточки ФИ — тоже .tile[data-mode], но режим им ставит тайл при
+       перерисовке ниже, а не этот проход */
+    document.querySelectorAll('.screen__content .tile[data-mode]:not(.lc-fin-card), .lc-knrm[data-mode]').forEach(function (el) {
+      if (el.classList.contains('lc-navigator')) return;
+      if (!el.hasAttribute('data-mode-own')) el.setAttribute('data-mode-own', el.getAttribute('data-mode'));
+      var mode = view ? 'view' : el.getAttribute('data-mode-own');
+      if (el.getAttribute('data-mode') !== mode) { el.setAttribute('data-mode', mode); changed = true; }
+    });
+    var rename = document.querySelector('.phead__edit');
+    if (rename) rename.hidden = view;
+    if (!changed) return;
+    var tree = document.getElementById('tile-deal-products');
+    if (tree && window.PostTileProductTree && window.ProductTreeStore && window.ProductTreeStore.dealId() != null) {
+      window.PostTileProductTree.render(tree, window.ProductTreeStore.view());
+    }
+    var fi = document.getElementById('tile-fin-instruments');
+    if (fi && fi.__fiPaint) fi.__fiPaint();
+  }
+
+  /* Статусы сделки меняет тайл «Заведение сделки» — чипы шапки, подзаголовок
+     погашенной сделки и режим правки следуют за записью в сторе. */
+  function watchStatus(deal) {
+    window.DealsStore.on('change', function (d) {
+      if (!d || d.deal !== deal) return;
+      fillChips(d.deal);
+      fillSubtitle(d.deal);
+      applyMode(d.deal);
+    });
+  }
+
+  /* Тайл «Заведение сделки» (Navigator) — путь сделки по четырём дорожкам и
+     действия текущего статуса, всё из статусной модели. Действие тайла
+     отдаёт patch статусов сюда, страница пишет его в стор; тайл, чипы и
+     режим перерисовываются по событию стора.
+
+     Отметки чек-листа «Сделки» до «Согласования» — заполненность разделов
+     (пояснение к «Черновику» в модели). Как мерить заполненность, макеты не
+     говорят — допущение 10.10.2026 (паспорт тайла): «Общая информация» —
+     есть дата заключения, «Продукты ДИД» — в дереве есть продукт ДИД,
+     «Финансовые инструменты» — есть карточка ФИ, «Расчёт метрик» — у сделки
+     есть метрики. Сторы дерева и ФИ открываются асинхронно — отметки
+     пересчитываются по их событиям.
+
+     Окна навигатора (назначение ответственного, отметки РМ/ПМ/ПМЗ, передача,
+     погашение, причина изменений) открывает openModal по имени из поля modal
+     перехода: окно берёт запись сделки и переход, по «Сохранить» отдаёт тайлу
+     extra — patch полей сделки или отметку, тайл применяет переход вместе с
+     ним. Крестик и Esc — перехода нет. Окна нет в реестре — переход сразу. */
+  function fillNavigator(deal) {
+    var tile = document.getElementById('tile-navigator');
+    if (!tile || !window.PostNavigator) return;
+    var trees = window.ProductTreeStore;
+    var cards = window.FinInstrumentsStore;
+    var metrics = window.MOCK_DEAL_FIN_METRICS || {};
+
+    function progress(d) {
+      var own = function (store) { return store && String(store.dealId()) === openedId; };
+      return [
+        !!String(d.signDate || '').trim(),
+        own(trees) ? trees.view().length > 0 : (d.productsDidNames || []).length > 0,
+        own(cards) ? cards.list().length > 0 : false,
+        !!metrics[openedId]
+      ];
+    }
+
+    function current() { return window.DealsStore.byId(deal.id) || deal; }
+
+    var nav = window.PostNavigator.bind(tile, {
+      get: current,
+      save: function (patch) { window.DealsStore.update(deal.id, patch); },
+      progress: progress,
+      openModal: function (name, transition, done) {
+        var modal = (window.PostNavigatorModals || {})[name];
+        if (!modal) return false;
+        modal.open({ deal: current(), transition: transition }, done);
+      }
+    });
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal === deal) nav.paint();
+    });
+    [trees, cards].forEach(function (store) {
+      if (!store) return;
+      store.on('change', function (e) { if (e && e.reason === 'use') nav.paint(); });
+      store.on('commit', nav.paint);
+    });
+  }
+
+  /* Тайл «КНР» — КНР этой сделки из CounterpartiesStore. Пока состав
+     грузится (сервер данных или localStorage, см. data/API.md), тайл стоит в
+     loading. После «Сохранить» в окне КНР тайл перерисовывается сразу —
+     таблица портфеля увидит то же при следующем открытии. */
+  function fillKnr(deal) {
+    var store = window.CounterpartiesStore;
+    var tile = document.getElementById('tile-knr');
+    if (!store || !tile || !window.PostTileKNR) return;
+    function paint() { window.PostTileKNR.render(tile, store.knr()); }
+    store.use(deal.id).then(paint);
+    store.on('commit', paint);
+  }
+
+  /* Тайл «Сроки сделки» — даты этой сделки из DealsStore (signDate, endDate,
+     firstDisb). Окно правки модули друг друга не знают — связывает их здесь
+     страница: окно берёт даты сделки при открытии и отдаёт проверенную дату
+     первой выдачи, страница пишет её в стор, тайл перерисовывается по событию
+     стора. Хранение — в памяти вкладки, как у всего DealsStore. */
+  function fillTerms(deal) {
+    var tile = document.getElementById('tile-deal-terms');
+    if (!tile || !window.PostTileDealTerms) return;
+    window.PostTileDealTerms.render(tile, deal);
+    if (window.PostDealTermsModal) {
+      window.PostDealTermsModal.bind(document.getElementById('deal-terms-scrim'), {
+        get: function () { return window.DealsStore.byId(deal.id) || deal; },
+        save: function (value) { window.DealsStore.update(deal.id, { firstDisb: value }); }
+      });
+    }
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal && String(d.deal.id) === String(deal.id)) window.PostTileDealTerms.render(tile, d.deal);
+    });
+  }
+
+  /* Тайл «Команда сделки» — деск и роли этой сделки из DealsStore. Тайл
+     показывает шесть ролей из тринадцати, остальные — в окне; оно же правит
+     состав. Как и со сроками, модули друг друга не знают: окно берёт команду
+     при открытии и отдаёт правку сюда, страница пишет её в стор, тайл
+     перерисовывается по событию стора.
+
+     Признак ограниченного доступа меняет только руководитель ЦУП (заказчик
+     23.09.2026). Такой роли в каталоге ролей пока нет — в IBPHome объявлена
+     одна, «Финансист ДИД», — поэтому право сейчас всегда закрыто и чекбокс в
+     окне выключен. Появится роль — условие ниже заработает само; заводить её
+     в ДС ради этого тайла не стали.
+
+     Деск управляет третьим рядом страницы: сведения о проекте есть у сделок
+     деска «Недвижимость». Решает это страница, а не тайлы — «Команда сделки»
+     про «Сведения о проекте» ничего не знает. */
+  function fillTeam(deal) {
+    var tile = document.getElementById('tile-deal-team');
+    if (!tile || !window.PostTileDealTeam) return;
+
+    function paint(d) {
+      window.PostTileDealTeam.render(tile, d);
+      applyProjectInfo(d);
+    }
+    paint(deal);
+
+    if (window.PostDealTeamModal) {
+      window.PostDealTeamModal.bind(document.getElementById('deal-team-scrim'), {
+        get: function () { return window.DealsStore.byId(deal.id) || deal; },
+        save: function (patch) { window.DealsStore.update(deal.id, patch); },
+        canEditRestricted: role === 'Руководитель ЦУП'
+      });
+    }
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal && String(d.deal.id) === String(deal.id)) paint(d.deal);
+    });
+  }
+
+  /* Тайл «Описание сделки» — поля описания этой сделки из DealsStore. Как со
+     сроками и командой, модули друг друга не знают, связывает их страница:
+       окно правки берёт запись при открытии и отдаёт правку сюда, страница
+         пишет её в стор, тайл перерисовывается по событию стора;
+       поповер «Связанные сделки» получает список сделки вместе с тайлом;
+       окно «Документы ЭКД» берёт участников из CounterpartiesStore — того же
+         состава, что правит окно «КНР». Пока состав этой сделки не загружен,
+         окно показывает загрузку (members → null). */
+  function fillDescription(deal) {
+    var tile = document.getElementById('tile-deal-description');
+    if (!tile || !window.PostTileDealDescription) return;
+    var pop = document.getElementById('related-deals-pop');
+
+    function paint(d) {
+      window.PostTileDealDescription.render(tile, d);
+      if (pop && window.PostRelatedDealsPopover) window.PostRelatedDealsPopover.render(pop, d.relatedDeals);
+    }
+    paint(deal);
+
+    if (window.PostDealDescriptionModal) {
+      window.PostDealDescriptionModal.bind(document.getElementById('deal-description-scrim'), {
+        get: function () { return window.DealsStore.byId(deal.id) || deal; },
+        save: function (patch) { window.DealsStore.update(deal.id, patch); }
+      });
+    }
+    if (window.PostDealEcmModal) {
+      var store = window.CounterpartiesStore;
+      window.PostDealEcmModal.bind(
+        document.getElementById('deal-ecm-scrim'),
+        document.getElementById('deal-ecm-docs-scrim'),
+        {
+          members: function () {
+            if (!store) return [];
+            return String(store.dealId()) === openedId ? store.members() : null;
+          }
+        });
+    }
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal && String(d.deal.id) === String(deal.id)) paint(d.deal);
+    });
+  }
+
+  /* Тайл «Финансовые метрики сделки» — метрики этой сделки из
+     mock-financial-metrics.js. Метрики считает система, в прототипе их
+     никто не правит, поэтому стора и событий нет: страница один раз отдаёт
+     метрики тайлу и окну. Нет записи — «Нет данных»; сделка из списка
+     MOCK_DEAL_FIN_METRICS_FAILED — ошибка запроса. Окно берёт метрики при
+     открытии тем же путём. */
+  function fillFinMetrics(deal) {
+    var tile = document.getElementById('tile-deal-fin-metrics');
+    if (!tile || !window.PostTileDealFinMetrics) return;
+    var all = window.MOCK_DEAL_FIN_METRICS || {};
+    var failed = (window.MOCK_DEAL_FIN_METRICS_FAILED || []).some(function (id) { return String(id) === String(deal.id); });
+    var metrics = failed ? null : (all[String(deal.id)] || null);
+
+    window.PostTileDealFinMetrics.render(tile, metrics, { failed: failed });
+    if (window.PostDealFinMetricsModal && metrics) {
+      window.PostDealFinMetricsModal.bind(document.getElementById('deal-fin-metrics-scrim'), {
+        get: function () { return metrics; }
+      });
+    }
+  }
+
+  /* Тайл «Сведения о проекте» — сведения этой сделки из DealsStore
+     (deal.projectInformation). Как у описания сделки, модули друг друга не
+     знают, связывает их страница: окно правки берёт сведения при открытии и
+     отдаёт правку сюда, страница пишет её в стор, тайл перерисовывается по
+     событию стора. Показывать ли ряд — решает applyProjectInfo по деску. */
+  function fillProjectInfo(deal) {
+    var tile = document.getElementById('tile-project-info');
+    if (!tile || !window.PostTileProjectInformation) return;
+
+    function paint(d) { window.PostTileProjectInformation.render(tile, d.projectInformation || null); }
+    paint(deal);
+
+    if (window.PostDealProjectInformationModal) {
+      window.PostDealProjectInformationModal.bind(document.getElementById('deal-project-info-scrim'), {
+        get: function () { return (window.DealsStore.byId(deal.id) || deal).projectInformation || null; },
+        save: function (info) { window.DealsStore.update(deal.id, { projectInformation: info }); }
+      });
+    }
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal && String(d.deal.id) === String(deal.id)) paint(d.deal);
+    });
+  }
+
+  /* Тайл «Продукты сделки» — дерево продуктов этой сделки из ProductTreeStore
+     (../data/product-tree-store.js поверх mock-deal-trees.js). Тайл связывает
+     со стором его собственный скрипт: перерисовка после «Сохранить» в окнах,
+     звезда основного продукта и «Удалить» — через стор. Окна «Продукты ДИД»,
+     «Продукты» и подтверждение удаления слушают события тайла сами, здесь их
+     не связывают. Режим (data-mode) тайлу уже поставил applyMode по статусу
+     сделки — render читает его с корня. Хранение — в памяти вкладки. */
+  /* Дерево сделки — после загрузки сохранённых деревьев (PostApi): до этого
+     тайл стоит в «Загрузке», как его вшила метка. */
+  function fillProducts(deal) {
+    var store = window.ProductTreeStore;
+    var tile = document.getElementById('tile-deal-products');
+    if (!store || !tile || !window.PostTileProductTree) return;
+    store.ready.then(function () {
+      store.use(deal.id);
+      window.PostTileProductTree.bind(tile, store);
+    });
+  }
+
+  /* Тайл «Финансовые инструменты» — карточки ФИ этой сделки из
+     FinInstrumentsStore (../data/fin-instruments-store.js поверх
+     mock-fin-instruments.js). Баланс, валюта, суммы и инструменты карточки
+     — из узлов дерева продуктов, прикреплённых к ней, поэтому стор ФИ
+     открывается после стора дерева. Тайл связывает со сторами его
+     собственный скрипт: перерисовка после «Сохранить» в окнах ФИ и в окне
+     связи с ФИ у дерева. Окна создания и изменения слушают события тайла
+     сами. Режим (data-mode) тайлу уже поставил applyMode. До загрузки
+     сохранённых карточек и деревьев тайл стоит в «Загрузке». */
+  function fillFinInstruments(deal) {
+    var store = window.FinInstrumentsStore;
+    var trees = window.ProductTreeStore;
+    var tile = document.getElementById('tile-fin-instruments');
+    if (!store || !tile || !window.PostTileFinInstruments) return;
+    Promise.all([store.ready, trees ? trees.ready : null, window.CounterpartiesStore ? window.CounterpartiesStore.ready : null])
+      .then(function () {
+        store.use(deal.id);
+        window.PostTileFinInstruments.bind(tile, store);
+      });
+  }
+
+  /* «→» в шапке карточки ФИ — переход на страницу финансового инструмента:
+     тайл только шлёт 'fiaction' OPEN, куда идти, знает страница. */
+  document.addEventListener('fiaction', function (e) {
+    var d = e.detail || {};
+    if (d.action !== 'OPEN' || !d.id) return;
+    var page = /\.preview\.html$/.test(window.location.pathname) ? 'FinInstrument.preview.html' : 'FinInstrument.html';
+    window.location.href = page + '?id=' + encodeURIComponent(openedId) + '&fi=' + encodeURIComponent(d.id);
+  });
+
+  /* Название транша в дереве продуктов — переход на страницу транша: тайл шлёт
+     'ptreeaction' OPEN, куда идти, знает страница. */
+  document.addEventListener('ptreeaction', function (e) {
+    var d = e.detail || {};
+    if (d.action !== 'OPEN' || !d.node || d.node.kind !== 'TRANCHE') return;
+    var page = /\.preview\.html$/.test(window.location.pathname) ? 'Tranche.preview.html' : 'Tranche.html';
+    window.location.href = page + '?id=' + encodeURIComponent(openedId) + '&tr=' + encodeURIComponent(d.id);
+  });
+
+  /* Ряд «Сведения о проекте» — только у деска «Недвижимость»: это проекты
+     недвижимости (заказчик 23.09.2026). Ряд прячется целиком, а не пустым
+     тайлом: пустой тайл читался бы как «данных нет». */
+  function applyProjectInfo(deal) {
+    var row = document.getElementById('row-project-info');
+    if (!row) return;
+    row.hidden = String((deal && deal.desk) || '').trim() !== 'Недвижимость';
+  }
+
+  /* Сворачивание блока «Общая информация». Рантайм ds-tile.js сюда не подходит:
+     он ищет closest('.tile'), а заголовок раздела стоит на фоне страницы. */
+  function bindSection() {
+    var toggle = document.querySelector('.gen__toggle');
+    var body = document.getElementById('gen-body');
+    if (!toggle || !body) return;
+    toggle.addEventListener('click', function () {
+      var open = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!open));
+      toggle.setAttribute('aria-label', open ? 'Развернуть' : 'Свернуть');
+      body.hidden = open;
+    });
+  }
+
+  /* Табы: roving tabindex, стрелки и переполнение даёт рантайм ДС, а показ
+     нужной панели — модель данных экрана, рантайма для неё в ДС нет
+     (design-system/specs/_runtime-hooks.md, «Чего рантаймы не делают»). */
+  function bindTabs() {
+    var bar = document.getElementById('deal-tabs');
+    if (!bar || !window.DSTabs) return;
+    var panels = Array.prototype.slice.call(document.querySelectorAll('[data-tabpanel]'));
+    window.DSTabs.tabs(bar, {
+      onChange: function (index) {
+        panels.forEach(function (p, i) { p.hidden = (i !== index); });
+      }
+    });
+  }
+
+  function paintAll() {
+    if (window.dsIcons) window.dsIcons.apply(document);
+  }
+
+  buildNav(); fillDeal(); bindSection(); bindTabs(); paintAll();
+})();
+</script>
+
+</body>
+</html>

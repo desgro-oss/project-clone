@@ -1,0 +1,7 @@
+/* V2TasksTable — таблица на общем рендере. Своя раскладка: колонка «тулбар
+   над таблицей → таблица на остаток высоты» (Table, вариант .dtable-toolbar,
+   ритм 12px; карточка — сама .dtable, без тайла) и блок ошибки по data-state.
+   Table, TableCell, TableFilter, Pagination — ДС. */
+.lc-tasks-table { display: flex; flex-direction: column; gap: var(--space-12); min-width: 0; min-height: 0; height: 100%; }
+.lc-tasks-table__error { display: none; }
+.lc-tasks-table[data-state="error"] .lc-tasks-table__error { display: flex; }
