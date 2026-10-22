@@ -76,6 +76,15 @@ components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconBut
 при текущем составе изначально выбран PreTrade. Вертикальный скролл — у контентной области,
 крошки залипают. Горизонтального скролла нет.
 
+**Полки раздела.** Если хотя бы у одного приложения раздела в `app.json` есть поле `shelf`
+(`actual` | `archive`), список раздела делится на две вложенные плашки-аккордеона:
+«Актуальное» (раскрыта) и «Архив» (свёрнута). В заголовке — название и число приложений
+полки Chip `chip--s`, справа — шеврон (`tile__toggle`); приложение без `shelf` в таком разделе
+лежит в «Актуальном», пустая полка не выводится. Раздел, где `shelf` нет ни у кого, остаётся
+плоским списком. Сейчас полки только у PostTrade: «Актуальное» — спецификации на разработку и
+«Досрочное погашение процентов v3», «Архив» — остальные концепты (допущение: что актуально,
+решает человек, поле правится в `app.json`).
+
 **Строка (Entity M):**
 
 | Слот | Значение | Класс |
@@ -94,6 +103,7 @@ components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconBut
 | Клик по строке | переход на стартовую страницу записи |
 | Клик по пункту меню записи | то же |
 | Выбор сегмента раздела кликом, стрелками, Home / End | показ концептов выбранного раздела; выбор, фокус и индикатор ведёт рантайм ДС |
+| Клик по шеврону полки («Актуальное» / «Архив») | полка сворачивается или разворачивается; рантайм Tile ведёт `aria-expanded`; выбор не запоминается |
 | Наведение на строку | фон `--bgtable-row-hover`; подложка стыкуется с соседней строкой, не накрывая её (`.entity-list`) |
 | Бургер / пин панели | rail ↔ drawer ↔ fixed (рантайм NavPanel) |
 | Рабочая область ≤ 1700px | колонки 3+3+3 → 6+6 / 6 |
@@ -142,6 +152,7 @@ components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconBut
 | Avatar | футер меню | `av--circular av--m`, инициалы | `design-system/components/atoms/Avatar/Avatar.md` |
 | Breadcrumbs | зона крошек | одна текущая | `design-system/components/molecules/Breadcrumbs/Breadcrumbs.md` |
 | Tile | колонки | обычный, `col-3 colw-6` | `design-system/components/organisms/Tile/Tile.md` |
+| Tile (accordion) | полки раздела концептов | вложенная `tile--accordion` с `tile__toggle` и `tile__collapsible`, Chip `chip--s` со счётчиком | `design-system/components/organisms/Tile/Tile.md` |
 | Entity | строки | M, `--interactive`, корень `<a>`, контейнер `.entity-list` (1.008) | `design-system/components/organisms/Entity/Entity.md` |
 | SegmentControl | фильтр раздела концептов | M, `data-segctrl`, `segctrl--fullwidth` | `design-system/components/molecules/SegmentControl/SegmentControl.md` |
 | Badge | число концептов в сегменте | `badge--text badge--s` | `design-system/components/atoms/Badge/Badge.md` |

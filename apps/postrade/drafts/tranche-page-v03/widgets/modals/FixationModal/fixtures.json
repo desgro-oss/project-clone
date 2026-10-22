@@ -1,0 +1,14 @@
+{
+  "_": "Демо-данные витрины окна «Фиксация ЭПС/ВБС». Окно рисует карточки само, ФИ сделки берёт из FinMetricsStore (сценарий демо открывает его на сделке 1027); здесь — только значения, которых стор не отдаёт без расчёта: context — как ответ fixationContext, preliminary — как ответ preliminary. Значения выдуманные, но правдоподобной длины.",
+  "data": {},
+  "partial": {},
+  "empty": {},
+  "error": { "message": "Предварительный расчет не выполнен" },
+  "long": {},
+  "context": { "grossCarryingBefore": 123456789, "etsRate": 15.45, "etsDelta": 6.43, "etsBefore": 9.02, "etsValues": null, "etsStatus": "OK" },
+  "preliminary": {
+    "ok": true, "grossCarryingBefore": 123456789,
+    "nonSubstantial": { "gcaAfter": 120000000, "day1Pnl": 123456789, "day1PnlShare": 15.45 },
+    "substantial": { "gcaAfter": 120000000, "eirAfter": 15.45, "eirDelta": 3 }
+  }
+}

@@ -1,8 +1,9 @@
 {
   "id": "tranche-page",
   "track": "rnd",
-  "title": "Post — Страница транша",
+  "title": "Post — Корректировки РСБУ",
   "desc": "Транш кредитной линии (НКЛ): шапка, общая информация, проценты, комиссии, платежи",
   "home": "pages/Tranche.html",
-  "icon": "folder"
+  "icon": "folder",
+  "shelf": "archive"
 }

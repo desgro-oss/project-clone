@@ -34,6 +34,11 @@
   /* Отступ между сегмент-контролом фильтра разделов и списком. */
   .hub-segments { margin-bottom: var(--space-8); }
 
+  /* Полки раздела концептов («Актуальное», «Архив») — вложенные плашки-аккордеоны
+     друг под другом. */
+  .hub-shelves { display: flex; flex-direction: column; gap: var(--space-12); }
+  .hub-shelf { min-width: 0; }
+
   /* Перестроение по рецепту стартовой страницы (Layout): первый шаг — штатная
      пара .col-N / .colw-N, второй парой не выражается и обязан иметь ту же
      специфичность (0,2,0) и стоять ниже правила пары. */
@@ -152,6 +157,31 @@
   }
 
   function listHTML(items) { return '<div class="entity-list">' + items.map(rowHTML).join('') + '</div>'; }
+  /* Полки приложений (поле shelf записи, app.json): «Актуальное» — раскрыто, «Архив» — свёрнут.
+     Раздел, где ни у одного приложения нет полки, остаётся плоским списком; приложение без
+     полки в таком разделе — в «Актуальном». */
+  var SHELVES = [
+    { key: 'actual', label: 'Актуальное', open: true },
+    { key: 'archive', label: 'Архив', open: false }
+  ];
+  function shelvesHTML(items, sectionKey) {
+    if (!items.some(function (p) { return p.shelf; })) return listHTML(items);
+    var html = SHELVES.map(function (sh) {
+      var list = items.filter(function (p) { return (p.shelf || 'actual') === sh.key; });
+      if (!list.length) return '';
+      var id = 'hub-shelf-' + sectionKey + '-' + sh.key;
+      return '<div class="hub-shelf" data-off-grid="Полка внутри колонки хаба: ширина — тело плашки-колонки, а не сетка страницы"><section class="tile tile--accordion' + (sh.open ? '' : ' tile--collapsed') + '">'
+        + '<header class="tile__header"><div class="tile__header-main"><div class="tile__title-row">'
+        + '<h3 class="tile__title">' + esc(sh.label) + '</h3>'
+        + '<span class="tile__title-add"><span class="chip chip--s chip--grey"><span class="chip__label">' + list.length + '</span></span></span>'
+        + '</div></div><div class="tile__actions">'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="' + (sh.open ? 'true' : 'false') + '" aria-controls="' + id + '" aria-label="' + (sh.open ? 'Свернуть' : 'Развернуть') + '"><span class="tile__chevron">' + ic('chevron-up') + '</span></button>'
+        + '</div></header>'
+        + '<div class="tile__collapsible" id="' + id + '"><div class="tile__body">' + listHTML(list) + '</div></div>'
+        + '</section></div>';
+    }).join('');
+    return '<div class="hub-shelves">' + html + '</div>';
+  }
   /* Фильтр концептов по разделу — сегменты со счётчиками;
      раздел вне SECTIONS — отдельным сегментом в конце, подписью папки. */
   function sectionsHTML(items) {
@@ -166,7 +196,7 @@
         + '<span class="segctrl__label">' + esc(x.label) + '</span><span class="badge badge--text badge--s">' + x.list.length + '</span></button>';
     }).join('');
     var panes = secs.map(function (x, i) {
-      return '<div data-pane-of="' + esc(x.key) + '"' + (i ? ' hidden' : '') + '>' + listHTML(x.list) + '</div>';
+      return '<div data-pane-of="' + esc(x.key) + '"' + (i ? ' hidden' : '') + '>' + shelvesHTML(x.list, x.key) + '</div>';
     }).join('');
     return '<div class="segctrl segctrl--fullwidth hub-segments" role="radiogroup" aria-label="Раздел концептов" data-segctrl><div class="segctrl__thumb"></div>' + segments + '</div>' + panes;
   }

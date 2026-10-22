@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фильтр отчета финансовых метрик — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Фильтр отчета финансовых метрик">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Окно «Фильтр» отчёта финансовых метрик — связанный артефакт кнопки «Фильтр»
+     (TableFilter) на таблицах отчётов МСФО, РСБУ и KPI. Фрагмент вшивается
+     ассемблером отдельной меткой ds-include: скрим лежит в конце body страницы
+     (якорь #sec:modals), а не внутри таблицы. Окно одно на все вкладки: что в нём
+     показывать, ему отдаёт страница при каждом открытии (FinancialMetricsFilterModal.js).
+
+     Структура — штатная модалка фильтра ДС: .modal--w6.tfm, тело .modal__body--flush >
+     .tfm__body = вертикальные табы-разделы .tfm__nav + .tfm__panel со своим разделом
+     .tfm__sec и сеткой .tfm__grid. Раздел один — «Основная информация»; бейдж на табе
+     показывает число выбранных финансовых инструментов, при нуле скрыт атрибутом hidden.
+     Своего CSS у окна нет.
+
+     В разметке — только первое поле, «Финансовые инструменты»: мультивыбор с чипами в
+     поле (InputAutocomplete + DropdownList). Список опций и чипы заполняет скрипт по
+     финансовым инструментам вкладки. Поле индикаторов для каждого выбранного
+     инструмента скрипт добавляет следом, в порядке выбора, той же разметкой, что и это
+     поле, — поэтому оно стоит прямым ребёнком .tfm__grid (правило сетки ДС: `.tfm__grid > .inp`).
+
+     Подвал: «Очистить фильтр» (сбрасывает поля окна, окно остаётся открытым; выключена,
+     пока очищать нечего) и «Применить» (закрывает окно и отдаёт значение). Ни одна не
+     несёт data-modal-close: закрытие и результат ведёт скрипт. Крестик и Esc закрывают
+     без применения; клик по скриму поле ввода не закрывает — защита включается сама. -->
+
+<div id="fm-filter-scrim" hidden class="modal-scrim modal-scrim--inline" data-widget="FinancialMetricsFilterModal" data-widget-group="modals" data-widget-src="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.html">
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="fmf-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fmf-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="fmf-sec-main"><span class="tab__label">Основная информация</span><span class="tab__badge" id="fmf-badge" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel">
+          <section class="tfm__sec" id="fmf-sec-main" aria-labelledby="fmf-sec-main-t">
+            <p class="tfm__sec-title" id="fmf-sec-main-t">Основная информация</p>
+            <div class="tfm__grid" data-fmf-grid>
+              <div class="inp inp--m tfm__span-2" data-fmf-fi>
+                <label class="ds-label" for="fmf-fi"><span class="ds-label__text">Финансовые инструменты</span></label>
+                <div class="inp__field" data-ddl="fmf-fi-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="fmf-fi" autocomplete="off" placeholder="Выберите финансовые инструменты">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="fmf-fi-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-fmf-clear disabled><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-fmf-apply><span class="btn__label">Применить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>0.002</b></span><span>Обновлено: <b>21.10.2026</b></span><span>Категория: <b>Финансовые отчеты сделки</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
+  <h1>Фильтр отчета финансовых метрик</h1>
+  <p class="lead">Фильтр отчета финансовых метрик — какие ФИ показать и по каким индикаторам</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal">apps/postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">new</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница «Финансовые метрики» (FinancialMetrics, RE0033) — кнопка «Фильтр» таблиц отчётов МСФО, РСБУ и KPI; окно одно на все вкладки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/FinancialMetrics.preview.html">apps/postrade/deals-app/pages/FinancialMetrics.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="FinancialMetricsTable.doc.html">Отчет финансовых метрик (FinancialMetricsTable)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопка «Фильтр» таблицы отчёта (TableFilter) на вкладках МСФО, РСБУ и KPI</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИ вкладки и их индикаторы приходят аргументом open({ indicators }) — структура FinMetricsStore.indicators(tab) (data/fin-metrics-store.js); стор окно не читает и сети у окна нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Задача RE0033 — макеты дизайнера «расчет мсфо и рсбу» и «Финансовые метрики - Отчеты KPI», ответы человека 20.10.2026 и 21.10.2026 (вопросы 11, 29, 30)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">0.002 · обновлено 21.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Окно «Фильтр» страницы «Финансовые метрики»: открывается кнопкой «Фильтр» над таблицей отчёта (TableFilter) и сужает отчёт — какие финансовые инструменты (ФИ) показывать и, по каждому из них, какие индикаторы (метрики отчёта). Окно — связанный артефакт таблицы: чип «Применено: N» и сама кнопка «Фильтр» стоят на таблице, не в окне.</p>
+<p class="desc">Устройство — штатная модалка фильтра ДС (<code class="tok">.modal--w6.tfm</code>): слева вертикальный таб-раздел «Основная информация» со счётчиком, справа раздел с тем же заголовком. Раздел один.</p>
+<ul class="bullets"><li><b>Финансовые инструменты</b> — первое поле: мультивыбор с чипами в поле. Варианты — ФИ, которые есть в сделке и в этом отчёте (приходят в <code class="tok">indicators</code>). Пустое поле — фильтра по ФИ нет.</li><li><b>По одному полю индикаторов на каждый выбранный ФИ.</b> Подпись поля — имя ФИ, значения — индикаторы этого ФИ (мультивыбор с чипами и поиском по набранному). Пустое поле — «все индикаторы» ФИ. Убрали ФИ из первого поля — его поле индикаторов исчезает вместе с выбором; добавили — поле появляется следом, в порядке выбора.</li><li><b>Счётчик на табе раздела</b> — число выбранных ФИ (ответ 29, 21.10.2026: «число полей ФИ, включённых в фильтр»). Ноль — бейдж скрыт.</li><li><b>Подвал:</b> «Очистить фильтр» сбрасывает поля окна и окно не закрывает; «Применить» закрывает окно и отдаёт значение странице.</li></ul>
+<p class="desc">Индикаторы у каждой вкладки свои (ответ 30, 21.10.2026), поэтому окно ничего не хранит и не знает о вкладках: при каждом открытии страница отдаёт ему ФИ и индикаторы нужной вкладки и текущий фильтр этой вкладки. Окно — компонент без сети и без стора; разбор значения и перерисовка таблицы — на странице.</p>
+<p class="desc">Значение фильтра — <code class="tok">FmFilterValue</code>: <code class="tok">{ fiIds: string[], metrics: { [fiId: string]: string[] } }</code>. <code class="tok">metrics[fiId]</code> — коды выбранных индикаторов ФИ; нет ключа или пустой список — все индикаторы. Пустой фильтр — <code class="tok">{ fiIds: [], metrics: {} }</code>. При «Применить» в значение попадают только ФИ из <code class="tok">indicators</code> и только коды, которые есть у своего ФИ.</p>
+<h3 class="kit-md__h3">Тексты интерфейса</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Место</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Текст</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заголовок окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Фильтр» (по умолчанию; страница может подставить свой — параметр <code class="tok">title</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Таб и заголовок раздела</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Основная информация»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Подпись первого поля</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Финансовые инструменты»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Плейсхолдер первого поля</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Выберите финансовые инструменты» (допущение, вопрос 11)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Подпись поля индикаторов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">имя ФИ, как в отчёте</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Плейсхолдер поля индикаторов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Все индикаторы» (пока ничего не выбрано)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Плейсхолдер поля индикаторов у ФИ без индикаторов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Нет индикаторов» (допущение, вопрос 9)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Строка списка «выбрать все»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Выбрать всё» (ДС)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Список без совпадений</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Ничего не найдено»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопки подвала</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Очистить фильтр», «Применить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Закрыть»</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Modal w6 (.tfm) — заголовок «Фильтр», IconButton «Закрыть»
+├── тело (--flush) = .tfm__body
+│   ├── .tfm__nav — Tab вертикальный «Основная информация» + бейдж (число выбранных ФИ)
+│   └── .tfm__panel
+│       └── .tfm__sec «Основная информация»
+│           └── .tfm__grid (поля на всю ширину — .tfm__span-2)
+│               ├── InputAutocomplete «Финансовые инструменты» — чипы в поле + DropdownList (чекбоксы, «Выбрать всё»)
+│               ├── InputAutocomplete «&lt;имя ФИ 1&gt;» — чипы индикаторов + DropdownList
+│               └── InputAutocomplete «&lt;имя ФИ N&gt;» — по полю на каждый выбранный ФИ
+└── подвал — справа: «Очистить фильтр» (Button Transparent M), «Применить» (Button Accent M)</code></pre>
+<p class="desc">Ширина окна — <code class="tok">modal--w6</code>, высота по содержимому до 80vh, дальше прокручивается тело (Modal).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.7fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Modal/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w6</code>, тело <code class="tok">modal__body--flush</code>; клик по скриму не закрывает — защита включается сама (в окне есть поля ввода)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">TableFilter</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/TableFilter/TableFilter.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">структура модалки <code class="tok">.tfm</code> (<code class="tok">.tfm__body</code>, <code class="tok">.tfm__nav</code>, <code class="tok">.tfm__panel</code>, <code class="tok">.tfm__sec</code>, <code class="tok">.tfm__grid</code>, <code class="tok">.tfm__span-2</code>); кнопка «Фильтр» и чип «Применено: N» — на таблице</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tab</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Tab/Tab.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вертикальный <code class="tok">.tabs--vert</code> <code class="tok">.tab--m</code>, бейдж <code class="tok">.tab__badge</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAutocomplete</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">inp--m</code>, чипы в поле <code class="tok">.inp__chips</code>, шеврон, крестик очистки ставит рантайм поля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">DropdownList</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/DropdownList/DropdownList.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки с чекбоксами <code class="tok">ddl__item--checkbox</code>, первая строка «Выбрать всё» (три состояния), <code class="tok">ddl--scroll</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Chip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Chip/Chip.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">chip--edit chip--s</code> (на размер меньше поля M), крестик удаляет значение; при переполнении поля — «+N» с тултипом (рантайм поля)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Buttons/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Очистить фильтр» <code class="tok">btn--transparent btn--m</code>, «Применить» <code class="tok">btn--accent btn--m</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/IconButton/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">крестик шапки <code class="tok">ibtn--neutral ibtn--l</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/components/organisms/TableFilter/TableFilter.html">TableFilter</a> · <a class="inl" href="../../../../design-system/components/molecules/Tab/Tab.html">Tab</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/components/molecules/DropdownList/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/components/atoms/Chip/Chip.html">Chip</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.css">FinancialMetricsFilterModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.html">FinancialMetricsFilterModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.js">FinancialMetricsFilterModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.md">FinancialMetricsFilterModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.9fr) minmax(0,2.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.9fr) minmax(0,2.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансовые инструменты</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">какие ФИ попадают в фильтр; мультивыбор с чипами</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fiIds: string[]</code> — идентификаторы ФИ в порядке выбора</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">indicators[].fiId</code>, подпись — <code class="tok">indicators[].fiName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет (пусто — фильтра по ФИ нет)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.9fr) minmax(0,2.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">&lt;имя ФИ&gt;</code> (по одному на выбранный ФИ)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">какие индикаторы ФИ показать; мультивыбор с чипами и поиском</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">metrics[fiId]: string[]</code> — коды индикаторов в порядке выбора</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">indicators[].metrics[].code</code>, подпись — <code class="tok">…metrics[].name</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет (пусто — все индикаторы ФИ)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Порядок строк — порядок отображения: поле индикаторов стоит сразу за полем ФИ, в порядке выбора ФИ. Поле индикаторов существует, только пока ФИ выбран; убрали ФИ — выбор индикаторов пропадает.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Любая роль, которой открыт отчёт</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо — фильтр не меняет данные сделки, только вид отчёта</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Роли, которым отчёт закрыт, окна не видят: кнопки «Фильтр» у них нет. <code class="tok">не решено (21.10.2026)</code> — какие роли видят страницу «Финансовые метрики» (вопрос страницы, не окна). Режима <code class="tok">data-mode</code> у окна нет.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно открывается по данным, которые страница уже держит; сети у окна нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбраны ФИ: чипы в первом поле, под ним поле индикаторов на каждый ФИ, бейдж = число ФИ</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбраны ФИ, а у части из них — индикаторы (у остальных поле пустое = все индикаторы)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пустой фильтр: чипов нет, плейсхолдеры, бейдж скрыт, «Очистить фильтр» выключена. У вкладки без ФИ окно не открывается: <code class="tok">open</code> отвечает <code class="tok">null</code> (кнопка «Фильтр» на пустой вкладке заблокирована страницей)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у окна нет сети и валидации: любое сочетание ФИ и индикаторов допустимо</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">данные вкладки не меняются, пока окно открыто</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">единственный режим окна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">см. «Права»</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Пустой фильтр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значение <code class="tok">{ fiIds: [], metrics: {} }</code>; после «Очистить фильтр»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">первое поле без чипов, полей индикаторов нет, бейдж скрыт (<code class="tok">hidden</code>), «Очистить фильтр» — <code class="tok">disabled</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выбраны ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в первом поле есть чипы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">под ним поле на каждый ФИ; плейсхолдер «Все индикаторы»; бейдж = число ФИ; «Очистить фильтр» доступна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">У ФИ выбраны индикаторы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в поле индикаторов этого ФИ есть чипы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">плейсхолдер скрыт, чипы в поле; не поместившиеся уходят в «+N» с тултипом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИ без индикаторов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у ФИ <code class="tok">metrics: []</code> (теоретически)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поле выключено (<code class="tok">disabled</code>, <code class="tok">inp--disabled</code>), плейсхолдер «Нет индикаторов»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Список отфильтрован</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в поле набран текст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в списке строки с совпадением, совпадение подсвечено (<code class="tok">ddl__match</code>); «Выбрать всё» относится к показанным строкам</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Запрос ничего не нашёл</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">набранного нет в вариантах</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка «Ничего не найдено» вместо списка</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Выбрать всё»: частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбрана часть показанных строк</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка в состоянии <code class="tok">aria-checked=&quot;mixed&quot;</code> (чёрточка)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет — применить пустой фильтр можно, он равен сбросу.</li><li>Обязательные поля внутри: нет, см. «Поля».</li><li>Что показывает, когда обязательное не заполнено: не применимо.</li><li>Что отдаёт наружу (признак для экрана или формы): <code class="tok">FmFilterValue</code> по «Применить»; <code class="tok">null</code>, если окно закрыли без применения. Число параметров для чипа «Применено: N» считает страница по значению; окно отдаёт его же в бейдже раздела — число выбранных ФИ.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подпись поля — имя ФИ целиком (перенос по правилам ДС); чип усекается многоточием, полное имя — тултипом (Chip); длинная строка списка — многоточие (DropdownList)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">много выбранных значений — чипы в один ряд, остальное в «+N» с тултипом перечня (InputAutocomplete); много ФИ — полей индикаторов столько же, тело окна прокручивается (Modal), шапка и подвал на месте; длинный список — <code class="tok">ddl--scroll</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно фиксированной ширины <code class="tok">modal--w6</code>; при узком экране навигация раздела встаёт над формой (правило <code class="tok">.tfm</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля на всю ширину раздела (<code class="tok">tfm__span-2</code>)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<p class="desc">Открывает окно страница: <code class="tok">PostFinMetricsFilter.open({ title?, indicators, value })</code>. Окно заполняется значением вкладки, фокус встаёт на первое поле (Modal).</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по строке списка первого поля</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИ добавляется чипом в поле, под ним появляется поле индикаторов этого ФИ (в порядке выбора); бейдж растёт; повторный клик по строке — ФИ снимается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Выбрать всё» в списке первого поля</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбираются все показанные ФИ (при набранном тексте — только совпавшие)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик на чипе ФИ, Backspace или Delete на чипе, Backspace в пустом поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИ снимается: поле его индикаторов исчезает вместе с выбором, бейдж уменьшается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Набор текста в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">список сужается до строк с совпадением; текст — запрос, а не значение: с поля он уходит, когда фокус ушёл из поля и из списка</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по строке списка индикаторов, «Выбрать всё»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">индикатор попадает чипом в поле; «Выбрать всё» — все показанные индикаторы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик очистки поля</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">снимается весь выбор этого поля; у поля ФИ — вместе с полями индикаторов</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Очистить фильтр»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сбрасываются ФИ и индикаторы; поля индикаторов исчезают, бейдж скрывается; окно остаётся открытым, фокус — на первом поле; кнопка выключается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Применить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно закрывается, <code class="tok">open</code> отвечает значением; применить можно и пустой выбор — это сброс фильтра</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик окна или Esc</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно закрывается без применения, <code class="tok">open</code> отвечает <code class="tok">null</code>; выбор в окне теряется</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по скриму</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не закрывает окно (в окне есть поля ввода)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Повторный <code class="tok">open</code> при открытом окне</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">возвращает тот же промис, окно не перезаполняется</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">open</code> с пустым <code class="tok">indicators</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается, ответ <code class="tok">null</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,1.5fr) minmax(0,2.6fr) minmax(0,1.5fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,1.5fr) minmax(0,2.6fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопка «Фильтр» таблицы отчёта (TableFilter)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">это окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИ вкладки и их индикаторы; текущий фильтр вкладки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">страница получает <code class="tok">FmFilterValue</code> (или <code class="tok">null</code>), перерисовывает таблицу и чип «Применено: N»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вкладки МСФО, РСБУ, KPI — одно окно на все</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Для окна: ФИ отчёта и набор индикаторов каждого ФИ (разный у разных типов ФИ и у разных вкладок). Полный перечень индикаторов по типам ФИ — <code class="tok">не решено (21.10.2026)</code>, вопрос 1. Хранение фильтра между заходами — вопрос 3. Имена методов и хуков API не придумываются: их выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<p class="desc">Своих данных у окна нет: ФИ и индикаторы страница берёт у <code class="tok">FinMetricsStore.indicators(tab)</code> и отдаёт аргументом.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/fin-metrics-store.js</code>, <code class="tok">mock-fin-metrics-calc.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FinMetricsStore.indicators(tab)</code>, <code class="tok">FIN_METRICS_CATALOG</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">[{ fiId, fiName, currencyCode, metrics: [{ code, name }] }]</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (20.10.2026) — состав индикаторов не решён, вопрос 1</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code> (рядом с окном)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">образцы для витрины: пустой фильтр, выбраны ФИ, выбраны ФИ и индикаторы, длинные имена; сценарий показа — <code class="tok">apps/local-components/postrade/deals-app/FinancialMetricsFilterModal.demo.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<p class="desc">Метка <code class="tok">&lt;ds-include&gt;</code> атрибутов не несёт: скрим стоит на странице один, в конце <code class="tok">body</code> (<code class="tok">&lt;ds-include src=&quot;../widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.html&quot;&gt;</code>, id скрима — <code class="tok">fm-filter-scrim</code>); открывает его скрипт, а не <code class="tok">data-modal</code> триггер.</p>
+<h3 class="kit-md__h3">Параметры вызова</h3>
+<p class="desc"><code class="tok">window.PostFinMetricsFilter</code> (<code class="tok">FinancialMetricsFilterModal.js</code>):</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Вызов</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что делает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">bind(scrim)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">один раз привязывает окно; корень — <code class="tok">.modal-scrim</code> (<code class="tok">fm-filter-scrim</code>). <code class="tok">open</code> привязывает окно сам, если нашёл скрим по id</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">preview(scrim, { title?, indicators, value })</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же заполнение, что в <code class="tok">open</code>, но окно остается на месте, без слоя поверх страницы; прежний сеанс сбрасывается. Для витрины локальных компонентов, страница его не зовет; окон на витрине несколько, текущим становится то, в которое зашли (pointerdown, focusin, keydown)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">open({ title?, indicators, value }) → Promise&lt;FmFilterValue \| null&gt;</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">открывает окно. <code class="tok">title</code> — заголовок (по умолчанию «Фильтр»). <code class="tok">indicators</code> — <code class="tok">[{ fiId, fiName, currencyCode, metrics: [{ code, name }] }]</code>. <code class="tok">value</code> — текущий фильтр вкладки. Ответ: значение по «Применить» (ФИ только из <code class="tok">indicators</code>, коды только своего ФИ) или <code class="tok">null</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">empty() → FmFilterValue</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пустой фильтр <code class="tok">{ fiIds: [], metrics: {} }</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">normalize(value, indicators)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">приводит значение к ФИ вкладки: убирает чужие ФИ и коды, повторы, пустые списки индикаторов</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Рантайм поля (DropdownList) привязывается без режима <code class="tok">multiple</code>: иначе в этом режиме пробел в поле выбирал бы строку списка, а не писался в запрос. Чипы, поиск по набранному и состояние выбора держит скрипт окна.</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/FinancialMetricsFilterModal/</code> (пары у фронтенда нет — имя наше)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выбор, чипы, значение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FinancialMetricsFilterModal.js</code> (<code class="tok">PostFinMetricsFilter</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">—</code> (логика формы фронтенда)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Стили</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FinancialMetricsFilterModal.css</code> — пустой, окно целиком на ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Образцы данных</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: кнопка подвала «Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Применить» (<code class="tok">btn--accent</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на макете устаревший вариант подвала; актуальный TableFilter ДС — «Очистить фильтр» + «Применить», сохранение пресета в этом окне не предусмотрено. Решение агента 21.10.2026, на разбор</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: на таблице чипы параметров и «+99»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на таблице один чип «Применено: N»; чиплиста и «+99» нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">устаревший вариант фильтра (кнопка XS и чиплист); ответ 30, 21.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: счётчик раздела «9» при трёх выбранных ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число выбранных ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответ 29, 21.10.2026: счётчик — число полей ФИ, включённых в фильтр; на макете могла быть ошибка. Вопрос 5</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: поля индикаторов не по выбранным в первом поле ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по одному полю на каждый выбранный ФИ, в порядке выбора</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответы 11 и 29: макет противоречит сам себе, делаем по ответу 11</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: чипы значений в поле переносятся на несколько строк</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">один ряд, не поместившееся — «+N» с тултипом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">так устроен актуальный InputAutocomplete ДС (<code class="tok">Inputs.js</code>), а у поля вне ДС переноса нет; вопрос 7</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Рантайм ДС: фильтрация списка по набранному и сборка чипов в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">делает скрипт окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в рантайме ДС этого нет — <code class="tok">DropdownList.js</code> даёт открытие, выбор и клавиатуру, <code class="tok">Inputs.js</code> — крестик и «+N»; <code class="tok">InputAutocomplete.page.js</code> — только демо. Образцы того же решения — окно выгрузки отчёта и фильтр портфеля. Дефект ДС, не правится здесь (вопрос 8)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Своё поверх ДС — только на токенах</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">своего CSS нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно целиком на классах ДС</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<p class="desc">Раздел не удаляется. Вопросы 1–4 — вопрос 11 задачи RE0033 в части окна; ответ вписывает человек.</p>
+<ol class="kit-md__ol"><li><b>Состав индикаторов по типам ФИ</b> — полного списка нет: у разных типов ФИ (кредит, акции, РЕПО, дебиторская задолженность, доп. доходность) и у разных вкладок (МСФО, РСБУ, KPI) индикаторы свои, человек дополнит (ответ 11, 20.10.2026). В прототипе — демо-каталог <code class="tok">FIN_METRICS_CATALOG</code>, состав МСФО придуман по чипам макета.</li><li><b>Общий фильтр или свой у вкладки</b> — по ответу 30 индикаторы у вкладок свои и чип «Применено» у каждой свой; допущение: значение фильтра хранится по вкладке и окно получает значение нужной вкладки (допущение 21.10.2026). Не решено, должен ли фильтр одной вкладки влиять на другую (например, один и тот же ФИ в МСФО и в РСБУ).</li><li><b>Сохраняется ли фильтр между заходами</b> — не решено (20.10.2026). Окно ничего не хранит; в прототипе значение живёт на странице, пока она открыта (допущение 21.10.2026).</li><li><b>«+99» в чипах фильтра</b> — снято ответом 30 (21.10.2026): «+99» уходит вместе с чиплистом, на таблице один чип «Применено: N». Вопрос оставлен в записи: что он означал на макете, так и не названо.</li><li><b>Что считает счётчик раздела.</b> Ответ 29 (21.10.2026): число полей ФИ, включённых в фильтр; в окне это число выбранных ФИ (на макете при трёх выбранных ФИ стоит «9» — это число из трёх не получается). Допущение: считается число ФИ, а не число чипов индикаторов; то же ли число видно в чипе «Применено: N» на таблице — вопрос к странице. Не закрыто.</li><li><b>ФИ, который выбран без индикаторов, и ФИ, у которого выбраны все индикаторы</b> — равны по смыслу («все индикаторы»), но в значении выглядят по-разному: нет ключа в <code class="tok">metrics</code> или список всех кодов. Допущение: окно отдаёт ровно то, что выбрано, ничего не сворачивая (21.10.2026); нужно ли сворачивать «выбраны все» в «нет ключа» — решение человека.</li><li><b>Чипы в поле: один ряд с «+N» или перенос на несколько строк, как на макете.</b> Допущение: по ДС — один ряд, «+N» с тултипом перечня (21.10.2026). Для индикаторов с длинными именами («МСФО. ОПУ Процентные доходы по ЭПС») в один ряд помещается один-два чипа; нужен ли перенос — решение дизайнера, и тогда это изменение InputAutocomplete в ДС.</li><li><b>Дефект ДС (для передачи владельцам ДС):</b> в рантайме нет фильтрации списка автокомплита по набранному и сборки чипов в поле — обещание «Автокомплит» в спеке InputAutocomplete держится кодом каждого экрана. Пока — код в окне.</li><li><b>ФИ без индикаторов</b> — теоретический случай (<code class="tok">metrics: []</code>): допущение — поле выключено, плейсхолдер «Нет индикаторов» (21.10.2026). Должен ли такой ФИ вообще быть в списке окна.</li><li><b>Применённый фильтр после пересчёта метрик.</b> После пересчёта состав ФИ и индикаторов вкладки может измениться. Окно при открытии и при «Применить» отбрасывает ФИ и коды, которых уже нет; чип «Применено: N» на таблице до следующего открытия окна может показывать устаревшее N — поведение страницы, решается в её спеке. Допущение, не решено (21.10.2026).</li><li><b>Тексты, которых нет на макете</b> — допущение (21.10.2026): плейсхолдер первого поля «Выберите финансовые инструменты», плейсхолдер «Нет индикаторов», «Ничего не найдено» — по ДС. «Все индикаторы» — из задания. В списке ФИ показано только имя, валюта (<code class="tok">currencyCode</code>) не показана; нужна ли — решение дизайнера.</li><li><b>Кнопка «Очистить фильтр» выключена, пока очищать нечего</b> — допущение (21.10.2026); на макете и в TableFilter ДС состояния нет.</li><li><b>Пары во фронтенде нет</b> — <code class="tok">frontend: new</code>: в «Именах фронтенда» модуля окна фильтра отчёта метрик нет. Имя наше (решение агента 2 задачи RE0033), с типом в конце.</li></ol>
+<p class="desc">Ответы человека, на которых стоит окно (оставлены в записи): 29 — «поле индикаторов на каждый выбранный ФИ; счётчик — число полей ФИ» (21.10.2026); 30 — «чипы у вкладок разные, индикаторы у каждой вкладки свои, фильтр — с одним чипом, «+99» уходит вместе с чиплистом» (21.10.2026).</p>
+<ol class="kit-md__ol"><li><b>Подпись таба «Основная информация» усечена при бейдже</b> («Основная информа… 2»): вертикальный таб ДС шириной 232px не вмещает подпись и счетчик, на макете подпись видна целиком. Похоже на дефект ДС (TableFilter, вертикальный Tab с бейджем) — передать владельцам ДС; виджет ширину таба не меняет (приёмка Э4, 21.10.2026).</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">FinancialMetricsFilterModal.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/FinancialMetrics.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/fin-instruments-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-metrics-calc.js"></script>
+<script src="../../../postrade/deals-app/data/fin-metrics-store.js"></script>
+<script src="../../../postrade/deals-app/data/fin-metrics-notify.js"></script>
+<script src="../../../postrade/deals-app/data/mock-report-employees.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.js"></script>
+<script src="../../../postrade/deals-app/widgets/tables/KPITable/KPITable.js"></script>
+<script src="../../../postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/FixationModal/FixationModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.js"></script>
+<script src="FinancialMetricsFilterModal.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"FinancialMetricsFilterModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":null,"scenario":true,"fixtures":{"_":"Демо-данные витрины окна: объект на состояние (ключи — виды заполнения окна). indicators — ФИ вкладки отчета и их индикаторы (форма — FinMetricsStore.indicators(tab): fiId, fiName, currencyCode, metrics[{code, name}]); value — текущий фильтр вкладки (FmFilterValue: fiIds и metrics по fiId; нет ключа — все индикаторы). empty — пустой фильтр, data — выбраны ФИ, partial — выбраны ФИ и у части из них индикаторы, long — самые длинные имена. Значения выдуманные. Окно рисует то же заполнение, что PostFinMetricsFilter.open(...) на странице отчетов; в витрине его зовет PostFinMetricsFilter.preview(...), окно остается на месте.","empty":{"title":"Фильтр","indicators":[{"fiId":"fi-1245","fiName":"1245. Кредит-556","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-111","fiName":"111-Акции-2","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-1","fiName":"1-ПУТ: Репо-4474","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-2","fiName":"2-Внутригрупповой кредит-44741","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-3","fiName":"3-Внутригрупповой кредит-17","currencyCode":"USD","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]}],"value":{"fiIds":[],"metrics":{}}},"data":{"title":"Фильтр","indicators":[{"fiId":"fi-1245","fiName":"1245. Кредит-556","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-111","fiName":"111-Акции-2","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-1","fiName":"1-ПУТ: Репо-4474","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-2","fiName":"2-Внутригрупповой кредит-44741","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-3","fiName":"3-Внутригрупповой кредит-17","currencyCode":"USD","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]}],"value":{"fiIds":["fi-1245","fi-111","fi-1"],"metrics":{}}},"partial":{"title":"Фильтр","indicators":[{"fiId":"fi-1245","fiName":"1245. Кредит-556","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-111","fiName":"111-Акции-2","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-1","fiName":"1-ПУТ: Репо-4474","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-2","fiName":"2-Внутригрупповой кредит-44741","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-3","fiName":"3-Внутригрупповой кредит-17","currencyCode":"USD","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по ЭПС"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]}],"value":{"fiIds":["fi-1","fi-2","fi-3"],"metrics":{"fi-1":["IFRS_PL_INCOME","IFRS_BS_CONTRACT_COST","IFRS_BS_RESERVE","IFRS_CF_TOTAL"],"fi-2":["IFRS_PL_INCOME","IFRS_BS_CONTRACT_COST"]}}},"long":{"title":"Фильтр","indicators":[{"fiId":"fi-1245","fiName":"Договор синдицированного кредитования с участием нескольких банков-кредиторов, транш А-1234567","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по эффективной процентной ставке за отчетный период с учетом комиссий"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-111","fiName":"111-Акции-2","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по эффективной процентной ставке за отчетный период с учетом комиссий"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]},{"fiId":"fi-1","fiName":"1-ПУТ: Репо-4474","currencyCode":"RUB","metrics":[{"code":"IFRS_PL_INTEREST_INCOME","name":"МСФО. ОПУ Процентные доходы по эффективной процентной ставке за отчетный период с учетом комиссий"},{"code":"IFRS_PL_INCOME","name":"МСФО. ОПУ Доходы"},{"code":"IFRS_PL_EXPENSE","name":"МСФО. ОПУ Расходы"},{"code":"IFRS_BS_CONTRACT_COST","name":"МСФО. БАЛ Контрактная стоимость"},{"code":"IFRS_BS_AMORTIZED_COST","name":"МСФО. БАЛ Амортизированная стоимость"},{"code":"IFRS_BS_GCA","name":"МСФО. БАЛ ВБС"},{"code":"IFRS_BS_RESERVE","name":"МСФО. БАЛ Резерв"},{"code":"IFRS_CF_TOTAL","name":"МСФО. Cashflow, суммарный"}]}],"value":{"fiIds":["fi-1245","fi-111"],"metrics":{"fi-1245":["IFRS_PL_INTEREST_INCOME","IFRS_PL_INCOME","IFRS_PL_EXPENSE"]}}}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Окно «Фильтр» отчёта финансовых метрик — связанный артефакт кнопки «Фильтр»
+     (TableFilter) на таблицах отчётов МСФО, РСБУ и KPI. Фрагмент вшивается
+     ассемблером отдельной меткой ds-include: скрим лежит в конце body страницы
+     (якорь #sec:modals), а не внутри таблицы. Окно одно на все вкладки: что в нём
+     показывать, ему отдаёт страница при каждом открытии (FinancialMetricsFilterModal.js).
+
+     Структура — штатная модалка фильтра ДС: .modal--w6.tfm, тело .modal__body--flush >
+     .tfm__body = вертикальные табы-разделы .tfm__nav + .tfm__panel со своим разделом
+     .tfm__sec и сеткой .tfm__grid. Раздел один — «Основная информация»; бейдж на табе
+     показывает число выбранных финансовых инструментов, при нуле скрыт атрибутом hidden.
+     Своего CSS у окна нет.
+
+     В разметке — только первое поле, «Финансовые инструменты»: мультивыбор с чипами в
+     поле (InputAutocomplete + DropdownList). Список опций и чипы заполняет скрипт по
+     финансовым инструментам вкладки. Поле индикаторов для каждого выбранного
+     инструмента скрипт добавляет следом, в порядке выбора, той же разметкой, что и это
+     поле, — поэтому оно стоит прямым ребёнком .tfm__grid (правило сетки ДС: `.tfm__grid > .inp`).
+
+     Подвал: «Очистить фильтр» (сбрасывает поля окна, окно остаётся открытым; выключена,
+     пока очищать нечего) и «Применить» (закрывает окно и отдаёт значение). Ни одна не
+     несёт data-modal-close: закрытие и результат ведёт скрипт. Крестик и Esc закрывают
+     без применения; клик по скриму поле ввода не закрывает — защита включается сама. -->
+
+<div class="modal-scrim" id="fm-filter-scrim" hidden>
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="fmf-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fmf-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="fmf-sec-main"><span class="tab__label">Основная информация</span><span class="tab__badge" id="fmf-badge" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel">
+          <section class="tfm__sec" id="fmf-sec-main" aria-labelledby="fmf-sec-main-t">
+            <p class="tfm__sec-title" id="fmf-sec-main-t">Основная информация</p>
+            <div class="tfm__grid" data-fmf-grid>
+              <div class="inp inp--m tfm__span-2" data-fmf-fi>
+                <label class="ds-label" for="fmf-fi"><span class="ds-label__text">Финансовые инструменты</span></label>
+                <div class="inp__field" data-ddl="fmf-fi-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="fmf-fi" autocomplete="off" placeholder="Выберите финансовые инструменты">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="fmf-fi-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-fmf-clear disabled><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-fmf-apply><span class="btn__label">Применить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Окно «Фильтр» отчёта финансовых метрик (FinancialMetricsFilterModal).
+   Своего CSS у окна нет: оно целиком собрано из штатной модалки фильтра ДС
+   (.modal--w6.tfm, TableFilter) и полей InputAutocomplete с чипами, раскладку и
+   отступы дают они сами. Файл оставлен пустым намеренно — ассемблер подключает
+   CSS виджета по соседству с разметкой, а правило сюда попадёт, только если у
+   окна появится раскладка, которой нет в ДС. */
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   FinancialMetricsFilterModal.js — окно «Фильтр» отчёта финансовых метрик.
+
+   Окно — компонент без сети и без стора: что в нём выбирать и что уже выбрано,
+   ему отдаёт страница при каждом открытии. Одно окно обслуживает все вкладки
+   отчёта (МСФО, РСБУ, KPI): у каждой вкладки свои финансовые инструменты (ФИ) и
+   свои индикаторы, поэтому всё заполняется заново на каждое открытие.
+
+   Что делает скрипт сверх рантаймов ДС (в них этого нет — это модель данных):
+     1. Мультивыбор с чипами. Список с чекбоксами и «Выбрать всё» — DSDropdownList,
+        открытие, клавиатуру и крестик очистки ведут рантаймы ДС; чипы в поле,
+        фильтрацию списка по набранному тексту (с подсветкой совпадения) и
+        состояние выбора держит этот файл.
+     2. Поле индикаторов на каждый выбранный ФИ. Подпись поля — имя ФИ, пустое поле
+        значит «все индикаторы». Убрали ФИ — его поле исчезает вместе с выбором,
+        добавили — поле появляется следом, в порядке выбора.
+     3. Счётчик на табе раздела — число выбранных ФИ; при нуле бейдж скрыт.
+     4. Результат: «Применить» закрывает окно и отдаёт значение, закрытие
+        крестиком или Esc отдаёт null. «Очистить фильтр» сбрасывает поля окна и
+        окно не закрывает.
+
+   Значение фильтра — FmFilterValue:
+     { fiIds: string[], metrics: { [fiId: string]: string[] } }
+     metrics[fiId] — коды выбранных индикаторов этого ФИ; нет ключа или пусто — все
+     индикаторы. Пустой фильтр — { fiIds: [], metrics: {} }.
+
+   API: window.PostFinMetricsFilter
+     bind(scrim)                    — один раз привязать окно; scrim — корень
+                                      фрагмента (.modal-scrim, id fm-filter-scrim);
+                                      повторный вызов возвращает уже привязанное.
+                                      open() привязывает окно сам, если его нашёл по id
+     open({ title?, indicators, value }) → Promise<FmFilterValue | null>
+       title       — заголовок окна; по умолчанию «Фильтр»
+       indicators  — [{ fiId, fiName, currencyCode, metrics: [{ code, name }] }] —
+                     ФИ вкладки и их индикаторы (структура
+                     FinMetricsStore.indicators(tab); стор отсюда не читается);
+                     пусто — окно не открывается, результат null
+       value       — текущий фильтр вкладки; окно заполняется им
+       Результат: по «Применить» — значение, в котором только ФИ из indicators и
+       только коды, которые есть у своего ФИ; закрыли без применения — null.
+       Повторный open при открытом окне возвращает тот же промис.
+     preview(scrim, { title?, indicators, value }) → scrim | null
+                                    — то же заполнение, что в open, но окно остаётся на месте,
+                                      без слоя поверх страницы (витрина локальных компонентов);
+                                      прежний сеанс сбрасывается. Окон на витрине несколько:
+                                      текущим становится то, в которое зашли
+     empty() → FmFilterValue        — пустой фильтр
+     normalize(value, indicators)   — привести значение к indicators: убрать чужие ФИ
+                                      и чужие коды, повторы, пустые списки индикаторов
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var SCRIM_ID = 'fm-filter-scrim';
+  var DEFAULT_TITLE = 'Фильтр';
+  var PLACEHOLDER_ALL = 'Все индикаторы';
+  var PLACEHOLDER_NONE = 'Нет индикаторов';
+
+  var ui = null;       // привязанное окно: узлы и поля
+  var session = null;  // открытый сеанс: данные вкладки и выбор
+  var uid = 0;         // номера полей индикаторов: id уникальны и между окнами витрины
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function norm(s) { return String(s == null ? '' : s).trim().toLowerCase(); }
+  function dict() { return Object.create(null); }
+  function applyIcons(el) { if (window.dsIcons) window.dsIcons.apply(el); }
+  function syncInput(inp) { if (window.DSInput) window.DSInput.sync(inp); }
+
+  /* ---------- значение фильтра ---------- */
+
+  function emptyValue() { return { fiIds: [], metrics: {} }; }
+
+  /* ФИ и индикаторы вкладки: без повторов и без записей без кода. */
+  function cleanIndicators(src) {
+    var seen = dict();
+    var out = [];
+    (Array.isArray(src) ? src : []).forEach(function (it) {
+      if (!it || it.fiId == null) return;
+      var id = String(it.fiId);
+      if (seen[id]) return;
+      seen[id] = true;
+      var codes = dict();
+      var metrics = [];
+      (Array.isArray(it.metrics) ? it.metrics : []).forEach(function (m) {
+        if (!m || m.code == null) return;
+        var code = String(m.code);
+        if (codes[code]) return;
+        codes[code] = true;
+        metrics.push({ code: code, name: m.name == null ? code : String(m.name) });
+      });
+      out.push({
+        fiId: id,
+        fiName: it.fiName == null ? id : String(it.fiName),
+        currencyCode: it.currencyCode,
+        metrics: metrics
+      });
+    });
+    return out;
+  }
+
+  function byFiId(inds) {
+    var map = dict();
+    inds.forEach(function (i) { map[i.fiId] = i; });
+    return map;
+  }
+
+  /* Привести значение к ФИ вкладки. Порядок — как в значении: он же порядок
+     полей в окне. */
+  function normalize(value, indicators) {
+    var inds = cleanIndicators(indicators);
+    var map = byFiId(inds);
+    var src = value && typeof value === 'object' ? value : {};
+    var srcMetrics = src.metrics && typeof src.metrics === 'object' ? src.metrics : {};
+    var ids = [];
+    var metrics = {};
+    (Array.isArray(src.fiIds) ? src.fiIds : []).forEach(function (raw) {
+      var id = String(raw);
+      if (!map[id] || ids.indexOf(id) >= 0) return;
+      ids.push(id);
+    });
+    ids.forEach(function (id) {
+      var raw = srcMetrics[id];
+      if (!Array.isArray(raw)) return;
+      var known = map[id].metrics.map(function (m) { return m.code; });
+      var codes = [];
+      raw.forEach(function (c) {
+        var code = String(c);
+        if (known.indexOf(code) >= 0 && codes.indexOf(code) < 0) codes.push(code);
+      });
+      if (codes.length) metrics[id] = codes;
+    });
+    return { fiIds: ids, metrics: metrics };
+  }
+
+  /* Выбор в окне → значение для вкладки. Пустой список индикаторов — «все», ключа нет. */
+  function collect() {
+    var ids = session.fiIds.slice();
+    var metrics = {};
+    ids.forEach(function (id) {
+      var codes = session.metrics[id];
+      if (codes && codes.length) metrics[id] = codes.slice();
+    });
+    return { fiIds: ids, metrics: metrics };
+  }
+
+  /* ---------- поле мультивыбора ---------- */
+
+  /* Разметка поля — та же, что у «Финансовых инструментов» во фрагменте: поле
+     индикаторов — такой же InputAutocomplete с чипами. Крестик очистки в разметку не
+     кладётся: его ставит и показывает рантайм поля, по значению. */
+  function fieldHTML(id, label, placeholder, disabled) {
+    return '<div class="inp inp--m tfm__span-2' + (disabled ? ' inp--disabled' : '') + '">'
+      + '<label class="ds-label" for="' + id + '"><span class="ds-label__text">' + esc(label) + '</span></label>'
+      + '<div class="inp__field" data-ddl="' + id + '-list">'
+      + '<span class="inp__chips"></span>'
+      + '<input class="inp__control" id="' + id + '" autocomplete="off" placeholder="' + esc(placeholder) + '"' + (disabled ? ' disabled' : '') + '>'
+      + '<span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"' + (disabled ? ' disabled' : '') + '><i data-icon="chevron-down"></i></button></span>'
+      + '</div>'
+      + '<div id="' + id + '-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>'
+      + '</div>';
+  }
+
+  function rowHTML(opt, on, query) {
+    var label = opt.label;
+    var at = query ? norm(label).indexOf(query) : -1;
+    var text = at < 0
+      ? esc(label)
+      : esc(label.slice(0, at)) + '<span class="ddl__match">' + esc(label.slice(at, at + query.length)) + '</span>' + esc(label.slice(at + query.length));
+    return '<button type="button" class="ddl__item ddl__item--checkbox" role="option" aria-checked="' + (on ? 'true' : 'false') + '" data-value="' + esc(opt.value) + '">'
+      + '<span class="ddl__item-check"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span></span>'
+      + '<span class="ddl__item-body"><span class="ddl__item-label">' + text + '</span></span></button>';
+  }
+
+  function allRowHTML(state) {
+    return '<button type="button" class="ddl__item ddl__item--checkbox ddl__item--all" role="option" aria-checked="' + state + '">'
+      + '<span class="ddl__item-check"><span class="cb__box"><span class="cb__mark"><i data-icon="' + (state === 'mixed' ? 'minus' : 'check') + '"></i></span></span></span>'
+      + '<span class="ddl__item-body"><span class="ddl__item-label">Выбрать всё</span></span></button>';
+  }
+
+  function chipEl(value, label) {
+    var chip = document.createElement('span');
+    chip.className = 'chip chip--edit chip--s';
+    chip.tabIndex = 0;
+    chip.setAttribute('data-value', value);
+    chip.innerHTML = '<span class="chip__label">' + esc(label) + '</span>'
+      + '<span class="chip__remove" role="button" aria-label="Удалить ' + esc(label) + '"><i data-icon="close"></i></span>';
+    return chip;
+  }
+
+  /* Поле мультивыбора поверх разметки root (.inp). Выбор живёт не в поле, а в
+     сеансе: поле спрашивает его у cfg.selected() и сообщает об изменениях в
+     cfg.toggle / setMany / clear, а затем в cfg.changed().
+     cfg: { options() → [{ value, label }], selected() → string[], placeholder,
+            disabled, toggle(value, on), setMany(values, on), clear(), changed() } */
+  function makeField(root, cfg) {
+    var field = root.querySelector('.inp__field');
+    var chips = root.querySelector('.inp__chips');
+    var input = root.querySelector('.inp__control');
+    var list = root.querySelector('.ddl');
+
+    function labelOf(value) {
+      var opts = cfg.options();
+      for (var i = 0; i < opts.length; i++) if (opts[i].value === value) return opts[i].label;
+      return value;
+    }
+
+    function listHTML() {
+      var query = norm(input.value);
+      var selected = cfg.selected();
+      var shown = cfg.options().filter(function (o) { return !query || norm(o.label).indexOf(query) >= 0; });
+      if (!shown.length) return '<div class="ddl__state ddl__state--empty">Ничего не найдено</div>';
+      var on = shown.filter(function (o) { return selected.indexOf(o.value) >= 0; }).length;
+      var state = on === shown.length ? 'true' : (on ? 'mixed' : 'false');
+      return allRowHTML(state) + '<hr class="ddl__divider">'
+        + shown.map(function (o) { return rowHTML(o, selected.indexOf(o.value) >= 0, query); }).join('');
+    }
+
+    function renderList() {
+      list.innerHTML = listHTML();
+      applyIcons(list);
+    }
+
+    function renderChips() {
+      var selected = cfg.selected();
+      chips.innerHTML = '';
+      selected.forEach(function (v) { chips.appendChild(chipEl(v, labelOf(v))); });
+      applyIcons(chips);
+      input.placeholder = selected.length ? '' : cfg.placeholder;
+      syncInput(root);
+    }
+
+    function render() {
+      renderChips();
+      renderList();
+    }
+
+    /* Набранный текст — запрос к списку, а не значение: с поля он уходит, когда
+       фокус ушёл и из поля, и из списка. */
+    function dropQuery() {
+      if (!input.value) return;
+      input.value = '';
+      renderList();
+      syncInput(root);
+    }
+
+    function openList() {
+      var api = field.__dsDdl;
+      if (!api) return;
+      if (api.isOpen()) api.place(); else api.open();
+    }
+
+    function remove(value) {
+      cfg.toggle(value, false);
+      render();
+      cfg.changed();
+      input.focus();
+    }
+
+    if (!cfg.disabled && window.DSDropdownList) {
+      /* Привязка — до собственного слушателя списка: обработчик ДС переключает
+         чекбокс первым, этот читает уже готовое состояние. Без multiple:
+         в этом режиме пробел в поле выбирал бы опцию, а не писался в запрос. */
+      window.DSDropdownList.bind(field, { list: list });
+    }
+
+    list.addEventListener('click', function (e) {
+      var item = e.target.closest ? e.target.closest('.ddl__item--checkbox') : null;
+      if (!item || item.getAttribute('aria-disabled') === 'true') return;
+      var on = item.getAttribute('aria-checked') === 'true';
+      if (item.classList.contains('ddl__item--all')) {
+        var values = Array.prototype.map.call(
+          list.querySelectorAll('.ddl__item--checkbox:not(.ddl__item--all)'),
+          function (r) { return r.getAttribute('data-value'); }
+        );
+        cfg.setMany(values, on);
+      } else {
+        cfg.toggle(item.getAttribute('data-value'), on);
+      }
+      renderChips();
+      cfg.changed();
+    });
+
+    /* Чип: крестик и Backspace/Delete на сфокусированном чипе. Слушатель стоит на
+       стеке чипов и гасит событие: рантайм чипа иначе снял бы узел сам, а выбор
+       остался бы в сеансе; поле-триггер списка — раскрыл бы список. */
+    chips.addEventListener('click', function (e) {
+      var rm = e.target.closest ? e.target.closest('.chip__remove') : null;
+      if (!rm) return;
+      var chip = rm.closest('.chip');
+      if (!chip) return;
+      e.stopPropagation();
+      remove(chip.getAttribute('data-value'));
+    });
+    chips.addEventListener('keydown', function (e) {
+      if (e.key !== 'Backspace' && e.key !== 'Delete') return;
+      var chip = e.target.closest ? e.target.closest('.chip') : null;
+      if (!chip || chip !== e.target) return;
+      e.preventDefault();
+      e.stopPropagation();
+      remove(chip.getAttribute('data-value'));
+    });
+
+    input.addEventListener('input', function () {
+      renderList();
+      if (input.value) openList();
+      else if (field.__dsDdl && field.__dsDdl.isOpen()) field.__dsDdl.place();
+    });
+    /* Backspace в пустом поле снимает последнее значение (правило InputAutocomplete). */
+    input.addEventListener('keydown', function (e) {
+      if (e.key !== 'Backspace' || input.value) return;
+      var selected = cfg.selected();
+      if (!selected.length) return;
+      e.preventDefault();
+      remove(selected[selected.length - 1]);
+    });
+
+    /* Крестик очистки поля (рантайм ДС уже стёр текст и чипы) снимает весь выбор поля. */
+    root.addEventListener('ds-input:clear', function () {
+      cfg.clear();
+      input.value = '';
+      render();
+      cfg.changed();
+    });
+
+    function leave() {
+      setTimeout(function () {
+        var active = document.activeElement;
+        if (active && (root.contains(active) || list.contains(active))) return;
+        dropQuery();
+      }, 0);
+    }
+    root.addEventListener('focusout', leave);
+    list.addEventListener('focusout', leave);
+
+    return {
+      root: root,
+      render: render,
+      reset: function () { input.value = ''; render(); },
+      focus: function () { input.focus(); },
+      destroy: function () {
+        var api = field.__dsDdl;
+        if (api && api.isOpen()) api.close();
+        if (list.parentNode) list.parentNode.removeChild(list);
+        if (root.parentNode) root.parentNode.removeChild(root);
+      }
+    };
+  }
+
+  /* ---------- выбор в сеансе ---------- */
+
+  function setFi(id, on) {
+    var ids = session.fiIds;
+    var at = ids.indexOf(id);
+    if (on && at < 0) {
+      ids.push(id);
+      if (!session.metrics[id]) session.metrics[id] = [];
+    } else if (!on && at >= 0) {
+      ids.splice(at, 1);
+      delete session.metrics[id];
+    }
+  }
+
+  function setMetric(id, code, on) {
+    var codes = session.metrics[id] || (session.metrics[id] = []);
+    var at = codes.indexOf(code);
+    if (on && at < 0) codes.push(code);
+    else if (!on && at >= 0) codes.splice(at, 1);
+  }
+
+  function updateBadge() {
+    var n = session ? session.fiIds.length : 0;
+    ui.badge.textContent = String(n);
+    ui.badge.hidden = n === 0;
+  }
+
+  /* «Очистить фильтр» выключена, пока очищать нечего. */
+  function updateClear() {
+    ui.clear.disabled = !session || session.fiIds.length === 0;
+  }
+
+  function createMetricField(fi) {
+    var id = 'fmf-m' + (++uid);
+    var none = fi.metrics.length === 0;
+    var holder = document.createElement('div');
+    holder.innerHTML = fieldHTML(id, fi.fiName, none ? PLACEHOLDER_NONE : PLACEHOLDER_ALL, none);
+    var root = holder.firstElementChild;
+    applyIcons(root);
+    return makeField(root, {
+      placeholder: none ? PLACEHOLDER_NONE : PLACEHOLDER_ALL,
+      disabled: none,
+      options: function () { return fi.metrics.map(function (m) { return { value: m.code, label: m.name }; }); },
+      selected: function () { return session ? (session.metrics[fi.fiId] || (session.metrics[fi.fiId] = [])) : []; },
+      toggle: function (code, on) { if (session) setMetric(fi.fiId, code, on); },
+      setMany: function (codes, on) { if (session) codes.forEach(function (c) { setMetric(fi.fiId, c, on); }); },
+      clear: function () { if (session) session.metrics[fi.fiId] = []; },
+      changed: updateClear
+    });
+  }
+
+  /* Поля индикаторов — по одному на выбранный ФИ, в порядке выбора, сразу за полем ФИ. */
+  function syncFields() {
+    var ids = session.fiIds;
+    Object.keys(ui.fields).forEach(function (id) {
+      if (ids.indexOf(id) >= 0) return;
+      ui.fields[id].destroy();
+      delete ui.fields[id];
+    });
+    ids.forEach(function (id, n) {
+      var f = ui.fields[id];
+      if (!f) {
+        f = ui.fields[id] = createMetricField(session.byId[id]);
+        f.render();
+      }
+      var at = ui.grid.children[n + 1] || null;
+      if (f.root !== at) ui.grid.insertBefore(f.root, at);
+    });
+  }
+
+  function onFiChanged() {
+    syncFields();
+    updateBadge();
+    updateClear();
+  }
+
+  function clearAll() {
+    if (!session) return;
+    session.fiIds = [];
+    session.metrics = dict();
+    ui.fi.reset();
+    syncFields();
+    updateBadge();
+    updateClear();
+    /* Кнопка, на которой стоял фокус, только что выключилась. */
+    ui.fi.focus();
+  }
+
+  function apply() {
+    if (!session) return;
+    session.result = collect();
+    if (session.layer) session.layer.close(true);
+  }
+
+  function onClose(ok) {
+    var s = session;
+    if (!s) return;
+    session = null;
+    if (ui) ui.sess = null;
+    if (window.DSDropdownList) window.DSDropdownList.closeAll();
+    s.resolve(ok && s.result ? s.result : null);
+  }
+
+  /* ---------- привязка и открытие ---------- */
+
+  function bind(scrim) {
+    if (!scrim) return null;
+    if (scrim.__fmFilterUi) { ui = scrim.__fmFilterUi; return api; }
+    var next = {
+      scrim: scrim,
+      title: scrim.querySelector('.modal__title'),
+      grid: scrim.querySelector('[data-fmf-grid]'),
+      badge: scrim.querySelector('.tab__badge'),
+      clear: scrim.querySelector('[data-fmf-clear]'),
+      apply: scrim.querySelector('[data-fmf-apply]'),
+      fiRoot: scrim.querySelector('[data-fmf-fi]'),
+      fi: null,
+      fields: dict()
+    };
+    if (!next.title || !next.grid || !next.badge || !next.clear || !next.apply || !next.fiRoot) return null;
+    ui = next;
+    scrim.__fmFilterUi = next;
+    /* Окон на странице обычно одно. На витрине их несколько (живое и копии «Все состояния»), а узлы и
+       сеанс — общие на скрипт: окно, в которое зашли, становится текущим вместе со своим сеансом. */
+    ['pointerdown', 'focusin', 'keydown'].forEach(function (type) {
+      scrim.addEventListener(type, function () {
+        if (ui === next) return;
+        ui = next;
+        session = next.sess || null;
+      }, true);
+    });
+
+    next.fi = makeField(next.fiRoot, {
+      placeholder: next.fiRoot.querySelector('.inp__control').getAttribute('placeholder') || '',
+      options: function () {
+        return session ? session.indicators.map(function (i) { return { value: i.fiId, label: i.fiName }; }) : [];
+      },
+      selected: function () { return session ? session.fiIds : []; },
+      toggle: function (id, on) { if (session) setFi(id, on); },
+      setMany: function (ids, on) { if (session) ids.forEach(function (id) { setFi(id, on); }); },
+      clear: function () { if (session) { session.fiIds = []; session.metrics = dict(); } },
+      changed: onFiChanged
+    });
+
+    next.clear.addEventListener('click', clearAll);
+    next.apply.addEventListener('click', apply);
+    return api;
+  }
+
+  /* Сеанс и заполнение окна по данным вкладки; слой поверх страницы — забота open. */
+  function start(opts) {
+    var inds = cleanIndicators(opts.indicators);
+    if (!inds.length) return null;
+    if (!ui) bind(document.getElementById(SCRIM_ID));
+    if (!ui) return null;
+
+    var resolve;
+    var promise = new Promise(function (r) { resolve = r; });
+    var value = normalize(opts.value, inds);
+    var metrics = dict();
+    value.fiIds.forEach(function (id) { metrics[id] = (value.metrics[id] || []).slice(); });
+    session = {
+      promise: promise,
+      resolve: resolve,
+      indicators: inds,
+      byId: byFiId(inds),
+      fiIds: value.fiIds.slice(),
+      metrics: metrics,
+      result: null,
+      layer: null
+    };
+
+    var title = typeof opts.title === 'string' ? opts.title.trim() : '';
+    ui.title.textContent = title || DEFAULT_TITLE;
+
+    /* Поля индикаторов прошлого открытия — от другой вкладки: строятся заново. */
+    Object.keys(ui.fields).forEach(function (id) { ui.fields[id].destroy(); });
+    ui.fields = dict();
+    ui.fi.reset();
+    syncFields();
+    updateBadge();
+    updateClear();
+    ui.sess = session;
+    return session;
+  }
+
+  function open(opts) {
+    opts = opts || {};
+    if (session) return session.promise;
+    if (!start(opts)) return Promise.resolve(null);
+    var s = session;
+
+    var layer = window.DSModal ? window.DSModal.open(ui.scrim, { onClose: onClose }) : null;
+    if (!layer) {
+      session = null;
+      ui.sess = null;
+      s.resolve(null);
+      return s.promise;
+    }
+    s.layer = layer;
+    return s.promise;
+  }
+
+  /* Окно на месте, без слоя поверх страницы — для витрины локальных компонентов: заполняется
+     теми же данными, что в open, поля живые, «Применить» только собирает значение. Прежний
+     сеанс сбрасывается, чтобы окно можно было перерисовать другими данными. */
+  function preview(scrim, opts) {
+    if (!bind(scrim)) return null;
+    if (window.DSDropdownList) window.DSDropdownList.closeAll();
+    session = null;
+    ui.sess = null;
+    return start(opts || {}) ? ui.scrim : null;
+  }
+
+  var api = {
+    bind: bind,
+    open: open,
+    preview: preview,
+    empty: emptyValue,
+    normalize: normalize
+  };
+  window.PostFinMetricsFilter = api;
+})();
+</script>
+</body>
+</html>

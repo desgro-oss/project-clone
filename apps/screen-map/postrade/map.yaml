@@ -63,6 +63,12 @@ nodes:
         title: Корректировки внесены
         page: RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled
 
+  - id: fin-metrics
+    app: deals-app
+    title: Финансовые метрики
+    page: FinancialMetrics.preview.html?id=1024
+    parent: deal
+
   - id: fin-instrument
     app: deals-app
     title: Финансовый инструмент

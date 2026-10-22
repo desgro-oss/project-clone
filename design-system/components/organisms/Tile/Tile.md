@@ -106,10 +106,10 @@ onToggle():                       # AccordionTile
 | `.tile__title-row` | строка [иконка] + Title + Addition |
 | `.tile__title-icon` | ведущая иконка заголовка (с 1.016): коробка высотой в строку Title, глиф 20 (Inset — 18), `--secondary`; тон `--accent` (`--primary`) / `--success` / `--warning` / `--error` / `--info` |
 | `.tile__title` | заголовок, H5 Strong, усекается |
-| `.tile__title-add` | Addition: link/icon/chip/badge; `--icon` — слот 20px, иконка в `--secondary`, тон — `--success`/`--warning`/`--error`/`--info` |
+| `.tile__title-add` | Addition: link/icon/chip/badge (Chip — размера S, `chip--s`; XS — для тегов; M по умолчанию в шапке не оставлять); `--icon` — слот 20px, иконка в `--secondary`, тон — `--success`/`--warning`/`--error`/`--info` |
 | `.tile__subtitle` | подзаголовок, Body XS, опц. `.tile__subtitle-icon` — слот 16px (высота строки Body XS), иконка в `--secondary`, тон — `.tile__subtitle-icon--success`/`--warning`/`--error`/`--info` |
 | `.tile__chiplist` | ряд чипов-маркеров (Chip XS, зазор 4) |
-| `.tile__actions` | трейлинг: 1–3 действия — IconButton (размер M, 20×20) и/или Button, зазор 12 |
+| `.tile__actions` | трейлинг: 1–3 действия — IconButton (размер M, 20×20), Button и/или SegmentControl (XS, 24, переключатель вида содержимого тайла: `<div class="segctrl segctrl--xs" role="radiogroup" data-segctrl>…</div>`), зазор 12 |
 | `.tile__toggle` / `.tile__chevron` | кнопка-шеврон аккордеона (aria-expanded) / поворот 180° |
 | `.tile__alert` | полноширинный Alert-слот (углы прямые) |
 | `.tile__body` | контентная область, padding 0/20/24/20; Button в ней — S (`btn--s`), если макет/ТЗ не задают иное |

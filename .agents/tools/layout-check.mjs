@@ -1014,6 +1014,50 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
       : 'Б30 в .dtable__body нет строки с классом .tbl__row--head — sticky повиснет на ячейке и шапка уедет при прокрутке тела');
   }
 
+  /* Б48 — у родителя `.tbl` нет своей рамки и скругления (урок Л253). Рамку и
+     скругление таблицы даёт ДС: `.tbl` рисует их сам, а внутри `.dtable__body`
+     обнуляет, оставляя их `.dtable`. Локальная обёртка с `border` /
+     `border-radius` поверх даёт двойную рамку, а когда в `.tbl` одна шапка
+     (пустая таблица, «Нет данных» рядом), шапка читается отдельной
+     скруглённой плашкой. Вход — разметка (родитель `.tbl`) и CSS экрана и
+     виджетов (`screenCss`): классы ДС в нём не встречаются, так что рамка ДС
+     у `.dtable` / `.tile` не считается. Смотрится только ближайший родитель:
+     глубже начинаются случаи, где обёртка бывает законной. WARN. */
+  {
+    const boxed = new Set();
+    for (const r of screenCss.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      const drawn = [...r[2].matchAll(/(?:^|;)\s*border(?:-radius)?\s*:\s*([^;]+)/g)].some((d) => !/^\s*(0|none)\b/.test(d[1]));
+      if (!drawn) continue;
+      for (const sel of r[1].split(',')) {
+        const last = sel.trim().split(/[\s>+~]+/).pop();
+        for (const c of last.matchAll(/\.(-?[A-Za-z_][\w-]*)/g)) boxed.add(c[1]);
+      }
+    }
+    const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']);
+    const stack = [];
+    const tables = [];
+    const doubled = [];
+    for (const m of html.replace(/<!--[\s\S]*?-->/g, (c) => c.replace(/[^\n]/g, ' ')).matchAll(/<(\/?)([a-zA-Z][\w:-]*)([^>]*?)(\/?)>/g)) {
+      const tag = m[2].toLowerCase();
+      if (m[1]) {
+        const k = stack.map((s) => s.tag).lastIndexOf(tag);
+        if (k >= 0) stack.length = k;
+        continue;
+      }
+      const classes = ((/class\s*=\s*"([^"]*)"/.exec(m[3]) || [])[1] || '').split(/\s+/).filter(Boolean);
+      if (tag === 'div' && classes.includes('tbl')) {
+        tables.push(m.index);
+        const wrap = (stack[stack.length - 1] || { classes: [] }).classes.filter((c) => boxed.has(c));
+        if (wrap.length) doubled.push(`.${wrap[0]} (строка ${lineOf(html, m.index)})`);
+      }
+      if (!VOID.has(tag) && !m[4]) stack.push({ tag, classes });
+    }
+    if (tables.length) {
+      if (doubled.length) warn(`Б48 таблица .tbl лежит в обёртке с собственной рамкой или скруглением: ${[...new Set(doubled)].slice(0, 5).join(', ')} — рамку и скругление даёт ДС, поверх выйдет двойная рамка, а шапка пустой таблицы — отдельной скруглённой плашкой. Таблицу кладут в .dtable > .dtable__body, рамку обёртки убирают (Л253)`);
+      else ok(true, `Б48 у родителей таблиц нет своей рамки и скругления (${tables.length})`);
+    }
+  }
+
   /* З3 — у кнопки-иконки нет видимого текста, поэтому имя ей даёт только
      aria-label; без него скринридер читает пустую кнопку. */
   const iconBtns = [...html.matchAll(/<button[^>]*class="(?:[^"]*\s)?ibtn(?:\s[^"]*)?"[^>]*>/g)];
@@ -1070,6 +1114,19 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
     const required = inKanbanCard ? /\bibtn--s\b/ : /\bibtn--m\b/;
     for (const b of inner.matchAll(/<button[^>]*class="((?:[^"]*\s)?ibtn(?:\s[^"]*)?)"/g)) {
       if (!required.test(b[1])) sizedM.push(`кнопка в .tile__actions (строка ${lineOf(html, acts.index)}, нужен ibtn--${inKanbanCard ? 's' : 'm'})`);
+    }
+  }
+  /* Чип в шапке тайла — S или XS, не M и не L: чип стоит в `.tile__title-row` (рядом с заголовком,
+     обёртка `.tile__title-add` или без неё). У Chip размер по умолчанию M, и
+     чип без размера в шапке выглядит крупнее соседей (страница транша, чип
+     «Демо», 22.10.2026). XS остаётся допустимым: так в шапке стоят теги
+     («Топ застройщик» на странице сделки). Чиплист шапки (`.tile__chiplist`) —
+     отдельный случай, здесь не читается. Как и у действий — только статическая разметка. */
+  for (const row of html.matchAll(/<div[^>]*class="(?:[^"]*\s)?tile__title-row(?:\s[^"]*)?"[^>]*>/g)) {
+    const inner = tagRange(html, row.index, 'div').inner;
+    for (const c of inner.matchAll(/<(?:span|button)[^>]*class="((?:[^"]*\s)?chip(?:\s[^"]*)?)"/g)) {
+      if (!isLiteralAttr(c[1])) continue;
+      if (!/\bchip--(?:s|xs)\b/.test(c[1])) sizedM.push(`чип в шапке тайла (строка ${lineOf(html, row.index)}, нужен chip--s)`);
     }
   }
   if (sizedM.length) {

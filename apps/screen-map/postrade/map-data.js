@@ -185,6 +185,16 @@
       ]
     },
     {
+      "id": "fin-metrics",
+      "app": "postrade/deals-app",
+      "title": "\u0424\u0438\u043d\u0430\u043d\u0441\u043e\u0432\u044b\u0435 \u043c\u0435\u0442\u0440\u0438\u043a\u0438",
+      "page": "FinancialMetrics.preview.html?id=1024",
+      "href": "postrade/deals-app/pages/FinancialMetrics.preview.html?id=1024",
+      "parent": "deal",
+      "note": null,
+      "states": []
+    },
+    {
       "id": "fin-instrument",
       "app": "postrade/deals-app",
       "title": "\u0424\u0438\u043d\u0430\u043d\u0441\u043e\u0432\u044b\u0439 \u0438\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442",

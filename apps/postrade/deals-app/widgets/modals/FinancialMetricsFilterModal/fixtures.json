@@ -1,0 +1,769 @@
+{
+  "_": "Демо-данные витрины окна: объект на состояние (ключи — виды заполнения окна). indicators — ФИ вкладки отчета и их индикаторы (форма — FinMetricsStore.indicators(tab): fiId, fiName, currencyCode, metrics[{code, name}]); value — текущий фильтр вкладки (FmFilterValue: fiIds и metrics по fiId; нет ключа — все индикаторы). empty — пустой фильтр, data — выбраны ФИ, partial — выбраны ФИ и у части из них индикаторы, long — самые длинные имена. Значения выдуманные. Окно рисует то же заполнение, что PostFinMetricsFilter.open(...) на странице отчетов; в витрине его зовет PostFinMetricsFilter.preview(...), окно остается на месте.",
+  "empty": {
+    "title": "Фильтр",
+    "indicators": [
+      {
+        "fiId": "fi-1245",
+        "fiName": "1245. Кредит-556",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-111",
+        "fiName": "111-Акции-2",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-1",
+        "fiName": "1-ПУТ: Репо-4474",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-2",
+        "fiName": "2-Внутригрупповой кредит-44741",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-3",
+        "fiName": "3-Внутригрупповой кредит-17",
+        "currencyCode": "USD",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      }
+    ],
+    "value": {
+      "fiIds": [],
+      "metrics": {}
+    }
+  },
+  "data": {
+    "title": "Фильтр",
+    "indicators": [
+      {
+        "fiId": "fi-1245",
+        "fiName": "1245. Кредит-556",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-111",
+        "fiName": "111-Акции-2",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-1",
+        "fiName": "1-ПУТ: Репо-4474",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-2",
+        "fiName": "2-Внутригрупповой кредит-44741",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-3",
+        "fiName": "3-Внутригрупповой кредит-17",
+        "currencyCode": "USD",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      }
+    ],
+    "value": {
+      "fiIds": [
+        "fi-1245",
+        "fi-111",
+        "fi-1"
+      ],
+      "metrics": {}
+    }
+  },
+  "partial": {
+    "title": "Фильтр",
+    "indicators": [
+      {
+        "fiId": "fi-1245",
+        "fiName": "1245. Кредит-556",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-111",
+        "fiName": "111-Акции-2",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-1",
+        "fiName": "1-ПУТ: Репо-4474",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-2",
+        "fiName": "2-Внутригрупповой кредит-44741",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-3",
+        "fiName": "3-Внутригрупповой кредит-17",
+        "currencyCode": "USD",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по ЭПС"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      }
+    ],
+    "value": {
+      "fiIds": [
+        "fi-1",
+        "fi-2",
+        "fi-3"
+      ],
+      "metrics": {
+        "fi-1": [
+          "IFRS_PL_INCOME",
+          "IFRS_BS_CONTRACT_COST",
+          "IFRS_BS_RESERVE",
+          "IFRS_CF_TOTAL"
+        ],
+        "fi-2": [
+          "IFRS_PL_INCOME",
+          "IFRS_BS_CONTRACT_COST"
+        ]
+      }
+    }
+  },
+  "long": {
+    "title": "Фильтр",
+    "indicators": [
+      {
+        "fiId": "fi-1245",
+        "fiName": "Договор синдицированного кредитования с участием нескольких банков-кредиторов, транш А-1234567",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по эффективной процентной ставке за отчетный период с учетом комиссий"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-111",
+        "fiName": "111-Акции-2",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по эффективной процентной ставке за отчетный период с учетом комиссий"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      },
+      {
+        "fiId": "fi-1",
+        "fiName": "1-ПУТ: Репо-4474",
+        "currencyCode": "RUB",
+        "metrics": [
+          {
+            "code": "IFRS_PL_INTEREST_INCOME",
+            "name": "МСФО. ОПУ Процентные доходы по эффективной процентной ставке за отчетный период с учетом комиссий"
+          },
+          {
+            "code": "IFRS_PL_INCOME",
+            "name": "МСФО. ОПУ Доходы"
+          },
+          {
+            "code": "IFRS_PL_EXPENSE",
+            "name": "МСФО. ОПУ Расходы"
+          },
+          {
+            "code": "IFRS_BS_CONTRACT_COST",
+            "name": "МСФО. БАЛ Контрактная стоимость"
+          },
+          {
+            "code": "IFRS_BS_AMORTIZED_COST",
+            "name": "МСФО. БАЛ Амортизированная стоимость"
+          },
+          {
+            "code": "IFRS_BS_GCA",
+            "name": "МСФО. БАЛ ВБС"
+          },
+          {
+            "code": "IFRS_BS_RESERVE",
+            "name": "МСФО. БАЛ Резерв"
+          },
+          {
+            "code": "IFRS_CF_TOTAL",
+            "name": "МСФО. Cashflow, суммарный"
+          }
+        ]
+      }
+    ],
+    "value": {
+      "fiIds": [
+        "fi-1245",
+        "fi-111"
+      ],
+      "metrics": {
+        "fi-1245": [
+          "IFRS_PL_INTEREST_INCOME",
+          "IFRS_PL_INCOME",
+          "IFRS_PL_EXPENSE"
+        ]
+      }
+    }
+  }
+}

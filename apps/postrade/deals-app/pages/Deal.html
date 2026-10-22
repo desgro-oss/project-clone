@@ -214,7 +214,7 @@
         </div>
         <!-- Второй ряд: один тайл в 6 колонок (тайл «Влияние на ЭПС/ВБС» снят 10.10.2026) -->
         <div class="tile-row">
-          <ds-include src="../widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.html" class="col-6 colw-12"></ds-include>
+          <ds-include src="../widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.html" class="col-6 colw-12" id="tile-fm-calc" state="loading" mode="edit"></ds-include>
         </div>
       </div>
 
@@ -239,6 +239,11 @@
 <!-- Окно шапки страницы: «Редактирование сделки» — номер и наименование;
      открывает карандаш у заголовка. -->
 <ds-include src="../widgets/modals/DealTitleModal/DealTitleModal.html"></ds-include>
+<!-- Окно «Фиксация ЭПС/ВБС» тайла «Финансовые метрики» (DealMetricsCalculationTile): скрим, подтверждение
+     незавершённого предварительного расчёта и шаблон карточки фиксации — отдельными фрагментами -->
+<ds-include src="../widgets/modals/FixationModal/FixationModal.html"></ds-include>
+<ds-include src="../widgets/modals/FixationModal/FixationConfirmModal.html"></ds-include>
+<ds-include src="../widgets/modals/FixationModal/FixationModalTile/FixationModalTile.html"></ds-include>
 <!-- Модальные окна тайла «КНР» (CounterpartiesTile → InstrumentsCounterpartiesModal). Скримы живут в конце body, а не внутри тайла:
      вложенный в скрытый родитель скрим не показать. Окно подтверждения —
      отдельным фрагментом, потому что у фрагмента один корневой элемент. -->
@@ -327,6 +332,12 @@
      валюту, суммы и список инструментов карточки он считает из прикреплённых узлов
      дерева, контрагентов берёт из базы. Хранение — data/API.md -->
 <script src="../data/fin-instruments-store.js"></script>
+<!-- расчёт финансовых метрик: стор читает ФИ сделки из стора ФИ, поэтому после
+     него. Не путать с mock-financial-metrics.js — тот кормит тайл
+     «Финансовые метрики сделки» (RE0033) -->
+<script src="../data/mock-fin-metrics-calc.js"></script>
+<script src="../data/fin-metrics-store.js"></script>
+<script src="../data/fin-metrics-notify.js"></script>
 <script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
 <!-- после ds.js и синхронно: его DSTabs.tabs(...) должен успеть раньше
      автопривязки wireAll на DOMContentLoaded.
@@ -363,6 +374,8 @@
      тайл рисует ею список -->
 <script src="../widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.js"></script>
 <script src="../widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
+<script src="../widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.js"></script>
+<script src="../widgets/modals/FixationModal/FixationModal.js"></script>
 <script src="../widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
 <script src="../widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
 <!-- Тайл «Заведение сделки» — статусы по модели (data/deal-status-model.js);
@@ -511,6 +524,7 @@
     fillTitle(deal);
     fillChips(deal);
     fillSubtitle(deal);
+    applyRoleMode();
     applyMode(deal);
     watchStatus(deal);
     fillKnr(deal);
@@ -521,6 +535,7 @@
     fillProjectInfo(deal);
     fillProducts(deal);
     fillFinInstruments(deal);
+    fillMetricsCalc(deal);
     fillNavigator(deal);
   }
 
@@ -602,6 +617,10 @@
     }
     var fi = document.getElementById('tile-fin-instruments');
     if (fi && fi.__fiPaint) fi.__fiPaint();
+    /* вид тайла «Финансовые метрики» в просмотре — CSS, но доступность его
+       кнопок (disabled) зависит от режима — перерисовать */
+    var fm = document.getElementById('tile-fm-calc');
+    if (fm && fm.__fmPaint) fm.__fmPaint();
   }
 
   /* Статусы сделки меняет тайл «Заведение сделки» — чипы шапки, подзаголовок
@@ -867,6 +886,56 @@
         window.PostTileFinInstruments.bind(tile, store);
       });
   }
+
+  /* Тайл «Финансовые метрики» — расчёт метрик этой сделки из FinMetricsStore
+     (../data/fin-metrics-store.js поверх mock-fin-metrics-calc.js). Стор
+     считает по карточкам ФИ сделки, поэтому открывается после стора ФИ — в
+     том же порядке, что у fillFinInstruments. Тайл связывает со сторами его
+     собственный скрипт: перерисовка по расчёту и по изменению карточек ФИ,
+     «Рассчитать» и «Пересчет метрик» — store.calculate(), снеки по исходу.
+     Режим (data-mode) тайлу уже поставили applyRoleMode и applyMode, вид в
+     просмотре тайл держит сам. До загрузки тайл стоит в «Загрузке». */
+  function fillMetricsCalc(deal) {
+    var store = window.FinMetricsStore;
+    var cards = window.FinInstrumentsStore;
+    var trees = window.ProductTreeStore;
+    var tile = document.getElementById('tile-fm-calc');
+    if (!store || !cards || !tile || !window.PostTileMetricsCalc) return;
+    Promise.all([store.ready, cards.ready, trees ? trees.ready : null, window.CounterpartiesStore ? window.CounterpartiesStore.ready : null])
+      .then(function () {
+        if (String(cards.dealId()) !== openedId) cards.use(deal.id);
+        store.use(deal.id);
+        window.PostTileMetricsCalc.bind(tile, store);
+      });
+  }
+
+  /* Просмотр по роли. Режим тайла «Финансовые метрики» зависит и от статуса
+     сделки, и от роли (ответ человека 20.10.2026, RE0033). Ролей с разными
+     правами в каталоге пока нет, поэтому роль без права на расчёт показывает
+     сценарий панели: ?fmMode=view. Ставится до applyMode — тот запомнит его
+     исходным режимом тайла (data-mode-own), и смена статуса его не вернёт
+     в правку. Так же устроен ?hardsMode=view у Tranche.html. */
+  function applyRoleMode() {
+    if (!/[?&]fmMode=view/.test(window.location.search)) return;
+    var tile = document.getElementById('tile-fm-calc');
+    if (tile) tile.setAttribute('data-mode', 'view');
+  }
+
+  /* Действия тайла «Финансовые метрики»: тайл шлёт 'fmcalcaction', куда идти,
+     знает страница. REPORTS («Отчеты →») — страница финансовых метрик этой
+     сделки (FinancialMetrics, RE0033 Э4). FIXATION — окно фиксации ЭПС/ВБС
+     (PostFixationModal, RE0033 Э6): готовая фиксация приходит в FinMetricsStore,
+     тайл обновляется по его событию. */
+  document.addEventListener('fmcalcaction', function (e) {
+    var d = e.detail || {};
+    if (d.action === 'FIXATION') {
+      if (window.PostFixationModal) window.PostFixationModal.open();
+      return;
+    }
+    if (d.action !== 'REPORTS') return;
+    var page = /\.preview\.html$/.test(window.location.pathname) ? 'FinancialMetrics.preview.html' : 'FinancialMetrics.html';
+    window.location.href = page + '?id=' + encodeURIComponent(openedId);
+  });
 
   /* «→» в шапке карточки ФИ — переход на страницу финансового инструмента:
      тайл только шлёт 'fiaction' OPEN, куда идти, знает страница. */

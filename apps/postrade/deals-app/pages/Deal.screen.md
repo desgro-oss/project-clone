@@ -4,11 +4,11 @@ title: Сделка
 file: apps/postrade/deals-app/pages/Deal.preview.html
 source: apps/postrade/deals-app/pages/Deal.html (источник с метками ds-include)
 requirements: ТЗ 19.09.2026 + apps/postrade/deals-app/refs/Текущий портфель.md
-version: "0.009"
+version: "0.010"
 created: "16.09.2026"
-updated: "10.10.2026"
+updated: "21.10.2026"
 design_system: IBP DS
-components: [Layout, NavPanel, Breadcrumbs, Link, PageHeader, Chip, Avatar, Buttons, IconButton, Tab, Tile, StepMarker, Switch, EmptyState, Illustrations, ReadOnlyField, Skeleton, Modal, Popover, InputText, InputAutocomplete, InputDate, DropdownList, Checkbox, Radiobutton, Divider, TableCell, AllocationBar, Tooltip, Alert, Table, ProductRow, ContextMenu, Spinner]
+components: [Layout, NavPanel, Breadcrumbs, Link, PageHeader, Chip, Avatar, Buttons, IconButton, Tab, Tile, StepMarker, Switch, EmptyState, Illustrations, ReadOnlyField, Skeleton, Modal, Popover, InputText, InputAutocomplete, InputDate, DropdownList, Checkbox, Radiobutton, Divider, TableCell, AllocationBar, Tooltip, Alert, Table, ProductRow, ContextMenu, Spinner, SnackBar]
 ---
 
 # Сделка
@@ -16,7 +16,7 @@ components: [Layout, NavPanel, Breadcrumbs, Link, PageHeader, Chip, Avatar, Butt
 ## 1. Назначение
 
 Страница одной сделки направления ДИД. Собрана раскладка по схеме тайлов: шапка,
-сворачиваемый блок «Общая информация» и таб-бар с тремя разделами. Девять тайлов
+сворачиваемый блок «Общая информация» и таб-бар с тремя разделами. Десять тайлов
 наполнены, остальные стоят **заглушками** — оболочка компонента в состоянии «Данных
 нет»; состав их полей не согласован (§7, п. 3). Тайл «Заведение сделки» меняет статусы
 сделки на самой странице — чипы шапки и режим правки следуют за ними.
@@ -205,6 +205,29 @@ node .agents/tools/assemble.mjs        # пересобрать после пр�
 | Окна создания и изменения ФИ | тот же стор, при открытии; открывают их события тайла `fiaction` — страница окна не связывает | `create` / `update` и `commit` |
 | «Сгенерировать автоматически» | `FinInstrumentsStore.generate()`: карточка на каждый тип узлов дерева без связи с ФИ, узлы прикрепляются (`ProductTreeStore.linkFi`) | оба стора сохраняются (`commit`), тайлы «Продукты сделки» и «Финансовые инструменты» перерисовываются |
 | После сохранения в окнах ФИ и в окне связи с ФИ у дерева | `commit` стора ФИ или стора дерева | тайл «Финансовые инструменты» перерисовывается по событию `commit` любого из них |
+
+### Расчет финансовых метрик
+
+Расчет метрик сделки — `window.FinMetricsStore` (`../data/fin-metrics-store.js` поверх
+`../data/mock-fin-metrics-calc.js`, `DealMetricsCalculationRsDto`; RE0033). Стор считает по
+карточкам ФИ сделки и берет их у `FinInstrumentsStore`, поэтому подключен и открывается после
+него. Расчет сохраняется через `PostApi` (ресурс `fin-metrics`, `../data/API.md`): отчеты
+открываются на другой странице. Не путать с `mock-financial-metrics.js` — тот кормит тайл
+«Финансовые метрики сделки». Какая демо-сделка какое состояние тайла показывает — в шапке
+`mock-fin-metrics-calc.js`.
+
+| Что | Откуда | Куда |
+|---|---|---|
+| Тайл «Финансовые метрики» | `FinMetricsStore.ready` и сторы ФИ, дерева, контрагентов → `FinMetricsStore.use(deal.id)` → `PostTileMetricsCalc.bind(tile, FinMetricsStore)` (экранный скрипт, `fillMetricsCalc`) | `#tile-fm-calc`: до загрузки — `loading`; состояния — паспорт тайла; перерисовка по событиям стора метрик и стора ФИ (добавили ФИ — «Заблокировано» уходит) |
+| «Рассчитать» / «Пересчет метрик» | `FinMetricsStore.calculate()` — имитация с задержкой | тайл в «Идет расчет», затем снек по исходу; расчет сохраняется |
+| «Отчеты →» | событие тайла `fmcalcaction` REPORTS | страница уходит на `FinancialMetrics.html?id=<сделка>` (страница — RE0033, Э4) |
+| «Фиксация ЭПС/ВБС» | событие тайла `fmcalcaction` FIXATION | страница открывает окно `PostFixationModal.open()` (виджет `FixationModal`, скрим `fm-fix-scrim`, RE0033 Э6); готовая фиксация приходит в `FinMetricsStore`, тайл перерисуется по событию стора |
+
+Параметры адреса для сценариев панели прототипа: `?fmCalc=ok|partial|fail` — исход расчета
+(все ФИ · примерно половина · ни одного), в хранилище не пишется; `?fmFix=prefail|fail` — окно
+фиксации ЭПС/ВБС: предварительный расчет падает · не фиксируется каждая вторая карточка (а единственная — целиком); `?fmMode=view` — роль без
+права на расчет: тайл в просмотре при любом статусе (`applyRoleMode`, до `applyMode`). Шаг
+«Расчет метрик» тайла «Заведение сделки» к этому стору не привязан (вне RE0033, ответ 5).
 
 ### Заведение сделки
 

@@ -1,0 +1,42 @@
+/* Локальный компонент «Отчет KPI» (KPITable).
+   Только внутренняя раскладка. Цвета, шрифты, отступы — токены ДС; своих значений здесь нет.
+   Карточка (Tile) с сегмент-контролом в действиях шапки (SegmentControl), тулбар
+   (TableFilter), таблица (Table, TableCell), пустое состояние (.dtable__empty) —
+   компоненты ДС: их размеры и состояния отсюда не переопределяются.
+
+   Оси на корне: data-state — loading | empty | data, ставит KPITable.js по отчетам;
+   data-view — KPI_SHORT | KPI_FULL, вид («Краткий» / «Подробный»).
+   Режима прав (data-mode) нет — в отчете нечего править. */
+
+/* Тулбар и таблица — колонкой с ритмом 12px (Table, вариант «тулбар над
+   таблицей»). Тело карточки сжимается по ширине родителя, горизонтальный скролл
+   остается у тела таблицы. */
+.lc-kpi-table__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Хост таблицы: .dtable--fill растягивается на свободную высоту, если родитель ее
+   ограничил; без ограничения таблица растет по числу строк. */
+.lc-kpi-table__table {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Имя ФИ в строке группы — Body S Strong (рисует FinancialMetricsTable.js). */
+.lc-kpi-table .lc-financial-metrics-table__group-name.tc__text {
+  font: var(--type-body-s-strong);
+}
+
+/* Пустой отчет: «Нет данных» — по центру тела таблицы, как на макете (см. FinancialMetricsTable.css). */
+.lc-kpi-table .dtable__body:has(> .dtable__empty) {
+  display: flex;
+  flex-direction: column;
+}
+.lc-kpi-table .dtable__body > .dtable__empty { flex: 1 1 auto; }

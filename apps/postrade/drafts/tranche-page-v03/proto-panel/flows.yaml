@@ -1,0 +1,357 @@
+# Сценарии показа прототипа Post — Корректировки РСБУ v3 — панель прототипа.
+# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
+# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
+# Основа — сценарии модуля deals-app (тайл и страница корректировок), 22.10.2026, RE0034.
+version: 1
+lastState: 46
+flows:
+  - id: main
+    title: Основной путь
+    desc: Сделка → финансовые метрики, затем сделка → транш → корректировки (сделка 1028, «Ввод изменений»)
+    steps:
+      - state: 1
+        id: start
+        title: Страница сделки
+        page: Deal.preview.html?id=1028
+        note: Страница сделки концепта — как в модуле, без окон правки. Название транша в дереве ведёт в транш, «Отчеты →» на тайле метрик — на финансовые метрики.
+      - state: 2
+        id: main-metrics
+        title: Финансовые метрики · РСБУ
+        page: FinancialMetrics.preview.html?id=1028&rasFix=none&rasMoves=none
+        note: Сделка в статусе «Ввод изменений» — «Пересчет метрик» доступна. На вкладке РСБУ — «Начисленные проценты за период»; у ФИ с траншем в строке кебаб «Зафиксировать расчёт». Перенесённые суммы подсвечены в ячейках дат «с» и «на».
+        do:
+          - click: '#tab-ras'
+          - waitFor: '#panel-ras:not([hidden])'
+      - state: 3
+        id: main-tranche
+        title: Страница транша
+        page: Tranche.preview.html?id=1028&tr=1028.d1.p1.i1.t1
+        note: Тайл «Корректировки процентов РСБУ» ведёт на страницу корректировок.
+      - state: 4
+        id: main-adjustments
+        title: Корректировки процентов РСБУ
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasFix=recalc&rasMoves=partial
+        note: 'Страница корректировок транша — переносы по дельтам; пока расхождение не устранено, над таблицей отметка «Расхождение с ДД.ММ.ГГГГ: …».'
+
+  - id: ras-e2e
+    title: 'Весь сценарий: фиксация → перенос → сверка'
+    desc: От страницы сделки до снятия фиксации — все шаги RE0034 одним путём (сделка 1028, «Ввод изменений»)
+    steps:
+      - state: 37
+        id: e2e-deal
+        title: Страница сделки
+        page: Deal.preview.html?id=1028&rasFix=none&rasMoves=none
+        note: Период закрыт, выгрузка ушла в 1С. Дальше — финансовые метрики, вкладка РСБУ. Поздний платёж в прототипе отдельно не вносится — его заменяет «Пересчет метрик» при зафиксированном расчёте.
+      - state: 38
+        id: e2e-fix
+        title: Расчёт зафиксирован
+        page: FinancialMetrics.preview.html?id=1028&rasFix=none&rasMoves=none
+        note: Кебаб у строки «Начисленные проценты за период» ФИ с траншем → «Зафиксировать расчёт». У строки появляется чип, дата фиксации — в тултипе. Порядок «фиксация / платёж» на результат не влияет.
+        do:
+          - click: '#tab-ras'
+          - waitFor: '#panel-ras:not([hidden]) [data-node]'
+          - click: '#panel-ras [data-menu^="fm-fixmenu-"]'
+          - waitFor: '[data-fm-fix-ras]'
+          - click: '[data-fm-fix-ras]'
+          - waitFor: '#panel-ras [data-fm-fixed-chip]'
+      - state: 39
+        id: e2e-recalc
+        title: Пересчёт после платежа — дельта
+        note: '«Пересчет метрик» — у строки индикатора дерево из трёх строк: «Зафиксировано», «После пересчёта», «Дельта» (плюс зелёным, минус красным). Расхождение растёт от даты к дате.'
+        do:
+          - click: '#fm-calc'
+          - waitFor:
+              target: '#panel-ras [data-node$="-ind"]'
+              timeout: 8000
+      - state: 40
+        id: e2e-move-modal
+        title: Окно переноса — дельта на дату
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasFix=recalc&rasMoves=none
+        note: Страница корректировок транша; расхождение не устранено, над таблицей отметка. В окне, когда выбрана дата «с» (30.06.2025), показана «Дельта на дату» (только чтение).
+        do:
+          - click: '#rh-add'
+          - waitFor: '#rsbu-adj-scrim:not([hidden])'
+          - fill:
+              target: '#rsbu-adj-start'
+              value: 30.06.2025
+          - waitFor: '[data-rsbu-delta]:not([hidden])'
+      - state: 41
+        id: e2e-move-saved
+        title: Часть дельты перенесена
+        note: Дата «на» 30.09.2024 (раньше «с», с событием у индикатора), сумма 25 000. Под суммой окно показало прогноз расхождения; строка в таблице, отметка осталась — расхождение уменьшилось, но не ноль.
+        do:
+          - fill:
+              target: '#rsbu-adj-end'
+              value: 30.09.2024
+          - fill:
+              target: '#rsbu-adj-amt'
+              value: '25000'
+          - click: '[data-rsbu-submit]'
+          - waitFor:
+              target: '#rsbu-adj-scrim'
+              state: hidden
+      - state: 42
+        id: e2e-tile
+        title: Отметка на тайле транша
+        page: Tranche.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasFix=recalc&rasMoves=partial
+        note: Тайл «Корректировки процентов РСБУ» показывает число переносов и расхождение, которое не устранено.
+      - state: 43
+        id: e2e-report
+        title: Подсветка в отчёте РСБУ
+        page: FinancialMetrics.preview.html?id=1028&rasFix=recalc&rasMoves=partial
+        note: 'Результат переноса виден до пересчёта: дельта в дереве уменьшилась на всех датах не раньше даты «на», первая дата расхождения отмечена; ячейки «с» и «на» подсвечены акцентом, тултип «Перенесено … на …» / «Получено … с …».'
+        do:
+          - click: '#tab-ras'
+          - waitFor: '#panel-ras [data-fm-move]'
+      - state: 44
+        id: e2e-warning
+        title: Не всё перенесено — окно предупреждения
+        note: «Пересчет метрик» при неустранённом расхождении открывает окно «Пересчитать метрики?» с расхождением на первой дате; «Отменить» оставляет всё как есть.
+        do:
+          - click: '#fm-calc'
+          - waitFor: '#rrw-scrim:not([hidden])'
+      - state: 45
+        id: e2e-released
+        title: Пересчёт подтверждён — фиксация снята
+        note: После «Пересчитать» фиксация снята (снек), чипа и дерева нет; подсветка переносов в отчёте остаётся навсегда.
+        do:
+          - click: '[data-rrw-ok]'
+          - waitFor:
+              target: '.snack--warning'
+              timeout: 8000
+      - state: 46
+        id: e2e-ok
+        title: Всё перенесено — сверка сошлась
+        page: FinancialMetrics.preview.html?id=1028&rasFix=recalc&rasMoves=full
+        note: 'Другой исход: дельта распределена полностью — окна нет, пересчёт идёт сразу, снек «Корректировка выполнена», фиксация снимается сама.'
+        do:
+          - click: '#tab-ras'
+          - waitFor: '#panel-ras [data-node$="-ind"]'
+          - click: '#fm-calc'
+          - waitFor:
+              target: '.snack--success'
+              timeout: 8000
+
+  - id: rsbu-tile
+    title: Тайл «Корректировки процентов РСБУ»
+    desc: Страница транша — вид тайла по условиям, данным и правам
+    steps:
+      - state: 5
+        id: rsbu-tile-locked
+        title: Требуется расчёт
+        page: Tranche.preview.html?id=1028&tr=1028.d1.p1.i1.t1&hardsState=locked&rasFix=none&rasMoves=none
+        note: Условия не выполнены — процентные платежи не рассчитаны. «Требуется расчёт процентных платежей», стрелки и кнопки нет.
+      - state: 6
+        id: rsbu-tile-none
+        title: Корректировок нет
+        page: Tranche.preview.html?id=1028&tr=1028.d1.p1.i1.t1&hardsState=none&rasFix=none&rasMoves=none
+        note: «Корректировки отсутствуют»; кнопка «Внести корректировку» ведёт на страницу корректировок с поднятым окном.
+      - state: 7
+        id: rsbu-tile-filled
+        title: Корректировки внесены
+        page: Tranche.preview.html?id=1028&tr=1028.d1.p1.i1.t1&hardsState=filled&rasFix=recalc&rasMoves=partial
+        note: '«Внесено корректировок: N»; стрелка и кнопка остаются. Пока расхождение не устранено — отметка «Расхождение с ДД.ММ.ГГГГ: …».'
+      - state: 8
+        id: rsbu-tile-view
+        title: Без права редактирования
+        page: Tranche.preview.html?id=1028&tr=1028.d1.p1.i1.t1&hardsState=filled&hardsMode=view&rasFix=recalc&rasMoves=partial
+        note: Кнопки «Внести корректировку» нет, стрелка на страницу корректировок остаётся — смотреть можно.
+
+  - id: rsbu-page
+    title: Страница «Корректировки процентов РСБУ»
+    desc: Таблица корректировок, добавление, правка, удаление, возврат в транш
+    steps:
+      - state: 9
+        id: rsbu-page-empty
+        title: Корректировок нет
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasFix=none&rasMoves=none
+        note: Пустая таблица — только колонки; «В транш» и «Внести корректировку» в шапке страницы.
+      - state: 10
+        id: rsbu-page-modal
+        title: Новая корректировка
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&open=add&rasFix=none&rasMoves=none
+        note: Так страница открывается с кнопки на тайле. Обе даты — обычные поля даты с календарём; целевая раньше исходной и совпадает с датой события индикатора; сумма может быть отрицательной.
+        do:
+          - waitFor: '#rsbu-adj-scrim:not([hidden])'
+      - state: 11
+        id: rsbu-page-filled
+        title: Корректировки внесены
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasFix=recalc&rasMoves=partial
+        note: После сохранения в окне строка появляется в таблице. Отрицательная сумма — со знаком минус.
+      - state: 12
+        id: rsbu-page-edit
+        title: Правка корректировки
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasFix=recalc&rasMoves=partial&demo=edit
+        note: Правка — карандашом в колонке «Действия» или двойным кликом по строке.
+        do:
+          - waitFor: '#rsbu-adj-scrim:not([hidden])'
+      - state: 13
+        id: rsbu-page-delete
+        title: Подтверждение удаления
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasFix=recalc&rasMoves=partial&demo=delete
+        note: Удаление — корзина в колонке «Действия» и окно подтверждения.
+        do:
+          - waitFor: '#rh-delete-scrim:not([hidden])'
+
+  - id: ras-fixation
+    title: Фиксация расчёта РСБУ
+    desc: Вкладка РСБУ сделки 1028 — зафиксировать расчёт, увидеть два значения и дельту (RE0034)
+    steps:
+      - state: 14
+        id: fix-before
+        title: Кебаб у строки индикатора
+        page: FinancialMetrics.preview.html?id=1028&rasFix=none&rasMoves=none
+        note: У строки «Начисленные проценты за период» ФИ с траншем (128-Кредит-202) — кебаб; у ФИ без транша (акции, РЕПО) его нет. В просмотре кебаба нет.
+        do:
+          - click: '#tab-ras'
+          - waitFor: '#panel-ras:not([hidden]) [data-node]'
+      - state: 15
+        id: fix-menu
+        title: Пункт «Зафиксировать расчёт»
+        note: Пункт ContextMenu ДС.
+        do:
+          - click: '#panel-ras [data-menu^="fm-fixmenu-"]'
+          - waitFor: '[data-fm-fix-ras]'
+      - state: 16
+        id: fix-after
+        title: Расчёт зафиксирован
+        note: У строки — чип-иконка, дата фиксации в тултипе; снек «Расчёт зафиксирован». Кебаба больше нет.
+        do:
+          - click: '[data-fm-fix-ras]'
+          - waitFor: '#panel-ras [data-fm-fixed-chip]'
+      - state: 23
+        id: fixed-before-recalc
+        title: Зафиксировано, до пересчёта
+        page: FinancialMetrics.preview.html?id=1028&rasFix=fixed&rasMoves=none
+        note: Платёж ещё не внесён и пересчёта не было — значения не отличаются, у строки только чип.
+        do:
+          - click: '#tab-ras'
+          - waitFor: '#panel-ras [data-fm-fixed-chip]'
+      - state: 20
+        id: value-recalc
+        title: После пересчёта — дерево из трёх строк
+        page: FinancialMetrics.preview.html?id=1028&rasFix=recalc&rasMoves=none
+        note: 'Строка индикатора раскрывается на «Зафиксировано», «После пересчёта», «Дельта». Дельта со знаком: плюс зелёным, минус красным.'
+        do:
+          - click: '#tab-ras'
+          - waitFor: '#panel-ras [data-node$="-ind"]'
+
+  - id: ras-move
+    title: Перенос дельты по датам
+    desc: После пересчёта — перенести сумму на прошлую дату, увидеть, как уменьшилась дельта, и подсветку в отчёте (RE0034)
+    steps:
+      - state: 24
+        id: move-empty
+        title: Дельта не распределена
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasFix=recalc&rasMoves=none
+        note: Расчёт зафиксирован и пересчитан после позднего платежа — расхождение (84 210,50 RUB на первой дате, дальше растёт) не устранено, над таблицей отметка.
+      - state: 25
+        id: move-modal
+        title: Окно переноса — дельта на дату
+        note: Введена исходная дата 30.06.2025 — под датами «Дельта на дату» (только чтение).
+        do:
+          - click: '#rh-add'
+          - waitFor: '#rsbu-adj-scrim:not([hidden])'
+          - fill:
+              target: '#rsbu-adj-start'
+              value: 30.06.2025
+          - waitFor: '[data-rsbu-delta]:not([hidden])'
+      - state: 26
+        id: move-error
+        title: Сумма больше дельты
+        note: Перенести можно не больше дельты на исходную дату; ошибка — в Alert вверху окна.
+        do:
+          - fill:
+              target: '#rsbu-adj-end'
+              value: 30.09.2024
+          - fill:
+              target: '#rsbu-adj-amt'
+              value: '200000'
+          - click: '[data-rsbu-submit]'
+          - waitFor: '#rsbu-adj-alert:not([hidden])'
+      - state: 27
+        id: move-partial
+        title: Часть дельты перенесена
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasFix=recalc&rasMoves=partial
+        note: Перенос 22 476,66 с 31.03.2025 на 30.09.2024 — расхождение на всех датах уменьшилось (на первой — до 50 526,30 RUB), но не ноль. Страница метрик показывает это сразу, до пересчёта.
+      - state: 28
+        id: move-tile
+        title: Отметка на тайле транша
+        page: Tranche.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasFix=recalc&rasMoves=partial
+        note: Тайл «Корректировки процентов РСБУ» показывает число переносов и расхождение, которое не устранено.
+      - state: 29
+        id: move-report
+        title: Подсветка в отчёте РСБУ
+        page: FinancialMetrics.preview.html?id=1028&rasFix=recalc&rasMoves=partial
+        note: 'Страница метрик сразу показывает результат переноса: строка «Дельта» стала меньше на всех датах не раньше даты «на», первая дата расхождения отмечена тултипом; ячейки «с» и «на» подсвечены, тултип «Перенесено … на …» / «Получено … с …».'
+        do:
+          - click: '#tab-ras'
+          - waitFor: '#panel-ras [data-fm-move]'
+      - state: 30
+        id: move-done
+        title: Дельта распределена полностью
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasFix=recalc&rasMoves=full
+        note: 'Расхождение нулевое на всех датах — отметка исчезла. Один и тот же перенос тем сильнее, чем раньше дата «на»: два переноса на разные прошлые даты дали ровно ноль. Фиксация снимается при следующем пересчёте метрик — шаги потока «Сверка после пересчёта».'
+
+  - id: ras-recon
+    title: Сверка после пересчёта
+    desc: Повторный пересчёт метрик ведёт фиксацию расчёта РСБУ — дельта, окно предупреждения, снятие фиксации (RE0034)
+    steps:
+      - state: 31
+        id: recon-delta
+        title: Пересчёт после платежа — появилась дельта
+        page: FinancialMetrics.preview.html?id=1028&rasFix=fixed&rasMoves=none
+        note: Расчёт зафиксирован, платёж внесён (в прототипе отдельно не вводится). «Пересчет метрик» — у строки индикатора появляется дерево из трёх строк с дельтой.
+        do:
+          - click: '#tab-ras'
+          - waitFor: '#panel-ras [data-fm-fixed-chip]'
+          - click: '#fm-calc'
+          - waitFor:
+              target: '#panel-ras [data-node$="-ind"]'
+              timeout: 8000
+      - state: 32
+        id: recon-warning
+        title: Не всё перенесено — окно предупреждения
+        page: FinancialMetrics.preview.html?id=1028&rasFix=recalc&rasMoves=partial
+        note: Расхождение не устранено. «Пересчет метрик» открывает окно «Пересчитать метрики?» с расхождением на первой дате; «Отменить» оставляет всё как есть.
+        do:
+          - click: '#tab-ras'
+          - waitFor: '#panel-ras [data-node$="-ind"]'
+          - click: '#fm-calc'
+          - waitFor: '#rrw-scrim:not([hidden])'
+      - state: 33
+        id: recon-released
+        title: Пересчёт подтверждён — фиксация снята
+        note: После «Пересчитать» метрики пересчитаны, фиксация снята (снек), чипа и дерева нет, подсветка переносов в отчёте остаётся.
+        do:
+          - click: '[data-rrw-ok]'
+          - waitFor:
+              target: '.snack--warning'
+              timeout: 8000
+      - state: 34
+        id: recon-ok
+        title: Всё перенесено — сверка сошлась
+        page: FinancialMetrics.preview.html?id=1028&rasFix=recalc&rasMoves=full
+        note: Дельта распределена полностью — окна нет, пересчёт идёт сразу; снек «Корректировка выполнена», фиксация снимается сама.
+        do:
+          - click: '#tab-ras'
+          - waitFor: '#panel-ras [data-node$="-ind"]'
+          - click: '#fm-calc'
+          - waitFor:
+              target: '.snack--success'
+              timeout: 8000
+      - state: 35
+        id: recon-tile
+        title: Пересчёт с тайла на странице сделки
+        page: Deal.preview.html?id=1028&rasFix=recalc&rasMoves=partial
+        note: Тайл «Финансовые метрики» при неустранённом расхождении открывает то же окно предупреждения.
+        do:
+          - click:
+              target: '#tile-fm-calc .lc-fin-metrics__buttons [data-fm-act="CALCULATE"]'
+              timeout: 8000
+          - waitFor: '#rrw-scrim:not([hidden])'
+      - state: 36
+        id: recon-adjustments
+        title: Страница корректировок после снятия
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasFix=none&rasMoves=partial
+        note: Фиксации нет — отметки о расхождении нет, переносы остаются в таблице.

@@ -2,7 +2,7 @@
 # Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
 # После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
 version: 1
-lastState: 10
+lastState: 53
 flows:
   - id: main
     title: Основной путь
@@ -72,3 +72,473 @@ flows:
         note: Удаление — корзина в колонке «Действия» и окно подтверждения.
         do:
           - waitFor: '#rh-delete-scrim:not([hidden])'
+
+  - id: fm-calc-tile
+    title: Тайл «Финансовые метрики»
+    desc: Страница сделки, таб «Финансовые данные» — расчет метрик по ФИ сделки (RE0033)
+    steps:
+      - state: 11
+        id: fm-calc-locked
+        title: Нет ФИ
+        page: Deal.preview.html?id=1026
+        note: «Отсутствуют ФИ для расчета» серым, без кнопки. Добавьте ФИ в тайле «Финансовые инструменты» — появится «Рассчитать».
+      - state: 12
+        id: fm-calc-default
+        title: Не рассчитано
+        page: Deal.preview.html?id=1044
+        note: ФИ есть, расчета не было — кнопка «Рассчитать».
+      - state: 13
+        id: fm-calc-error
+        title: Ошибка расчета
+        page: Deal.preview.html?id=1036
+        note: Последняя попытка не посчитала ни одного ФИ — алерт «Расчет не выполнен, некорректные данные в ФИ». Снимается только успешным расчетом.
+      - state: 14
+        id: fm-calc-running
+        title: Идет расчет
+        page: Deal.preview.html?id=1044&fmCalc=ok
+        note: Лоадер на кнопке, все кнопки тайла заблокированы.
+        do:
+          - click: '#tile-fm-calc [data-fm-act="CALCULATE"]'
+          - waitFor: '#tile-fm-calc[data-state="updating"]'
+      - state: 15
+        id: fm-calc-done
+        title: Расчет выполнен
+        page: Deal.preview.html?id=1044&fmCalc=ok
+        note: '«Рассчитано ФИ: N из M», «Пересчет метрик», «Фиксация ЭПС/ВБС», «Отчеты →»; снек «Операция выполнена». Исход по сценарию не сохраняется.'
+        do:
+          - click: '#tile-fm-calc [data-fm-act="CALCULATE"]'
+          - waitFor: '#tile-fm-calc[data-state="data"]'
+      - state: 16
+        id: fm-calc-partial
+        title: Рассчитано частично
+        page: Deal.preview.html?id=1027
+        note: Несчитанные ФИ в отчеты не попадают. «Пересчет метрик» со сценарием ?fmCalc=partial дает снек «Операция выполнена частично».
+      - state: 17
+        id: fm-calc-error-after
+        title: Ошибка после расчета
+        page: Deal.preview.html?id=1028
+        note: Пересчет не посчитал ни одного ФИ — алерт ошибки над видом «Рассчитано» с прежней датой.
+      - state: 18
+        id: fm-calc-view-status
+        title: Просмотр по статусу
+        page: Deal.preview.html?id=1024
+        note: Активная сделка — «Последний расчет» и «Отчеты →», без кнопок.
+      - state: 19
+        id: fm-calc-view-role
+        title: Просмотр по роли
+        page: Deal.preview.html?id=1027&fmMode=view
+        note: Роль без права на расчет — тот же вид просмотра при статусе, допускающем правку.
+      - state: 20
+        id: fm-calc-view-none
+        title: Просмотр, не рассчитано
+        page: Deal.preview.html?id=1044&fmMode=view
+        note: «Расчет не выполнен» серым, без кнопок.
+
+  - id: fm-page
+    title: Страница «Финансовые метрики»
+    desc: Отчеты МСФО, РСБУ, KPI по ФИ сделки; «Отчеты →» из тайла «Финансовые метрики» (RE0033)
+    steps:
+      - state: 21
+        id: fm-page-ifrs
+        title: Отчет МСФО
+        page: FinancialMetrics.preview.html?id=1024
+        note: Активная сделка — просмотр, без «Фиксация ЭПС/ВБС» и «Пересчет метрик». Группы ФИ сворачиваются, колонка метрик закреплена, даты общие, у ФИ без события — пустая ячейка.
+      - state: 22
+        id: fm-page-ras-empty
+        title: Пустая РСБУ
+        page: FinancialMetrics.preview.html?id=1037
+        note: Посчитан один ФИ с МСФО — в РСБУ «Нет данных», «Фильтр» заблокирован, колонок дат нет.
+        do:
+          - click: '#tab-ras'
+          - waitFor: '#panel-ras:not([hidden])'
+      - state: 23
+        id: fm-page-kpi
+        title: Отчет KPI
+        page: FinancialMetrics.preview.html?id=1024
+        note: Подвкладки «Краткий» / «Подробный»; в «Подробный» добавлена метрика «Фондируемый объем».
+        do:
+          - click: '#tab-kpi'
+          - waitFor: '#panel-kpi:not([hidden])'
+      - state: 24
+        id: fm-page-filter
+        title: Окно фильтра
+        page: FinancialMetrics.preview.html?id=1024
+        note: 'Выберите ФИ — под первым полем появится поле индикаторов для каждого. «Применить» — чип «Применено: N» и только выбранные ФИ.'
+        do:
+          - click: '#panel-ifrs .tfilter__open'
+          - waitFor: '#fm-filter-scrim:not([hidden])'
+      - state: 25
+        id: fm-page-partial
+        title: Рассчитано частично
+        page: FinancialMetrics.preview.html?id=1027
+        note: Несчитанные ФИ в отчетах нет. «Пересчет метрик» со сценарием ?fmCalc=partial дает снек «Операция выполнена частично».
+      - state: 26
+        id: fm-page-recalc
+        title: Идет пересчет
+        page: FinancialMetrics.preview.html?id=1027&fmCalc=ok
+        note: Лоадер на «Пересчет метрик», остальные кнопки шапки заблокированы; после расчета — снек «Операция выполнена», дата в подзаголовке обновляется.
+        do:
+          - click: '#fm-calc'
+          - waitFor: '#fm-calc[aria-busy="true"]'
+      - state: 27
+        id: fm-page-not-calculated
+        title: Расчета не было
+        page: FinancialMetrics.preview.html?id=1044
+        note: Все вкладки «Нет данных». «Пересчет метрик» доступен — после него отчеты наполняются.
+      - state: 28
+        id: fm-page-view-role
+        title: Просмотр по роли
+        page: FinancialMetrics.preview.html?id=1037&fmMode=view
+        note: Правка по статусу разрешена, но роль без права на расчет — «Фиксация ЭПС/ВБС» и «Пересчет метрик» скрыты и выключены; выгрузка из кебаба остаётся.
+      - state: 29
+        id: fm-page-fixations-by-fi
+        title: История фиксаций — По ФИ
+        page: FinancialMetrics.preview.html?id=1027
+        note: Группы по ФИ, в группе фиксации по дате по возрастанию; «№» — номер строки в группе, у Δ плюс зелёным и минус красным. Кнопка сортировки даты — по кругу.
+        do:
+          - click: '#tab-fixations'
+          - waitFor: '#panel-fixations:not([hidden])'
+      - state: 30
+        id: fm-page-fixations-by-date
+        title: История фиксаций — По дате
+        page: FinancialMetrics.preview.html?id=1027
+        note: Плоский список с колонкой «Наименование ФИ» второй, «№» сквозной.
+        do:
+          - click: '#tab-fixations'
+          - waitFor: '#panel-fixations:not([hidden])'
+          - click: '#fm-table-fixations [data-view="BY_DATE"]'
+          - waitFor: '#fm-table-fixations[data-view="BY_DATE"]'
+      - state: 31
+        id: fm-page-fixations-remove-last
+        title: Удаление последней — подтверждение
+        page: FinancialMetrics.preview.html?id=1027
+        note: Корзина последней фиксации ФИ. «Подтвердить» — фиксация уходит из таблицы, счётчик вкладки уменьшается, тёмный тост «Фиксация ЭПС/ВБС удалена».
+        do:
+          - click: '#tab-fixations'
+          - waitFor: '#panel-fixations:not([hidden])'
+          - click: '#fm-table-fixations [data-fh-act="REMOVE"][data-fixation-id="FX-1027-2"]'
+          - waitFor: '#fm-confirm-scrim:not([hidden])'
+      - state: 32
+        id: fm-page-fixations-remove-not-last
+        title: Удаление не последней — снек
+        page: FinancialMetrics.preview.html?id=1027
+        note: Корзина активна у всех строк, без тултипа; у не последней фиксации клик даёт снек «Невозможно удалить фиксацию ЭПС/ВБС», окна подтверждения нет.
+        do:
+          - click: '#tab-fixations'
+          - waitFor: '#panel-fixations:not([hidden])'
+          - click: '#fm-table-fixations [data-fh-act="REMOVE"][data-fixation-id="FX-1027-1"]'
+      - state: 33
+        id: fm-page-fixations-view
+        title: Просмотр — без корзин
+        page: FinancialMetrics.preview.html?id=1024
+        note: Активная сделка — просмотр, колонки «Действия» нет вовсе; история остаётся видимой.
+        do:
+          - click: '#tab-fixations'
+          - waitFor: '#panel-fixations:not([hidden])'
+
+  - id: fm-fixation
+    title: Окно «Фиксация ЭПС/ВБС»
+    desc: Окно фиксации с тайла «Финансовые метрики» и страницы метрик — карточки по ФИ, предварительный расчет, правила (RE0033)
+    steps:
+      - state: 34
+        id: fm-fix-empty
+        title: Пустое окно
+        page: FinancialMetrics.preview.html?id=1027
+        note: Одна пустая карточка; предварительный расчет выключен, «⊖» выключена, пока карточка одна. «Сохранить» активна.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+      - state: 35
+        id: fm-fix-filled
+        title: ФИ и дата — данные подтянулись
+        page: FinancialMetrics.preview.html?id=1027
+        note: После ФИ и даты появляются «ВБС до фиксации», ЕТС и Δ ЕТС, доступен предварительный расчет.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Кредит-201
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="date"] .inp__control'
+              value: 01.01.2030
+          - waitFor: '#fm-fix-scrim [data-fx-card][data-fx-ets="ok"]'
+      - state: 36
+        id: fm-fix-prelim-done
+        title: Предварительный расчет выполнен
+        page: FinancialMetrics.preview.html?id=1027
+        note: Кнопку заменил чип «Расчет выполнен», заполнены блоки несущественной и существенной модификации. Тип выбирают по результату.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Кредит-201
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="date"] .inp__control'
+              value: 01.01.2030
+          - click: '#fm-fix-scrim [data-fx-prelim-run]'
+          - waitFor: '#fm-fix-scrim [data-fx-card][data-fx-prelim="done"]'
+      - state: 37
+        id: fm-fix-initial
+        title: Тип «Первоначальная»
+        page: FinancialMetrics.preview.html?id=1027
+        note: Дата очищена и заблокирована, предварительный расчет выключен, значения — прочерк. ФИ без первоначальной фиксации — «127-Акции-203».
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Акции-203
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="type"] .inp__control'
+              value: Первоначальная
+          - waitFor: '#fm-fix-scrim [data-fx-card][data-fx-initial="true"]'
+      - state: 38
+        id: fm-fix-validation
+        title: Валидация обязательных полей
+        page: FinancialMetrics.preview.html?id=1027
+        note: «Сохранить» с пустой карточкой — красные рамки у ФИ, даты и типа, тултип «Обязательное поле» на фокусе; окно не закрывается.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - click: '#fm-fix-scrim [data-fix-save]'
+          - waitFor: '#fm-fix-scrim .inp--error'
+      - state: 39
+        id: fm-fix-duplicate
+        title: Повтор ФИ
+        page: FinancialMetrics.preview.html?id=1027
+        note: Тот же ФИ во второй карточке — ошибка «Невозможно рассчитать более одной фиксации для одного ФИ». «⊖» у обеих карточек активна.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Кредит-201
+          - click: '#fm-fix-scrim [data-fix-add]'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-card]:nth-of-type(2) [data-fx-field="fi"] .inp__control'
+              value: 127-Кредит-201
+          - waitFor: '#fm-fix-scrim [data-fx-card]:nth-of-type(2) [data-fx-field="fi"].inp--error'
+      - state: 40
+        id: fm-fix-prelim-fail
+        title: Ошибка предварительного расчета
+        page: FinancialMetrics.preview.html?id=1027&fmFix=prefail
+        note: Сценарий ?fmFix=prefail. Алерт «Предварительный расчет не выполнен» над телом окна, кнопка снова доступна.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Кредит-201
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="date"] .inp__control'
+              value: 01.01.2030
+          - click: '#fm-fix-scrim [data-fx-prelim-run]'
+          - waitFor: '#fm-fix-scrim [data-fix-alert]:not([hidden])'
+      - state: 41
+        id: fm-fix-prelim-no-initial
+        title: Предрасчет без первоначальной фиксации
+        page: FinancialMetrics.preview.html?id=1027
+        note: Алерт называет причину — у ФИ ещё нет первоначальной фиксации ЭПС/ВБС. Тип «Существенная» без первоначальной при сохранении даёт снек с подсказкой «Первоначальная».
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Акции-203
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="date"] .inp__control'
+              value: 01.01.2030
+          - click: '#fm-fix-scrim [data-fx-prelim-run]'
+          - waitFor: '#fm-fix-scrim [data-fix-alert]:not([hidden])'
+      - state: 42
+        id: fm-fix-confirm
+        title: Сохранить до конца предрасчета — подтверждение
+        page: FinancialMetrics.preview.html?id=1027
+        note: Предварительный расчет идёт (ЕТС уже посчитан), «Сохранить» открывает «Подтвердите действие». «Подтвердить» — окна закрываются, тост «Расчет фиксации ЭПС/ВБС запущен», затем новая строка в истории и зелёный снек.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Кредит-201
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="type"] .inp__control'
+              value: Несущественная
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="date"] .inp__control'
+              value: 02.02.2032
+          - click: '#fm-fix-scrim [data-fx-prelim-run]'
+          - wait: 800
+          - click: '#fm-fix-scrim [data-fix-save]'
+          - waitFor: '#fm-fix-confirm-scrim:not([hidden])'
+      - state: 43
+        id: fm-fix-deal-tile
+        title: Окно с тайла на странице сделки
+        page: Deal.preview.html?id=1027
+        note: Кнопка «Фиксация ЭПС/ВБС» тайла «Финансовые метрики» открывает то же окно.
+        do:
+          - click: '#tile-fm-calc [data-fm-act="FIXATION"]'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+      - state: 44
+        id: fm-fix-ets-loading
+        title: ЕТС считается — скелетоны, «Сохранить» с алертом
+        page: FinancialMetrics.preview.html?id=1027&fmEts=slow
+        note: Сценарий ?fmEts=slow (расчёт ЕТС ~8 с). После ФИ и даты вместо ЕТС и Δ ЕТС скелетоны. «Сохранить» до конца расчёта — алерт «Фиксация не может быть выполнена» / «Выполняется расчет значения ЕТС для ФИ»; сам гаснет, когда ЕТС посчитался.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Кредит-201
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="type"] .inp__control'
+              value: Несущественная
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="date"] .inp__control'
+              value: 01.01.2030
+          - click: '#fm-fix-scrim [data-fix-save]'
+          - waitFor: '#fm-fix-scrim [data-fix-alert]:not([hidden])'
+      - state: 45
+        id: fm-fix-ets-failed
+        title: Ошибка расчёта ЕТС
+        page: FinancialMetrics.preview.html?id=1027&fmEts=failed
+        note: Сценарий ?fmEts=failed. Вместо значения прочерк и красная иконка с тултипом «Ошибка расчета ЕТС», рядом карандаш для ручного ввода. Сохранение не блокируется.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Кредит-201
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="date"] .inp__control'
+              value: 01.01.2030
+          - waitFor: '#fm-fix-scrim [data-fx-card][data-fx-ets="error"]'
+      - state: 46
+        id: fm-fix-ets-empty
+        title: ЕТС нет или равна 0
+        page: FinancialMetrics.preview.html?id=1027&fmEts=empty
+        note: Сценарий ?fmEts=empty. Прочерк и жёлтый треугольник с тултипом «Значение ЕТС отсутствует или равно 0», доступен ручной ввод. Сохранение не блокируется.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Кредит-201
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="date"] .inp__control'
+              value: 01.01.2030
+          - waitFor: '#fm-fix-scrim [data-fx-card][data-fx-ets="empty"]'
+      - state: 47
+        id: fm-fix-ets-multiple
+        title: Разные ЕТС у инструментов ФИ — «Сохранить» с алертом
+        page: FinancialMetrics.preview.html?id=1027&fmEts=multiple
+        note: Сценарий ?fmEts=multiple. До «Сохранить» (или предварительного расчёта) в блоке ЕТС прочерк. «Сохранить» — алерт «Фиксация не может быть выполнена», красная иконка «Найдено несколько значений ЕТС для данного ФИ» и список значений и карандаш; окно не закрывается.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Кредит-201
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="type"] .inp__control'
+              value: Несущественная
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="date"] .inp__control'
+              value: 01.01.2030
+          - waitFor: '#fm-fix-scrim [data-fx-card][data-fx-ets="idle"]'
+          - wait: 900
+          - click: '#fm-fix-scrim [data-fix-save]'
+          - waitFor: '#fm-fix-scrim [data-fx-card][data-fx-ets="error"]'
+      - state: 48
+        id: fm-fix-ets-edit
+        title: Ручной ввод ЕТС — поле с «%» и галочка
+        page: FinancialMetrics.preview.html?id=1027&fmEts=multiple
+        note: После карандаша на месте значения поле с постфиксом «%», вместо карандаша галочка. Пустое поле и галочка — возврат к прежнему виду.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Кредит-201
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="type"] .inp__control'
+              value: Несущественная
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="date"] .inp__control'
+              value: 01.01.2030
+          - wait: 900
+          - click: '#fm-fix-scrim [data-fix-save]'
+          - waitFor: '#fm-fix-scrim [data-fx-card][data-fx-ets="error"]'
+          - click: '#fm-fix-scrim [data-fx-ets-pencil]'
+          - waitFor: '#fm-fix-scrim [data-fx-card][data-fx-ets-edit="true"]'
+      - state: 49
+        id: fm-fix-ets-manual
+        title: ЕТС введена вручную — алерт скрыт, Δ пересчитана
+        page: FinancialMetrics.preview.html?id=1027&fmEts=multiple
+        note: После галочки подставлено значение, Δ ЕТС посчитана от прежней ЕТС, иконка и алерт скрыты, карандаш остался; «Сохранить» теперь проходит.
+        do:
+          - click: '#fm-fixation'
+          - waitFor: '#fm-fix-scrim:not([hidden])'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="fi"] .inp__control'
+              value: 127-Кредит-201
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="type"] .inp__control'
+              value: Несущественная
+          - fill:
+              target: '#fm-fix-scrim [data-fx-field="date"] .inp__control'
+              value: 01.01.2030
+          - wait: 900
+          - click: '#fm-fix-scrim [data-fix-save]'
+          - waitFor: '#fm-fix-scrim [data-fx-card][data-fx-ets="error"]'
+          - click: '#fm-fix-scrim [data-fx-ets-pencil]'
+          - fill:
+              target: '#fm-fix-scrim [data-fx-ets-input] .inp__control'
+              value: 18,5
+          - click: '#fm-fix-scrim [data-fx-ets-ok]'
+          - waitFor: '#fm-fix-scrim [data-fx-card][data-fx-ets="manual"]'
+
+  - id: fm-export
+    title: Выгрузка отчета
+    desc: Окно «Выгрузка отчета» из кебаба страницы «Финансовые метрики»; вид — по сети (RE0033, Э8)
+    steps:
+      - state: 50
+        id: fm-export-plain
+        title: Альфа — без шифрования
+        page: FinancialMetrics.preview.html?id=1024
+        note: Сеть по умолчанию — Альфа / Омега. Окно с предупреждением о данных К2, без выбора сотрудников; «Отменить» и «Выгрузить». «Выгрузить» — снек «Файл выгружен».
+        do:
+          - click: '#fm-menu-btn'
+          - click: '#fm-export'
+          - waitFor: '#fm-download-scrim:not([hidden])'
+      - state: 51
+        id: fm-export-encrypted
+        title: Сигма — с шифрованием
+        page: FinancialMetrics.preview.html?id=1024&net=sigma
+        note: Сеть Сигма (с выходом в интернет) — файл шифруется. Тот же заголовок и подвал, плюс выбор сотрудников; «Выгрузить» выключена, пока никто не отмечен.
+        do:
+          - click: '#fm-menu-btn'
+          - click: '#fm-export'
+          - waitFor: '#fm-download-scrim:not([hidden])'
+      - state: 52
+        id: fm-export-email
+        title: Добавлен сотрудник по e-mail
+        note: Адрес вне справочника попадает в колонку своего домена (omega / alfa — во внутренний); «Выгрузить» стала доступна.
+        do:
+          - fill:
+              target: '#fm-dl-email'
+              value: PetrovAA@omega.sberbank.ru
+          - click: '[data-dl-add-email]'
+          - waitFor: '#fm-download-scrim [data-dl-rows] .tbl__row[data-key]'
+      - state: 53
+        id: fm-export-error
+        title: Ошибка выгрузки
+        page: FinancialMetrics.preview.html?id=1024&download=fail
+        note: Сценарий ?download=fail. Окно закрывается, красный снек «Ошибка» / «Не удалось выгрузить файл. Попробуйте еще раз.»
+        do:
+          - click: '#fm-menu-btn'
+          - click: '#fm-export'
+          - click: '#fm-download-scrim [data-dl-submit]'
+          - waitFor: '.snack--error'

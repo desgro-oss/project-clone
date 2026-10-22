@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/tables/FixationHistoryTable/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>История фиксаций — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="История фиксаций">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--table" id="pg-stage">
+<!-- Локальный компонент «История фиксаций» (FixationHistoryTable) — вкладка «Фиксации ЭПС/ВБС»
+     страницы «Финансовые метрики». Пара во фронтенде — FixationHistoryTable. Карточка (Tile)
+     с заголовком и сегмент-контролом «По ФИ» / «По дате» (SegmentControl XS) в действиях
+     шапки (внутри вкладки «Фиксации ЭПС/ВБС» страницы МСФО · РСБУ · KPI · Фиксации ЭПС/ВБС
+     стоит эта карточка) и таблица фиксаций. Вшивается общим сборщиком
+     (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Каркас показан в состоянии «Загрузка», пока страница не передала фиксации: в таблице
+     скелетоны, кнопка сортировки заблокирована. Таблицу и остальные состояния рисует
+     FixationHistoryTable.js поверх FinancialMetricsTable.js:
+     PostFixationHistoryTable.render(корень, фиксации, { mode, busy }). -->
+<section class="tile lc-fixation-history-table" data-state="loading" data-view="BY_FI" data-mode="edit" data-busy="false" id="fm-table-fixations" data-widget="FixationHistoryTable" data-widget-group="tables" data-widget-src="../../../postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.html">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">История фиксаций</h3></div>
+    </div>
+    <div class="tile__actions">
+      <div class="segctrl segctrl--xs" role="radiogroup" data-segctrl aria-label="Вид истории фиксаций">
+        <div class="segctrl__thumb"></div>
+        <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="BY_FI"><span class="segctrl__label">По ФИ</span></button>
+        <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="BY_DATE"><span class="segctrl__label">По дате</span></button>
+      </div>
+    </div>
+  </header>
+  <div class="tile__body lc-fixation-history-table__body">
+    <div class="lc-fixation-history-table__table" data-fh-table>
+      <div class="dtable dtable--fill" aria-busy="true">
+        <div class="dtable__body">
+          <div class="tbl" data-table>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 64px 160px 140px 120px 140px 120px 200px 160px 180px 160px 280px 96px minmax(8px,1fr)">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label" data-grab>№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th" aria-sort="none"><span class="th__label" data-grab>Дата изменений</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="changeDate" aria-label="Сортировать" disabled><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Значение ЭПС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Δ ЭПС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Значение ЕТС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Δ ЕТС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>ВБС на дату фиксации, в валюте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Влияние на ВБС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Day1PnL, в валюте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label" data-grab>Вид модификации</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label" data-grab>Комментарий</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--center"><span class="th__label" data-grab>Действия</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+            <div class="tbl__row" style="grid-template-columns:8px 64px 160px 140px 120px 140px 120px 200px 160px 180px 160px 280px 96px minmax(8px,1fr)">
+              <div class="tc tc--separator"></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>таблица</b></span><span>Версия: <b>0.002</b></span><span>Обновлено: <b>22.10.2026</b></span><span>Категория: <b>Финансовые отчеты сделки</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
+  <h1>История фиксаций</h1>
+  <p class="lead">История фиксаций ЭПС/ВБС по ФИ сделки: переключатель По ФИ и По дате, удаление последней фиксации</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">таблица</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tables/FixationHistoryTable">apps/postrade/deals-app/widgets/tables/FixationHistoryTable/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/widgets/tables/FixationHistoryTable</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница «Финансовые метрики» (FinancialMetrics, RE0033 Э5) — вкладка «Фиксации ЭПС/ВБС», карточка на 12 колонок</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/FinancialMetrics.preview.html">apps/postrade/deals-app/pages/FinancialMetrics.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно подтверждения удаления фиксации (на странице «Финансовые метрики», скрим fm-confirm-scrim — открывает страница по событию виджета)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="FinancialMetricsTable.doc.html">Отчет финансовых метрик (../FinancialMetricsTable/FinancialMetricsTable.md) — числа и даты форматирует его скрипт (fmtNumber, fmtDate); FinancialMetricsTable.js подключается раньше FixationHistoryTable.js; связь односторонняя</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Задача RE0033 (макет «Фиксации ЭПС_ВБС», ответы человека 13, 32 и 33, решение агента 7)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">0.002 · обновлено 22.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">История фиксаций ЭПС/ВБС по финансовым инструментам (ФИ) сделки. ЭПС — эффективная процентная ставка, ВБС — валовая балансовая стоимость; фиксация запоминает их значения на дату изменений и вид модификации (первоначальная, несущественная, существенная). Карточка «История фиксаций» с переключателем вида в шапке: «По ФИ» — группа на каждый ФИ (название и валюта), в группе его фиксации; «По дате» — один плоский список всех фиксаций с колонкой «Наименование ФИ» второй. Вид по умолчанию — «По ФИ». Фильтра у таблицы нет.</p>
+<p class="desc">В колонке «№» — порядковый номер строки (ответ 13 задачи): в «По ФИ» внутри группы, в «По дате» сквозной; номер фиксации ФИ не показывается. Порядок строк по умолчанию — дата изменений по возрастанию; кнопка сортировки даты в шапке идет по кругу «нет → по возрастанию → по убыванию → нет» (нет — порядок по умолчанию, то есть возрастание). Сортировка и свернутые группы запоминаются и не сбрасываются при смене вида.</p>
+<p class="desc">Удалить можно только последнюю фиксацию ФИ, но корзина стоит у каждой строки и активна у всех, тултипа у нее нет (ответ 33 задачи). Сам виджет ничего не удаляет: клик по корзине отправляет событие <code class="tok">fmfixationaction</code>, а решает страница — у непоследней фиксации показывает снек ошибки, у последней открывает подтверждение и после него удаляет и показывает тост. Пока идет пересчет метрик, корзины выключены атрибутом <code class="tok">disabled</code>; в режиме просмотра колонки «Действия» нет в разметке вовсе.</p>
+<p class="desc">Новая строка появляется, когда приходит ответ бэка, вместе со снеком о выполненной фиксации (ответ 32); виджет перерисовывается целиком из списка, который ему передала страница. Что видно, пока фиксация считается, — вопрос 2.</p>
+<p class="desc">Вид («По ФИ» / «По дате») переключает SegmentControl ДС размера XS в действиях шапки карточки (<code class="tok">tile__actions</code>). Карточка «История фиксаций» — содержимое вкладки «Фиксации ЭПС/ВБС» страницы «МСФО · РСБУ · KPI · Фиксации ЭПС/ВБС»; своих вкладок внутри карточки нет, второй уровень навигации не нужен.</p>
+<p class="desc">Где виджет стоит на странице и какую высоту ему дает страница — решает страница, не он.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Tile (заголовок «История фиксаций»)                         · data-state: loading | data | empty; data-view; data-mode; data-busy
+├── tile__actions → SegmentControl XS «По ФИ» · «По дате»   · по умолчанию «По ФИ»
+└── тело
+    └── [data-fh-table] → .dtable.dtable--fill
+        └── .dtable__body → .tbl (шапка; группы ФИ или плоский список) · скелетоны · «Нет данных»
+            «По ФИ»:   группа (twisty, ФИ, валюта) → строки фиксаций
+            «По дате»: строки фиксаций, «Наименование ФИ» — вторая колонка</code></pre>
+<p class="desc">Колонки по порядку: «№», («Наименование ФИ» — только «По дате»), «Дата изменений», «Значение ЭПС, %», «Δ ЭПС, %», «Значение ЕТС, %», «Δ ЕТС, %», «ВБС на дату фиксации, в валюте», «Влияние на ВБС, %», «Day1PnL, в валюте», «Вид модификации», «Комментарий», «Действия» (только в <code class="tok">edit</code>).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">обычный, заголовок M, <code class="tok">tile__header</code> + <code class="tok">tile__body</code>; полосы Alert нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">SegmentControl</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.segctrl.segctrl--xs</code> с <code class="tok">data-segctrl</code> (рантайм Tab: стрелки, Home/End, индикатор), в <code class="tok">.tile__actions</code> шапки; два сегмента без счетчика; кнопки несут <code class="tok">data-view</code> (<code class="tok">BY_FI</code>, <code class="tok">BY_DATE</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Table</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.dtable.dtable--fill</code>, без тулбара; пустое состояние — <code class="tok">.dtable__empty</code> с <code class="tok">.dtable__empty-title</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">TableCell</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">шапка с кнопкой сортировки <code class="tok">.th__sort</code> (<code class="tok">data-sort=&quot;changeDate&quot;</code>), <code class="tok">.tc--numbers</code>, <code class="tok">.tc--center</code> у «Действий», дерево групп (<code class="tok">data-node</code> / <code class="tok">data-parent</code>, <code class="tok">.tc--tree</code>, <code class="tok">.tc__twisty</code>), <code class="tok">.tc__postfix</code> для валюты группы, ячейка группы занимает три колонки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">neutral S, глиф <code class="tok">trash</code>, <code class="tok">aria-label=&quot;Удалить фиксацию&quot;</code>; недоступная — <code class="tok">disabled</code> и <code class="tok">aria-disabled=&quot;true&quot;</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.sk-line--caption</code> в ячейках, шесть строк</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Своего CSS — раскладка тела карточки (колонка, зазор <code class="tok">--space-12</code>), хост таблицы, ячейка группы на три колонки, цвета Δ.</p>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Tile/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.html">SegmentControl</a> · <a class="inl" href="../../../../design-system/components/organisms/Table/Table.html">Table</a> · <a class="inl" href="../../../../design-system/components/organisms/TableCell/TableCell.html">TableCell</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/atoms/Skeleton/Skeleton.html">Skeleton</a> · <a class="inl" href="../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tables/FixationHistoryTable/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.css">FixationHistoryTable.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.html">FixationHistoryTable.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.js">FixationHistoryTable.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.md">FixationHistoryTable.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tables/FixationHistoryTable/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<p class="desc">Фиксации приходят как <code class="tok">EirIbsvFixationRsDto</code> (<code class="tok">data/mock-fin-metrics-calc.js</code>) плюс три поля, которые добавляет <code class="tok">FinMetricsStore.fixations()</code>. Порядок строк — порядок колонок:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">— («№»)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">порядковый номер строки в группе («По ФИ») или в списке («По дате»)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">целое, считает виджет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">порядок после сортировки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fiName</code> + <code class="tok">currencyCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">название ФИ и валюта: в строке группы («По ФИ») и в колонке «Наименование ФИ» («По дате»; в ячейке — название и валюта)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст, код валюты</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FinMetricsStore.fixations()</code> (карточка ФИ сделки)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">changeDate</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата изменений</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ISO-дата, показывается <code class="tok">ДД.ММ.ГГГГ</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EirIbsvFixationRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">eirRate</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значение ЭПС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, %</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EirIbsvFixationRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет — прочерка нет, ячейка пустая</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">eirDelta</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Δ ЭПС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число со знаком, %; «+» зеленым, «−» красным, 0 — без цвета</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EirIbsvFixationRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет — у первоначальной фиксации пусто</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">etsRate</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значение ЕТС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, %</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EirIbsvFixationRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">etsDelta</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Δ ЕТС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число со знаком, %; цвета как у Δ ЭПС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EirIbsvFixationRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">grossCarryingAmount</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ВБС на дату фиксации</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, в валюте ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EirIbsvFixationRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">grossCarryingImpactRate</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">влияние на ВБС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число со знаком, %</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EirIbsvFixationRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">day1PnlAmount</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Day1PnL</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число со знаком, в валюте ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EirIbsvFixationRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modificationTypeCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вид модификации: «Первоначальная», «Несущественная», «Существенная»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">INITIAL</code> · <code class="tok">NON_SUBSTANTIAL</code> · <code class="tok">SUBSTANTIAL</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EirIbsvFixationRsDto</code>, подписи — <code class="tok">FIN_METRICS_LABELS.modification</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">comment</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">комментарий</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EirIbsvFixationRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixationId</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">идентификатор; уходит в событие корзины и в <code class="tok">data-fixation-id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EirIbsvFixationRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-view</code> на корне</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текущий вид</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">BY_FI</code> · <code class="tok">BY_DATE</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">скрипт, по умолчанию <code class="tok">BY_FI</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Числа — с запятой и неразрывным пробелом между разрядами (<code class="tok">1 500 000,00</code>; решение агента 8 задачи). Валюта в колонках «в валюте» не повторяется: она в строке группы и в колонке «Наименование ФИ».</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">удаление последней фиксации ФИ; в просмотре колонки «Действия» нет. Кто удаляет — вопрос 1, не решено (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Режим прав приходит атрибутом <code class="tok">data-mode</code> (<code class="tok">edit</code> · <code class="tok">view</code>) от страницы: страница ставит <code class="tok">view</code>, когда статус сделки не допускает правку или роль без права на расчет и фиксацию.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state=&quot;loading&quot;</code>: карточка, переключатель вида и шапка таблицы на месте (кнопка сортировки заблокирована), в строках скелетоны. Это и разметка по умолчанию, пока страница не передала фиксации; скрипт рисует его при <code class="tok">fixations == null</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state=&quot;data&quot;</code>: «По ФИ» — группы ФИ со строками, «По дате» — плоский список</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">та же разметка: у первоначальной фиксации Δ, влияние на ВБС и Day1PnL пусты — ячейка пустая, колонка на месте</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state=&quot;empty&quot;</code>: фиксаций нет. Переключатель вида виден, шапки и колонок нет, по центру «Нет данных». Одинаково в обоих видах</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вид ошибки получения истории на макетах не нарисован; вопрос 2</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">таблица перерисовывается целиком</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode=&quot;edit&quot;</code>: колонка «Действия» с корзинами</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode=&quot;view&quot;</code>: колонки «Действия» нет в разметке; история и переключатель вида остаются</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает страница, не виджет; вопрос 1</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.3fr) minmax(0,2.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.3fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Вид «По ФИ»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-view=&quot;BY_FI&quot;</code>, по умолчанию</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">группы по ФИ, сворачиваются</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.3fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Вид «По дате»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-view=&quot;BY_DATE&quot;</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">плоский список, вторая колонка «Наименование ФИ»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.3fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Идет пересчет метрик</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-busy=&quot;true&quot;</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">корзины выключены: <code class="tok">disabled</code> и <code class="tok">aria-disabled=&quot;true&quot;</code>; клик событие не отправляет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.3fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сортировка по дате</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">aria-sort</code> у колонки: <code class="tok">none</code> · <code class="tok">ascending</code> · <code class="tok">descending</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки переставлены внутри групп («По ФИ») или во всем списке («По дате»), «№» пересчитан</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.3fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Группа свернута</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у кнопки группы <code class="tok">aria-expanded=&quot;false&quot;</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки группы скрыты атрибутом <code class="tok">hidden</code>; выбор запоминается и переживает смену вида</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет — он показывает данные, ничего не заполняет.</li><li>Обязательные поля внутри: Не применимо — полей ввода нет.</li><li>Что показывает, когда обязательное не заполнено: Не применимо.</li><li>Что отдаёт наружу (признак для экрана или формы): событие <code class="tok">fmfixationaction</code> (см. «Поведение»); признака для формы нет.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">название ФИ, вид модификации и комментарий усечены многоточием с тултипом ДС; название в строке группы усекается внутри трех колонок</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вертикальный скролл у тела таблицы, шапка липкая; высоту ограничивает страница (<code class="tok">.screen--app</code>), иначе таблица растет по числу строк</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">горизонтальный скролл у тела таблицы; переключатель не переносится (два сегмента)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточка на 12 колонок страницы; ширины колонок заданы, остаток забирает хвостовой сепаратор</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по сегменту переключателя или стрелки, Home / End на нём</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-view</code> корня меняется, таблица перерисовывается; к странице виджет не обращается. Сортировка и свернутые группы сохраняются</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по кнопке сортировки «Дата изменений»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">рантайм ДС красит кнопку и шлет <code class="tok">sort</code>; виджет по нему сам переставляет строки (внутри групп — в дереве <code class="tok">data-sort-rows</code> ДС переставляет только корни) и считает «№» заново. Круг: нет → по возрастанию → по убыванию → нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по значку группы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">группа сворачивается и разворачивается (рантайм ДС)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по корзине</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">с корня уходит <code class="tok">fmfixationaction</code> с <code class="tok">detail: { action: 'REMOVE', fixationId }</code>; виджет сам ничего не удаляет. У корзины с <code class="tok">disabled</code> события нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">render(root, fixations, { mode, busy })</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запоминает список и режим на корне, ставит <code class="tok">data-state</code>, <code class="tok">data-mode</code>, <code class="tok">data-busy</code> и перерисовывает таблицу; вид, сортировка и свернутые группы не сбрасываются</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Корзина последней фиксации ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно подтверждения (на странице, Modal <code class="tok">--w4</code>, скрим <code class="tok">fm-confirm-scrim</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заголовок «Подтверждение действия», текст «Удаление фиксации ЭПС/ВБС финансового инструмента &quot;&lt;ФИ&gt;&quot; на &lt;ДД.ММ.ГГГГ&gt;», кнопки «Отменить» и «Подтвердить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Подтвердить»: стор удаляет фиксацию, виджет перерисован, счётчик вкладки уменьшен, тёмный тост «Фиксация ЭПС/ВБС удалена»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно фиксации (Э6) подтверждает действия через ту же функцию страницы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Корзина не последней фиксации ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">снек ошибки (SnackBar)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Невозможно удалить фиксацию ЭПС/ВБС» / «Вы можете удалить только последнюю фиксацию для каждого ФИ»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ничего: окно не открывается, фиксация остается</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Список фиксаций сделки (поля — «Поля») и удаление фиксации по идентификатору. Последняя фиксация ФИ — самая поздняя по дате изменений; решает ли это бэкенд или клиент по списку — не решено (вопрос 3). Имена методов API не придумываются: их выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-fin-metrics-calc.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_DEAL_METRICS_CALC</code> (поле <code class="tok">fixations</code> у записи сделки), <code class="tok">window.FIN_METRICS_LABELS.modification</code>, typedef <code class="tok">EirIbsvFixationRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">описание типа, демо-фиксации сделок 1024 и 1027</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/fin-metrics-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.FinMetricsStore</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixations()</code> (с <code class="tok">fiName</code>, <code class="tok">currencyCode</code>, <code class="tok">isLast</code>), <code class="tok">removeFixation(id)</code> → <code class="tok">{ ok }</code> или <code class="tok">{ error: 'NOT_FOUND' \| 'NOT_LAST' }</code>, событие <code class="tok">change</code> с <code class="tok">reason: 'fixation-removed'</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модель представления, не DTO</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code> (рядом)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фиксации, вид, режим и <code class="tok">busy</code> по состояниям витрины; сценарий показа — <code class="tok">apps/local-components/postrade/deals-app/FixationHistoryTable.demo.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Виджет стор не читает: фиксации получает от страницы.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,2.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по нему страница находит карточку; в разметке виджета id нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">место в сетке страницы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loading</code> · <code class="tok">data</code> · <code class="tok">empty</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние данных; в разметке по умолчанию <code class="tok">loading</code>, после каждого <code class="tok">render</code> его ставит скрипт — страница не задает</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code> · <code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">режим прав; ставит скрипт из аргумента <code class="tok">render</code>, в разметке по умолчанию <code class="tok">edit</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Свои атрибуты корня: <code class="tok">data-view</code> (<code class="tok">BY_FI</code> · <code class="tok">BY_DATE</code>) — вид; <code class="tok">data-busy</code> (<code class="tok">true</code> · <code class="tok">false</code>) — идет пересчет метрик.</p>
+<h3 class="kit-md__h3">Скрипт виджета</h3>
+<p class="desc"><code class="tok">FixationHistoryTable.js</code>, глобал <code class="tok">PostFixationHistoryTable</code>; подключается после <code class="tok">FinancialMetricsTable.js</code> (оттуда <code class="tok">fmtNumber</code> и <code class="tok">fmtDate</code>), оба — после <code class="tok">ds.js</code>:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Функция</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что делает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">render(root, fixations, { mode, busy })</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixations</code> — записи фиксаций; <code class="tok">null</code> — загрузка; <code class="tok">[]</code> — «Нет данных». <code class="tok">mode</code> — <code class="tok">edit</code> (по умолчанию) или <code class="tok">view</code>; <code class="tok">busy</code> — идет пересчет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">view(root)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текущий вид: <code class="tok">BY_FI</code> или <code class="tok">BY_DATE</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">События с корня (<code class="tok">CustomEvent</code>, <code class="tok">bubbles: true</code>): <code class="tok">fmfixationaction</code> с <code class="tok">detail: { action: 'REMOVE', fixationId }</code>.</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.8fr) minmax(0,2.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.8fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Виджет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tables/FixationHistoryTable/FixationHistoryTable.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/widgets/tables/FixationHistoryTable</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.8fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Стили раскладки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tables/FixationHistoryTable/FixationHistoryTable.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.8fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Переключатель вида, сортировка, перерисовка, событие</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tables/FixationHistoryTable/FixationHistoryTable.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">компонент виджета</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.8fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Удаление, подтверждение, снек и тост</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">pages/FinancialMetrics.html</code>, <code class="tok">data/fin-metrics-notify.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">страница-владелец</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: часть корзин светлее, у них тултип «Можно удалить только последнюю фиксацию ЭПС/ВБС»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">корзина активна у всех строк, тултипа нет; у не последней клик даёт снек ошибки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответ 33 задачи RE0033</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: счётчик вкладки «9» и номера «1» у всех строк</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«№» — порядковый номер строки, счётчик — число фиксаций</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответ 13 задачи</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: тост «Фиксации ЭПС/ВБС удалена»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Фиксация ЭПС/ВБС удалена»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">явная опечатка макета, решение агента 7 задачи</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal ДС: подтверждение удаления — Primary в тоне <code class="tok">btn--danger</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно подтверждения на странице: «Подтвердить» — <code class="tok">btn--accent</code>, без тона ошибки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тон кнопки задаёт макет (лист «Фиксации ЭПС_ВБС»); окно общее и в Э6 подтверждает не деструктивное действие</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: подвкладки подчеркнутым текстом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">SegmentControl XS ДС в <code class="tok">tile__actions</code> шапки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение человека 22.10.2026: переключатель вида — сегмент-контрол в действиях шапки карточки; ДС допускает SegmentControl в <code class="tok">tile__actions</code> (Tile, правка 22.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Группа ФИ — готового компонента «группа строк» в ДС нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дерево строк TableCell (<code class="tok">data-node</code> / <code class="tok">data-parent</code>); значок раскрытия <code class="tok">chevron-right</code>; ячейка группы занимает три колонки (<code class="tok">grid-column: span 3</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в колонке «№» (64px) название ФИ не помещается; других колонок под название нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сортировка строк — опция ДС <code class="tok">data-sort-rows</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не ставится, строки переставляет виджет по событию <code class="tok">sort</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в дереве ДС переставляет только корни, а нужны строки внутри групп</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопка сортировки в первый раз: «нет» — порядок по умолчанию</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«нет» — порядок по возрастанию, поэтому первый клик (по возрастанию) строки не меняет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">порядок по умолчанию задан дата по возрастанию; допущение 21.10.2026, вопрос 4</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Перестановка колонок за подпись шапки (в ДС включена всегда — <code class="tok">TableReorder.js</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выключена: у подписей шапки стоит атрибут <code class="tok">data-grab</code>; ширина колонок меняется как обычно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">та же причина, что у отчетов метрик: порядок колонок задан макетом (решение человека 21.10.2026). Шестерёнки «Настройка таблицы» нет — в её модалке порядок тоже переставляется</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Каждый виджет стилизует только свои классы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FixationHistoryTable.css</code> повторяет правило имени ФИ в группе из <code class="tok">FinancialMetricsTable.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточка должна выглядеть одинаково, даже если на странице нет вкладок отчетов</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<p class="desc">Решение человека 29.09.2026: вопросы не закрываются догадкой и не удаляются, пока человек не разберёт каждый; ответ записывается у вопроса с датой. Вопросы 1–2 перенесены из задачи RE0033 (<code class="tok">docs/tasks/RE0033-deal-financial-metrics.md</code>, вопросы 19 и 32).</p>
+<ol class="kit-md__ol"><li><b>Права</b> (RE0033, вопрос 19): кто фиксирует, удаляет фиксацию, выгружает отчет — оставлено открытым (21.10.2026). В прототипе (допущение 21.10.2026): удалять может тот, кто может править сделку по статусу, и роль с правом на расчет; иначе <code class="tok">view</code> без колонки «Действия» (на странице — сценарий панели <code class="tok">?fmMode=view</code>).</li><li><b>Что видно, пока фиксация считается, и при ошибке расчета</b> (RE0033, вопрос 32): строка появляется, когда приходит ответ бэка, вместе с зеленым снеком о выполненной фиксации (ответ 21.10.2026); что видно, пока расчет идет (скелетон строки, отдельное состояние таблицы, ничего), и что при ошибке «Расчет фиксации ЭПС/ВБС не выполнен» — оставлено открытым. В прототипе сейчас: строка появляется по ответу расчёта фиксации (окно собрано в Э6), промежуточного вида нет; вид ошибки получения истории не нарисован.</li><li><b>Что такое «последняя» фиксация.</b> В прототипе — с самой поздней датой изменений у ФИ (допущение 21.10.2026). Не решено: что при равных датах, считает ли признак бэкенд или клиент, можно ли удалить последнюю фиксацию «Первоначальная», если по ФИ нет других.</li><li><b>Первый клик по сортировке даты.</b> По умолчанию строки идут по возрастанию, а кнопка в состоянии «нет» (так ведет себя рантайм ДС: нет → по возрастанию → по убыванию → нет), поэтому первый клик строки не меняет. Допущение 21.10.2026 по заданию; альтернатива — стартовать с «по возрастанию»; нужен ли ответ человека — не решено.</li><li><b>Что меняется после удаления фиксации.</b> В прототипе из отчетов МСФО, РСБУ и KPI уходит колонка даты этой фиксации, если на нее нет другого события (так строит даты мок); пересчет метрик не запускается и не требуется. Не решено: влияет ли удаление на значения отчетов и метрик, нужен ли пересчет, как это видит пользователь.</li><li><b>Колонка «Комментарий», ширины колонок, единицы значений</b> (проценты — число без знака «%», суммы — без кода валюты) и <b>длинные значения</b> — по макету не уточнены; ширины колонок в прототипе — допущение 21.10.2026, определяются по размеру заголовков и значений.</li><li><b>Счетчики у сегментов переключателя</b> («По ФИ» · «По дате») — на макете нет, в прототипе нет; нужны ли (например, число ФИ или фиксаций) — не решено (21.10.2026).</li><li><b>Вид по умолчанию и его запоминание.</b> По умолчанию — «По ФИ» (первая на макете; допущение 21.10.2026). Запоминается ли выбор между заходами — не решено.</li><li><b>Закрепление первой колонки, настройка таблицы, ошибка получения истории</b> — те же вопросы, что у <code class="tok">FinancialMetricsTable</code> (паспорт, «Открытые вопросы»); отдельных ответов для истории фиксаций нет (21.10.2026). Закрепленных колонок в прототипе нет: таблица шире экрана прокручивается целиком.</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">FixationHistoryTable.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/tables/FixationHistoryTable/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/FinancialMetrics.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/fin-instruments-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-metrics-calc.js"></script>
+<script src="../../../postrade/deals-app/data/fin-metrics-store.js"></script>
+<script src="../../../postrade/deals-app/data/fin-metrics-notify.js"></script>
+<script src="../../../postrade/deals-app/data/mock-report-employees.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.js"></script>
+<script src="../../../postrade/deals-app/widgets/tables/KPITable/KPITable.js"></script>
+<script src="../../../postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/FixationModal/FixationModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.js"></script>
+<script src="FixationHistoryTable.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"FixationHistoryTable","type":"table","base":"../..","hub":"../../../../index.html","states":["loading"],"modes":["edit"],"state":"loading","mode":"edit","width":1600,"scenario":true,"fixtures":{"_":"Демо-данные конструктора витрины: объект на состояние (ключи — значения data-state, плюс свои): fixations — записи фиксаций вместе с fiName и currencyCode (так их отдает FinMetricsStore.fixations()); null — загрузка; view — вид «По ФИ» (BY_FI) или «По дате» (BY_DATE); mode — edit или view (в просмотре колонки «Действия» нет); busy — идет пересчет метрик, корзины disabled. «По дате» — те же данные на второй подвкладке, «Просмотр» и «Пересчет идет» — режимы того же состояния «Данные есть». long — самые длинные значения. Значения выдуманные, но правдоподобной длины. Рисует их сценарий демо функциями самого компонента.","data":{"fixations":[{"fixationId":"FX-1","financialInstrumentId":"FI-1","changeDate":"2024-04-22","modificationTypeCode":"INITIAL","eirRate":11.82,"eirDelta":null,"etsRate":9.4,"etsDelta":null,"grossCarryingAmount":350000000,"grossCarryingImpactRate":null,"day1PnlAmount":null,"comment":"Первоначальная фиксация","fiName":"5-Кредит-1","currencyCode":"RUB"},{"fixationId":"FX-2","financialInstrumentId":"FI-1","changeDate":"2025-03-14","modificationTypeCode":"SUBSTANTIAL","eirRate":12.64,"eirDelta":0.82,"etsRate":10.1,"etsDelta":0.7,"grossCarryingAmount":338450000,"grossCarryingImpactRate":-3.3,"day1PnlAmount":-4210000,"comment":"Изменение графика погашения","fiName":"5-Кредит-1","currencyCode":"RUB"},{"fixationId":"FX-3","financialInstrumentId":"FI-1","changeDate":"2025-09-30","modificationTypeCode":"NON_SUBSTANTIAL","eirRate":12.4,"eirDelta":-0.24,"etsRate":10.1,"etsDelta":0,"grossCarryingAmount":336100000,"grossCarryingImpactRate":-0.7,"day1PnlAmount":-820000,"comment":"","fiName":"5-Кредит-1","currencyCode":"RUB"},{"fixationId":"FX-4","financialInstrumentId":"FI-2","changeDate":"2024-06-10","modificationTypeCode":"INITIAL","eirRate":8.15,"eirDelta":null,"etsRate":6.9,"etsDelta":null,"grossCarryingAmount":12500000,"grossCarryingImpactRate":null,"day1PnlAmount":null,"comment":"","fiName":"12345. Договор займа (НКЛ)","currencyCode":"USD"},{"fixationId":"FX-5","financialInstrumentId":"FI-2","changeDate":"2025-06-30","modificationTypeCode":"NON_SUBSTANTIAL","eirRate":8.4,"eirDelta":0.25,"etsRate":7.3,"etsDelta":0.4,"grossCarryingAmount":12380000,"grossCarryingImpactRate":-0.96,"day1PnlAmount":-115000,"comment":"Перенос даты платежа","fiName":"12345. Договор займа (НКЛ)","currencyCode":"USD"}],"view":"BY_FI","mode":"edit","busy":false},"byDate":{"fixations":[{"fixationId":"FX-1","financialInstrumentId":"FI-1","changeDate":"2024-04-22","modificationTypeCode":"INITIAL","eirRate":11.82,"eirDelta":null,"etsRate":9.4,"etsDelta":null,"grossCarryingAmount":350000000,"grossCarryingImpactRate":null,"day1PnlAmount":null,"comment":"Первоначальная фиксация","fiName":"5-Кредит-1","currencyCode":"RUB"},{"fixationId":"FX-2","financialInstrumentId":"FI-1","changeDate":"2025-03-14","modificationTypeCode":"SUBSTANTIAL","eirRate":12.64,"eirDelta":0.82,"etsRate":10.1,"etsDelta":0.7,"grossCarryingAmount":338450000,"grossCarryingImpactRate":-3.3,"day1PnlAmount":-4210000,"comment":"Изменение графика погашения","fiName":"5-Кредит-1","currencyCode":"RUB"},{"fixationId":"FX-3","financialInstrumentId":"FI-1","changeDate":"2025-09-30","modificationTypeCode":"NON_SUBSTANTIAL","eirRate":12.4,"eirDelta":-0.24,"etsRate":10.1,"etsDelta":0,"grossCarryingAmount":336100000,"grossCarryingImpactRate":-0.7,"day1PnlAmount":-820000,"comment":"","fiName":"5-Кредит-1","currencyCode":"RUB"},{"fixationId":"FX-4","financialInstrumentId":"FI-2","changeDate":"2024-06-10","modificationTypeCode":"INITIAL","eirRate":8.15,"eirDelta":null,"etsRate":6.9,"etsDelta":null,"grossCarryingAmount":12500000,"grossCarryingImpactRate":null,"day1PnlAmount":null,"comment":"","fiName":"12345. Договор займа (НКЛ)","currencyCode":"USD"},{"fixationId":"FX-5","financialInstrumentId":"FI-2","changeDate":"2025-06-30","modificationTypeCode":"NON_SUBSTANTIAL","eirRate":8.4,"eirDelta":0.25,"etsRate":7.3,"etsDelta":0.4,"grossCarryingAmount":12380000,"grossCarryingImpactRate":-0.96,"day1PnlAmount":-115000,"comment":"Перенос даты платежа","fiName":"12345. Договор займа (НКЛ)","currencyCode":"USD"}],"view":"BY_DATE","mode":"edit","busy":false},"viewMode":{"fixations":[{"fixationId":"FX-1","financialInstrumentId":"FI-1","changeDate":"2024-04-22","modificationTypeCode":"INITIAL","eirRate":11.82,"eirDelta":null,"etsRate":9.4,"etsDelta":null,"grossCarryingAmount":350000000,"grossCarryingImpactRate":null,"day1PnlAmount":null,"comment":"Первоначальная фиксация","fiName":"5-Кредит-1","currencyCode":"RUB"},{"fixationId":"FX-2","financialInstrumentId":"FI-1","changeDate":"2025-03-14","modificationTypeCode":"SUBSTANTIAL","eirRate":12.64,"eirDelta":0.82,"etsRate":10.1,"etsDelta":0.7,"grossCarryingAmount":338450000,"grossCarryingImpactRate":-3.3,"day1PnlAmount":-4210000,"comment":"Изменение графика погашения","fiName":"5-Кредит-1","currencyCode":"RUB"},{"fixationId":"FX-3","financialInstrumentId":"FI-1","changeDate":"2025-09-30","modificationTypeCode":"NON_SUBSTANTIAL","eirRate":12.4,"eirDelta":-0.24,"etsRate":10.1,"etsDelta":0,"grossCarryingAmount":336100000,"grossCarryingImpactRate":-0.7,"day1PnlAmount":-820000,"comment":"","fiName":"5-Кредит-1","currencyCode":"RUB"},{"fixationId":"FX-4","financialInstrumentId":"FI-2","changeDate":"2024-06-10","modificationTypeCode":"INITIAL","eirRate":8.15,"eirDelta":null,"etsRate":6.9,"etsDelta":null,"grossCarryingAmount":12500000,"grossCarryingImpactRate":null,"day1PnlAmount":null,"comment":"","fiName":"12345. Договор займа (НКЛ)","currencyCode":"USD"},{"fixationId":"FX-5","financialInstrumentId":"FI-2","changeDate":"2025-06-30","modificationTypeCode":"NON_SUBSTANTIAL","eirRate":8.4,"eirDelta":0.25,"etsRate":7.3,"etsDelta":0.4,"grossCarryingAmount":12380000,"grossCarryingImpactRate":-0.96,"day1PnlAmount":-115000,"comment":"Перенос даты платежа","fiName":"12345. Договор займа (НКЛ)","currencyCode":"USD"}],"view":"BY_FI","mode":"view","busy":false},"busy":{"fixations":[{"fixationId":"FX-1","financialInstrumentId":"FI-1","changeDate":"2024-04-22","modificationTypeCode":"INITIAL","eirRate":11.82,"eirDelta":null,"etsRate":9.4,"etsDelta":null,"grossCarryingAmount":350000000,"grossCarryingImpactRate":null,"day1PnlAmount":null,"comment":"Первоначальная фиксация","fiName":"5-Кредит-1","currencyCode":"RUB"},{"fixationId":"FX-2","financialInstrumentId":"FI-1","changeDate":"2025-03-14","modificationTypeCode":"SUBSTANTIAL","eirRate":12.64,"eirDelta":0.82,"etsRate":10.1,"etsDelta":0.7,"grossCarryingAmount":338450000,"grossCarryingImpactRate":-3.3,"day1PnlAmount":-4210000,"comment":"Изменение графика погашения","fiName":"5-Кредит-1","currencyCode":"RUB"},{"fixationId":"FX-3","financialInstrumentId":"FI-1","changeDate":"2025-09-30","modificationTypeCode":"NON_SUBSTANTIAL","eirRate":12.4,"eirDelta":-0.24,"etsRate":10.1,"etsDelta":0,"grossCarryingAmount":336100000,"grossCarryingImpactRate":-0.7,"day1PnlAmount":-820000,"comment":"","fiName":"5-Кредит-1","currencyCode":"RUB"},{"fixationId":"FX-4","financialInstrumentId":"FI-2","changeDate":"2024-06-10","modificationTypeCode":"INITIAL","eirRate":8.15,"eirDelta":null,"etsRate":6.9,"etsDelta":null,"grossCarryingAmount":12500000,"grossCarryingImpactRate":null,"day1PnlAmount":null,"comment":"","fiName":"12345. Договор займа (НКЛ)","currencyCode":"USD"},{"fixationId":"FX-5","financialInstrumentId":"FI-2","changeDate":"2025-06-30","modificationTypeCode":"NON_SUBSTANTIAL","eirRate":8.4,"eirDelta":0.25,"etsRate":7.3,"etsDelta":0.4,"grossCarryingAmount":12380000,"grossCarryingImpactRate":-0.96,"day1PnlAmount":-115000,"comment":"Перенос даты платежа","fiName":"12345. Договор займа (НКЛ)","currencyCode":"USD"}],"view":"BY_FI","mode":"edit","busy":true},"loading":{"fixations":null,"view":"BY_FI","mode":"edit","busy":false},"empty":{"fixations":[],"view":"BY_FI","mode":"edit","busy":false},"error":{"message":""},"long":{"fixations":[{"fixationId":"FX-L1","financialInstrumentId":"FI-L1","changeDate":"2024-04-22","modificationTypeCode":"INITIAL","eirRate":11.82,"eirDelta":null,"etsRate":9.4,"etsDelta":null,"grossCarryingAmount":98765432100.55,"grossCarryingImpactRate":null,"day1PnlAmount":null,"comment":"Первоначальная фиксация по договору, подписанному в рамках рамочного соглашения об условиях сделок репо","fiName":"1-ПУТ: Репо-4474 с дополнительным обеспечением и расширенным периодом расчетов","currencyCode":"RUB"},{"fixationId":"FX-L2","financialInstrumentId":"FI-L1","changeDate":"2025-03-14","modificationTypeCode":"SUBSTANTIAL","eirRate":-12.64,"eirDelta":-24.46,"etsRate":10.1,"etsDelta":-0.7,"grossCarryingAmount":98765432100.55,"grossCarryingImpactRate":-13.33,"day1PnlAmount":-987654321.99,"comment":"Существенная модификация: изменение графика погашения и ставки","fiName":"1-ПУТ: Репо-4474 с дополнительным обеспечением и расширенным периодом расчетов","currencyCode":"RUB"}],"view":"BY_DATE","mode":"edit","busy":false}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «История фиксаций» (FixationHistoryTable) — вкладка «Фиксации ЭПС/ВБС»
+     страницы «Финансовые метрики». Пара во фронтенде — FixationHistoryTable. Карточка (Tile)
+     с заголовком и сегмент-контролом «По ФИ» / «По дате» (SegmentControl XS) в действиях
+     шапки (внутри вкладки «Фиксации ЭПС/ВБС» страницы МСФО · РСБУ · KPI · Фиксации ЭПС/ВБС
+     стоит эта карточка) и таблица фиксаций. Вшивается общим сборщиком
+     (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Каркас показан в состоянии «Загрузка», пока страница не передала фиксации: в таблице
+     скелетоны, кнопка сортировки заблокирована. Таблицу и остальные состояния рисует
+     FixationHistoryTable.js поверх FinancialMetricsTable.js:
+     PostFixationHistoryTable.render(корень, фиксации, { mode, busy }). -->
+<section class="tile lc-fixation-history-table" data-state="loading" data-view="BY_FI" data-mode="edit" data-busy="false">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">История фиксаций</h3></div>
+    </div>
+    <div class="tile__actions">
+      <div class="segctrl segctrl--xs" role="radiogroup" data-segctrl aria-label="Вид истории фиксаций">
+        <div class="segctrl__thumb"></div>
+        <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="BY_FI"><span class="segctrl__label">По ФИ</span></button>
+        <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="BY_DATE"><span class="segctrl__label">По дате</span></button>
+      </div>
+    </div>
+  </header>
+  <div class="tile__body lc-fixation-history-table__body">
+    <div class="lc-fixation-history-table__table" data-fh-table>
+      <div class="dtable dtable--fill" aria-busy="true">
+        <div class="dtable__body">
+          <div class="tbl" data-table>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 64px 160px 140px 120px 140px 120px 200px 160px 180px 160px 280px 96px minmax(8px,1fr)">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label" data-grab>№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th" aria-sort="none"><span class="th__label" data-grab>Дата изменений</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="changeDate" aria-label="Сортировать" disabled><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Значение ЭПС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Δ ЭПС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Значение ЕТС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Δ ЕТС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>ВБС на дату фиксации, в валюте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Влияние на ВБС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Day1PnL, в валюте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label" data-grab>Вид модификации</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label" data-grab>Комментарий</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--center"><span class="th__label" data-grab>Действия</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+            <div class="tbl__row" style="grid-template-columns:8px 64px 160px 140px 120px 140px 120px 200px 160px 180px 160px 280px 96px minmax(8px,1fr)">
+              <div class="tc tc--separator"></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «История фиксаций» (FixationHistoryTable).
+   Только внутренняя раскладка. Цвета, шрифты, отступы — токены ДС; своих значений здесь нет.
+   Карточка (Tile) с сегмент-контролом в действиях шапки (SegmentControl), таблица (Table,
+   TableCell), пустое состояние (.dtable__empty), скелетоны, IconButton — компоненты ДС: их
+   размеры и состояния отсюда не переопределяются.
+
+   Оси на корне: data-state — loading | empty | data, ставит FixationHistoryTable.js по
+   списку фиксаций; data-view — BY_FI | BY_DATE, вид («По ФИ» / «По дате»);
+   data-mode — edit | view (в просмотре колонки «Действия» нет в разметке); data-busy —
+   true, пока идет пересчет метрик (корзины disabled). Вид по состоянию задают сами
+   компоненты ДС, CSS виджета его не переключает. */
+
+/* Таблица — колонкой с ритмом 12px (Table, вариант «над таблицей»). Тело
+   карточки сжимается по ширине родителя, горизонтальный скролл остается у тела таблицы. */
+.lc-fixation-history-table__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Хост таблицы: .dtable--fill растягивается на свободную высоту, если родитель ее
+   ограничил; без ограничения таблица растет по числу строк. */
+.lc-fixation-history-table__table {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Строка группы «По ФИ»: ячейка с названием ФИ занимает первые три колонки («№»,
+   «Дата изменений», «Значение ЭПС») — в «№» (64px) название не помещается. */
+.lc-fixation-history-table__group-cell { grid-column: span 3; }
+
+/* Имя ФИ в строке группы — Body S Strong (как в отчетах метрик); валюта рядом — штатный
+   .tc__postfix. Два класса — чтобы перебить .tc__text
+   независимо от порядка подключения CSS. */
+.lc-fixation-history-table__group-name.tc__text {
+  font: var(--type-body-s-strong);
+}
+
+/* Δ ЭПС и Δ ЕТС: плюс — зеленым, минус — красным; ноль и пусто — цветом текста. */
+.lc-fixation-history-table__delta--up { color: var(--success-dark); }
+.lc-fixation-history-table__delta--down { color: var(--error-dark); }
+
+/* Пустая история: «Нет данных» — по центру тела таблицы, как у отчетов метрик (ДС центрирует
+   только по горизонтали). Тело растягивается, только когда в нем одно пустое состояние. */
+.lc-fixation-history-table .dtable__body:has(> .dtable__empty) {
+  display: flex;
+  flex-direction: column;
+}
+.lc-fixation-history-table .dtable__body > .dtable__empty { flex: 1 1 auto; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   FixationHistoryTable.js — история фиксаций ЭПС/ВБС: карточка «История
+   фиксаций» с переключателем вида «По ФИ» / «По дате» и таблица фиксаций.
+
+   Виджет ничего не удаляет и стор не читает: список фиксаций и режим ему
+   отдает страница, удаление выполняет она по событию корня. Числа и даты
+   форматирует FinancialMetricsTable.js (fmtNumber, fmtDate), поэтому он
+   подключается раньше этого скрипта; оба — после ds.js (рантаймы ДС: Table,
+   TableCell, Tab, Icons).
+
+   Глобальное имя: window.PostFixationHistoryTable.
+
+   Тип записи (data/mock-fin-metrics-calc.js, EirIbsvFixationRsDto) плюс три
+   поля, которые добавляет FinMetricsStore.fixations():
+     { fixationId, financialInstrumentId, changeDate: 'ГГГГ-ММ-ДД',
+       modificationTypeCode: 'INITIAL' | 'NON_SUBSTANTIAL' | 'SUBSTANTIAL',
+       eirRate, eirDelta, etsRate, etsDelta, grossCarryingAmount,
+       grossCarryingImpactRate, day1PnlAmount: число | null, comment,
+       fiName, currencyCode }
+   isLast виджету не нужен: корзина активна у всех строк, решает страница.
+
+   API:
+     render(root, fixations, { mode, busy })
+       root — корень виджета (.lc-fixation-history-table).
+       fixations == null — загрузка (скелетоны); [] — «Нет данных», переключатель вида
+       на месте. mode — 'edit' (по умолчанию) | 'view': в просмотре колонки
+       «Действия» нет вовсе. busy — идет пересчет метрик: корзины с атрибутом
+       disabled. Значения запоминаются на корне и ставятся атрибутами data-mode,
+       data-busy и data-state (loading | empty | data).
+     view(root) → 'BY_FI' | 'BY_DATE'
+       Текущий вид; хранится на корне в data-view (по умолчанию BY_FI).
+
+   Порядок строк: дата изменений по возрастанию. Клик по кнопке сортировки
+   даты идет по кругу none → asc → desc → none (рантайм ДС шлет событие sort,
+   строки переставляет сам виджет: в дереве data-sort-rows ДС переставляет
+   только корни, а нужны строки внутри групп). none — порядок по умолчанию,
+   то есть возрастание. Направление и свернутые группы запоминаются на корне
+   и переживают смену вида. «№» — порядковый номер строки: в «По ФИ»
+   внутри группы, в «По дате» сквозной.
+
+   События с корня (CustomEvent, bubbles: true):
+     fmfixationaction  detail: { action: 'REMOVE', fixationId } — клик по
+                       корзине. Корзина активна у всех строк, вопрос «последняя
+                       ли» решает страница.
+
+   Сворачивание групп, ширина колонок, скелетоны — рантаймы и классы ДС.
+   Перестановка колонок выключена (data-grab у подписей шапки).
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var VIEWS = ['BY_FI', 'BY_DATE'];
+  var SKELETON_ROWS = 6;
+  /* Строка группы: ячейка с названием ФИ занимает первые три колонки «По ФИ»
+     («№», «Дата изменений», «Значение ЭПС»), иначе название не помещается в «№». */
+  var GROUP_SPAN = 3;
+  var LABEL = '<span class="th__label" data-grab>';
+  var RESIZE = '<span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>';
+
+  /* Начертание кнопки сортировки по направлению — те же значения, что рисует
+     рантайм ДС после клика; здесь они нужны разметке при перерисовке. */
+  var SORT = {
+    none: { glyph: 'arrow-up-down', aria: 'none', label: 'Сортировать' },
+    asc: { glyph: 'arrow-narrow-up', aria: 'ascending', label: 'Сортировка от меньшего к большему' },
+    desc: { glyph: 'arrow-narrow-down', aria: 'descending', label: 'Сортировка от большего к меньшему' }
+  };
+  var MODIFICATION_FALLBACK = { INITIAL: 'Первоначальная', NON_SUBSTANTIAL: 'Несущественная', SUBSTANTIAL: 'Существенная' };
+
+  var COLUMNS = [
+    { key: 'num', label: '№', width: '64px' },
+    { key: 'fiName', label: 'Наименование ФИ', width: '280px', view: 'BY_DATE' },
+    { key: 'changeDate', label: 'Дата изменений', width: '160px', sort: true },
+    { key: 'eirRate', label: 'Значение ЭПС, %', width: '140px', numbers: true },
+    { key: 'eirDelta', label: 'Δ ЭПС, %', width: '120px', numbers: true, delta: true },
+    { key: 'etsRate', label: 'Значение ЕТС, %', width: '140px', numbers: true },
+    { key: 'etsDelta', label: 'Δ ЕТС, %', width: '120px', numbers: true, delta: true },
+    { key: 'grossCarryingAmount', label: 'ВБС на дату фиксации, в валюте', width: '200px', numbers: true },
+    { key: 'grossCarryingImpactRate', label: 'Влияние на ВБС, %', width: '160px', numbers: true },
+    { key: 'day1PnlAmount', label: 'Day1PnL, в валюте', width: '180px', numbers: true },
+    { key: 'modificationTypeCode', label: 'Вид модификации', width: '160px' },
+    { key: 'comment', label: 'Комментарий', width: '280px' },
+    { key: 'actions', label: 'Действия', width: '96px', center: true, mode: 'edit' }
+  ];
+
+  function lib() {
+    var t = window.PostFinMetricsTable;
+    if (!t) throw new Error('FixationHistoryTable: сначала подключите FinancialMetricsTable.js');
+    return t;
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function view(root) {
+    var v = root && root.getAttribute('data-view');
+    return VIEWS.indexOf(v) >= 0 ? v : 'BY_FI';
+  }
+
+  function columnsFor(v, mode) {
+    return COLUMNS.filter(function (c) { return (!c.view || c.view === v) && (!c.mode || c.mode === mode); });
+  }
+
+  function gridTemplate(cols) {
+    return '8px ' + cols.map(function (c) { return c.width; }).join(' ') + ' minmax(8px,1fr)';
+  }
+
+  function modificationLabel(code) {
+    var l = window.FIN_METRICS_LABELS && window.FIN_METRICS_LABELS.modification;
+    return (l && l[code]) || MODIFICATION_FALLBACK[code] || String(code == null ? '' : code);
+  }
+
+  /* ── Порядок строк ────────────────────────────────────────────── */
+
+  function byDate(dir) {
+    var k = dir === 'desc' ? -1 : 1;
+    return function (a, b) {
+      if (a.changeDate !== b.changeDate) return (a.changeDate < b.changeDate ? -1 : 1) * k;
+      var an = String(a.fiName || ''), bn = String(b.fiName || '');
+      if (an !== bn) return (an < bn ? -1 : 1) * k;
+      return (a.fixationId < b.fixationId ? -1 : (a.fixationId > b.fixationId ? 1 : 0)) * k;
+    };
+  }
+
+  /* Группы идут в порядке появления ФИ в списке, строки внутри — по дате. */
+  function groupsOf(list, dir) {
+    var order = [];
+    var map = {};
+    list.forEach(function (f) {
+      var id = f.financialInstrumentId;
+      if (!map[id]) {
+        map[id] = { id: id, name: f.fiName || id, currency: f.currencyCode, rows: [] };
+        order.push(map[id]);
+      }
+      map[id].rows.push(f);
+    });
+    order.forEach(function (g) { g.rows.sort(byDate(dir)); });
+    return order;
+  }
+
+  /* ── Разметка ─────────────────────────────────────────────────── */
+
+  function nodeId(fiId) {
+    return 'fh-' + String(fiId).replace(/[^A-Za-z0-9_-]/g, '_');
+  }
+
+  function headCell(col, dir, disabled) {
+    var cls = 'th' + (col.numbers ? ' th--right' : '') + (col.center ? ' th--center' : '')
+      + (col.sort && dir !== 'none' ? ' th--sorted' : '');
+    var attrs = col.sort ? ' aria-sort="' + SORT[dir].aria + '"' : '';
+    var tools = '';
+    if (col.sort) {
+      tools = '<span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort'
+        + (dir !== 'none' ? ' is-sorted' : '') + '" data-sort="' + col.key + '" aria-label="' + SORT[dir].label + '"'
+        + (disabled ? ' disabled' : '') + '><i data-icon="' + SORT[dir].glyph + '"></i></button></span>';
+    }
+    return '<div class="' + cls + '"' + attrs + '>' + LABEL + esc(col.label) + '</span>' + tools + RESIZE + '</div>';
+  }
+
+  function headHtml(grid, cols, dir, disabled) {
+    return '<div class="tbl__row tbl__row--head" style="grid-template-columns:' + grid + '">'
+      + '<div class="th th--separator"></div>'
+      + cols.map(function (c) { return headCell(c, dir, disabled); }).join('')
+      + '<div class="th th--separator"></div></div>';
+  }
+
+  function textCell(text, extra) {
+    return text === '' || text == null
+      ? '<div class="tc' + (extra || '') + '"></div>'
+      : '<div class="tc' + (extra || '') + '"><span class="tc__row"><span class="tc__text tc__text--truncate">' + text + '</span></span></div>';
+  }
+
+  /* Δ: «+» зеленым, «−» красным, ноль и пусто — без цвета. Знак «+» дописываем сами. */
+  function deltaCell(value) {
+    var T = lib();
+    var text = T.fmtNumber(value);
+    if (!text) return '<div class="tc tc--numbers"></div>';
+    var n = Number(value);
+    var tone = '';
+    if (n > 0 && text.charAt(0) !== '-') { text = '+' + text; tone = ' lc-fixation-history-table__delta--up'; }
+    else if (text.charAt(0) === '-') tone = ' lc-fixation-history-table__delta--down';
+    return '<div class="tc tc--numbers"><span class="tc__row"><span class="tc__text"><span class="lc-fixation-history-table__delta' + tone + '">'
+      + text + '</span></span></span></div>';
+  }
+
+  function numberCell(value) {
+    var text = lib().fmtNumber(value);
+    return text
+      ? '<div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">' + text + '</span></span></div>'
+      : '<div class="tc tc--numbers"></div>';
+  }
+
+  function actionCell(rec, busy) {
+    return '<div class="tc tc--center"><button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Удалить фиксацию"'
+      + ' data-fh-act="REMOVE" data-fixation-id="' + esc(rec.fixationId) + '"'
+      + (busy ? ' disabled aria-disabled="true"' : '') + '><i data-icon="trash"></i></button></div>';
+  }
+
+  function fiCell(rec) {
+    return '<div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">'
+      + esc(rec.fiName || rec.financialInstrumentId) + '</span>'
+      + (rec.currencyCode ? '<span class="tc__postfix">' + esc(rec.currencyCode) + '</span>' : '')
+      + '</span></div>';
+  }
+
+  function cellHtml(col, rec, n, busy) {
+    var T = lib();
+    switch (col.key) {
+      case 'num': return textCell(String(n));
+      case 'fiName': return fiCell(rec);
+      case 'changeDate': return textCell(esc(T.fmtDate(rec.changeDate)));
+      case 'modificationTypeCode': return textCell(esc(modificationLabel(rec.modificationTypeCode)));
+      case 'comment': return textCell(esc(rec.comment));
+      case 'actions': return actionCell(rec, busy);
+      default: return col.delta ? deltaCell(rec[col.key]) : numberCell(rec[col.key]);
+    }
+  }
+
+  function rowHtml(grid, cols, rec, n, busy, parent) {
+    return '<div class="tbl__row"' + (parent ? ' data-parent="' + parent.node + '"' + (parent.open ? '' : ' hidden') : '')
+      + ' data-fixation-id="' + esc(rec.fixationId) + '" style="grid-template-columns:' + grid + '">'
+      + '<div class="tc tc--separator"></div>'
+      + cols.map(function (c) { return cellHtml(c, rec, n, busy); }).join('')
+      + '<div class="tc tc--separator"></div></div>';
+  }
+
+  function groupHtml(grid, cols, g, dir, busy, collapsed) {
+    var node = nodeId(g.id);
+    var open = !collapsed[node];
+    var h = '<div class="tbl__row" data-node="' + node + '" style="grid-template-columns:' + grid + '">'
+      + '<div class="tc tc--separator"></div>'
+      + '<div class="tc tc--tree lc-fixation-history-table__group-cell"><span class="tc__row">'
+      + '<button type="button" class="tc__twisty" aria-expanded="' + open + '" aria-label="' + (open ? 'Свернуть' : 'Развернуть') + '"><i data-icon="chevron-right"></i></button>'
+      + '<span class="tc__text tc__text--truncate lc-fixation-history-table__group-name">' + esc(g.name) + '</span>'
+      + (g.currency ? '<span class="tc__postfix">' + esc(g.currency) + '</span>' : '')
+      + '</span></div>';
+    for (var i = GROUP_SPAN; i < cols.length; i++) h += '<div class="tc"></div>';
+    h += '<div class="tc tc--separator"></div></div>';
+    g.rows.forEach(function (rec, i) {
+      h += rowHtml(grid, cols, rec, i + 1, busy, { node: node, open: open });
+    });
+    return h;
+  }
+
+  function tableHtml(list, v, mode, busy, dir, collapsed) {
+    var cols = columnsFor(v, mode);
+    var grid = gridTemplate(cols);
+    var body;
+    if (v === 'BY_FI') {
+      body = groupsOf(list, dir).map(function (g) { return groupHtml(grid, cols, g, dir, busy, collapsed); }).join('');
+    } else {
+      body = list.slice().sort(byDate(dir)).map(function (rec, i) { return rowHtml(grid, cols, rec, i + 1, busy, null); }).join('');
+    }
+    return '<div class="dtable dtable--fill"><div class="dtable__body"><div class="tbl" data-table>'
+      + headHtml(grid, cols, dir, false) + body + '</div></div></div>';
+  }
+
+  function emptyHtml() {
+    return '<div class="dtable dtable--fill"><div class="dtable__body">'
+      + '<div class="dtable__empty"><p class="dtable__empty-title">Нет данных</p></div>'
+      + '</div></div>';
+  }
+
+  function skeletonHtml(v, mode) {
+    var cols = columnsFor(v, mode);
+    var grid = gridTemplate(cols);
+    var rows = '';
+    for (var r = 0; r < SKELETON_ROWS; r++) {
+      rows += '<div class="tbl__row" style="grid-template-columns:' + grid + '"><div class="tc tc--separator"></div>'
+        + cols.map(function (c) {
+          return '<div class="tc' + (c.numbers ? ' tc--numbers' : '') + ' tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>';
+        }).join('')
+        + '<div class="tc tc--separator"></div></div>';
+    }
+    return '<div class="dtable dtable--fill" aria-busy="true"><div class="dtable__body"><div class="tbl" data-table>'
+      + headHtml(grid, cols, 'none', true) + rows + '</div></div></div>';
+  }
+
+  /* Какие группы свернуты на экране: читается из разметки перед каждой перерисовкой
+     и запоминается на корне, чтобы выбор переживал смену вида. */
+  function readCollapsed(host, prev) {
+    var out = {};
+    Object.keys(prev || {}).forEach(function (k) { out[k] = prev[k]; });
+    var rows = host.querySelectorAll('.tbl__row[data-node]');
+    for (var i = 0; i < rows.length; i++) {
+      var tw = rows[i].querySelector('.tc__twisty[aria-expanded]');
+      if (tw) out[rows[i].getAttribute('data-node')] = tw.getAttribute('aria-expanded') === 'false';
+    }
+    return out;
+  }
+
+  function wire(host) {
+    if (window.dsIcons) window.dsIcons.apply(host);
+    var body = host.querySelector('.dtable__body');
+    if (window.DSTable && body) { window.DSTable.bind(body); window.DSTable.wireAll(host); }
+    if (window.DSTablePin) window.DSTablePin.bindAll(host);
+  }
+
+  /* ── Переключатель вида ───────────────────────────────────────────────── */
+
+  /* Переключатель вида (сегмент-контрол в шапке): aria-checked и roving tabindex
+     приводятся к data-view корня, индикатор двигается следом. Рантайм ДС
+     (data-segctrl) ставит то же на клик; здесь — на render. */
+  function syncTabs(root, current) {
+    var items = root.querySelectorAll('.segctrl__item');
+    for (var i = 0; i < items.length; i++) {
+      var on = items[i].getAttribute('data-view') === current;
+      items[i].setAttribute('aria-checked', on ? 'true' : 'false');
+      items[i].setAttribute('tabindex', on ? '0' : '-1');
+    }
+    var seg = root.querySelector('.segctrl');
+    if (seg && window.DSTabs) window.DSTabs.positionThumb(seg);
+  }
+
+  /* ── Перерисовка ──────────────────────────────────────────────── */
+
+  function paint(root) {
+    var st = root.__fh;
+    var v = view(root);
+    var host = root.querySelector('[data-fh-table]');
+    if (!host) return;
+    syncTabs(root, v);
+    root.setAttribute('data-mode', st.mode);
+    root.setAttribute('data-busy', st.busy ? 'true' : 'false');
+    st.collapsed = readCollapsed(host, st.collapsed);
+
+    if (st.fixations == null) {
+      root.setAttribute('data-state', 'loading');
+      host.innerHTML = skeletonHtml(v, st.mode);
+      wire(host);
+      return;
+    }
+    if (!st.fixations.length) {
+      root.setAttribute('data-state', 'empty');
+      host.innerHTML = emptyHtml();
+      return;
+    }
+    root.setAttribute('data-state', 'data');
+    host.innerHTML = tableHtml(st.fixations, v, st.mode, st.busy, st.sort, st.collapsed);
+    wire(host);
+  }
+
+  function pick(root, next) {
+    if (VIEWS.indexOf(next) < 0 || next === view(root)) return;
+    root.setAttribute('data-view', next);
+    paint(root);
+  }
+
+  function emit(root, name, detail) {
+    root.dispatchEvent(new CustomEvent(name, { bubbles: true, detail: detail || {} }));
+  }
+
+  function bind(root) {
+    if (!root || root.__fhBound) return;
+    root.__fhBound = true;
+
+    /* Рантайм сегмент-контрола (roving, data-segctrl) сидит на самом контроле и
+       срабатывает раньше, чем событие дойдет до корня. Клик читает вид с кнопки,
+       клавиатура — с выбранного сегмента после отложенного вызова (контрол двигает
+       выбор сам). */
+    root.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('.segctrl__item') : null;
+      if (b && root.contains(b)) { pick(root, b.getAttribute('data-view')); return; }
+      var del = e.target.closest ? e.target.closest('[data-fh-act="REMOVE"]') : null;
+      if (!del || !root.contains(del) || del.disabled || del.getAttribute('aria-disabled') === 'true') return;
+      emit(root, 'fmfixationaction', { action: 'REMOVE', fixationId: del.getAttribute('data-fixation-id') });
+    });
+    root.addEventListener('keydown', function (e) {
+      var b = e.target.closest ? e.target.closest('.segctrl__item') : null;
+      if (!b || !root.contains(b)) return;
+      setTimeout(function () {
+        var sel = root.querySelector('.segctrl__item[aria-checked="true"]');
+        if (sel) pick(root, sel.getAttribute('data-view'));
+      }, 0);
+    });
+
+    /* Сортировку по дате делает виджет: рантайм ДС красит кнопку и шлет sort с
+       { column, dir }, строки (в том числе внутри групп) переставляет перерисовка. */
+    root.addEventListener('sort', function (e) {
+      var d = e.detail;
+      if (!d || d.column !== 'changeDate' || !SORT[d.dir]) return;
+      var hadFocus = root.contains(document.activeElement) && document.activeElement.closest('.th__sort');
+      root.__fh.sort = d.dir;
+      paint(root);
+      /* перерисовка заменила кнопку сортировки новым узлом — фокус с клавиатуры возвращаем ей */
+      if (hadFocus) {
+        var again = root.querySelector('.th__sort[data-sort="changeDate"]');
+        if (again) again.focus();
+      }
+    });
+  }
+
+  function render(root, fixations, opts) {
+    if (!root) return;
+    lib();
+    bind(root);
+    var prev = root.__fh || {};
+    var o = opts || {};
+    root.__fh = {
+      fixations: fixations == null ? null : fixations,
+      mode: o.mode === 'view' ? 'view' : 'edit',
+      busy: !!o.busy,
+      sort: prev.sort || 'none',
+      collapsed: prev.collapsed || {}
+    };
+    paint(root);
+  }
+
+  window.PostFixationHistoryTable = { render: render, view: view };
+})();
+</script>
+</body>
+</html>

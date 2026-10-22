@@ -1,0 +1,26 @@
+<!-- Локальный компонент «Приоритет погашения» — фрагмент страницы «Досрочное погашение процентов».
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Горизонтальный тайл над таблицей платежей: все виды задолженности в ряд — номер приоритета
+     в квадрате и название (Entity, как в концепте v2, только по горизонтали).
+     Открывает окно «Приоритет погашения».
+
+     Ось data-mode — права: edit (карандаш в шапке — окно на правку) | view (карандаша нет,
+     только чтение, кнопок нет). Приоритет есть всегда (по умолчанию — исходный порядок),
+     поэтому data-state — только data.
+     Значения в разметке — демо; поля и обработчик карандаша ставит RepaymentPriorityTile.js. -->
+<section class="tile lc-repay-order" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Приоритет погашения</h3></div></div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-repay-order__edit" data-repay-open aria-label="Изменить приоритет погашения"><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="lc-repay-order__list" data-repay-list>
+      <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">1</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Текущие начисленные проценты</span></div></div></div></div>
+      <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">2</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Капитализированные начисленные проценты</span></div></div></div></div>
+      <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">3</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Отложенные начисленные проценты</span></div></div></div></div>
+      <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">4</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Основной долг</span></div></div></div></div>
+    </div>
+  </div>
+</section>

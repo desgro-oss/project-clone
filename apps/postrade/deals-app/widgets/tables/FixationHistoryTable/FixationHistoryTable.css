@@ -1,0 +1,54 @@
+/* Локальный компонент «История фиксаций» (FixationHistoryTable).
+   Только внутренняя раскладка. Цвета, шрифты, отступы — токены ДС; своих значений здесь нет.
+   Карточка (Tile) с сегмент-контролом в действиях шапки (SegmentControl), таблица (Table,
+   TableCell), пустое состояние (.dtable__empty), скелетоны, IconButton — компоненты ДС: их
+   размеры и состояния отсюда не переопределяются.
+
+   Оси на корне: data-state — loading | empty | data, ставит FixationHistoryTable.js по
+   списку фиксаций; data-view — BY_FI | BY_DATE, вид («По ФИ» / «По дате»);
+   data-mode — edit | view (в просмотре колонки «Действия» нет в разметке); data-busy —
+   true, пока идет пересчет метрик (корзины disabled). Вид по состоянию задают сами
+   компоненты ДС, CSS виджета его не переключает. */
+
+/* Таблица — колонкой с ритмом 12px (Table, вариант «над таблицей»). Тело
+   карточки сжимается по ширине родителя, горизонтальный скролл остается у тела таблицы. */
+.lc-fixation-history-table__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Хост таблицы: .dtable--fill растягивается на свободную высоту, если родитель ее
+   ограничил; без ограничения таблица растет по числу строк. */
+.lc-fixation-history-table__table {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Строка группы «По ФИ»: ячейка с названием ФИ занимает первые три колонки («№»,
+   «Дата изменений», «Значение ЭПС») — в «№» (64px) название не помещается. */
+.lc-fixation-history-table__group-cell { grid-column: span 3; }
+
+/* Имя ФИ в строке группы — Body S Strong (как в отчетах метрик); валюта рядом — штатный
+   .tc__postfix. Два класса — чтобы перебить .tc__text
+   независимо от порядка подключения CSS. */
+.lc-fixation-history-table__group-name.tc__text {
+  font: var(--type-body-s-strong);
+}
+
+/* Δ ЭПС и Δ ЕТС: плюс — зеленым, минус — красным; ноль и пусто — цветом текста. */
+.lc-fixation-history-table__delta--up { color: var(--success-dark); }
+.lc-fixation-history-table__delta--down { color: var(--error-dark); }
+
+/* Пустая история: «Нет данных» — по центру тела таблицы, как у отчетов метрик (ДС центрирует
+   только по горизонтали). Тело растягивается, только когда в нем одно пустое состояние. */
+.lc-fixation-history-table .dtable__body:has(> .dtable__empty) {
+  display: flex;
+  flex-direction: column;
+}
+.lc-fixation-history-table .dtable__body > .dtable__empty { flex: 1 1 auto; }

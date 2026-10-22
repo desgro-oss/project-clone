@@ -1,0 +1,189 @@
+<!-- Локальный компонент «Карточка фиксации» (подчасть окна «Фиксация ЭПС/ВБС»).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include.
+
+     Корень фрагмента — <template>: карточек в окне от одной и больше, поля у них
+     одинаковые, а значения разные. Поэтому компонент отдаёт ЭТАЛОН разметки, а
+     карточки по нему рисует скрипт окна (FixationModal.js): клонирует шаблон и
+     заменяет {uid} в id и for — у каждой карточки свой.
+
+     Слева — ввод: ФИ, дата изменений, тип модификации, комментарий; под ними
+     «ВБС до фиксации» и кнопка «Предварительный расчет», которую после расчёта
+     заменяет чип «Расчет выполнен». Справа — результат: два блока по виду модификации и блок ЕТС (Inset ДС, `tile--inset`). Пока значения нет — прочерк; у процентов постфикс «%»
+     появляется вместе со значением. «⊖» справа — удалить карточку; пока карточка
+     одна, он выключен.
+
+     Состояние карточки — атрибуты корня .lc-fixtile (ставит скрипт окна):
+       data-fx-prelim   idle | busy | done — предварительный расчёт не запускали | идёт | выполнен
+       data-fx-initial  true | false       — выбран тип «Первоначальная»: дата очищена и
+                                             заблокирована, предварительный расчёт недоступен
+       data-fx-ets      idle | loading | ok | empty | error | manual — ЕТС: нет значения | грузится
+                                             (скелетоны) | есть | нет или 0 (жёлтая иконка) | ошибка
+                                             (красная иконка) | введена вручную
+       data-fx-ets-edit true | false       — идёт ручной ввод ЕТС: вместо значения поле и галочка
+
+     Недоступное действие выключается разметкой (disabled у кнопки, disabled у поля),
+     а не только прячется стилем. -->
+
+<div hidden
+     data-off-grid="Эталон карточки фиксации: ширину задаёт окно, а не 12-колоночная сетка страницы">
+<template id="lc-fixtile-tpl">
+  <section class="tile tile--headless lc-fixtile" data-fx-card data-fx-prelim="idle" data-fx-initial="false" data-fx-ets="idle" data-fx-ets-edit="false">
+    <div class="tile__body lc-fixtile__body">
+
+      <div class="lc-fixtile__main">
+        <div class="lc-fixtile__fields">
+
+          <div class="inp inp--m inp--fullwidth" data-fx-field="fi">
+            <label class="ds-label" for="fx-fi-{uid}"><span class="ds-label__text">Наименование ФИ</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="fx-fi-{uid}-list">
+                <input class="inp__control" id="fx-fi-{uid}" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="fx-fi-{uid}-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+
+          <!-- Дата: маска ДД.ММ.ГГГГ и календарь — из коробки ДС. Крестик очистки рисует
+               рантайм по значению, руками его не ставим. -->
+          <div class="inp inp--m inp--fullwidth" data-fx-field="date">
+            <label class="ds-label" for="fx-date-{uid}"><span class="ds-label__text">Дата изменений</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="fx-date-{uid}" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="inp inp--m inp--fullwidth" data-fx-field="type">
+            <label class="ds-label" for="fx-type-{uid}"><span class="ds-label__text">Тип модификации</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="fx-type-{uid}-list">
+                <input class="inp__control" id="fx-type-{uid}" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="fx-type-{uid}-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+
+        </div>
+
+        <div class="inp inp--m inp--fullwidth inp--multiline" data-fx-field="comment">
+          <label class="ds-label" for="fx-comment-{uid}"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field">
+            <textarea class="inp__control" id="fx-comment-{uid}" rows="8"></textarea>
+          </div>
+        </div>
+
+        <div class="lc-fixtile__foot">
+          <div class="rof">
+            <span class="ds-label"><span class="ds-label__text">ВБС до фиксации</span></span>
+            <div class="rof__row"><span class="rof__value" data-fx-val="gcaBefore">—</span></div>
+          </div>
+          <button type="button" class="btn btn--outline btn--m" data-fx-prelim-run disabled>
+            <span class="btn__label">Предварительный расчет</span>
+          </button>
+          <span class="chip chip--success chip--m" data-fx-prelim-done hidden>
+            <span class="chip__icon"><i data-icon="check"></i></span>
+            <span class="chip__label">Расчет выполнен</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="lc-fixtile__side">
+        <div class="lc-fixtile__pair">
+
+          <section class="tile tile--inset" data-fx-block="non" aria-labelledby="fx-non-{uid}">
+            <header class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row"><h3 class="tile__title" id="fx-non-{uid}">Несущественная модификация</h3></div>
+              </div>
+            </header>
+            <div class="tile__body lc-fixtile__rows">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ВБС после фиксации</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="nonGca">—</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Day1PnL</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="nonDay1">—</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Доля Day1PnL</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="nonShare">—</span><span class="rof__affix" data-fx-aff="nonShare" hidden>%</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="tile tile--inset" data-fx-block="sub" aria-labelledby="fx-sub-{uid}">
+            <header class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row"><h3 class="tile__title" id="fx-sub-{uid}">Существенная модификация</h3></div>
+              </div>
+            </header>
+            <div class="tile__body lc-fixtile__rows">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ВБС после фиксации</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="subGca">—</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ЭПС после фиксации</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="subEir">—</span><span class="rof__affix" data-fx-aff="subEir" hidden>%</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Δ ЭПС</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="subEirDelta">—</span><span class="rof__affix" data-fx-aff="subEirDelta" hidden>%</span></div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ЕТС — Inset без заголовка: tile--inset + tile--headless.
+             Слева в строке значения — иконка статуса (слот data-fx-ets-icon: скрипт кладёт туда
+             красную «!» или жёлтый треугольник с тултипом), вместо значения при загрузке — скелетон,
+             справа — карандаш ручного ввода; в режиме ввода значение заменяет поле с «%» и
+             кнопка-галочка (Э7). -->
+        <section class="tile tile--inset tile--headless" data-fx-block="ets">
+          <div class="tile__body lc-fixtile__rows lc-fixtile__rows--two">
+            <div class="rof">
+              <span class="ds-label"><span class="ds-label__text">ЕТС после фиксации</span></span>
+              <div class="rof__row lc-fixtile__ets-row">
+                <span class="lc-fixtile__ets-icon" data-fx-ets-icon></span>
+                <span class="sk-line lc-fixtile__sk" data-fx-ets-sk aria-hidden="true"></span>
+                <span class="rof__value" data-fx-val="etsRate">—</span><span class="rof__affix" data-fx-aff="etsRate" hidden>%</span>
+                <div class="inp inp--m lc-fixtile__ets-input" data-fx-ets-input>
+                  <div class="inp__box">
+                    <div class="inp__field">
+                      <input class="inp__control" inputmode="decimal" autocomplete="off" aria-label="Значение ЕТС, %" disabled>
+                      <span class="inp__postfix">%</span>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="ibtn ibtn--neutral ibtn--s lc-fixtile__ets-act" data-fx-ets-pencil
+                        aria-label="Изменить значение ЕТС" disabled><i data-icon="edit"></i></button>
+                <button type="button" class="ibtn ibtn--neutral ibtn--s lc-fixtile__ets-act" data-fx-ets-ok
+                        aria-label="Подтвердить значение ЕТС" disabled><i data-icon="check"></i></button>
+              </div>
+            </div>
+            <div class="rof">
+              <span class="ds-label"><span class="ds-label__text">Δ ЕТС</span></span>
+              <div class="rof__row">
+                <span class="sk-line lc-fixtile__sk" data-fx-ets-sk aria-hidden="true"></span>
+                <span class="rof__value" data-fx-val="etsDelta">—</span><span class="rof__affix" data-fx-aff="etsDelta" hidden>%</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-fx-remove
+              aria-label="Удалить карточку фиксации" data-tooltip="Удалить карточку"><i data-icon="minus-circle"></i></button>
+
+    </div>
+  </section>
+</template>
+</div>

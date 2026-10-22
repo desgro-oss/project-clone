@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 727.
+Документов: 809.
 
 ## Корень (4)
 
@@ -249,7 +249,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (490)
+## Приложения (568)
 
 | Документ | Аннотация |
 |---|---|
@@ -721,6 +721,7 @@
 | [apps/postrade/deals-app/data/deal-status-model.md](../apps/postrade/deals-app/data/deal-status-model.md) | Статусная модель сделки ДИД |
 | [apps/postrade/deals-app/pages/Deal.screen.md](../apps/postrade/deals-app/pages/Deal.screen.md) | Сделка |
 | [apps/postrade/deals-app/pages/FinInstrument.screen.md](../apps/postrade/deals-app/pages/FinInstrument.screen.md) | Финансовый инструмент |
+| [apps/postrade/deals-app/pages/FinancialMetrics.screen.md](../apps/postrade/deals-app/pages/FinancialMetrics.screen.md) | Финансовые метрики |
 | [apps/postrade/deals-app/pages/MainPage.screen.md](../apps/postrade/deals-app/pages/MainPage.screen.md) | Главная страница |
 | [apps/postrade/deals-app/pages/Portfolio.screen.md](../apps/postrade/deals-app/pages/Portfolio.screen.md) | Текущий портфель ДИД |
 | [apps/postrade/deals-app/pages/RsbuInterestAdjustments.screen.md](../apps/postrade/deals-app/pages/RsbuInterestAdjustments.screen.md) | Корректировки процентов РСБУ |
@@ -748,6 +749,14 @@
 | [apps/postrade/deals-app/widgets/modals/DealTitleModal/DealTitleModal.md](../apps/postrade/deals-app/widgets/modals/DealTitleModal/DealTitleModal.md) | Widget: DealTitleModal — Модальное окно редактирования сделки |
 | [apps/postrade/deals-app/widgets/modals/DidProductsModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/DidProductsModal/CHANGELOG.md) | Окно «Продукты ДИД» (DidProductsModal) — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.md](../apps/postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.md) | Окно «Продукты ДИД» (DidProductsModal) |
+| [apps/postrade/deals-app/widgets/modals/FinancialMetricsDownloadReportModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/FinancialMetricsDownloadReportModal/CHANGELOG.md) | Выгрузка отчета (FinancialMetricsDownloadReportModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.md](../apps/postrade/deals-app/widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.md) | Выгрузка отчета |
+| [apps/postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/CHANGELOG.md) | Фильтр отчета финансовых метрик (FinancialMetricsFilterModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.md](../apps/postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.md) | Фильтр отчета финансовых метрик |
+| [apps/postrade/deals-app/widgets/modals/FixationModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/FixationModal/CHANGELOG.md) | FixationModal — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/FixationModal/FixationModal.md](../apps/postrade/deals-app/widgets/modals/FixationModal/FixationModal.md) | Фиксация ЭПС/ВБС |
+| [apps/postrade/deals-app/widgets/modals/FixationModal/FixationModalTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/FixationModal/FixationModalTile/CHANGELOG.md) | FixationModalTile — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.md](../apps/postrade/deals-app/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.md) | Карточка фиксации ЭПС/ВБС |
 | [apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/CHANGELOG.md) | Окно «Перенос инструмента» (InstrumentTransferModal) — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.md](../apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.md) | Окно «Перенос инструмента» (InstrumentTransferModal) |
 | [apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CHANGELOG.md) | Модальное окно контрагентов (InstrumentsCounterpartiesModal) — журнал изменений |
@@ -780,6 +789,12 @@
 | [apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md](../apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md) | Widget: RelatedDealsPopover — Поповер связанных сделок |
 | [apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/CHANGELOG.md](../apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/CHANGELOG.md) | Контрагенты сделки (DealCounterpartiesTable) — журнал изменений |
 | [apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md](../apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md) | Контрагенты сделки |
+| [apps/postrade/deals-app/widgets/tables/FinancialMetricsTable/CHANGELOG.md](../apps/postrade/deals-app/widgets/tables/FinancialMetricsTable/CHANGELOG.md) | FinancialMetricsTable — журнал изменений |
+| [apps/postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.md](../apps/postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.md) | Отчет финансовых метрик |
+| [apps/postrade/deals-app/widgets/tables/FixationHistoryTable/CHANGELOG.md](../apps/postrade/deals-app/widgets/tables/FixationHistoryTable/CHANGELOG.md) | FixationHistoryTable — журнал изменений |
+| [apps/postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.md](../apps/postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.md) | История фиксаций |
+| [apps/postrade/deals-app/widgets/tables/KPITable/CHANGELOG.md](../apps/postrade/deals-app/widgets/tables/KPITable/CHANGELOG.md) | KPITable — журнал изменений |
+| [apps/postrade/deals-app/widgets/tables/KPITable/KPITable.md](../apps/postrade/deals-app/widgets/tables/KPITable/KPITable.md) | Отчет KPI |
 | [apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CHANGELOG.md) | Контрагенты (CounterpartiesTile) — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md](../apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md) | Контрагенты (CounterpartiesTile) |
 | [apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/CHANGELOG.md) | Описание сделки — журнал изменений |
@@ -822,6 +837,7 @@
 | [apps/postrade/drafts/dev-specs/pages/Spec.screen.md](../apps/postrade/drafts/dev-specs/pages/Spec.screen.md) | Спецификация на разработку |
 | [apps/postrade/drafts/dev-specs/pages/index.screen.md](../apps/postrade/drafts/dev-specs/pages/index.screen.md) | Спецификации на разработку |
 | [apps/postrade/drafts/dev-specs/refs/EarlyInterestPayments/EarlyInterestPayments.dev-spec.md](../apps/postrade/drafts/dev-specs/refs/EarlyInterestPayments/EarlyInterestPayments.dev-spec.md) | Досрочное погашение процентов |
+| [apps/postrade/drafts/dev-specs/refs/EarlyInterestPaymentsV3/EarlyInterestPaymentsV3.dev-spec.md](../apps/postrade/drafts/dev-specs/refs/EarlyInterestPaymentsV3/EarlyInterestPaymentsV3.dev-spec.md) | Досрочное погашение процентов |
 | [apps/postrade/drafts/dev-specs/refs/RsbuInterestAdjustments/RsbuInterestAdjustments.dev-spec.md](../apps/postrade/drafts/dev-specs/refs/RsbuInterestAdjustments/RsbuInterestAdjustments.dev-spec.md) | Корректировки процентов РСБУ |
 
 ### apps/postrade/drafts/early-interest
@@ -856,6 +872,22 @@
 | [apps/postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/CHANGELOG.md](../apps/postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/CHANGELOG.md) | Приоритет погашения — журнал изменений |
 | [apps/postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.md](../apps/postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.md) | Приоритет погашения |
 
+### apps/postrade/drafts/early-interest-v03
+
+| Документ | Аннотация |
+|---|---|
+| [apps/postrade/drafts/early-interest-v03/pages/EarlyInterestPayments.screen.md](../apps/postrade/drafts/early-interest-v03/pages/EarlyInterestPayments.screen.md) | Досрочное погашение процентов |
+| [apps/postrade/drafts/early-interest-v03/pages/Tranche.screen.md](../apps/postrade/drafts/early-interest-v03/pages/Tranche.screen.md) | Страница транша (концепт «Досрочное погашение процентов v3») |
+| [apps/postrade/drafts/early-interest-v03/proto-panel/comments.md](../apps/postrade/drafts/early-interest-v03/proto-panel/comments.md) | Комментарии к прототипу |
+| [apps/postrade/drafts/early-interest-v03/widgets/modals/EarlyInterestRepaymentModal/CHANGELOG.md](../apps/postrade/drafts/early-interest-v03/widgets/modals/EarlyInterestRepaymentModal/CHANGELOG.md) | Новый платеж — журнал изменений |
+| [apps/postrade/drafts/early-interest-v03/widgets/modals/EarlyInterestRepaymentModal/EarlyInterestRepaymentModal.md](../apps/postrade/drafts/early-interest-v03/widgets/modals/EarlyInterestRepaymentModal/EarlyInterestRepaymentModal.md) | Окно «Новый платеж» |
+| [apps/postrade/drafts/early-interest-v03/widgets/modals/RepaymentPriorityModal/CHANGELOG.md](../apps/postrade/drafts/early-interest-v03/widgets/modals/RepaymentPriorityModal/CHANGELOG.md) | Приоритет погашения (окно) — журнал изменений |
+| [apps/postrade/drafts/early-interest-v03/widgets/modals/RepaymentPriorityModal/RepaymentPriorityModal.md](../apps/postrade/drafts/early-interest-v03/widgets/modals/RepaymentPriorityModal/RepaymentPriorityModal.md) | Окно «Приоритет погашения» |
+| [apps/postrade/drafts/early-interest-v03/widgets/tiles/EarlyInterestRepaymentTile/CHANGELOG.md](../apps/postrade/drafts/early-interest-v03/widgets/tiles/EarlyInterestRepaymentTile/CHANGELOG.md) | Досрочное погашение процентов — журнал изменений |
+| [apps/postrade/drafts/early-interest-v03/widgets/tiles/EarlyInterestRepaymentTile/EarlyInterestRepaymentTile.md](../apps/postrade/drafts/early-interest-v03/widgets/tiles/EarlyInterestRepaymentTile/EarlyInterestRepaymentTile.md) | Досрочное погашение процентов |
+| [apps/postrade/drafts/early-interest-v03/widgets/tiles/RepaymentPriorityTile/CHANGELOG.md](../apps/postrade/drafts/early-interest-v03/widgets/tiles/RepaymentPriorityTile/CHANGELOG.md) | Приоритет погашения — журнал изменений |
+| [apps/postrade/drafts/early-interest-v03/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.md](../apps/postrade/drafts/early-interest-v03/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.md) | Приоритет погашения |
+
 ### apps/postrade/drafts/tranche-page
 
 | Документ | Аннотация |
@@ -871,6 +903,62 @@
 | [apps/postrade/drafts/tranche-page-v02/pages/RsbuInterestAdjustments.screen.md](../apps/postrade/drafts/tranche-page-v02/pages/RsbuInterestAdjustments.screen.md) | Корректировки процентов РСБУ |
 | [apps/postrade/drafts/tranche-page-v02/pages/Tranche.screen.md](../apps/postrade/drafts/tranche-page-v02/pages/Tranche.screen.md) | Страница транша |
 | [apps/postrade/drafts/tranche-page-v02/proto-panel/comments.md](../apps/postrade/drafts/tranche-page-v02/proto-panel/comments.md) | Комментарии к прототипу |
+
+### apps/postrade/drafts/tranche-page-v03
+
+| Документ | Аннотация |
+|---|---|
+| [apps/postrade/drafts/tranche-page-v03/pages/Deal.screen.md](../apps/postrade/drafts/tranche-page-v03/pages/Deal.screen.md) | Страница сделки |
+| [apps/postrade/drafts/tranche-page-v03/pages/FinancialMetrics.screen.md](../apps/postrade/drafts/tranche-page-v03/pages/FinancialMetrics.screen.md) | Финансовые метрики |
+| [apps/postrade/drafts/tranche-page-v03/pages/RsbuInterestAdjustments.screen.md](../apps/postrade/drafts/tranche-page-v03/pages/RsbuInterestAdjustments.screen.md) | Корректировки процентов РСБУ |
+| [apps/postrade/drafts/tranche-page-v03/pages/Tranche.screen.md](../apps/postrade/drafts/tranche-page-v03/pages/Tranche.screen.md) | Страница транша |
+| [apps/postrade/drafts/tranche-page-v03/proto-panel/comments.md](../apps/postrade/drafts/tranche-page-v03/proto-panel/comments.md) | Комментарии к прототипу |
+| [apps/postrade/drafts/tranche-page-v03/widgets/modals/FinancialMetricsDownloadReportModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/modals/FinancialMetricsDownloadReportModal/CHANGELOG.md) | Выгрузка отчета (FinancialMetricsDownloadReportModal) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.md](../apps/postrade/drafts/tranche-page-v03/widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.md) | Выгрузка отчета |
+| [apps/postrade/drafts/tranche-page-v03/widgets/modals/FinancialMetricsFilterModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/modals/FinancialMetricsFilterModal/CHANGELOG.md) | Фильтр отчета финансовых метрик (FinancialMetricsFilterModal) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.md](../apps/postrade/drafts/tranche-page-v03/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.md) | Фильтр отчета финансовых метрик |
+| [apps/postrade/drafts/tranche-page-v03/widgets/modals/FixationModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/modals/FixationModal/CHANGELOG.md) | FixationModal — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/modals/FixationModal/FixationModal.md](../apps/postrade/drafts/tranche-page-v03/widgets/modals/FixationModal/FixationModal.md) | Фиксация ЭПС/ВБС |
+| [apps/postrade/drafts/tranche-page-v03/widgets/modals/FixationModal/FixationModalTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/modals/FixationModal/FixationModalTile/CHANGELOG.md) | FixationModalTile — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.md) | Карточка фиксации ЭПС/ВБС |
+| [apps/postrade/drafts/tranche-page-v03/widgets/modals/RsbuAdjustmentModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/modals/RsbuAdjustmentModal/CHANGELOG.md) | Модальное окно внесения корректировки (RsbuAdjustmentModal) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.md](../apps/postrade/drafts/tranche-page-v03/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.md) | Модальное окно внесения корректировки |
+| [apps/postrade/drafts/tranche-page-v03/widgets/modals/RsbuRecalcWarningModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/modals/RsbuRecalcWarningModal/CHANGELOG.md) | Окно предупреждения при пересчёте метрик (RsbuRecalcWarningModal) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/modals/RsbuRecalcWarningModal/RsbuRecalcWarningModal.md](../apps/postrade/drafts/tranche-page-v03/widgets/modals/RsbuRecalcWarningModal/RsbuRecalcWarningModal.md) | Окно предупреждения при пересчёте метрик |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tables/DealCounterpartiesTable/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tables/DealCounterpartiesTable/CHANGELOG.md) | Контрагенты сделки (DealCounterpartiesTable) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md](../apps/postrade/drafts/tranche-page-v03/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md) | Контрагенты сделки |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tables/FinancialMetricsTable/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tables/FinancialMetricsTable/CHANGELOG.md) | FinancialMetricsTable — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.md](../apps/postrade/drafts/tranche-page-v03/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.md) | Отчет финансовых метрик |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tables/FixationHistoryTable/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tables/FixationHistoryTable/CHANGELOG.md) | FixationHistoryTable — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tables/FixationHistoryTable/FixationHistoryTable.md](../apps/postrade/drafts/tranche-page-v03/widgets/tables/FixationHistoryTable/FixationHistoryTable.md) | История фиксаций |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tables/KPITable/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tables/KPITable/CHANGELOG.md) | KPITable — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tables/KPITable/KPITable.md](../apps/postrade/drafts/tranche-page-v03/widgets/tables/KPITable/KPITable.md) | Отчет KPI |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/CounterpartiesTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/CounterpartiesTile/CHANGELOG.md) | Контрагенты (CounterpartiesTile) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md) | Контрагенты (CounterpartiesTile) |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealDescriptionTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealDescriptionTile/CHANGELOG.md) | Описание сделки — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md) | Widget: DealDescriptionTile — Описание сделки |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealFinancialMetricsTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealFinancialMetricsTile/CHANGELOG.md) | Финансовые метрики сделки — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.md) | Финансовые метрики сделки |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealMetricsCalculationTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealMetricsCalculationTile/CHANGELOG.md) | Финансовые метрики (DealMetricsCalculationTile) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.md) | Финансовые метрики |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealPeriodTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealPeriodTile/CHANGELOG.md) | Сроки сделки — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealPeriodTile/DealPeriodTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealPeriodTile/DealPeriodTile.md) | Сроки сделки |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealProductTreeTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealProductTreeTile/CHANGELOG.md) | Продукты сделки (DealProductTreeTile) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealProductTreeTile/DealProductTreeTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealProductTreeTile/DealProductTreeTile.md) | Продукты сделки (DealProductTreeTile) |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealRelatedCollateralsTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealRelatedCollateralsTile/CHANGELOG.md) | Связанные обеспечения (DealRelatedCollateralsTile) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealRelatedCollateralsTile/DealRelatedCollateralsTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealRelatedCollateralsTile/DealRelatedCollateralsTile.md) | Связанные обеспечения |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealTeamTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealTeamTile/CHANGELOG.md) | Команда сделки — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealTeamTile/DealTeamTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/DealTeamTile/DealTeamTile.md) | Команда сделки |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/FinInstrumentsTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/FinInstrumentsTile/CHANGELOG.md) | Финансовые инструменты (FinInstrumentsTile) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/CHANGELOG.md) | Карточка финансового инструмента (FinInstrumentCard) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.md) | Карточка финансового инструмента (FinInstrumentCard) |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md) | Финансовые инструменты (FinInstrumentsTile) |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/Navigator/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/Navigator/CHANGELOG.md) | Заведение сделки (Navigator) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/Navigator/Navigator.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/Navigator/Navigator.md) | Заведение сделки |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/ProjectInformationTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/ProjectInformationTile/CHANGELOG.md) | Сведения о проекте — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md) | Widget: ProjectInformationTile — Сведения о проекте |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/RsbuInterestAdjustmentsTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/RsbuInterestAdjustmentsTile/CHANGELOG.md) | Корректировки процентов РСБУ — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v03/widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.md) | Корректировки процентов РСБУ |
 
 ### apps/postrade/payments-app
 
@@ -969,7 +1057,7 @@
 |---|---|
 | [apps/screen-map/README.md](../apps/screen-map/README.md) | Карта экранов |
 
-## Задачи и заметки (108)
+## Задачи и заметки (112)
 
 ### Архив/черновики
 
@@ -1058,7 +1146,7 @@
 | [docs/tasks/RE0023-contour-tool-fixes.md](tasks/RE0023-contour-tool-fixes.md) | Перенос правок и дефектов оснастки из контрольного захода в контуре |
 | [docs/tasks/RE0023-contour-tool-fixes.review.md](tasks/RE0023-contour-tool-fixes.review.md) | RE0023 — ревью: перенос правок и дефектов оснастки из контрольного захода в контуре |
 | [docs/tasks/RE0024-contour-speedup.md](tasks/RE0024-contour-speedup.md) | Ускорение работы в контуре банка по замерам контрольного захода |
-| [docs/tasks/RE0025-early-interest-v02.md](tasks/RE0025-early-interest-v02.md) | Досрочное погашение процентов v2: концепт по новым макетам и спека на разработку |
+| [docs/tasks/RE0025-early-interest-v02.md](tasks/RE0025-early-interest-v02.md) | Досрочное погашение процентов v2 (RE0025) |
 | [docs/tasks/RE0026-navigator-scroll.md](tasks/RE0026-navigator-scroll.md) | Тайл «Заведение сделки»: высота по левой секции, прокрутка степпера, подвал у низа |
 | [docs/tasks/RE0027-kit-states-grid.md](tasks/RE0027-kit-states-grid.md) | Витрина: «Все состояния» сеткой по осям и минимальная высота тайла (проба на РСБУ) |
 | [docs/tasks/RE0028-fin-instrument-card.md](tasks/RE0028-fin-instrument-card.md) | Карточка ФИ — отдельный компонент витрины со всеми состояниями макета |
@@ -1066,6 +1154,8 @@
 | [docs/tasks/RE0030-proto-panel-devmode.md](tasks/RE0030-proto-panel-devmode.md) | Панель прототипа: Devmode — инспектор вёрстки, закрепление панели, масштаб страницы |
 | [docs/tasks/RE0031-devmode-improvements.md](tasks/RE0031-devmode-improvements.md) | Улучшение Devmode: светлая панель, box model с радиусами, тулбар, направляющие, подсказки с закреплением, медиа |
 | [docs/tasks/RE0032-spec-inspector.md](tasks/RE0032-spec-inspector.md) | Лёгкий инспектор Devmode в окне снимка спецификации |
+| [docs/tasks/RE0033-deal-financial-metrics.md](tasks/RE0033-deal-financial-metrics.md) | Финансовые метрики сделки: тайл расчёта на странице сделки и страница отчётов |
+| [docs/tasks/RE0034-rsbu-interest-fixation.md](tasks/RE0034-rsbu-interest-fixation.md) | Фиксация расчёта начисленных процентов РСБУ и корректировка по дельтам (концепт v3) |
 | [docs/tasks/README.md](tasks/README.md) | Задачи: как заводить, какие файлы бывают, как считать затраты |
 
 ### Снимки задач
@@ -1093,6 +1183,8 @@
 | [docs/tasks/RE0030-proto-panel-devmode.handoff.md](tasks/RE0030-proto-panel-devmode.handoff.md) | RE0030 Devmode панели прототипа — handoff |
 | [docs/tasks/RE0031-devmode-improvements.handoff.md](tasks/RE0031-devmode-improvements.handoff.md) | RE0031 Улучшение Devmode — handoff |
 | [docs/tasks/RE0032-spec-inspector.handoff.md](tasks/RE0032-spec-inspector.handoff.md) | RE0032 Лёгкий инспектор Devmode в окне снимка спеки — handoff |
+| [docs/tasks/RE0033-deal-financial-metrics.handoff.md](tasks/RE0033-deal-financial-metrics.handoff.md) | Финансовые метрики сделки (RE0033) — handoff |
+| [docs/tasks/RE0034-rsbu-interest-fixation.handoff.md](tasks/RE0034-rsbu-interest-fixation.handoff.md) | Фиксация расчёта процентов РСБУ (RE0034) — handoff |
 
 ## Служебное (1)
 

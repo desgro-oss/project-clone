@@ -58,6 +58,10 @@ const DSP = await dsPaths();
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GEN = 'hub-build.mjs';
 const APP_FIELDS = ['id', 'track', 'title', 'desc', 'home', 'icon'];
+/* Необязательное поле `shelf` — полка приложения на хабе: «actual» (актуальное) или «archive»
+   (архив). Хаб раскладывает по полкам аккордеонами тот раздел концептов, где поле есть хотя бы
+   у одного приложения; приложение без поля в таком разделе — в «Актуальном». */
+const SHELVES = ['actual', 'archive'];
 const DS_FIELDS = ['id', 'title', 'desc', 'icon'];
 const KIT_FIELDS = ['id', 'title', 'desc', 'icon'];
 const MAP_FIELDS = ['id', 'section', 'title', 'desc', 'icon', 'after'];
@@ -103,12 +107,13 @@ export function collect(P) {
     if (app.id !== path.posix.basename(dir)) { defects.push('ХБ4 ' + rel + ' — id «' + app.id + '» не совпадает с каталогом «' + path.posix.basename(dir) + '»'); continue; }
     if (!byTrack.has(app.track)) { defects.push('ХБ4 ' + rel + ' — track «' + app.track + '» не из треков манифеста: ' + [...byTrack.keys()].join(', ')); continue; }
     if (app.hub === false) continue;        // приложение без строки на хабе
+    if (app.shelf !== undefined && !SHELVES.includes(app.shelf)) { defects.push('ХБ4 ' + rel + ' — shelf «' + app.shelf + '» не из списка: ' + SHELVES.join(', ')); continue; }
     byTrack.get(app.track).push({ ...app, dir });
   }
   for (const t of tracks) {
     for (const app of byTrack.get(t.id).sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))) {
       const root = P.appsDir + '/' + app.dir;
-      entries.push({ id: app.id, group: t.hubGroup, title: app.title, desc: app.desc, href: root + '/' + app.home.replace(/^\.\//, ''), root, icon: app.icon });
+      entries.push({ id: app.id, group: t.hubGroup, title: app.title, desc: app.desc, href: root + '/' + app.home.replace(/^\.\//, ''), root, icon: app.icon, ...(app.shelf ? { shelf: app.shelf } : {}) });
     }
   }
   /* Карты экранов (задача RE0015, решение человека 11.10.2026): пункт карты —
@@ -162,9 +167,11 @@ export function render(P, entries) {
     "     root   — каталог приложения от корня; у группы 'ds' — null. Всё внутри",
     '              него — часть записи: экраны с меню обязаны вести строкой',
     '              пользователя в футере на хаб;',
-    '     icon   — имя глифа из ' + P.ds + '/' + DSP.layout().specOf('Icons') + '. */',
+    '     icon   — имя глифа из ' + P.ds + '/' + DSP.layout().specOf('Icons') + ';',
+    "     shelf  — необязательное, только у приложений: 'actual' | 'archive' — полка в разделе концептов. */",
   ].join('\n');
-  const body = entries.map((e) => '  {\n' + ['id', 'group', 'title', 'desc', 'href', 'root', 'icon']
+  const body = entries.map((e) => '  {\n' + ['id', 'group', 'title', 'desc', 'href', 'root', 'icon', 'shelf']
+    .filter((k) => k !== 'shelf' || e.shelf)
     .map((k) => '    ' + k + ': ' + js(e[k])).join(',\n') + '\n  }').join(',\n');
   return head + '\nwindow.IBPHub = [\n' + body + '\n];\n';
 }

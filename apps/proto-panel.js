@@ -15,8 +15,10 @@
     "postrade/deals-app",
     "postrade/drafts/early-interest",
     "postrade/drafts/early-interest-v02",
+    "postrade/drafts/early-interest-v03",
     "postrade/drafts/tranche-page",
     "postrade/drafts/tranche-page-v02",
+    "postrade/drafts/tranche-page-v03",
     "postrade/post-reports-app"
   ];
   var RUNTIME = "../.agents/proto-panel/";

@@ -1,0 +1,8 @@
+{
+  "_": "Демо-данные витрины: по объекту на вид тайла (аргумент PostTileRsbuAdjustments.render). state — locked | none | filled, count — число внесённых корректировок, unallocated — расхождение, которое не устранено ({ amount, currencyCode, date } или null).",
+
+  "none":   { "state": "none",   "count": 0, "unallocated": null },
+  "filled": { "state": "filled", "count": 2, "unallocated": null },
+  "unallocated": { "state": "filled", "count": 2, "unallocated": { "amount": 50526.3, "currencyCode": "RUB", "date": "2025-03-31" } },
+  "locked": { "state": "locked", "count": 0, "unallocated": null }
+}

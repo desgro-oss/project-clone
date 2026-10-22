@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<!--
+  ИСТОЧНИК страницы «Финансовые метрики». Двойным кликом открывают НЕ этот файл, а собранный
+  FinancialMetrics.preview.html: таблицы отчётов и окно фильтра стоят здесь метками <ds-include>,
+  а рантайм-инклуд ДС тянет фрагменты через fetch, который по file:// не работает.
+
+    node .agents/tools/assemble.mjs        — пересобрать после правки любого виджета
+
+  Страница держит шапку, вкладки и связь виджетов со сторами; разметка таблиц и окна фильтра —
+  в их папках apps/postrade/drafts/tranche-page-v03/widgets/. Адрес: FinancialMetrics.html?id=<номер сделки>.
+  Концепт v3 (RE0034): копия страницы модуля deals-app от 22.10.2026; без ?id= открывается сделка 1028.
+-->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Финансовые метрики — IBP</title>
+<!-- @lc-css -->
+<link rel="stylesheet" href="../widgets/tables/FinancialMetricsTable/FinancialMetricsTable.css">
+<link rel="stylesheet" href="../widgets/tables/KPITable/KPITable.css">
+<link rel="stylesheet" href="../widgets/tables/FixationHistoryTable/FixationHistoryTable.css">
+<link rel="stylesheet" href="../widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.css">
+<link rel="stylesheet" href="../widgets/modals/FixationModal/FixationModal.css">
+<link rel="stylesheet" href="../widgets/modals/FixationModal/FixationModalTile/FixationModalTile.css">
+<link rel="stylesheet" href="../widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.css"><!-- сюда ассемблер вставляет CSS подключённых локальных компонентов -->
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  /* Ритм 12px между шапкой, вкладками и таблицей (как у подстраницы модуля). */
+  .screen__content { gap: var(--space-12); }
+
+  /* Панель вкладки занимает оставшуюся высоту .screen--app, а таблица (.dtable--fill)
+     внутри неё — высоту панели: цепочка flex:1 + min-height:0 от экрана до тела таблицы,
+     скролл только у тела таблицы. Парное [hidden] — соглашение ДС: display у класса иначе
+     перебивает UA-правило [hidden]. */
+  .fm-panel { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; min-height: 0; }
+  .fm-panel[hidden] { display: none; }
+  .fm-panel > .lc-financial-metrics-table,
+  .fm-panel > .lc-kpi-table,
+  .fm-panel > .lc-fixation-history-table { flex: 1 1 auto; min-height: 0; }
+  /* Тело карточек «Отчет KPI» и «История фиксаций» (Tile) само по высоте не тянется — её растягивает страница. */
+  .fm-panel > .lc-kpi-table > .tile__body,
+  .fm-panel > .lc-fixation-history-table > .tile__body { flex: 1 1 auto; }
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+
+  <!-- Боковое меню строится экранным скриптом из ibp-home.js по роли -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen screen--app">
+
+    <!-- Крошки: Главная / Текущий портфель ДИД / «<номер>. <название сделки>» / Финансовые метрики.
+         Третье звено (текст и ссылку) заполняет экранный скрипт из записи сделки. -->
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Текущий портфель ДИД</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="Deal.html" id="fm-crumb-deal">Сделка</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Финансовые метрики</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- #sec:head ── Шапка страницы ─────────────────────────────────────────
+           Подзаголовок «Последний расчет: …» заполняет скрипт по FinMetricsStore.state().
+           Действия: «Фиксация ЭПС/ВБС» и «Пересчет метрик» — до загрузки сторов выключены
+           (disabled), дальше доступность ставит скрипт по режиму, расчёту и состоянию стора;
+           кебаб с «Выгрузить в XLSX» стоит выше вкладок и от них не зависит. -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <h1 class="phead__title">Финансовые метрики</h1>
+            </div>
+            <span class="phead__return"><a class="btn btn--outline btn--xs" href="Deal.html" id="fm-return"><i data-icon="flip-backward"></i><span class="btn__label">В сделку</span></a></span>
+          </div>
+          <div class="phead__subtitle" id="fm-subtitle" hidden>
+            <span id="fm-subtitle-text"></span>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <button type="button" class="btn btn--outline btn--m" id="fm-fixation" data-fm-act="FIXATION" disabled><span class="btn__label">Фиксация ЭПС/ВБС</span></button>
+          <button type="button" class="btn btn--outline btn--m" id="fm-calc" data-fm-act="CALCULATE" disabled><span class="btn__label">Пересчет метрик</span></button>
+          <span class="menu-anchor">
+            <button type="button" class="btn btn--outline btn--m btn--icon-only" id="fm-menu-btn" aria-label="Ещё действия" aria-haspopup="menu" aria-expanded="false" data-menu="fm-menu" data-menu-align="end" disabled><i data-icon="more-dots"></i></button>
+            <div id="fm-menu" class="menu menu--floating" role="menu" hidden>
+              <button type="button" class="menu__item" role="menuitem" id="fm-export" data-fm-act="EXPORT">
+                <span class="menu__item-icon"><i data-icon="download"></i></span>
+                <span class="menu__item-label">Выгрузить в XLSX</span>
+              </button>
+            </div>
+          </span>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Вкладки отчётов ───────────────────────────────────── -->
+      <div class="tabs tabs--horiz" role="tablist" id="fm-tabs" data-tabs>
+        <button type="button" class="tab tab--m tab--selected" role="tab" id="tab-ifrs" data-fm-tab="IFRS"
+                aria-selected="true" aria-controls="panel-ifrs" tabindex="0">
+          <span class="tab__label">МСФО</span>
+        </button>
+        <button type="button" class="tab tab--m" role="tab" id="tab-ras" data-fm-tab="RAS"
+                aria-selected="false" aria-controls="panel-ras" tabindex="-1">
+          <span class="tab__label">РСБУ</span>
+        </button>
+        <button type="button" class="tab tab--m" role="tab" id="tab-kpi" data-fm-tab="KPI"
+                aria-selected="false" aria-controls="panel-kpi" tabindex="-1">
+          <span class="tab__label">KPI</span>
+        </button>
+        <button type="button" class="tab tab--m" role="tab" id="tab-fixations" data-fm-tab="FIXATIONS"
+                aria-selected="false" aria-controls="panel-fixations" tabindex="-1">
+          <span class="tab__label">Фиксации ЭПС/ВБС</span><span class="tab__badge" id="fm-fixations-badge" hidden></span>
+        </button>
+      </div>
+
+      <!-- МСФО и РСБУ — один виджет на обе вкладки; data-report на корень ставит его скрипт -->
+      <div class="fm-panel" id="panel-ifrs" role="tabpanel" aria-labelledby="tab-ifrs" data-tabpanel data-fm-tab="IFRS">
+        <!-- Локальный компонент «Отчет финансовых метрик» (FinancialMetricsTable) — вкладки МСФО и РСБУ
+     страницы «Финансовые метрики». Пара во фронтенде — FinancialMetricsTable.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране,
+     на странице дважды (МСФО и РСБУ) — поэтому в разметке нет id.
+     Каркас показан в состоянии «Загрузка», пока страница не передала отчет: кнопка «Фильтр»
+     заблокирована, в таблице скелетоны. Таблицу, тулбар и остальные состояния рисует
+     FinancialMetricsTable.js: PostFinMetricsTable.render(корень, отчет, фильтр). -->
+<section class="lc-financial-metrics-table" data-state="loading" id="fm-table-ifrs" data-widget="FinancialMetricsTable" data-widget-group="tables" data-widget-src="../widgets/tables/FinancialMetricsTable/FinancialMetricsTable.html">
+  <div class="dtable-toolbar">
+    <div class="tfilter tfilter--disabled" role="group" aria-label="Фильтр таблицы">
+      <button type="button" class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false" disabled><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+    </div>
+  </div>
+  <div class="lc-financial-metrics-table__table" data-fm-table>
+    <div class="dtable dtable--fill" aria-busy="true">
+      <div class="dtable__body">
+        <div class="tbl" data-table>
+          <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 400px repeat(2, 160px) minmax(8px,1fr)">
+            <div class="th th--separator"></div>
+            <div class="th"><span class="th__label" data-grab>Наименование метрики</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--separator"></div>
+          </div>
+          <div class="tbl__row" style="grid-template-columns:8px 400px repeat(2, 160px) minmax(8px,1fr)">
+            <div class="tc tc--separator"></div>
+            <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--separator"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+      </div>
+      <div class="fm-panel" id="panel-ras" role="tabpanel" aria-labelledby="tab-ras" data-tabpanel data-fm-tab="RAS" hidden>
+        <!-- Локальный компонент «Отчет финансовых метрик» (FinancialMetricsTable) — вкладки МСФО и РСБУ
+     страницы «Финансовые метрики». Пара во фронтенде — FinancialMetricsTable.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране,
+     на странице дважды (МСФО и РСБУ) — поэтому в разметке нет id.
+     Каркас показан в состоянии «Загрузка», пока страница не передала отчет: кнопка «Фильтр»
+     заблокирована, в таблице скелетоны. Таблицу, тулбар и остальные состояния рисует
+     FinancialMetricsTable.js: PostFinMetricsTable.render(корень, отчет, фильтр). -->
+<section class="lc-financial-metrics-table" data-state="loading" id="fm-table-ras" data-widget="FinancialMetricsTable" data-widget-group="tables" data-widget-src="../widgets/tables/FinancialMetricsTable/FinancialMetricsTable.html">
+  <div class="dtable-toolbar">
+    <div class="tfilter tfilter--disabled" role="group" aria-label="Фильтр таблицы">
+      <button type="button" class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false" disabled><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+    </div>
+  </div>
+  <div class="lc-financial-metrics-table__table" data-fm-table>
+    <div class="dtable dtable--fill" aria-busy="true">
+      <div class="dtable__body">
+        <div class="tbl" data-table>
+          <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 400px repeat(2, 160px) minmax(8px,1fr)">
+            <div class="th th--separator"></div>
+            <div class="th"><span class="th__label" data-grab>Наименование метрики</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--separator"></div>
+          </div>
+          <div class="tbl__row" style="grid-template-columns:8px 400px repeat(2, 160px) minmax(8px,1fr)">
+            <div class="tc tc--separator"></div>
+            <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--separator"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+      </div>
+      <div class="fm-panel" id="panel-kpi" role="tabpanel" aria-labelledby="tab-kpi" data-tabpanel data-fm-tab="KPI" hidden>
+        <!-- Локальный компонент «Отчет KPI» (KPITable) — вкладка KPI страницы «Финансовые метрики».
+     Пара во фронтенде — KPITable. Карточка (Tile) с заголовком и сегмент-контролом
+     «Краткий» / «Подробный» (SegmentControl XS) в действиях шапки (внутри вкладки KPI
+     страницы МСФО · РСБУ · KPI · Фиксации ЭПС/ВБС стоит эта карточка), тулбар с «Фильтр»
+     и таблица. Вшивается общим сборщиком (.agents/tools/assemble.mjs)
+     по метке ds-include на экране.
+     Каркас показан в состоянии «Загрузка», пока страница не передала отчеты: «Фильтр»
+     заблокирован, в таблице скелетоны. Таблицу, тулбар и остальные состояния рисует
+     KPITable.js поверх FinancialMetricsTable.js:
+     PostKpiTable.render(корень, { KPI_SHORT, KPI_FULL }, фильтр). -->
+<section data-state="loading" data-view="KPI_SHORT" id="fm-table-kpi" class="tile lc-kpi-table col-12" data-widget="KPITable" data-widget-group="tables" data-widget-src="../widgets/tables/KPITable/KPITable.html">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Отчет KPI</h3></div>
+    </div>
+    <div class="tile__actions">
+      <div class="segctrl segctrl--xs" role="radiogroup" data-segctrl aria-label="Вид отчета KPI">
+        <div class="segctrl__thumb"></div>
+        <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="KPI_SHORT"><span class="segctrl__label">Краткий</span></button>
+        <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="KPI_FULL"><span class="segctrl__label">Подробный</span></button>
+      </div>
+    </div>
+  </header>
+  <div class="tile__body lc-kpi-table__body">
+    <div class="dtable-toolbar">
+      <div class="tfilter tfilter--disabled" role="group" aria-label="Фильтр таблицы">
+        <button type="button" class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false" disabled><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+      </div>
+    </div>
+    <div class="lc-kpi-table__table" data-fm-table>
+      <div class="dtable dtable--fill" aria-busy="true">
+        <div class="dtable__body">
+          <div class="tbl" data-table>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 400px repeat(2, 160px) minmax(8px,1fr)">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label" data-grab>Наименование метрики</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+            <div class="tbl__row" style="grid-template-columns:8px 400px repeat(2, 160px) minmax(8px,1fr)">
+              <div class="tc tc--separator"></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+      </div>
+
+      <!-- «Фиксации ЭПС/ВБС» — история фиксаций (FixationHistoryTable): «По ФИ» / «По дате»,
+           корзина в строке шлёт fmfixationaction, удаление и подтверждение — на странице. -->
+      <div class="fm-panel" id="panel-fixations" role="tabpanel" aria-labelledby="tab-fixations" data-tabpanel data-fm-tab="FIXATIONS" hidden>
+        <!-- Локальный компонент «История фиксаций» (FixationHistoryTable) — вкладка «Фиксации ЭПС/ВБС»
+     страницы «Финансовые метрики». Пара во фронтенде — FixationHistoryTable. Карточка (Tile)
+     с заголовком и сегмент-контролом «По ФИ» / «По дате» (SegmentControl XS) в действиях
+     шапки (внутри вкладки «Фиксации ЭПС/ВБС» страницы МСФО · РСБУ · KPI · Фиксации ЭПС/ВБС
+     стоит эта карточка) и таблица фиксаций. Вшивается общим сборщиком
+     (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Каркас показан в состоянии «Загрузка», пока страница не передала фиксации: в таблице
+     скелетоны, кнопка сортировки заблокирована. Таблицу и остальные состояния рисует
+     FixationHistoryTable.js поверх FinancialMetricsTable.js:
+     PostFixationHistoryTable.render(корень, фиксации, { mode, busy }). -->
+<section data-state="loading" data-view="BY_FI" data-mode="edit" data-busy="false" id="fm-table-fixations" class="tile lc-fixation-history-table col-12" data-widget="FixationHistoryTable" data-widget-group="tables" data-widget-src="../widgets/tables/FixationHistoryTable/FixationHistoryTable.html">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">История фиксаций</h3></div>
+    </div>
+    <div class="tile__actions">
+      <div class="segctrl segctrl--xs" role="radiogroup" data-segctrl aria-label="Вид истории фиксаций">
+        <div class="segctrl__thumb"></div>
+        <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="BY_FI"><span class="segctrl__label">По ФИ</span></button>
+        <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="BY_DATE"><span class="segctrl__label">По дате</span></button>
+      </div>
+    </div>
+  </header>
+  <div class="tile__body lc-fixation-history-table__body">
+    <div class="lc-fixation-history-table__table" data-fh-table>
+      <div class="dtable dtable--fill" aria-busy="true">
+        <div class="dtable__body">
+          <div class="tbl" data-table>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 64px 160px 140px 120px 140px 120px 200px 160px 180px 160px 280px 96px minmax(8px,1fr)">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label" data-grab>№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th" aria-sort="none"><span class="th__label" data-grab>Дата изменений</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="changeDate" aria-label="Сортировать" disabled><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Значение ЭПС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Δ ЭПС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Значение ЕТС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Δ ЕТС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>ВБС на дату фиксации, в валюте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Влияние на ВБС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Day1PnL, в валюте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label" data-grab>Вид модификации</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label" data-grab>Комментарий</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--center"><span class="th__label" data-grab>Действия</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+            <div class="tbl__row" style="grid-template-columns:8px 64px 160px 140px 120px 140px 120px 200px 160px 180px 160px 280px 96px minmax(8px,1fr)">
+              <div class="tc tc--separator"></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── Окно «Фильтр»: одно на все вкладки отчётов (скрим fm-filter-scrim).
+     Окно «Фиксация ЭПС/ВБС» (скрим fm-fix-scrim) — с подтверждением незавершённого
+     предварительного расчёта (fm-fix-confirm-scrim) и шаблоном карточки фиксации.
+     Окно «Выгрузка отчета» (скрим fm-download-scrim) — одно на страницу: с шифрованием или без
+     по сети (?net=sigma), «Выгрузить в XLSX» открывает его. -->
+<!-- Окно «Фильтр» отчёта финансовых метрик — связанный артефакт кнопки «Фильтр»
+     (TableFilter) на таблицах отчётов МСФО, РСБУ и KPI. Фрагмент вшивается
+     ассемблером отдельной меткой ds-include: скрим лежит в конце body страницы
+     (якорь #sec:modals), а не внутри таблицы. Окно одно на все вкладки: что в нём
+     показывать, ему отдаёт страница при каждом открытии (FinancialMetricsFilterModal.js).
+
+     Структура — штатная модалка фильтра ДС: .modal--w6.tfm, тело .modal__body--flush >
+     .tfm__body = вертикальные табы-разделы .tfm__nav + .tfm__panel со своим разделом
+     .tfm__sec и сеткой .tfm__grid. Раздел один — «Основная информация»; бейдж на табе
+     показывает число выбранных финансовых инструментов, при нуле скрыт атрибутом hidden.
+     Своего CSS у окна нет.
+
+     В разметке — только первое поле, «Финансовые инструменты»: мультивыбор с чипами в
+     поле (InputAutocomplete + DropdownList). Список опций и чипы заполняет скрипт по
+     финансовым инструментам вкладки. Поле индикаторов для каждого выбранного
+     инструмента скрипт добавляет следом, в порядке выбора, той же разметкой, что и это
+     поле, — поэтому оно стоит прямым ребёнком .tfm__grid (правило сетки ДС: `.tfm__grid > .inp`).
+
+     Подвал: «Очистить фильтр» (сбрасывает поля окна, окно остаётся открытым; выключена,
+     пока очищать нечего) и «Применить» (закрывает окно и отдаёт значение). Ни одна не
+     несёт data-modal-close: закрытие и результат ведёт скрипт. Крестик и Esc закрывают
+     без применения; клик по скриму поле ввода не закрывает — защита включается сама. -->
+
+<div class="modal-scrim" id="fm-filter-scrim" hidden data-widget="FinancialMetricsFilterModal" data-widget-group="modals" data-widget-src="../widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.html">
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="fmf-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fmf-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="fmf-sec-main"><span class="tab__label">Основная информация</span><span class="tab__badge" id="fmf-badge" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel">
+          <section class="tfm__sec" id="fmf-sec-main" aria-labelledby="fmf-sec-main-t">
+            <p class="tfm__sec-title" id="fmf-sec-main-t">Основная информация</p>
+            <div class="tfm__grid" data-fmf-grid>
+              <div class="inp inp--m tfm__span-2" data-fmf-fi>
+                <label class="ds-label" for="fmf-fi"><span class="ds-label__text">Финансовые инструменты</span></label>
+                <div class="inp__field" data-ddl="fmf-fi-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="fmf-fi" autocomplete="off" placeholder="Выберите финансовые инструменты">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="fmf-fi-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-fmf-clear disabled><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-fmf-apply><span class="btn__label">Применить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Окно «Фиксация ЭПС/ВБС» — связанный артефакт кнопок «Фиксация ЭПС/ВБС» тайла
+     «Финансовые метрики» (страница сделки) и шапки страницы «Финансовые метрики».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include: скрим лежит в конце
+     body страницы, а не внутри тайла. Рядом вшиваются подтверждение
+     (FixationConfirmModal.html) и шаблон карточки (FixationModalTile/).
+
+     Окно — список карточек фиксации (по одной на ФИ). Карточку рисует скрипт
+     FixationModal.js по шаблону подчасти; в разметке — только каркас: шапка, алерт
+     уровня окна, пустой список, подвал. Алерт показывает ошибку предварительного
+     расчёта (.modal__alert); пока ошибки нет — скрыт атрибутом hidden.
+
+     Подвал: слева «+ Добавить ФИ» (по макету; ДС не рекомендует левые и правые
+     кнопки вместе — отступление записано в паспорте), справа «Сохранить». Кнопки
+     без data-modal-close: окно закрывает скрипт, когда проверка прошла; с ошибкой
+     окно остаётся открытым. Крестик и Esc закрывают без сохранения; клик мимо окна
+     не закрывает (окно с полями ввода — guarded). Ширина — шаг 10 шкалы колонок
+     (1511px): карточка делится на ввод и результат. Высота растёт с числом карточек
+     до предела ДС, дальше скролл тела. -->
+<div class="modal-scrim" id="fm-fix-scrim" hidden data-widget="FixationModal" data-widget-group="modals" data-widget-src="../widgets/modals/FixationModal/FixationModal.html">
+  <div class="modal modal--w10" role="dialog" aria-modal="true" aria-labelledby="fm-fix-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fm-fix-title">Фиксация ЭПС/ВБС</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__alert" data-fix-alert hidden>
+      <div class="alert alert--error alert--m alert--flush" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title" data-fix-alert-title></p>
+          <p class="alert__text" data-fix-alert-text hidden></p>
+        </div>
+      </div>
+    </div>
+    <div class="modal__body">
+      <div class="lc-fixation-modal__list" data-fix-list></div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-left">
+        <button type="button" class="btn btn--transparent btn--m" data-fix-add>
+          <span class="btn__icon"><i data-icon="add"></i></span>
+          <span class="btn__label">Добавить ФИ</span>
+        </button>
+      </div>
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fix-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Подтверждение окна «Фиксация ЭПС/ВБС»: вложенное окно, которое открывается поверх
+     окна фиксации, когда «Сохранить» нажали до конца предварительного расчёта.
+     Паспорт у него общий с окном (FixationModal.md). Свой файл — потому что у
+     фрагмента один корневой элемент, а каждый скрим — отдельный корень.
+
+     «Отменить» закрывает без сохранения (data-modal-close), «Подтвердить» закрывает
+     с результатом «да» — это делает скрипт окна (data-fix-confirm-ok). Рядом с
+     окном фиксации стоит своё подтверждение, а не подтверждение страницы: окно
+     открывается и на странице сделки, где общего подтверждения нет. -->
+<div class="modal-scrim modal-scrim--nested" id="fm-fix-confirm-scrim" hidden data-widget="FixationConfirmModal" data-widget-group="modals" data-widget-src="../widgets/modals/FixationModal/FixationConfirmModal.html">
+  <div class="modal modal--w4" role="alertdialog" aria-modal="true" aria-labelledby="fm-fix-confirm-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fm-fix-confirm-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <div>Процесс предварительного расчета не завершен, сохранить фиксацию ЭПС/ВБС?</div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-fix-confirm-ok><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Локальный компонент «Карточка фиксации» (подчасть окна «Фиксация ЭПС/ВБС»).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include.
+
+     Корень фрагмента — <template>: карточек в окне от одной и больше, поля у них
+     одинаковые, а значения разные. Поэтому компонент отдаёт ЭТАЛОН разметки, а
+     карточки по нему рисует скрипт окна (FixationModal.js): клонирует шаблон и
+     заменяет {uid} в id и for — у каждой карточки свой.
+
+     Слева — ввод: ФИ, дата изменений, тип модификации, комментарий; под ними
+     «ВБС до фиксации» и кнопка «Предварительный расчет», которую после расчёта
+     заменяет чип «Расчет выполнен». Справа — результат: два блока по виду модификации и блок ЕТС (Inset ДС, `tile--inset`). Пока значения нет — прочерк; у процентов постфикс «%»
+     появляется вместе со значением. «⊖» справа — удалить карточку; пока карточка
+     одна, он выключен.
+
+     Состояние карточки — атрибуты корня .lc-fixtile (ставит скрипт окна):
+       data-fx-prelim   idle | busy | done — предварительный расчёт не запускали | идёт | выполнен
+       data-fx-initial  true | false       — выбран тип «Первоначальная»: дата очищена и
+                                             заблокирована, предварительный расчёт недоступен
+       data-fx-ets      idle | loading | ok | empty | error | manual — ЕТС: нет значения | грузится
+                                             (скелетоны) | есть | нет или 0 (жёлтая иконка) | ошибка
+                                             (красная иконка) | введена вручную
+       data-fx-ets-edit true | false       — идёт ручной ввод ЕТС: вместо значения поле и галочка
+
+     Недоступное действие выключается разметкой (disabled у кнопки, disabled у поля),
+     а не только прячется стилем. -->
+
+<div hidden
+     data-off-grid="Эталон карточки фиксации: ширину задаёт окно, а не 12-колоночная сетка страницы" data-widget="FixationModalTile" data-widget-group="modals" data-widget-src="../widgets/modals/FixationModal/FixationModalTile/FixationModalTile.html">
+<template id="lc-fixtile-tpl">
+  <section class="tile tile--headless lc-fixtile" data-fx-card data-fx-prelim="idle" data-fx-initial="false" data-fx-ets="idle" data-fx-ets-edit="false">
+    <div class="tile__body lc-fixtile__body">
+
+      <div class="lc-fixtile__main">
+        <div class="lc-fixtile__fields">
+
+          <div class="inp inp--m inp--fullwidth" data-fx-field="fi">
+            <label class="ds-label" for="fx-fi-{uid}"><span class="ds-label__text">Наименование ФИ</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="fx-fi-{uid}-list">
+                <input class="inp__control" id="fx-fi-{uid}" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="fx-fi-{uid}-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+
+          <!-- Дата: маска ДД.ММ.ГГГГ и календарь — из коробки ДС. Крестик очистки рисует
+               рантайм по значению, руками его не ставим. -->
+          <div class="inp inp--m inp--fullwidth" data-fx-field="date">
+            <label class="ds-label" for="fx-date-{uid}"><span class="ds-label__text">Дата изменений</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="fx-date-{uid}" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="inp inp--m inp--fullwidth" data-fx-field="type">
+            <label class="ds-label" for="fx-type-{uid}"><span class="ds-label__text">Тип модификации</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="fx-type-{uid}-list">
+                <input class="inp__control" id="fx-type-{uid}" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="fx-type-{uid}-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+
+        </div>
+
+        <div class="inp inp--m inp--fullwidth inp--multiline" data-fx-field="comment">
+          <label class="ds-label" for="fx-comment-{uid}"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field">
+            <textarea class="inp__control" id="fx-comment-{uid}" rows="8"></textarea>
+          </div>
+        </div>
+
+        <div class="lc-fixtile__foot">
+          <div class="rof">
+            <span class="ds-label"><span class="ds-label__text">ВБС до фиксации</span></span>
+            <div class="rof__row"><span class="rof__value" data-fx-val="gcaBefore">—</span></div>
+          </div>
+          <button type="button" class="btn btn--outline btn--m" data-fx-prelim-run disabled>
+            <span class="btn__label">Предварительный расчет</span>
+          </button>
+          <span class="chip chip--success chip--m" data-fx-prelim-done hidden>
+            <span class="chip__icon"><i data-icon="check"></i></span>
+            <span class="chip__label">Расчет выполнен</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="lc-fixtile__side">
+        <div class="lc-fixtile__pair">
+
+          <section class="tile tile--inset" data-fx-block="non" aria-labelledby="fx-non-{uid}">
+            <header class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row"><h3 class="tile__title" id="fx-non-{uid}">Несущественная модификация</h3></div>
+              </div>
+            </header>
+            <div class="tile__body lc-fixtile__rows">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ВБС после фиксации</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="nonGca">—</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Day1PnL</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="nonDay1">—</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Доля Day1PnL</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="nonShare">—</span><span class="rof__affix" data-fx-aff="nonShare" hidden>%</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="tile tile--inset" data-fx-block="sub" aria-labelledby="fx-sub-{uid}">
+            <header class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row"><h3 class="tile__title" id="fx-sub-{uid}">Существенная модификация</h3></div>
+              </div>
+            </header>
+            <div class="tile__body lc-fixtile__rows">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ВБС после фиксации</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="subGca">—</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ЭПС после фиксации</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="subEir">—</span><span class="rof__affix" data-fx-aff="subEir" hidden>%</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Δ ЭПС</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="subEirDelta">—</span><span class="rof__affix" data-fx-aff="subEirDelta" hidden>%</span></div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ЕТС — Inset без заголовка: tile--inset + tile--headless.
+             Слева в строке значения — иконка статуса (слот data-fx-ets-icon: скрипт кладёт туда
+             красную «!» или жёлтый треугольник с тултипом), вместо значения при загрузке — скелетон,
+             справа — карандаш ручного ввода; в режиме ввода значение заменяет поле с «%» и
+             кнопка-галочка (Э7). -->
+        <section class="tile tile--inset tile--headless" data-fx-block="ets">
+          <div class="tile__body lc-fixtile__rows lc-fixtile__rows--two">
+            <div class="rof">
+              <span class="ds-label"><span class="ds-label__text">ЕТС после фиксации</span></span>
+              <div class="rof__row lc-fixtile__ets-row">
+                <span class="lc-fixtile__ets-icon" data-fx-ets-icon></span>
+                <span class="sk-line lc-fixtile__sk" data-fx-ets-sk aria-hidden="true"></span>
+                <span class="rof__value" data-fx-val="etsRate">—</span><span class="rof__affix" data-fx-aff="etsRate" hidden>%</span>
+                <div class="inp inp--m lc-fixtile__ets-input" data-fx-ets-input>
+                  <div class="inp__box">
+                    <div class="inp__field">
+                      <input class="inp__control" inputmode="decimal" autocomplete="off" aria-label="Значение ЕТС, %" disabled>
+                      <span class="inp__postfix">%</span>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="ibtn ibtn--neutral ibtn--s lc-fixtile__ets-act" data-fx-ets-pencil
+                        aria-label="Изменить значение ЕТС" disabled><i data-icon="edit"></i></button>
+                <button type="button" class="ibtn ibtn--neutral ibtn--s lc-fixtile__ets-act" data-fx-ets-ok
+                        aria-label="Подтвердить значение ЕТС" disabled><i data-icon="check"></i></button>
+              </div>
+            </div>
+            <div class="rof">
+              <span class="ds-label"><span class="ds-label__text">Δ ЕТС</span></span>
+              <div class="rof__row">
+                <span class="sk-line lc-fixtile__sk" data-fx-ets-sk aria-hidden="true"></span>
+                <span class="rof__value" data-fx-val="etsDelta">—</span><span class="rof__affix" data-fx-aff="etsDelta" hidden>%</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-fx-remove
+              aria-label="Удалить карточку фиксации" data-tooltip="Удалить карточку"><i data-icon="minus-circle"></i></button>
+
+    </div>
+  </section>
+</template>
+</div>
+<!-- Окно «Выгрузка отчета» страницы «Финансовые метрики». Фрагмент вшивается ассемблером
+     меткой ds-include — скрим должен лежать в конце body. Один скрим на оба вида:
+       с шифрованием (сеть Сигма) — виден блок получателей, окно шире;
+       без шифрования (сеть Альфа / Омега) — блока получателей нет.
+     Вид выбирает api.open({ encrypted }) — FinancialMetricsDownloadReportModal.js (PostDealDownloadReportModal.bind). -->
+
+<div class="modal-scrim" id="fm-download-scrim" hidden data-widget="FinancialMetricsDownloadReportModal" data-widget-group="modals" data-widget-src="../widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.html">
+  <div class="modal modal--w6 lc-fm-download" role="dialog" aria-modal="true" aria-labelledby="fm-download-title" data-dl-variant="plain">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fm-download-title">Выгрузка отчета</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert">
+      <div class="alert alert--warning alert--m alert--flush" data-alert-tone="warning" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Вы выгружаете документ, содержащий данные К2</p>
+          <p class="alert__text">Нажимая кнопку «Выгрузить», вы подтверждаете, что осведомлены о следующих ограничениях:</p>
+          <ul class="alert__text lc-fm-download__list">
+            <li>данные только для внутреннего использования;</li>
+            <li>данные необходимо использовать строго в соответствии с бизнес-процессом;</li>
+            <li>данные нельзя передавать лицам, не задействованным в бизнес-процессе.</li>
+          </ul>
+          <p class="alert__text">Информация о выгрузке документа будет зафиксирована и направлена в службу безопасности.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body" data-dl-recipients hidden>
+      <p class="lc-fm-download__lead">Выберите сотрудников, которым будет доступен файл после его создания. Данный файл будет доступен для работы в доменах Сигма и Альфа/Омега только у указанных ниже сотрудников. Если вы добавили сотрудника по e-mail, то файл будет доступен только в том домене, которому соответствует e-mail.</p>
+
+      <div class="lc-fm-download__adders">
+        <div class="lc-fm-download__adder">
+          <div class="inp inp--m lc-fm-download__field">
+            <label class="ds-label" for="fm-dl-employee"><span class="ds-label__text">Сотрудник</span></label>
+            <div class="inp__field" data-ddl="fm-dl-employee-list">
+              <input class="inp__control" id="fm-dl-employee" autocomplete="off" data-dl-employee>
+              <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button><button class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="fm-dl-employee-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <button type="button" class="btn btn--outline btn--m" data-dl-add-employee disabled aria-disabled="true"><span class="btn__label">Добавить</span></button>
+        </div>
+        <div class="lc-fm-download__adder">
+          <div class="inp inp--m lc-fm-download__field">
+            <label class="ds-label" for="fm-dl-email"><span class="ds-label__text">Сотрудник вне штата (по e-mail)</span></label>
+            <div class="inp__field">
+              <input class="inp__control" id="fm-dl-email" autocomplete="off" inputmode="email" data-dl-email>
+              <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+            </div>
+          </div>
+          <button type="button" class="btn btn--outline btn--m" data-dl-add-email disabled aria-disabled="true"><span class="btn__label">Добавить</span></button>
+        </div>
+      </div>
+
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl tbl--scroll" data-table data-dl-rows>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 48px minmax(200px,1.4fr) minmax(140px,1fr) minmax(200px,1.2fr) minmax(220px,1.2fr) 8px;">
+              <div class="th th--separator"></div>
+              <div class="th"><label class="cb cb--no-content"><input type="checkbox" class="cb__input" aria-label="Выбрать всех" data-dl-all><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span></label></div>
+              <div class="th"><span class="th__label">ФИО</span></div>
+              <div class="th"><span class="th__label">Должность</span></div>
+              <div class="th"><span class="th__label">Почта во внешнем домене</span></div>
+              <div class="th"><span class="th__label">Почта во внутреннем домене</span></div>
+              <div class="th th--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-dl-submit><span class="btn__label">Выгрузить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Окно предупреждения «Пересчитать метрики?» — открывается, если при пересчёте у зафиксированного
+     индикатора РСБУ осталась нераспределённая сумма (RE0034, Э5) -->
+<!-- Окно предупреждения при пересчёте метрик с нераспределённой дельтой РСБУ (RE0034, Э5).
+     Открывается кликом «Пересчет метрик» на странице финансовых метрик и тайлом «Финансовые
+     метрики» на странице сделки, пока у зафиксированного индикатора расхождение не устранено
+     корректировками. Дату, сумму и ФИ вписывает скрипт при открытии. «Отменить» закрывает без пересчёта
+     (data-modal-close), «Пересчитать» закрывает с результатом «да» (data-rrw-ok). -->
+<div class="modal-scrim" id="rrw-scrim" hidden data-widget="RsbuRecalcWarningModal" data-widget-group="modals" data-widget-src="../widgets/modals/RsbuRecalcWarningModal/RsbuRecalcWarningModal.html">
+  <div class="modal modal--w4" role="alertdialog" aria-modal="true" aria-labelledby="rrw-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rrw-title">Пересчитать метрики?</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <div>Расхождение с <span data-rrw-date></span> не устранено: <span data-rrw-amount></span> по ФИ <span data-rrw-fi></span>. После пересчёта фиксация расчёта будет снята, расхождение останется в отчёте РСБУ.</div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-rrw-ok><span class="btn__label">Пересчитать</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Подтверждение действия: одно на страницу (скрим fm-confirm-scrim); текст и действие подставляет
+     скрипт функцией confirmAction. Им подтверждается удаление фиксации; у окна фиксации своё
+     подтверждение (fm-fix-confirm-scrim): окно открывается и на странице сделки. -->
+<div class="modal-scrim" id="fm-confirm-scrim" hidden>
+  <div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="fm-confirm-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fm-confirm-title">Подтверждение действия</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <div id="fm-confirm-text"></div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" id="fm-confirm-ok"><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- данные: порядок как у Deal.html. Стор метрик читает ФИ сделки из стора ФИ, а тот — узлы
+     дерева сделки, поэтому деревья и ФИ раньше расчёта -->
+<script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
+<script src="../data/deals-store.js"></script>
+<script src="../data/mock-team.js"></script>
+<script src="../data/mock-counterparties.js"></script>
+<script src="../data/post-api.js"></script>
+<script src="../data/counterparties-store.js"></script>
+<script src="../data/mock-financial-metrics.js"></script>
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/mock-fin-instruments.js"></script>
+<script src="../data/mock-deal-trees.js"></script>
+<script src="../data/product-tree-store.js"></script>
+<script src="../data/fin-instruments-store.js"></script>
+<script src="../data/mock-fin-metrics-calc.js"></script>
+<script src="../data/fin-metrics-store.js"></script>
+<script src="../data/fin-metrics-notify.js"></script>
+<script src="../data/mock-report-employees.js"></script>
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<!-- виджеты: FinancialMetricsTable.js раньше KPITable.js и FixationHistoryTable.js (те строятся на нём) -->
+<script src="../widgets/tables/FinancialMetricsTable/FinancialMetricsTable.js"></script>
+<script src="../widgets/tables/KPITable/KPITable.js"></script>
+<script src="../widgets/tables/FixationHistoryTable/FixationHistoryTable.js"></script>
+<script src="../widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.js"></script>
+<script src="../widgets/modals/FixationModal/FixationModal.js"></script>
+<script src="../widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.js"></script>
+<script src="../widgets/modals/RsbuRecalcWarningModal/RsbuRecalcWarningModal.js"></script>
+<script>
+/* Экранный скрипт. Делает только то, чего рантаймы ДС не делают: меню по каталогу ролей,
+   данные сделки (крошки, шапка), связь таблиц и окна фильтра с FinMetricsStore, переключение
+   панелей вкладок (DSTabs.tabs — как на Deal.html: синхронно после ds-body.js, раньше
+   автопривязки на DOMContentLoaded), пересчёт метрик, доступность кнопок шапки, удаление
+   фиксации ЭПС/ВБС с подтверждением.
+   Фильтры вкладок живут в памяти страницы (вопрос 11 задачи RE0033 открыт). */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'current-portfolio';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../../index.html" aria-label="Хаб проектов"';
+  var TABS = ['IFRS', 'RAS', 'KPI'];
+
+  function ic(name) { return '<i data-icon=\'' + name + '\'></i>'; }
+  function $(id) { return document.getElementById(id); }
+
+  /* ---------- боковое меню ---------- */
+  function itemHTML(it) {
+    var badge = it.badge
+      ? '<span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">' + it.badge + '</span></span>'
+      : '';
+    var href = '#';
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="' + href + '"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span>' + badge + '</a>';
+  }
+
+  function buildNav() {
+    var nav = $('nav');
+    var s = '<div class="nav__top">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+      + '</div><div class="nav__list">'
+      + '<a class="nav__item" href="#"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    window.IBPHome.itemsFor(role).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>' + (window.IBPHome.footerHTML
+      ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">'
+        + '<a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">'
+        + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+        + '<span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span>'
+        + '<span class="nav__user-role">' + role + '</span></span></a>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>'
+        + '</div>');
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  }
+
+  /* ---------- сделка: номер приходит параметром ?id=, как на Deal.html ---------- */
+  function currentDeal() {
+    var id = null;
+    try { id = new URLSearchParams(window.location.search).get('id'); } catch (e) { id = null; }
+    var deal = (id != null && id !== '') ? window.DealsStore.byId(id) : null;
+    return deal || window.DealsStore.byId('1028') || window.DealsStore.list()[0] || null;
+  }
+
+  var deal = currentDeal();
+  var openedId = deal ? String(deal.id) : '';
+  var preview = /\.preview\.html$/.test(window.location.pathname);
+  var DEAL_PAGE = (preview ? 'Deal.preview.html' : 'Deal.html');
+  var dealHref = DEAL_PAGE + (openedId ? '?id=' + encodeURIComponent(openedId) : '');
+
+  /* Просмотр: статус сделки не допускает правку (DealsStore.isEditable) либо сценарий панели
+     ?fmMode=view — роль без права на расчёт и фиксацию (как на Deal.html). */
+  var roleView = /[?&]fmMode=view/.test(window.location.search);
+  function isView() { return roleView || !(deal && window.DealsStore.isEditable(deal)); }
+
+  /* ---------- шапка и крошки ---------- */
+  function paintCrumbs() {
+    var ol = document.querySelector('[data-breadcrumbs]');
+    var label = deal ? deal.id + '. ' + (deal.name || '') : 'Сделка';
+    $('fm-return').setAttribute('href', dealHref);
+    var api = window.DSBreadcrumbs && ol ? window.DSBreadcrumbs.bind(ol) : null;
+    if (api && api.items[2]) {
+      api.items[2].text = label;
+      api.items[2].href = dealHref;
+      api.refresh();
+      return;
+    }
+    var a = $('fm-crumb-deal');
+    if (a) { a.textContent = label; a.setAttribute('href', dealHref); }
+  }
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  /* ISO → «ДД.ММ.ГГГГ, ЧЧ:ММ» по местному времени (как в тайле «Финансовые метрики») */
+  function formatAt(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear() + ', ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+
+  var store = window.FinMetricsStore;
+  var Table = window.PostFinMetricsTable;
+  var Kpi = window.PostKpiTable;
+  var Fix = window.PostFixationHistoryTable;
+  var Filter = window.PostFinMetricsFilter;
+
+  function noFilter() { return Filter ? Filter.empty() : { fiIds: [], metrics: {} }; }
+  var filters = { IFRS: noFilter(), RAS: noFilter(), KPI: noFilter() };
+  var loaded = false;
+
+
+  /* Недоступное действие выключается атрибутом, а не только прячется (урок Л235). */
+  function setEnabled(el, on) {
+    el.disabled = !on;
+    if (on) el.removeAttribute('aria-disabled'); else el.setAttribute('aria-disabled', 'true');
+  }
+
+  /* Лоадер на кнопке — разметка Buttons ДС (btn--loading + spin--current). */
+  function setLoading(btn, on) {
+    var spin = btn.querySelector('.spin');
+    btn.classList.toggle('btn--loading', on);
+    if (on) {
+      btn.setAttribute('aria-busy', 'true');
+      if (!spin) {
+        spin = document.createElement('span');
+        spin.className = 'spin spin--current';
+        btn.insertBefore(spin, btn.firstChild);
+      }
+    } else {
+      btn.removeAttribute('aria-busy');
+      if (spin) spin.remove();
+    }
+  }
+
+  function paintHeader() {
+    if (!loaded) return;
+    var s = store.state();
+    var view = isView();
+    var busy = !!s.busy;
+
+    var sub = $('fm-subtitle');
+    var at = s.calculated ? formatAt(s.calculatedAt) : '';
+    sub.hidden = !at;
+    $('fm-subtitle-text').textContent = at ? 'Последний расчет: ' + at : '';
+
+    var fix = $('fm-fixation');
+    var calc = $('fm-calc');
+    fix.hidden = view;
+    setEnabled(fix, !view && !busy && s.code !== 'LOCKED');
+    calc.hidden = view;
+    setEnabled(calc, !view && !busy && s.code !== 'LOCKED');
+    setLoading(calc, busy && !view);
+
+    setEnabled($('fm-menu-btn'), !busy);
+    setEnabled($('fm-export'), !busy);
+
+    /* «В сделку» — ссылка: запрещённая теряет href (Л235) */
+    var back = $('fm-return');
+    if (busy) {
+      back.removeAttribute('href');
+      back.setAttribute('aria-disabled', 'true');
+      back.setAttribute('tabindex', '-1');
+      back.classList.add('btn--disabled');
+    } else {
+      back.setAttribute('href', dealHref);
+      back.removeAttribute('aria-disabled');
+      back.removeAttribute('tabindex');
+      back.classList.remove('btn--disabled');
+    }
+  }
+
+  /* ---------- вкладки ---------- */
+  function paintTabs() {
+    if (!loaded) return;
+    store.reportTabs().forEach(function (t) {
+      var tab = document.querySelector('#fm-tabs [data-fm-tab="' + t.code + '"]');
+      if (!tab) return;
+      var label = tab.querySelector('.tab__label');
+      if (label && t.label) label.textContent = t.label;
+    });
+    var fixTab = store.reportTabs().filter(function (t) { return t.code === 'FIXATIONS'; })[0];
+    var badge = $('fm-fixations-badge');
+    var count = fixTab && fixTab.count ? fixTab.count : 0;
+    badge.textContent = count > 0 ? String(count) : '';
+    badge.hidden = !(count > 0);
+  }
+
+  function bindTabs() {
+    var bar = $('fm-tabs');
+    if (!bar || !window.DSTabs) return;
+    var panels = Array.prototype.slice.call(document.querySelectorAll('[data-tabpanel]'));
+    window.DSTabs.tabs(bar, {
+      onChange: function (index) {
+        panels.forEach(function (p, i) { p.hidden = (i !== index); });
+      }
+    });
+  }
+
+  /* ---------- отчёты ---------- */
+  var ROOTS = { IFRS: 'fm-table-ifrs', RAS: 'fm-table-ras', KPI: 'fm-table-kpi', FIXATIONS: 'fm-table-fixations' };
+
+  /* После пересчёта состав ФИ и индикаторов мог измениться: из фильтра уходит то, чего нет. */
+  function pruneFilter(tab) {
+    var ind = store.indicators(tab);
+    filters[tab] = Filter ? Filter.normalize(filters[tab], ind) : noFilter();
+    return filters[tab];
+  }
+
+  /* ФИ отчёта РСБУ с траншем — им доступна фиксация; в просмотре и во время расчёта действий нет. */
+  function rasFiIds() {
+    var inReport = {};
+    store.report('RAS').groups.forEach(function (g) { inReport[g.financialInstrumentId] = true; });
+    return store.trancheFiIds().filter(function (id) { return inReport[id]; });
+  }
+  function rasOpts() {
+    return { ras: {
+      canFix: rasFiIds(), fixation: store.rasFixation(), moves: store.rasMoves(),
+      readOnly: isView() || !!store.state().busy
+    } };
+  }
+
+  function renderTab(tab) {
+    var root = $(ROOTS[tab]);
+    if (!root || !loaded) return;
+    if (tab === 'FIXATIONS') {
+      /* фильтра у вкладки нет; корзины — по режиму (просмотр: колонки нет) и по пересчёту (disabled) */
+      Fix.render(root, store.fixations(), { mode: isView() ? 'view' : 'edit', busy: !!store.state().busy });
+      return;
+    }
+    var f = pruneFilter(tab);
+    if (tab === 'KPI') {
+      Kpi.render(root, { KPI_SHORT: store.report('KPI_SHORT'), KPI_FULL: store.report('KPI_FULL') }, f);
+    } else {
+      Table.render(root, store.report(tab), f, tab === 'RAS' ? rasOpts() : null);
+    }
+  }
+
+  function refreshAll() {
+    paintHeader();
+    paintTabs();
+    TABS.forEach(renderTab);
+    renderTab('FIXATIONS');
+  }
+
+  function tabOf(el) {
+    var panel = el && el.closest ? el.closest('[data-tabpanel][data-fm-tab]') : null;
+    return panel ? panel.getAttribute('data-fm-tab') : null;
+  }
+
+  /* «Фильтр» таблицы: окно открывает страница (у кнопки виджета нет data-modal) */
+  document.addEventListener('fmtableaction', function (e) {
+    if (!e.detail || e.detail.action !== 'FILTER' || !loaded || !Filter) return;
+    var tab = tabOf(e.target);
+    if (!tab) return;
+    Filter.open({ indicators: store.indicators(tab), value: filters[tab] }).then(function (value) {
+      if (!value) return;
+      filters[tab] = value;
+      renderTab(tab);
+    });
+  });
+  document.addEventListener('fmtablefilterreset', function (e) {
+    var tab = tabOf(e.target);
+    if (!tab || !loaded) return;
+    filters[tab] = noFilter();
+    renderTab(tab);
+  });
+
+  /* ---------- фиксация расчёта РСБУ ---------- */
+  function fiName(id) {
+    var hit = store.indicators('RAS').filter(function (x) { return x.fiId === id; })[0];
+    return hit ? hit.fiName : id;
+  }
+  function doFixRas(id) {
+    if (!loaded || isView() || store.state().busy) return;
+    var res = store.fixRas(id);
+    if (res && res.ok) syncUrl();
+    if (res && res.ok && window.FinMetricsNotify) window.FinMetricsNotify.rasFixed(fiName(id));
+    /* контрол, на котором стоял фокус, заменён чипом — фокус переносим на чип */
+    var chip = document.querySelector('#panel-ras [data-fm-fixed-chip]');
+    if (chip) chip.focus();
+  }
+  document.addEventListener('fmtableaction', function (e) {
+    var d = e.detail;
+    if (!d) return;
+    if (d.action === 'FIX_RAS') doFixRas(d.fiId);
+  });
+
+  /* Служебный переключатель состояния фиксации — таб System панели прототипа (не в интерфейсе):
+     состояния включает и сам пересчёт (зафиксировано → после пересчёта → фиксация снята, Э5), а
+     переключатель или адрес `rasFix` задают их напрямую; состояние сохраняется в хранилище
+     вместе с переносами (RE0034, Э4). */
+  function syncUrl() {
+    try {
+      var u = new URL(window.location.href);
+      u.searchParams.set('rasFix', store.rasState());
+      window.history.replaceState(null, '', u.toString());
+    } catch (e) { /* file:// и т. п. */ }
+  }
+  (window.PP_SYSTEM = window.PP_SYSTEM || []).push(
+    { id: 'ras-state', title: 'Фиксация расчёта РСБУ', desc: 'Нет фиксации · зафиксировано до пересчёта · после позднего платежа и пересчёта.',
+      options: [{ value: 'none', label: 'Нет' }, { value: 'fixed', label: 'Зафиксировано' }, { value: 'recalc', label: 'После пересчёта' }],
+      value: function () { return store.rasState(); },
+      set: function (v) { store.setRasState(v); syncUrl(); } },
+    { id: 'ras-reset', title: 'Фиксация расчёта РСБУ и переносы', action: 'Сбросить',
+      run: function () {
+        store.resetRas();
+        try {
+          var u = new URL(window.location.href);
+          u.searchParams.set('rasFix', 'none');
+          u.searchParams.set('rasMoves', 'none');
+          window.history.replaceState(null, '', u.toString());
+        } catch (e) { /* file:// и т. п. */ }
+      } }
+  );
+
+  /* ---------- подтверждение действия ---------- */
+  var pending = null;
+  function confirmAction(text, onOk) {
+    $('fm-confirm-text').textContent = text;
+    pending = onOk;
+    /* подтверждения открываются и поверх окна фиксации (Э6) */
+    window.DSModal.open($('fm-confirm-scrim'), { nested: true });
+  }
+  $('fm-confirm-ok').addEventListener('click', function () {
+    var fn = pending; pending = null;
+    window.DSModal.closeTop(true);
+    if (fn) fn();
+  });
+
+  /* ---------- фиксации ЭПС/ВБС: удаление ---------- */
+  /* Корзина есть у каждой строки. Удалить можно только последнюю фиксацию ФИ: у остальных клик
+     даёт снек ошибки (ответ 33 задачи RE0033), у последней — подтверждение, удаление и тост. */
+  document.addEventListener('fmfixationaction', function (e) {
+    var d = e.detail;
+    if (!d || d.action !== 'REMOVE' || !loaded || isView() || store.state().busy) return;
+    var rec = store.fixations().filter(function (f) { return f.fixationId === d.fixationId; })[0];
+    if (!rec) return;
+    var notify = window.FinMetricsNotify;
+    if (!rec.isLast) {
+      if (notify) notify.fixationNotLast();
+      return;
+    }
+    confirmAction('Удаление фиксации ЭПС/ВБС финансового инструмента "' + rec.fiName + '" на ' + Table.fmtDate(rec.changeDate), function () {
+      var res = store.removeFixation(rec.fixationId);
+      if (!notify) return;
+      if (res && res.ok) notify.fixationRemoved();
+      else if (res && res.error === 'NOT_LAST') notify.fixationNotLast();
+    });
+  });
+
+  /* ---------- действия шапки ---------- */
+  function pageEvent(action) {
+    var host = document.querySelector('.screen');
+    if (host) host.dispatchEvent(new CustomEvent('fmpageaction', { bubbles: true, detail: { action: action } }));
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('[data-fm-act]') : null;
+    if (!btn || btn.disabled || btn.getAttribute('aria-disabled') === 'true' || btn.hidden || !loaded) return;
+    var act = btn.getAttribute('data-fm-act');
+    if (act === 'CALCULATE') {
+      if (isView() || store.state().busy) return;
+      /* нераспределённая дельта РСБУ — сначала предупреждение (RE0034, Э5): отмена пересчёт не запускает */
+      var un = store.rasUnallocated();
+      var run = function () {
+        store.calculate().then(function (res) {
+          if (window.FinMetricsNotify) window.FinMetricsNotify.calculation(res);
+          syncUrl();
+        });
+      };
+      if (un && window.PostRsbuRecalcWarning) {
+        window.PostRsbuRecalcWarning.open({ amount: un.amount, currencyCode: un.currencyCode, fiName: fiName(un.fiId), date: un.date })
+          .then(function (ok) { if (ok) run(); });
+      } else run();
+    } else if (act === 'FIXATION') {
+      /* окно фиксации ведёт себя само (PostFixationModal): готовая фиксация приходит в стор,
+         страница перерисуется по событию 'fixation-added' */
+      if (isView() || store.state().busy || !window.PostFixationModal) return;
+      window.PostFixationModal.open();
+    } else if (act === 'EXPORT') {
+      pageEvent(act);
+      if (download && !exporting) download.open({ encrypted: ENCRYPTED });
+    }
+  });
+
+  /* ---------- выгрузка отчёта ----------
+     Кебаб над вкладками выгружает всю страницу. Сеть Сигма (внешний интернет) — с шифрованием,
+     Альфа / Омега (внутренние) — без; в продукте сеть по логину, в прототипе — ?net=sigma
+     (по умолчанию Альфа). ?download=fail — демо ошибки выгрузки. Файла нет: выгрузка
+     имитируется задержкой, повторный запуск, пока она идёт, игнорируется (кебаб не выключаем:
+     выключение уронило бы фокус, который окно только что вернуло на кебаб). */
+  var query = new URLSearchParams(window.location.search);
+  var ENCRYPTED = query.get('net') === 'sigma';
+  var exporting = false;
+  var download = window.PostDealDownloadReportModal && $('fm-download-scrim')
+    ? window.PostDealDownloadReportModal.bind($('fm-download-scrim'), {
+        employees: window.MOCK_REPORT_EMPLOYEES,
+        run: function () {
+          exporting = true;
+          setTimeout(function () {
+            exporting = false;
+            var notify = window.FinMetricsNotify;
+            if (!notify) return;
+            if (query.get('download') === 'fail') notify.exportFailed(); else notify.exportDone();
+          }, 600);
+        }
+      })
+    : null;
+
+  /* ---------- сторы ---------- */
+  function openStores() {
+    var cards = window.FinInstrumentsStore;
+    var trees = window.ProductTreeStore;
+    var cpt = window.CounterpartiesStore;
+    if (!deal || !store || !cards || !Table || !Kpi || !Fix) return;
+    Promise.all([store.ready, cards.ready, trees ? trees.ready : null, cpt ? cpt.ready : null]).then(function () {
+      if (trees && String(trees.dealId()) !== openedId) trees.use(deal.id);
+      if (String(cards.dealId()) !== openedId) cards.use(deal.id);
+      store.use(deal.id);
+      loaded = true;
+      store.on('change', function (d) {
+        /* идёт расчёт — меняется только шапка (лоадер и блокировка); по его итогу — всё */
+        if (d && d.reason === 'calculating') { paintHeader(); renderTab('RAS'); renderTab('FIXATIONS'); }
+        else refreshAll();
+      });
+      window.DealsStore.on('change', function (d) {
+        if (d && d.deal === deal) { paintHeader(); renderTab('FIXATIONS'); }
+      });
+      refreshAll();
+      if (window.dsIcons) window.dsIcons.apply(document);
+    });
+  }
+
+  buildNav();
+  paintCrumbs();
+  bindTabs();
+  if (Filter && $('fm-filter-scrim')) Filter.bind($('fm-filter-scrim'));
+  openStores();
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

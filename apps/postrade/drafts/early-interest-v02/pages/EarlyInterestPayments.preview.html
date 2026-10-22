@@ -181,17 +181,21 @@
 
       <section class="lc-ei-pay__debt" aria-labelledby="ei-pay-debt-title">
         <h3 class="lc-ei-pay__debt-title" id="ei-pay-debt-title">Задолженность на дату</h3>
-        <div class="lc-ei-pay__table">
-          <div class="tbl" data-table id="ei-pay-tbl">
-            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 104px 104px minmax(240px,1fr) 72px 128px 144px 8px;">
-              <div class="th th--separator"></div>
-              <div class="th" data-col="periodStart"><span class="th__label">Дата начала ПП</span></div>
-              <div class="th" data-col="periodEnd"><span class="th__label">Дата оконч. ПП</span></div>
-              <div class="th" data-col="debtType"><span class="th__label">Вид задолженности</span></div>
-              <div class="th" data-col="currency"><span class="th__label">Валюта</span></div>
-              <div class="th th--right" data-col="accrued"><span class="th__label">Начисленная сумма</span></div>
-              <div class="th th--right" data-col="early"><span class="th__label">Досрочная сумма</span></div>
-              <div class="th th--separator"></div>
+        <!-- Table ДС без тулбара: рамку и скругление даёт .dtable, у .tbl внутри .dtable__body их нет.
+             «Нет данных» — строка под шапкой внутри того же .dtable -->
+        <div class="dtable">
+          <div class="dtable__body">
+            <div class="tbl" data-table id="ei-pay-tbl">
+              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 104px 104px minmax(240px,1fr) 72px 128px 144px 8px;">
+                <div class="th th--separator"></div>
+                <div class="th" data-col="periodStart"><span class="th__label">Дата начала ПП</span></div>
+                <div class="th" data-col="periodEnd"><span class="th__label">Дата оконч. ПП</span></div>
+                <div class="th" data-col="debtType"><span class="th__label">Вид задолженности</span></div>
+                <div class="th" data-col="currency"><span class="th__label">Валюта</span></div>
+                <div class="th th--right" data-col="accrued"><span class="th__label">Начисленная сумма</span></div>
+                <div class="th th--right" data-col="early"><span class="th__label">Досрочная сумма</span></div>
+                <div class="th th--separator"></div>
+              </div>
             </div>
           </div>
           <div class="lc-ei-pay__empty" data-ei-debt-empty>Нет данных</div>

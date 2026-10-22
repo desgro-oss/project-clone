@@ -19,6 +19,7 @@
 | Главная | `pages/MainPage.html` | нет в `deals-app`; главная у фронтенда — `core/host-app` → `HomePage` |
 | Текущий портфель ДИД | `pages/Portfolio.html` | вероятно `Deals` с таблицей `CurrentPortfolioDidTable` — подтвердить |
 | Сделка | `pages/Deal.preview.html` — **собранная**; источник — `pages/Deal.html` | `Deal` |
+| Финансовые метрики сделки | `pages/FinancialMetrics.preview.html?id=<сделка>` — **собранная**; источник — `pages/FinancialMetrics.html`; открывается кнопкой «Отчеты →» тайла «Финансовые метрики» | `FinancialMetrics` |
 
 Экраны лежат на одном уровне — прямо в `pages/`, папок под роль нет. Копии
 страниц под каждую роль не делаются: различия ролей закрываются сменой
@@ -51,6 +52,12 @@
 | `widgets/tiles/FinInstrumentsTile` — наполнен | «Финансовые данные», первый ряд (6) | ближайшее — группа `DealFinancialInstrumentsGroup` из `DealFinancialInstrumentTile` — имя оставлено |
 | `widgets/tiles/FinInstrumentsTile/FinInstrumentCard` — подчасть тайла | карточка списка тайла «Финансовые инструменты» (эталон — конец `body`) | `DealFinancialInstrumentTile` — карточка ФИ; имя наше, по образцу `CounterpartyCard` (17.10.2026) |
 | `widgets/tiles/DealMetricsCalculationTile` | «Финансовые данные», второй ряд (6) | `DealMetricsCalculationTile` (было `FinMetricsTile`) |
+| `widgets/tables/FinancialMetricsTable` | страница «Финансовые метрики», вкладки «МСФО» и «РСБУ» — вшит дважды; группы по ФИ, закреплённая колонка метрик, общие колонки дат, фильтр | `FinancialMetricsTable` |
+| `widgets/tables/KPITable` | страница «Финансовые метрики», вкладка «KPI»; переключатель «Краткий» / «Подробный» в шапке, таблицу рисует `FinancialMetricsTable.js` | `KPITable` |
+| `widgets/modals/FinancialMetricsFilterModal` | конец `body` страницы «Финансовые метрики»; окно фильтра отчётов (ФИ и их индикаторы), одно на все вкладки | нет — пары во фронтенде нет, имя наше (RE0033) |
+| `widgets/tables/FixationHistoryTable` | страница «Финансовые метрики», вкладка «Фиксации ЭПС/ВБС»; переключатель «По ФИ» / «По дате» в шапке, корзина в строке | `FixationHistoryTable` |
+| `widgets/modals/FixationModal` — подчасти `FixationModalTile` (карточка ФИ), `FixationConfirmModal` (подтверждение незавершённого предварительного расчёта) | конец `body` страниц «Финансовые метрики» и сделки; окно «Фиксация ЭПС/ВБС» | `FixationModal` (подчасть `FixationModalTile` с `Ets` и `PreliminaryCalculationButton`); `FixationConfirmModal` — имя наше (RE0033) |
+| `widgets/modals/FinancialMetricsDownloadReportModal` | конец `body` страницы «Финансовые метрики»; выгрузка отчета в XLSX, с шифрованием или без | `DownloadReportModal` — папка названа длиннее: в разделе Post такое имя уже занято окном расчёта FV (RE0033, решение агента 63) |
 | `widgets/tables/DealCounterpartiesTable` | вкладка «Контрагенты» (12) | нет — новая сущность, имя наше (было `widgets/tiles/CounterpartiesTile`, до того `widgets/tables/CounterpartiesTable`; корень — тайл без шапки) |
 | `widgets/tiles/DealRelatedCollateralsTile` | вкладка «Обеспечения» (12) | `DealRelatedCollateralsTile` (было `CollateralsTile`) |
 | `widgets/modals/InstrumentsCounterpartiesModal` | конец `body`; окно тайла «КНР» (+ `KNRConfirmModal.html` — подтверждение, `CounterpartyCard/` — шаблон карточки контрагента) | `InstrumentsCounterpartiesModal` (было `KNRModal`, до того `TileKNRModal`; карточка — `CardCounterparty`) |
@@ -113,6 +120,14 @@ node .agents/tools/module-readme.mjs
 правила валидации, уникальности и тоны статусных чипов
 (`DealsStore.statusTone`) живут в одном месте. Состояние сделок — только в
 памяти вкладки; справочник сотрудников для окна команды — `mock-team.js`.
+
+Расчёт финансовых метрик сделки (RE0033) — `fin-metrics-store.js`
+(`FinMetricsStore`) поверх `mock-fin-metrics-calc.js`: состояние расчёта, отчёты
+МСФО / РСБУ / KPI по ФИ сделки, история фиксаций ЭПС/ВБС. Читают его тайл
+«Финансовые метрики» на странице сделки и страница `FinancialMetrics`; ФИ берёт у
+`FinInstrumentsStore`. Снек по исходу расчёта — `fin-metrics-notify.js`
+(`FinMetricsNotify`), общий для тайла и страницы. Не путать с
+`mock-financial-metrics.js` — тот кормит тайл «Финансовые метрики сделки».
 
 Статусная модель сделки — `deal-status-model.js` (`window.DEAL_STATUS_MODEL`;
 задача RE0013, решение человека 09.10.2026) — единственный источник статусов
@@ -204,6 +219,9 @@ deals-app/
 │   ├── Deal.html                               ← Сделка — источник, собирается в Deal.preview.html
 │   ├── Deal.preview.html                       ← собранная страница — открывать её
 │   ├── Deal.screen.md                          ← спека
+│   ├── FinancialMetrics.html                   ← Финансовые метрики — источник, собирается в FinancialMetrics.preview.html
+│   ├── FinancialMetrics.preview.html           ← собранная страница — открывать её
+│   ├── FinancialMetrics.screen.md              ← спека
 │   ├── FinInstrument.html                      ← Финансовый инструмент — источник, собирается в FinInstrument.preview.html
 │   ├── FinInstrument.preview.html              ← собранная страница — открывать её
 │   ├── FinInstrument.screen.md                 ← спека
@@ -281,6 +299,34 @@ deals-app/
 │   │   │   ├── DidProductsModal.html
 │   │   │   ├── DidProductsModal.js
 │   │   │   ├── DidProductsModal.md
+│   │   │   └── fixtures.json
+│   │   ├── FinancialMetricsDownloadReportModal/ ← Выгрузка отчета
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── FinancialMetricsDownloadReportModal.css
+│   │   │   ├── FinancialMetricsDownloadReportModal.html
+│   │   │   ├── FinancialMetricsDownloadReportModal.js
+│   │   │   ├── FinancialMetricsDownloadReportModal.md
+│   │   │   └── fixtures.json
+│   │   ├── FinancialMetricsFilterModal/        ← Фильтр отчета финансовых метрик
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── FinancialMetricsFilterModal.css
+│   │   │   ├── FinancialMetricsFilterModal.html
+│   │   │   ├── FinancialMetricsFilterModal.js
+│   │   │   ├── FinancialMetricsFilterModal.md
+│   │   │   └── fixtures.json
+│   │   ├── FixationModal/                      ← Фиксация ЭПС/ВБС
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── FixationConfirmModal.html
+│   │   │   ├── FixationModal.css
+│   │   │   ├── FixationModal.html
+│   │   │   ├── FixationModal.js
+│   │   │   ├── FixationModal.md
+│   │   │   ├── FixationModalTile/
+│   │   │   │   ├── CHANGELOG.md
+│   │   │   │   ├── FixationModalTile.css
+│   │   │   │   ├── FixationModalTile.html
+│   │   │   │   ├── FixationModalTile.md
+│   │   │   │   └── fixtures.json
 │   │   │   └── fixtures.json
 │   │   ├── InstrumentsCounterpartiesModal/     ← Модальное окно контрагентов
 │   │   │   ├── CHANGELOG.md
@@ -387,11 +433,32 @@ deals-app/
 │   │       └── RelatedDealsPopover.md
 │   ├── README.md
 │   ├── tables/                                 ← таблицы
-│   │   └── DealCounterpartiesTable/            ← Контрагенты сделки
+│   │   ├── DealCounterpartiesTable/            ← Контрагенты сделки
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── DealCounterpartiesTable.css
+│   │   │   ├── DealCounterpartiesTable.html
+│   │   │   └── DealCounterpartiesTable.md
+│   │   ├── FinancialMetricsTable/              ← Отчет финансовых метрик
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── FinancialMetricsTable.css
+│   │   │   ├── FinancialMetricsTable.html
+│   │   │   ├── FinancialMetricsTable.js
+│   │   │   ├── FinancialMetricsTable.md
+│   │   │   └── fixtures.json
+│   │   ├── FixationHistoryTable/               ← История фиксаций
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── FixationHistoryTable.css
+│   │   │   ├── FixationHistoryTable.html
+│   │   │   ├── FixationHistoryTable.js
+│   │   │   ├── FixationHistoryTable.md
+│   │   │   └── fixtures.json
+│   │   └── KPITable/                           ← Отчет KPI
 │   │       ├── CHANGELOG.md
-│   │       ├── DealCounterpartiesTable.css
-│   │       ├── DealCounterpartiesTable.html
-│   │       └── DealCounterpartiesTable.md
+│   │       ├── fixtures.json
+│   │       ├── KPITable.css
+│   │       ├── KPITable.html
+│   │       ├── KPITable.js
+│   │       └── KPITable.md
 │   └── tiles/                                  ← тайлы
 │       ├── CounterpartiesTile/                 ← Контрагенты
 │       │   ├── CHANGELOG.md
@@ -418,7 +485,9 @@ deals-app/
 │       │   ├── CHANGELOG.md
 │       │   ├── DealMetricsCalculationTile.css
 │       │   ├── DealMetricsCalculationTile.html
-│       │   └── DealMetricsCalculationTile.md
+│       │   ├── DealMetricsCalculationTile.js
+│       │   ├── DealMetricsCalculationTile.md
+│       │   └── fixtures.json
 │       ├── DealPeriodTile/                     ← Сроки сделки
 │       │   ├── CHANGELOG.md
 │       │   ├── DealPeriodTile.css
@@ -486,13 +555,17 @@ deals-app/
 │   ├── deal-status-model.md
 │   ├── deals-store.js                          ← DealsStore — единственная точка доступа к базе сделок ДИД (мок).
 │   ├── fin-instruments-store.js                ← FinInstrumentsStore — карточки финансовых инструментов (ФИ) текущей сде…
+│   ├── fin-metrics-notify.js                   ← FinMetricsNotify — сообщения финансовых метрик: снек по исходу расчёта и
+│   ├── fin-metrics-store.js                    ← FinMetricsStore — расчёт финансовых метрик текущей сделки и его отчёты.
 │   ├── mock-counterparties.js                  ← Мок-данные ДИД — база контрагентов (window.MOCK_COUNTERPARTIES) и
 │   ├── mock-deal-trees.js                      ← Деревья продуктов сделок ДИД (window.MOCK_DEAL_TREES), ключ — id сделки.
 │   ├── mock-deals.js                           ← Мок-данные ДИД — реестр сделок (window.MOCK_DEALS) и перечни (window.DE…
 │   ├── mock-fin-instrument-details.js          ← Страница финансового инструмента — демо-данные прототипа
 │   ├── mock-fin-instruments.js                 ← Карточки финансовых инструментов (ФИ) сделок — демо-данные прототипа.
+│   ├── mock-fin-metrics-calc.js                ← Расчёт финансовых метрик сделок — демо-данные прототипа
 │   ├── mock-financial-metrics.js               ← Финансовые метрики сделок — демо-данные (window.MOCK_DEAL_FIN_METRICS).
 │   ├── mock-product-catalog.js                 ← Каталог продуктов сделки — демо-данные прототипа.
+│   ├── mock-report-employees.js                ← Сотрудники для выгрузки отчёта финансовых метрик — демо-данные
 │   ├── mock-team.js                            ← Мок-данные ДИД — сотрудники банка для выпадающих списков окна «Команда
 │   ├── post-api.js                             ← PostApi — адаптер хранения данных направления Post.
 │   ├── product-tree-store.js                   ← ProductTreeStore — дерево продуктов текущей сделки.

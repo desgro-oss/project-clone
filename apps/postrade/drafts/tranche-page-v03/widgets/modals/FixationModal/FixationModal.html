@@ -1,0 +1,49 @@
+<!-- Окно «Фиксация ЭПС/ВБС» — связанный артефакт кнопок «Фиксация ЭПС/ВБС» тайла
+     «Финансовые метрики» (страница сделки) и шапки страницы «Финансовые метрики».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include: скрим лежит в конце
+     body страницы, а не внутри тайла. Рядом вшиваются подтверждение
+     (FixationConfirmModal.html) и шаблон карточки (FixationModalTile/).
+
+     Окно — список карточек фиксации (по одной на ФИ). Карточку рисует скрипт
+     FixationModal.js по шаблону подчасти; в разметке — только каркас: шапка, алерт
+     уровня окна, пустой список, подвал. Алерт показывает ошибку предварительного
+     расчёта (.modal__alert); пока ошибки нет — скрыт атрибутом hidden.
+
+     Подвал: слева «+ Добавить ФИ» (по макету; ДС не рекомендует левые и правые
+     кнопки вместе — отступление записано в паспорте), справа «Сохранить». Кнопки
+     без data-modal-close: окно закрывает скрипт, когда проверка прошла; с ошибкой
+     окно остаётся открытым. Крестик и Esc закрывают без сохранения; клик мимо окна
+     не закрывает (окно с полями ввода — guarded). Ширина — шаг 10 шкалы колонок
+     (1511px): карточка делится на ввод и результат. Высота растёт с числом карточек
+     до предела ДС, дальше скролл тела. -->
+<div class="modal-scrim" id="fm-fix-scrim" hidden>
+  <div class="modal modal--w10" role="dialog" aria-modal="true" aria-labelledby="fm-fix-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fm-fix-title">Фиксация ЭПС/ВБС</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__alert" data-fix-alert hidden>
+      <div class="alert alert--error alert--m alert--flush" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title" data-fix-alert-title></p>
+          <p class="alert__text" data-fix-alert-text hidden></p>
+        </div>
+      </div>
+    </div>
+    <div class="modal__body">
+      <div class="lc-fixation-modal__list" data-fix-list></div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-left">
+        <button type="button" class="btn btn--transparent btn--m" data-fix-add>
+          <span class="btn__icon"><i data-icon="add"></i></span>
+          <span class="btn__label">Добавить ФИ</span>
+        </button>
+      </div>
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fix-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

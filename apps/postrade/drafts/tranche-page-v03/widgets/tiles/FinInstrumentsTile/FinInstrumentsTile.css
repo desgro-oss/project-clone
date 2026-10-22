@@ -1,0 +1,70 @@
+/* Локальный компонент «Финансовые инструменты» (FinInstrumentsTile).
+   Только внутренняя раскладка. Цвета, шрифты, отступы — токены ДС;
+   своих значений здесь нет. Карточка ФИ — Card ДС с аккордеоном
+   (.tile--card.tile--accordion), поля — ReadOnlyField, строки инструментов
+   — ProductRow: их размеры и состояния отсюда не переопределяются,
+   переключается только присутствие собственных блоков
+   .lc-fin-instruments__*. Раскладка карточки — подчасть FinInstrumentCard/.
+   Режим (data-mode) ставит страница: edit | view. */
+
+/* ── Данные есть: вкладки, список карточек, кнопка под списком ──────── */
+/* Зазор между вкладками, карточками и кнопкой — как между корневыми
+   узлами дерева в соседнем тайле «Продукты сделки» (16px). */
+.lc-fin-instruments__data,
+.lc-fin-instruments__list,
+.lc-fin-instruments__loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+/* Карточка ФИ — подчасть FinInstrumentCard/: её раскладка и режим прав —
+   в FinInstrumentCard.css. */
+
+/* ── Не заполнено ───────────────────────────────────────────────────── */
+/* Правка: две кнопки слева вверху тела (макет «Нет данных»). */
+.lc-fin-instruments__fill {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+/* Просмотр: одна строка причины, действия нет. */
+.lc-fin-instruments__empty {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-inactive);
+}
+
+/* ── Что видно в каком состоянии ────────────────────────────────────── */
+/* База — «данные есть» (и «заполнено частично»: та же разметка, прочерки
+   в значениях). «Обновление» — тоже список: прежние значения остаются на
+   месте, в шапке Spinner. Скрытие — через корень тайла: у классов ДС
+   (.spin, .tile) своя display той же специфичности. */
+.lc-fin-instruments .lc-fin-instruments__loading,
+.lc-fin-instruments .lc-fin-instruments__fill,
+.lc-fin-instruments .lc-fin-instruments__empty,
+.lc-fin-instruments .lc-fin-instruments__spin { display: none; }
+
+.lc-fin-instruments[data-state="loading"] .lc-fin-instruments__data,
+.lc-fin-instruments[data-state="empty"] .lc-fin-instruments__data { display: none; }
+
+.lc-fin-instruments[data-state="loading"] .lc-fin-instruments__loading { display: flex; }
+.lc-fin-instruments[data-state="empty"][data-mode="edit"] .lc-fin-instruments__fill { display: flex; }
+.lc-fin-instruments[data-state="empty"][data-mode="view"] .lc-fin-instruments__empty { display: block; }
+.lc-fin-instruments[data-state="updating"] .lc-fin-instruments__spin { display: inline-block; }
+
+/* ── Действия правки ────────────────────────────────────────────────── */
+/* В просмотре действия не выключаются, а не рисуются вовсе (правило прав
+   локальных компонентов). Кнопки карточек прячет CSS карточки
+   (FinInstrumentCard.css, в том числе по режиму тайла). Меню шапки в
+   просмотре тоже не рисуется (макет «Недоступно редактирование»). Пока
+   данных нет, пока они грузятся и во время обновления действий в шапке и
+   под списком нет. */
+.lc-fin-instruments[data-mode="view"] .lc-fin-instruments__add,
+.lc-fin-instruments[data-mode="view"] .lc-fin-instruments__menu { display: none; }
+.lc-fin-instruments[data-state="loading"] .lc-fin-instruments__add,
+.lc-fin-instruments[data-state="empty"] .lc-fin-instruments__add,
+.lc-fin-instruments[data-state="updating"] .lc-fin-instruments__add,
+.lc-fin-instruments[data-state="loading"] .lc-fin-instruments__menu,
+.lc-fin-instruments[data-state="empty"] .lc-fin-instruments__menu { display: none; }

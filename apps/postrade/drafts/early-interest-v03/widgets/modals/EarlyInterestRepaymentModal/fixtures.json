@@ -1,0 +1,65 @@
+{
+  "_": "Демо-данные витрины. options — валюта, задолженность по процентным периодам, приоритет погашения (коды видов) и подписи видов; edit — платёж, с которым окно открыто на изменение (дата ISO, распределение по видам).",
+  "options": {
+    "currencyCode": "RUB",
+    "periodDebts": [
+      {
+        "periodStartDate": "2025-01-01",
+        "periodEndDate": "2025-03-31",
+        "accrued": {
+          "CURRENT_INTEREST": 100000,
+          "CAPITALIZED_INTEREST": 55000,
+          "DEFERRED_INTEREST": 35000,
+          "PRINCIPAL": 400000
+        }
+      }
+    ],
+    "order": [
+      "CURRENT_INTEREST",
+      "CAPITALIZED_INTEREST",
+      "DEFERRED_INTEREST",
+      "PRINCIPAL"
+    ],
+    "debtLabels": {
+      "CURRENT_INTEREST": "Текущие начисленные проценты",
+      "CAPITALIZED_INTEREST": "Капитализированные начисленные проценты",
+      "DEFERRED_INTEREST": "Отложенные начисленные проценты",
+      "PRINCIPAL": "Основной долг"
+    }
+  },
+  "edit": {
+    "paymentDate": "2025-03-31",
+    "paymentAmount": 100000,
+    "comment": "Текст комментария",
+    "allocations": [
+      {
+        "periodStartDate": "2025-01-01",
+        "periodEndDate": "2025-03-31",
+        "debtTypeCode": "CURRENT_INTEREST",
+        "accruedAmount": 100000,
+        "earlyAmount": 100000
+      },
+      {
+        "periodStartDate": "2025-01-01",
+        "periodEndDate": "2025-03-31",
+        "debtTypeCode": "CAPITALIZED_INTEREST",
+        "accruedAmount": 55000,
+        "earlyAmount": 0
+      },
+      {
+        "periodStartDate": "2025-01-01",
+        "periodEndDate": "2025-03-31",
+        "debtTypeCode": "DEFERRED_INTEREST",
+        "accruedAmount": 35000,
+        "earlyAmount": 0
+      },
+      {
+        "periodStartDate": "2025-01-01",
+        "periodEndDate": "2025-03-31",
+        "debtTypeCode": "PRINCIPAL",
+        "accruedAmount": 400000,
+        "earlyAmount": 0
+      }
+    ]
+  }
+}

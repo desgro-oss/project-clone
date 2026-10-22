@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/tables/FinancialMetricsTable/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Отчет финансовых метрик — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.css">
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Отчет финансовых метрик">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--table" id="pg-stage">
+<!-- Локальный компонент «Отчет финансовых метрик» (FinancialMetricsTable) — вкладки МСФО и РСБУ
+     страницы «Финансовые метрики». Пара во фронтенде — FinancialMetricsTable.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране,
+     на странице дважды (МСФО и РСБУ) — поэтому в разметке нет id.
+     Каркас показан в состоянии «Загрузка», пока страница не передала отчет: кнопка «Фильтр»
+     заблокирована, в таблице скелетоны. Таблицу, тулбар и остальные состояния рисует
+     FinancialMetricsTable.js: PostFinMetricsTable.render(корень, отчет, фильтр). -->
+<section class="lc-financial-metrics-table" data-state="loading" id="fm-table-ifrs" data-widget="FinancialMetricsTable" data-widget-group="tables" data-widget-src="../../../postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.html">
+  <div class="dtable-toolbar">
+    <div class="tfilter tfilter--disabled" role="group" aria-label="Фильтр таблицы">
+      <button type="button" class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false" disabled><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+    </div>
+  </div>
+  <div class="lc-financial-metrics-table__table" data-fm-table>
+    <div class="dtable dtable--fill" aria-busy="true">
+      <div class="dtable__body">
+        <div class="tbl" data-table>
+          <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 400px repeat(2, 160px) minmax(8px,1fr)">
+            <div class="th th--separator"></div>
+            <div class="th"><span class="th__label" data-grab>Наименование метрики</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--separator"></div>
+          </div>
+          <div class="tbl__row" style="grid-template-columns:8px 400px repeat(2, 160px) minmax(8px,1fr)">
+            <div class="tc tc--separator"></div>
+            <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--separator"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>таблица</b></span><span>Версия: <b>0.002</b></span><span>Обновлено: <b>21.10.2026</b></span><span>Категория: <b>Финансовые отчеты сделки</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
+  <h1>Отчет финансовых метрик</h1>
+  <p class="lead">Отчет МСФО или РСБУ: группы по ФИ, закрепленная колонка метрик, колонки дат, фильтр</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">таблица</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tables/FinancialMetricsTable">apps/postrade/deals-app/widgets/tables/FinancialMetricsTable/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/widgets/tables/FinancialMetricsTable</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница «Финансовые метрики» (FinancialMetrics, RE0033 Э4) — вкладки МСФО и РСБУ, по экземпляру на вкладку, 12 колонок</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/FinancialMetrics.preview.html">apps/postrade/deals-app/pages/FinancialMetrics.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="FinancialMetricsFilterModal.doc.html">Фильтр отчета финансовых метрик (FinancialMetricsFilterModal)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Задача RE0033 (макеты «расчет мсфо и рсбу» и «Пример индикаторов ФИ на странице Финансовые метрики», ответы человека 20.10.2026 и 21.10.2026, решения агента 8 и 16)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">0.002 · обновлено 21.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Отчет финансовых метрик (МСФО или РСБУ) по финансовым инструментам (ФИ) сделки: по каждому рассчитанному ФИ — группа строк-метрик, по колонкам — даты, в которые у какого-либо ФИ сделки есть финансовое событие (выдача, погашение, начисление процентов, фиксация ЭПС/ВБС и т. п.). Даты общие для всех ФИ отчета, группы прокручиваются вместе — одна таблица на отчет; у ФИ без события на дату ячейка пустая (ответ человека 20.10.2026, вопрос 10 задачи RE0033). ФИ, который не удалось рассчитать, в отчете не появляется (вопрос 4 задачи).</p>
+<p class="desc">Виджет вшивается на страницу дважды: на вкладку «МСФО» и на вкладку «РСБУ». Какой это отчет, знает не виджет, а данные: страница передает готовый отчет — <code class="tok">FinMetricsReportRsDto</code> с кодом <code class="tok">IFRS</code> или <code class="tok">RAS</code>. Сам виджет не читает стор.</p>
+<p class="desc">Над таблицей — тулбар: кнопка «Фильтр» (TableFilter) и, если фильтр применен, один чип «Применено: N», где N — число ФИ, выбранных в фильтре. Окно фильтра виджет не открывает: кнопка шлет событие, окно открывает страница. Чиплиста параметров и «+N» нет — на макете устаревший вариант (ответ 30 задачи).</p>
+<p class="desc">Отчет пуст, когда в нем нет ни одной группы (например, у ФИ нет отчётности РСБУ): колонок дат и шапки нет, по центру «Нет данных», кнопка «Фильтр» заблокирована (ответ 28 задачи).</p>
+<p class="desc">ЭПС — эффективная процентная ставка, ВБС — валовая балансовая стоимость; в самой таблице этих сокращений нет.</p>
+<p class="desc">Где виджет стоит на странице, какую высоту ему дает страница и сколько колонок он занимает — решает страница, не он.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>section.lc-financial-metrics-table  (data-state: loading | data | empty; data-report ставит скрипт)
+├── .dtable-toolbar                           · тулбар над таблицей
+│   └── .tfilter
+│       ├── Button outline S «Фильтр»          · disabled, когда отчет пуст
+│       └── Chip edit M «Применено: N»         · только когда фильтр применен
+└── [data-fm-table]                            · хост, его перерисовывает скрипт
+    └── .dtable.dtable--fill
+        └── .dtable__body
+            ├── .tbl [data-table]              · данные
+            │   ├── строка-шапка: сепаратор · «Наименование метрики» (закреплена) · даты ДД.ММ.ГГГГ (вправо) · сепаратор
+            │   └── на каждый ФИ:
+            │       ├── строка группы [data-node]  · шеврон, имя ФИ, валюта приглушенно
+            │       └── строки метрик [data-parent] · имя метрики, числа по датам
+            ├── .tbl со скелетонами               · загрузка
+            └── .dtable__empty «Нет данных»        · отчет пуст или фильтр скрыл все</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Table</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.dtable.dtable--fill</code>, тулбар над таблицей — <code class="tok">.dtable-toolbar</code> (вариант «тулбар над таблицей»): сама таблица без <code class="tok">.dtable__toolbar</code>. Липкая шапка, горизонтальный скролл тела, ширина колонок тянется, колонки переносятся — рантайм ДС. Пустое состояние — <code class="tok">.dtable__empty</code> с <code class="tok">.dtable__empty-title</code>, без иллюстрации и пояснения (как на макете)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">TableCell</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">шапка <code class="tok">.th</code> (даты — <code class="tok">.th--right</code>), <code class="tok">.tc--numbers</code> для чисел, <code class="tok">.tc--separator</code> по краям строки. Закрепление первой колонки — <code class="tok">.th--pinned</code> / <code class="tok">.tc--pinned</code> (нативный sticky, инсеты пишет <code class="tok">TablePin.js</code>), без кнопки <code class="tok">.th__pin</code>: открепить нельзя</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">TableCell · дерево</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">группа ФИ — дерево строк: у строки группы <code class="tok">data-node</code>, у метрик <code class="tok">data-parent</code>, ячейка <code class="tok">.tc--tree</code> с <code class="tok">.tc__twisty</code> (шеврон) и <code class="tok">.tc__postfix</code> для валюты; метрики — уровень 1 (<code class="tok">--tc-level:1</code>), лист <code class="tok">.tc__twisty--leaf</code>. Сворачивание — рантайм (<code class="tok">.tc__twisty</code>, событие <code class="tok">treetoggle</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">TableFilter</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.tfilter</code> с кнопкой <code class="tok">.tfilter__open</code> (Button outline S, иконка <code class="tok">filter</code>) и чипом <code class="tok">.tfilter__applied</code> (Chip edit M, «Применено: N»); пустой отчет — <code class="tok">.tfilter--disabled</code> и <code class="tok">disabled</code> на кнопке. Сброс чипа — рантайм (<code class="tok">tfilter:reset</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">btn btn--outline btn--s</code> («Фильтр»)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Chip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">chip chip--edit chip--m tfilter__applied</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.tc--skeleton</code> с <code class="tok">.sk-line--caption</code> в ячейках — состояние «Загрузка»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tooltip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тултип усечения у имен метрик, ФИ и подписей шапки — рантайм Table сам</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Своего CSS — раскладка корня (колонка, зазор <code class="tok">--space-12</code>, хост таблицы) и жирное начертание имени ФИ в строке группы (<code class="tok">--type-body-s-strong</code>, см. «Осознанные отклонения»).</p>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Table/Table.html">Table</a> · <a class="inl" href="../../../../design-system/components/organisms/TableCell/TableCell.html">TableCell</a> · <a class="inl" href="../../../../design-system/components/organisms/TableFilter/TableFilter.html">TableFilter</a> · <a class="inl" href="../../../../design-system/components/atoms/Chip/Chip.html">Chip</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/components/atoms/Skeleton/Skeleton.html">Skeleton</a> · <a class="inl" href="../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tables/FinancialMetricsTable/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.css">FinancialMetricsTable.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.html">FinancialMetricsTable.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.js">FinancialMetricsTable.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.md">FinancialMetricsTable.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tables/FinancialMetricsTable/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<p class="desc">Отчет приходит как <code class="tok">FinMetricsReportRsDto</code> (<code class="tok">data/mock-fin-metrics-calc.js</code>); имена полей — как в описании типа.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.5fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.5fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">reportCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">какой это отчет (<code class="tok">IFRS</code> или <code class="tok">RAS</code>); скрипт кладет его на корень в <code class="tok">data-report</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">код</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FinMetricsReportRsDto.reportCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.5fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">dates</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонки — все даты событий всех ФИ отчета; шапка <code class="tok">ДД.ММ.ГГГГ</code>, колонки общие</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">массив ISO-дат</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FinMetricsReportRsDto.dates</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да (пустой массив у пустого отчета)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.5fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">groups[].financialInstrumentName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">имя ФИ в строке группы, жирным</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">groups[].financialInstrumentName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.5fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">groups[].currencyCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">валюта ФИ в строке группы, приглушенно, кодом (<code class="tok">RUB</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">код ISO 4217</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">groups[].currencyCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.5fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">groups[].financialInstrumentId</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ключ группы и фильтра</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">groups[].financialInstrumentId</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.5fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">groups[].rows[].metricName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Наименование метрики» — первая закрепленная колонка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">groups[].rows[].metricName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.5fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">groups[].rows[].metricCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ключ метрики в фильтре</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">groups[].rows[].metricCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.5fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">groups[].rows[].values[дата]</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значение метрики на дату: <code class="tok">1 500 000,00</code> (неразрывный пробел между разрядами, запятая, обычный минус); <code class="tok">null</code> — пустая ячейка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, единица — валюта ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">groups[].rows[].values</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Значение фильтра <code class="tok">FmFilterValue = { fiIds: string[], metrics: { [fiId]: string[] } }</code> — его хранит страница, виджет только применяет:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что видно</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fiIds</code> пуст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фильтра нет: все ФИ и все метрики; чипа нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fiIds</code> непуст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">только ФИ из <code class="tok">fiIds</code>; чип «Применено: N», N — число ФИ</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у ФИ из <code class="tok">fiIds</code> есть <code class="tok">metrics[fiId]</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у этого ФИ только строки с этими <code class="tok">metricCode</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у ФИ из <code class="tok">fiIds</code> нет <code class="tok">metrics[fiId]</code> или он пуст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">все метрики ФИ</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">после фильтра у ФИ не осталось строк</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">группа не рисуется (допущение, вопрос 4)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Порядок строк — порядок отображения: группы в порядке отчета, метрики в порядке отчета. Значения не сортируются.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Не применимо: в отчете ничего не правят. Кто видит отчет — вопрос 8 паспорта тайла <code class="tok">DealMetricsCalculationTile</code>, не решено (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Режима прав (<code class="tok">data-mode</code>) у виджета нет: действий правки нет, различать нечего. Выгрузка отчета — действие страницы, не виджета.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state=&quot;loading&quot;</code>: каркас таблицы со скелетонами, «Фильтр» заблокирован. Это и разметка по умолчанию, пока страница не передала данные; скрипт рисует его при <code class="tok">report == null</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state=&quot;data&quot;</code>: шапка, группы ФИ раскрыты, числа по датам</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">та же разметка: у ФИ без события на дату ячейка пустая — это норма отчета, а не неполнота данных</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state=&quot;empty&quot;</code>: отчет без групп. Колонок дат и шапки нет, по центру «Нет данных» (<code class="tok">.dtable__empty-title</code>, без иллюстрации и пояснения — как на макете, широкий компонент), «Фильтр» заблокирован (<code class="tok">.tfilter--disabled</code> и <code class="tok">disabled</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ошибка получения отчета на макетах не нарисована; вид не придуман</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">отчет перерисовывается целиком; прежние значения на время пересчета не показываются — расчет идет на тайле и на странице</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в отчете нечего править</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">отчет всегда только для просмотра</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает страница, не виджет (вопрос 8 паспорта тайла)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фильтр применен</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fiIds</code> непуст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">рядом с «Фильтр» чип «Применено: N»; в таблице только выбранные ФИ и метрики</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фильтр скрыл все</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fiIds</code> непуст, но после фильтра нет ни одной группы, хотя отчет не пуст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Нет данных» (тот же текст, что у пустого отчета), шапки нет; «Фильтр» остается доступным, чтобы изменить условия; <code class="tok">data-state=&quot;data&quot;</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Группа свернута</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клик по шеврону группы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки метрик группы скрыты (<code class="tok">hidden</code>), шеврон повернут. По умолчанию все группы раскрыты. При перерисовке (например, смена фильтра) свернутые группы остаются свернутыми; между заходами не запоминаются</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заблокированный «Фильтр»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пустой отчет или загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопка <code class="tok">disabled</code> + <code class="tok">.tfilter--disabled</code>; клик не шлет событие</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет — он показывает данные, ничего не заполняет.</li><li>Обязательные поля внутри: Не применимо — в отчете нет полей ввода.</li><li>Что показывает, когда обязательное не заполнено: Не применимо.</li><li>Что отдаёт наружу (признак для экрана или формы): события <code class="tok">fmtableaction</code> и <code class="tok">fmtablefilterreset</code> (см. «Поведение»); признака для формы нет.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">имя метрики и имя ФИ в одну строку, усечение многоточием, полное значение — тултип рантайма Table. Колонка тянется за правую границу шапки (минимум 96px)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вертикальный скролл у тела таблицы (<code class="tok">.dtable__body</code>), шапка липкая; страница не скроллится из-за таблицы. Чтобы скролл был у тела, страница ограничивает высоту рабочей области (<code class="tok">.screen--app</code>): иначе таблица растет по числу строк</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">горизонтальный скролл только у тела таблицы; первая колонка закреплена и остается на месте, пока колонки дат уходят. Горизонтального скролла у страницы нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">первая колонка 400px, колонки дат по 160px, хвостовой сепаратор забирает остаток: при малом числе дат справа остается свободное место, числа остаются у правой границы своих колонок. Число — в одну строку: не помещается — многоточие и тултип</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по «Фильтр»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">с корня виджета уходит событие <code class="tok">fmtableaction</code> с <code class="tok">detail: { action: 'FILTER' }</code>; кнопка сама окно не открывает (у нее нет <code class="tok">data-modal</code>). Окно открывает страница</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик на чипе «Применено: N» или Backspace / Delete на чипе</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">уходит <code class="tok">fmtablefilterreset</code>; штатное <code class="tok">tfilter:reset</code> ДС на корне гасится. Страница очищает фильтр этой вкладки и зовет <code class="tok">render</code> заново</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по шеврону группы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">группа сворачивается или раскрывается (рантайм ДС, событие <code class="tok">treetoggle</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Горизонтальный скролл тела</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">первая колонка («Наименование метрики») остается слева, под ней и над ней — сепаратор 8px</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Перетаскивание правой границы шапки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">меняется ширина колонки (рантайм ДС)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Перетаскивание за подпись шапки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонка переносится (рантайм ДС); закрепленная колонка переносится вместе с закреплением</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">render(root, report, filter)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">перерисовка тулбара (чип, блокировка «Фильтр») и таблицы</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Фильтр»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно «Фильтр» (<code class="tok">FinancialMetricsFilterModal</code>, RE0033 Э4)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">первое поле — какие ФИ фильтровать (из ФИ сделки и этого отчета); по каждому выбранному ФИ поле-автокомплит с его индикаторами; индикаторы у каждой вкладки свои (ответы 11, 29, 30 задачи)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">страница запоминает <code class="tok">FmFilterValue</code> вкладки и зовет <code class="tok">render</code>: в таблице выбранные ФИ и метрики, рядом с «Фильтр» чип «Применено: N»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">KPITable</code> (фильтр вкладки KPI)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Применение фильтра</h3>
+<p class="desc">Фильтр применяет сам виджет, в <code class="tok">render</code>; страница хранит значение и перерисовывает. Пустой отчет определяется по <code class="tok">report.groups.length === 0</code>, а не по результату фильтра: если фильтр скрыл все группы непустого отчета, «Нет данных» показывается, но «Фильтр» остается доступным.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Отчет по коду <code class="tok">IFRS</code> или <code class="tok">RAS</code> целиком: даты событий всех ФИ и по каждому рассчитанному ФИ — метрики со значениями по датам (поля — раздел «Поля»). Нерассчитанный ФИ в отчет не входит. Состав метрик по типам ФИ, единицы метрик и периодичность дат — не решено (см. «Открытые вопросы»). Имена методов API не придумываются: их выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,2.9fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,2.9fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-fin-metrics-calc.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.FIN_METRICS_CATALOG</code> (состав метрик отчетов), typedef <code class="tok">FinMetricsReportRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">описание типа, каталог метрик</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,2.9fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/fin-metrics-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.FinMetricsStore</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">report('IFRS' | 'RAS')</code> → <code class="tok">FinMetricsReportRsDto</code>; числа и даты строятся детерминированно от id ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модель представления, не DTO</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,2.9fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code> (рядом)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">отчет и значение фильтра по состояниям витрины: данные, частично, пусто, фильтр применен, длинные значения; сценарий показа — <code class="tok">apps/local-components/postrade/deals-app/FinancialMetricsTable.demo.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Виджет стор не читает: отчет получает от страницы.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на странице два экземпляра (МСФО и РСБУ); в разметке виджета id нет, страница задает его в метке, если он нужен ей</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">место в сетке страницы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loading</code> · <code class="tok">data</code> · <code class="tok">empty</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние данных; в разметке по умолчанию <code class="tok">loading</code> (отчет еще не передан), после каждого <code class="tok">render</code> его ставит скрипт — страница не задает</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не используется</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">режима прав у виджета нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc"><code class="tok">data-report</code> (<code class="tok">IFRS</code> или <code class="tok">RAS</code>) на корне ставит скрипт из <code class="tok">report.reportCode</code>: метка <code class="tok">&lt;ds-include&gt;</code> передает только <code class="tok">id</code>, <code class="tok">class</code>, <code class="tok">state</code>, <code class="tok">mode</code>.</p>
+<h3 class="kit-md__h3">Скрипт виджета</h3>
+<p class="desc"><code class="tok">FinancialMetricsTable.js</code>, глобал <code class="tok">PostFinMetricsTable</code>; подключается после <code class="tok">ds.js</code>, до <code class="tok">KPITable.js</code>.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Функция</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что делает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">render(root, report, filter)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">перерисовывает тулбар и таблицу; <code class="tok">report == null</code> — загрузка; пустой отчет — «Нет данных» и заблокированный «Фильтр»; ставит <code class="tok">data-state</code> и <code class="tok">data-report</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">drawReport(host, report, filter)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">рисует в контейнер только <code class="tok">.dtable</code>: шапка и группы либо «Нет данных»; сохраняет свернутые группы; после вставки зовет <code class="tok">dsIcons.apply</code>, <code class="tok">DSTable.bind</code>, <code class="tok">DSTable.wireAll</code>, <code class="tok">DSTablePin.bindAll</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">drawSkeleton(host)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">скелетоны в габаритах таблицы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">syncFilterBar(bar, appliedCount, disabled)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чип «Применено: N» и блокировка кнопки; <code class="tok">bar</code> — <code class="tok">.tfilter</code> или его контейнер</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">bind(root)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">один раз вешает события корня; <code class="tok">render</code> зовет сам</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">visibleGroups(report, filter)</code>, <code class="tok">appliedCount(filter)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">применение фильтра и число для чипа</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fmtNumber(value)</code>, <code class="tok">fmtDate(iso)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">1 500 000,00</code> и <code class="tok">ДД.ММ.ГГГГ</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">События с корня (<code class="tok">CustomEvent</code>, <code class="tok">bubbles: true</code>):</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Событие</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">detail</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fmtableaction</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">{ action: 'FILTER' }</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клик по доступной кнопке «Фильтр»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fmtablefilterreset</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сброс чипа «Применено: N»</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.9fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Виджет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tables/FinancialMetricsTable/FinancialMetricsTable.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/widgets/tables/FinancialMetricsTable</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Стили раскладки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tables/FinancialMetricsTable/FinancialMetricsTable.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Отрисовка, фильтр, события</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tables/FinancialMetricsTable/FinancialMetricsTable.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">компонент виджета</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Отчет и его типы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/mock-fin-metrics-calc.js</code>, <code class="tok">data/fin-metrics-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запрос отчета и типы ответа</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Локальные компоненты, тип «таблица»: корень — Tile ДС (обычно <code class="tok">tile--headless</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">корень — <code class="tok">section</code> без Tile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на макете таблица стоит прямо на фоне вкладки, с тулбаром над ней; карточки нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет готового компонента «группа строк»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">группа ФИ — дерево строк TableCell: <code class="tok">data-node</code> у строки группы, <code class="tok">data-parent</code> у метрик, <code class="tok">.tc--tree</code>, <code class="tok">.tc__twisty</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение при постановке этапа Э4 (21.10.2026): ближайший штатный способ сворачиваемой группы в ДС</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Пустое значение ячейки — прочерк <code class="tok">.tc__empty</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">null</code> — пустая ячейка без прочерка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение агента 8 задачи RE0033: нет события у ФИ на дату — это норма, прочерки на каждой такой ячейке зашумили бы отчет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Закрепленная колонка по ДС снабжается кнопкой <code class="tok">.th__pin</code> (открепить)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопки нет, колонка закреплена всегда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение при постановке этапа Э4: «Наименование метрики» не должна уезжать; на макете у колонки есть булавка — вопрос 7</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Пустое состояние Table: иллюстрация <code class="tok">empty-folder</code>, заголовок, пояснение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">только заголовок «Нет данных»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">макет: «Нет данных» по центру без иллюстрации и пояснения</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: у пустого отчета шапка с «Наименование метрики» и датами</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">шапки нет, колонок дат нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответ 28 задачи: колонок дат нет на всех вкладках; шапка вместе с ними</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Строка группы использует <code class="tok">.tc__text</code> без модификаторов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">имя ФИ жирным: <code class="tok">.lc-financial-metrics-table__group-name.tc__text { font: var(--type-body-s-strong) }</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на макете имя ФИ выделено; в ДС для ячейки такого модификатора нет — свое правило на токене ДС (Body S Strong), записано здесь</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: первая колонка на одном кадре подписана «Наименование»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Наименование метрики»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на остальных кадрах и листах подпись «Наименование метрики»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: чиплист параметров, «+99», кнопка «Фильтр» XS</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопка S и один чип «Применено: N»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответ 30 задачи: на макете устаревший вариант</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: числа с точкой на листах МСФО и РСБУ, KPI</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">1 500 000,00</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение агента 8 задачи RE0033: как на остальных листах</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Перестановка колонок за подпись шапки (в ДС включена всегда — <code class="tok">TableReorder.js</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выключена: у подписей шапки стоит атрибут <code class="tok">data-grab</code>, по контракту рантайма такие подписи он не берёт; ширина колонок меняется как обычно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонки дат идут по хронологии — порядок менять нельзя (человек, 21.10.2026). Шестерёнки «Настройка таблицы» нет — в её модалке порядок тоже переставляется</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<p class="desc">Решение человека 29.09.2026: вопросы не закрываются догадкой и не удаляются, пока человек не разберёт каждый; ответ записывается у вопроса с датой. Вопросы 1–2 перенесены из задачи RE0033 (<code class="tok">docs/tasks/RE0033-deal-financial-metrics.md</code>, вопросы 9 и 11).</p>
+<ol class="kit-md__ol"><li><b>Состав метрик МСФО и РСБУ по типам ФИ</b> (акции, РЕПО, дебиторская задолженность, дополнительная доходность и т. д.) — точной информации пока нет, человек вернется с ответом (20.10.2026; RE0033, вопрос 9). На макете — 13 строк РСБУ для кредита; состав МСФО придуман по чипам окна фильтра. Допущение прототипа (решение агента 16 задачи, 21.10.2026): набор метрик одинаков для всех типов ФИ.</li><li><b>Фильтр отчета</b> (RE0033, вопрос 11, часть про таблицу): — общий фильтр у всех вкладок или у каждой свой — не решено; в прототипе у каждой вкладки свой чип, индикаторы свои (ответ 30); — сохраняется ли фильтр между заходами на страницу — не решено; в прототипе нет, виджет значение не хранит — его хранит страница; — «+99» в чипах — снято: чиплиста параметров нет (ответ человека 21.10.2026, вопрос 30).</li><li><b>Фильтр скрыл все группы</b> — какой текст показывать: в ДС для пустой таблицы различаются «нет данных» и «ничего не найдено»; в прототипе везде «Нет данных» (допущение 21.10.2026, макета нет), «Фильтр» остается доступным.</li><li><b>ФИ, у которого после фильтра не осталось ни одной метрики</b> (в фильтре выбраны метрики, которых нет в отчете) — группа не рисуется, чтобы не оставлять пустой заголовок (допущение 21.10.2026, макета нет).</li><li><b>Единицы значений</b> — числа показаны в валюте ФИ, код валюты стоит в строке группы; в шапке колонок единиц нет. У метрик, которые по смыслу не суммы (проценты, ставки), единицы не заданы — не решено (21.10.2026).</li><li><b>Пустая ячейка и 0,00</b> — отчет различает «нет события на дату» (пусто) и «значение ноль» (<code class="tok">0,00</code>); различает ли это бэкенд — не решено (21.10.2026; допущение прототипа: <code class="tok">null</code> — пусто).</li><li><b>Закрепление первой колонки.</b> На макете у колонки есть булавка (можно открепить); в прототипе колонка закреплена всегда, кнопки нет — решение при постановке этапа (21.10.2026). Нужна ли кнопка — не решено.</li><li><b>Настройка таблицы</b> (шестерёнка <code class="tok">data-table-settings</code>: видимость, порядок и закрепление колонок) — по ДС это стандарт таблиц; на макете ее нет, в прототипе не добавлена. Нужна ли — не решено (21.10.2026). Порядок колонок менять нельзя (даты по хронологии, 21.10.2026), поэтому такая модалка была бы без перестановки — рантайм ДС этого не умеет.</li><li><b>Сворачивание групп</b> — по умолчанию все раскрыты; запоминать ли состояние между заходами на страницу — не решено (21.10.2026). При смене фильтра свернутые группы остаются свернутыми (допущение).</li><li><b>Ошибка получения отчета и права видеть отчет</b> — вид не нарисован на макетах, в прототипе нет — не решено (21.10.2026).</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">FinancialMetricsTable.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/tables/FinancialMetricsTable/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/FinancialMetrics.html): окна и подчасти, которые открывает виджет. -->
+<!-- Окно «Фильтр» отчёта финансовых метрик — связанный артефакт кнопки «Фильтр»
+     (TableFilter) на таблицах отчётов МСФО, РСБУ и KPI. Фрагмент вшивается
+     ассемблером отдельной меткой ds-include: скрим лежит в конце body страницы
+     (якорь #sec:modals), а не внутри таблицы. Окно одно на все вкладки: что в нём
+     показывать, ему отдаёт страница при каждом открытии (FinancialMetricsFilterModal.js).
+
+     Структура — штатная модалка фильтра ДС: .modal--w6.tfm, тело .modal__body--flush >
+     .tfm__body = вертикальные табы-разделы .tfm__nav + .tfm__panel со своим разделом
+     .tfm__sec и сеткой .tfm__grid. Раздел один — «Основная информация»; бейдж на табе
+     показывает число выбранных финансовых инструментов, при нуле скрыт атрибутом hidden.
+     Своего CSS у окна нет.
+
+     В разметке — только первое поле, «Финансовые инструменты»: мультивыбор с чипами в
+     поле (InputAutocomplete + DropdownList). Список опций и чипы заполняет скрипт по
+     финансовым инструментам вкладки. Поле индикаторов для каждого выбранного
+     инструмента скрипт добавляет следом, в порядке выбора, той же разметкой, что и это
+     поле, — поэтому оно стоит прямым ребёнком .tfm__grid (правило сетки ДС: `.tfm__grid > .inp`).
+
+     Подвал: «Очистить фильтр» (сбрасывает поля окна, окно остаётся открытым; выключена,
+     пока очищать нечего) и «Применить» (закрывает окно и отдаёт значение). Ни одна не
+     несёт data-modal-close: закрытие и результат ведёт скрипт. Крестик и Esc закрывают
+     без применения; клик по скриму поле ввода не закрывает — защита включается сама. -->
+
+<div class="modal-scrim" id="fm-filter-scrim" hidden data-widget="FinancialMetricsFilterModal" data-widget-group="modals" data-widget-src="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.html">
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="fmf-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fmf-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="fmf-sec-main"><span class="tab__label">Основная информация</span><span class="tab__badge" id="fmf-badge" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel">
+          <section class="tfm__sec" id="fmf-sec-main" aria-labelledby="fmf-sec-main-t">
+            <p class="tfm__sec-title" id="fmf-sec-main-t">Основная информация</p>
+            <div class="tfm__grid" data-fmf-grid>
+              <div class="inp inp--m tfm__span-2" data-fmf-fi>
+                <label class="ds-label" for="fmf-fi"><span class="ds-label__text">Финансовые инструменты</span></label>
+                <div class="inp__field" data-ddl="fmf-fi-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="fmf-fi" autocomplete="off" placeholder="Выберите финансовые инструменты">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="fmf-fi-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-fmf-clear disabled><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-fmf-apply><span class="btn__label">Применить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/fin-instruments-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-metrics-calc.js"></script>
+<script src="../../../postrade/deals-app/data/fin-metrics-store.js"></script>
+<script src="../../../postrade/deals-app/data/fin-metrics-notify.js"></script>
+<script src="../../../postrade/deals-app/data/mock-report-employees.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.js"></script>
+<script src="../../../postrade/deals-app/widgets/tables/KPITable/KPITable.js"></script>
+<script src="../../../postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/FixationModal/FixationModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.js"></script>
+<script src="FinancialMetricsTable.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"FinancialMetricsTable","type":"table","base":"../..","hub":"../../../../index.html","states":["loading"],"modes":[],"state":"loading","mode":null,"width":1200,"scenario":true,"fixtures":{"_":"Отчет РСБУ: «Данные есть» — два ФИ, у второго не все метрики; «Заполнено частично» — у второго и третьего ФИ нет событий на часть дат (пустые ячейки); «Данных нет» — отчет без групп (фильтр заблокирован, шапки нет); «Фильтр применен» — выбраны два ФИ, у первого три метрики, чип «Применено: 2»; «Длинные значения» — длинные имена и большие числа.","data":{"report":{"reportCode":"RAS","dates":["2024-03-31","2024-06-30","2024-09-30","2024-12-31"],"groups":[{"financialInstrumentId":"FI-1","financialInstrumentName":"5-Кредит-1","currencyCode":"RUB","rows":[{"metricCode":"RAS_CF_EXCL_BODY_PERCENT","metricName":"Cashflow, все за исключением тела и %","values":{"2024-03-31":871.09,"2024-06-30":13868.18,"2024-09-30":26865.27,"2024-12-31":39862.36}},{"metricCode":"RAS_PRINCIPAL_START","metricName":"Тело долга на начало периода","values":{"2024-03-31":1918.38,"2024-06-30":14915.47,"2024-09-30":27912.56,"2024-12-31":-40909.65}},{"metricCode":"RAS_ACCUMULATED_INCOME_END","metricName":"Накопленный доход на конец периода","values":{"2024-03-31":2965.67,"2024-06-30":15962.76,"2024-09-30":-28959.85,"2024-12-31":41956.94}},{"metricCode":"RAS_LIMIT_FEE_END","metricName":"Комиссия за пользование лимитом на конец периода","values":{"2024-03-31":0,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_LIMIT_FEE_PAID_END","metricName":"Накопленные платежи по комиссии за пользование лимитом на конец периода","values":{"2024-03-31":-5060.25,"2024-06-30":18057.34,"2024-09-30":31054.43,"2024-12-31":44051.52}},{"metricCode":"RAS_ACCRUED_PERCENT","metricName":"Начисленные проценты за период","values":{"2024-03-31":6107.54,"2024-06-30":19104.63,"2024-09-30":32101.72,"2024-12-31":45098.81}},{"metricCode":"RAS_LIMIT_FEE_REMAINDER_END","metricName":"Остаток по комиссии за пользование лимитом на конец периода","values":{"2024-03-31":7154.83,"2024-06-30":20151.92,"2024-09-30":33149.01,"2024-12-31":-46146.1}},{"metricCode":"RAS_LIMIT_FEE_ACCUMULATED_END","metricName":"Накопленная комиссия за пользование лимитом на конец периода","values":{"2024-03-31":0,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_PRINCIPAL_END","metricName":"Тело долга на конец периода","values":{"2024-03-31":9249.41,"2024-06-30":-22246.5,"2024-09-30":35243.59,"2024-12-31":48240.68}},{"metricCode":"RAS_CF_TOTAL","metricName":"Cashflow, суммарный","values":{"2024-03-31":-10296.7,"2024-06-30":23293.79,"2024-09-30":36290.88,"2024-12-31":49287.97}},{"metricCode":"RAS_CF_PERCENT","metricName":"Cashflow, проценты","values":{"2024-03-31":11343.99,"2024-06-30":24341.08,"2024-09-30":37338.17,"2024-12-31":50335.26}},{"metricCode":"RAS_ACCUMULATED_PERCENT_END","metricName":"Накопленные проценты на конец периода","values":{"2024-03-31":0,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_CF_BODY","metricName":"Cashflow, тело","values":{"2024-03-31":13438.57,"2024-06-30":26435.66,"2024-09-30":-39432.75,"2024-12-31":52429.84}}]},{"financialInstrumentId":"FI-2","financialInstrumentName":"1-ПУТ: Репо-4474","currencyCode":"RUB","rows":[{"metricCode":"RAS_CF_EXCL_BODY_PERCENT","metricName":"Cashflow, все за исключением тела и %","values":{"2024-03-31":1821.37,"2024-06-30":14818.46,"2024-09-30":-27815.55,"2024-12-31":40812.64}},{"metricCode":"RAS_PRINCIPAL_START","metricName":"Тело долга на начало периода","values":{"2024-03-31":2868.66,"2024-06-30":-15865.75,"2024-09-30":28862.84,"2024-12-31":41859.93}},{"metricCode":"RAS_ACCUMULATED_INCOME_END","metricName":"Накопленный доход на конец периода","values":{"2024-03-31":-3915.95,"2024-06-30":16913.04,"2024-09-30":29910.13,"2024-12-31":42907.22}},{"metricCode":"RAS_LIMIT_FEE_END","metricName":"Комиссия за пользование лимитом на конец периода","values":{"2024-03-31":0,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_LIMIT_FEE_PAID_END","metricName":"Накопленные платежи по комиссии за пользование лимитом на конец периода","values":{"2024-03-31":6010.53,"2024-06-30":19007.62,"2024-09-30":32004.71,"2024-12-31":-45001.8}}]}]},"filter":{"fiIds":[],"metrics":{}}},"partial":{"report":{"reportCode":"RAS","dates":["2024-03-31","2024-06-30","2024-09-30","2024-12-31"],"groups":[{"financialInstrumentId":"FI-1","financialInstrumentName":"5-Кредит-1","currencyCode":"RUB","rows":[{"metricCode":"RAS_CF_EXCL_BODY_PERCENT","metricName":"Cashflow, все за исключением тела и %","values":{"2024-03-31":871.09,"2024-06-30":13868.18,"2024-09-30":26865.27,"2024-12-31":39862.36}},{"metricCode":"RAS_PRINCIPAL_START","metricName":"Тело долга на начало периода","values":{"2024-03-31":1918.38,"2024-06-30":14915.47,"2024-09-30":27912.56,"2024-12-31":-40909.65}},{"metricCode":"RAS_ACCUMULATED_INCOME_END","metricName":"Накопленный доход на конец периода","values":{"2024-03-31":2965.67,"2024-06-30":15962.76,"2024-09-30":-28959.85,"2024-12-31":41956.94}},{"metricCode":"RAS_LIMIT_FEE_END","metricName":"Комиссия за пользование лимитом на конец периода","values":{"2024-03-31":0,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_LIMIT_FEE_PAID_END","metricName":"Накопленные платежи по комиссии за пользование лимитом на конец периода","values":{"2024-03-31":-5060.25,"2024-06-30":18057.34,"2024-09-30":31054.43,"2024-12-31":44051.52}},{"metricCode":"RAS_ACCRUED_PERCENT","metricName":"Начисленные проценты за период","values":{"2024-03-31":6107.54,"2024-06-30":19104.63,"2024-09-30":32101.72,"2024-12-31":45098.81}},{"metricCode":"RAS_LIMIT_FEE_REMAINDER_END","metricName":"Остаток по комиссии за пользование лимитом на конец периода","values":{"2024-03-31":7154.83,"2024-06-30":20151.92,"2024-09-30":33149.01,"2024-12-31":-46146.1}},{"metricCode":"RAS_LIMIT_FEE_ACCUMULATED_END","metricName":"Накопленная комиссия за пользование лимитом на конец периода","values":{"2024-03-31":0,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_PRINCIPAL_END","metricName":"Тело долга на конец периода","values":{"2024-03-31":9249.41,"2024-06-30":-22246.5,"2024-09-30":35243.59,"2024-12-31":48240.68}},{"metricCode":"RAS_CF_TOTAL","metricName":"Cashflow, суммарный","values":{"2024-03-31":-10296.7,"2024-06-30":23293.79,"2024-09-30":36290.88,"2024-12-31":49287.97}},{"metricCode":"RAS_CF_PERCENT","metricName":"Cashflow, проценты","values":{"2024-03-31":11343.99,"2024-06-30":24341.08,"2024-09-30":37338.17,"2024-12-31":50335.26}},{"metricCode":"RAS_ACCUMULATED_PERCENT_END","metricName":"Накопленные проценты на конец периода","values":{"2024-03-31":0,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_CF_BODY","metricName":"Cashflow, тело","values":{"2024-03-31":13438.57,"2024-06-30":26435.66,"2024-09-30":-39432.75,"2024-12-31":52429.84}}]},{"financialInstrumentId":"FI-2","financialInstrumentName":"1-ПУТ: Репо-4474","currencyCode":"RUB","rows":[{"metricCode":"RAS_CF_EXCL_BODY_PERCENT","metricName":"Cashflow, все за исключением тела и %","values":{"2024-03-31":null,"2024-06-30":null,"2024-09-30":-27815.55,"2024-12-31":40812.64}},{"metricCode":"RAS_PRINCIPAL_START","metricName":"Тело долга на начало периода","values":{"2024-03-31":null,"2024-06-30":null,"2024-09-30":28862.84,"2024-12-31":41859.93}},{"metricCode":"RAS_ACCUMULATED_INCOME_END","metricName":"Накопленный доход на конец периода","values":{"2024-03-31":null,"2024-06-30":null,"2024-09-30":29910.13,"2024-12-31":42907.22}},{"metricCode":"RAS_LIMIT_FEE_END","metricName":"Комиссия за пользование лимитом на конец периода","values":{"2024-03-31":null,"2024-06-30":null,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_LIMIT_FEE_PAID_END","metricName":"Накопленные платежи по комиссии за пользование лимитом на конец периода","values":{"2024-03-31":null,"2024-06-30":null,"2024-09-30":32004.71,"2024-12-31":-45001.8}}]},{"financialInstrumentId":"FI-3","financialInstrumentName":"3-Внутригрупповой кредит-17","currencyCode":"USD","rows":[{"metricCode":"RAS_CF_EXCL_BODY_PERCENT","metricName":"Cashflow, все за исключением тела и %","values":{"2024-03-31":2454.89,"2024-06-30":15451.98,"2024-09-30":null,"2024-12-31":null}},{"metricCode":"RAS_PRINCIPAL_START","metricName":"Тело долга на начало периода","values":{"2024-03-31":3502.18,"2024-06-30":16499.27,"2024-09-30":null,"2024-12-31":null}},{"metricCode":"RAS_ACCUMULATED_INCOME_END","metricName":"Накопленный доход на конец периода","values":{"2024-03-31":4549.47,"2024-06-30":17546.56,"2024-09-30":null,"2024-12-31":null}},{"metricCode":"RAS_LIMIT_FEE_END","metricName":"Комиссия за пользование лимитом на конец периода","values":{"2024-03-31":0,"2024-06-30":0,"2024-09-30":null,"2024-12-31":null}},{"metricCode":"RAS_LIMIT_FEE_PAID_END","metricName":"Накопленные платежи по комиссии за пользование лимитом на конец периода","values":{"2024-03-31":-6644.05,"2024-06-30":19641.14,"2024-09-30":null,"2024-12-31":null}}]}]},"filter":{"fiIds":[],"metrics":{}}},"empty":{"report":{"reportCode":"RAS","dates":[],"groups":[]},"filter":{"fiIds":[],"metrics":{}}},"filtered":{"report":{"reportCode":"RAS","dates":["2024-03-31","2024-06-30","2024-09-30","2024-12-31"],"groups":[{"financialInstrumentId":"FI-1","financialInstrumentName":"5-Кредит-1","currencyCode":"RUB","rows":[{"metricCode":"RAS_CF_EXCL_BODY_PERCENT","metricName":"Cashflow, все за исключением тела и %","values":{"2024-03-31":871.09,"2024-06-30":13868.18,"2024-09-30":26865.27,"2024-12-31":39862.36}},{"metricCode":"RAS_PRINCIPAL_START","metricName":"Тело долга на начало периода","values":{"2024-03-31":1918.38,"2024-06-30":14915.47,"2024-09-30":27912.56,"2024-12-31":-40909.65}},{"metricCode":"RAS_ACCUMULATED_INCOME_END","metricName":"Накопленный доход на конец периода","values":{"2024-03-31":2965.67,"2024-06-30":15962.76,"2024-09-30":-28959.85,"2024-12-31":41956.94}},{"metricCode":"RAS_LIMIT_FEE_END","metricName":"Комиссия за пользование лимитом на конец периода","values":{"2024-03-31":0,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_LIMIT_FEE_PAID_END","metricName":"Накопленные платежи по комиссии за пользование лимитом на конец периода","values":{"2024-03-31":-5060.25,"2024-06-30":18057.34,"2024-09-30":31054.43,"2024-12-31":44051.52}},{"metricCode":"RAS_ACCRUED_PERCENT","metricName":"Начисленные проценты за период","values":{"2024-03-31":6107.54,"2024-06-30":19104.63,"2024-09-30":32101.72,"2024-12-31":45098.81}},{"metricCode":"RAS_LIMIT_FEE_REMAINDER_END","metricName":"Остаток по комиссии за пользование лимитом на конец периода","values":{"2024-03-31":7154.83,"2024-06-30":20151.92,"2024-09-30":33149.01,"2024-12-31":-46146.1}},{"metricCode":"RAS_LIMIT_FEE_ACCUMULATED_END","metricName":"Накопленная комиссия за пользование лимитом на конец периода","values":{"2024-03-31":0,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_PRINCIPAL_END","metricName":"Тело долга на конец периода","values":{"2024-03-31":9249.41,"2024-06-30":-22246.5,"2024-09-30":35243.59,"2024-12-31":48240.68}},{"metricCode":"RAS_CF_TOTAL","metricName":"Cashflow, суммарный","values":{"2024-03-31":-10296.7,"2024-06-30":23293.79,"2024-09-30":36290.88,"2024-12-31":49287.97}},{"metricCode":"RAS_CF_PERCENT","metricName":"Cashflow, проценты","values":{"2024-03-31":11343.99,"2024-06-30":24341.08,"2024-09-30":37338.17,"2024-12-31":50335.26}},{"metricCode":"RAS_ACCUMULATED_PERCENT_END","metricName":"Накопленные проценты на конец периода","values":{"2024-03-31":0,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_CF_BODY","metricName":"Cashflow, тело","values":{"2024-03-31":13438.57,"2024-06-30":26435.66,"2024-09-30":-39432.75,"2024-12-31":52429.84}}]},{"financialInstrumentId":"FI-2","financialInstrumentName":"1-ПУТ: Репо-4474","currencyCode":"RUB","rows":[{"metricCode":"RAS_CF_EXCL_BODY_PERCENT","metricName":"Cashflow, все за исключением тела и %","values":{"2024-03-31":null,"2024-06-30":null,"2024-09-30":-27815.55,"2024-12-31":40812.64}},{"metricCode":"RAS_PRINCIPAL_START","metricName":"Тело долга на начало периода","values":{"2024-03-31":null,"2024-06-30":null,"2024-09-30":28862.84,"2024-12-31":41859.93}},{"metricCode":"RAS_ACCUMULATED_INCOME_END","metricName":"Накопленный доход на конец периода","values":{"2024-03-31":null,"2024-06-30":null,"2024-09-30":29910.13,"2024-12-31":42907.22}},{"metricCode":"RAS_LIMIT_FEE_END","metricName":"Комиссия за пользование лимитом на конец периода","values":{"2024-03-31":null,"2024-06-30":null,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_LIMIT_FEE_PAID_END","metricName":"Накопленные платежи по комиссии за пользование лимитом на конец периода","values":{"2024-03-31":null,"2024-06-30":null,"2024-09-30":32004.71,"2024-12-31":-45001.8}}]},{"financialInstrumentId":"FI-3","financialInstrumentName":"3-Внутригрупповой кредит-17","currencyCode":"USD","rows":[{"metricCode":"RAS_CF_EXCL_BODY_PERCENT","metricName":"Cashflow, все за исключением тела и %","values":{"2024-03-31":2454.89,"2024-06-30":15451.98,"2024-09-30":null,"2024-12-31":null}},{"metricCode":"RAS_PRINCIPAL_START","metricName":"Тело долга на начало периода","values":{"2024-03-31":3502.18,"2024-06-30":16499.27,"2024-09-30":null,"2024-12-31":null}},{"metricCode":"RAS_ACCUMULATED_INCOME_END","metricName":"Накопленный доход на конец периода","values":{"2024-03-31":4549.47,"2024-06-30":17546.56,"2024-09-30":null,"2024-12-31":null}},{"metricCode":"RAS_LIMIT_FEE_END","metricName":"Комиссия за пользование лимитом на конец периода","values":{"2024-03-31":0,"2024-06-30":0,"2024-09-30":null,"2024-12-31":null}},{"metricCode":"RAS_LIMIT_FEE_PAID_END","metricName":"Накопленные платежи по комиссии за пользование лимитом на конец периода","values":{"2024-03-31":-6644.05,"2024-06-30":19641.14,"2024-09-30":null,"2024-12-31":null}}]}]},"filter":{"fiIds":["FI-1","FI-3"],"metrics":{"FI-1":["RAS_PRINCIPAL_START","RAS_PRINCIPAL_END","RAS_CF_TOTAL"]}}},"error":{"message":""},"long":{"report":{"reportCode":"RAS","dates":["2024-03-31","2024-06-30","2024-09-30","2024-12-31"],"groups":[{"financialInstrumentId":"FI-9","financialInstrumentName":"12345-Договор займа с отлагательным условием и переменной процентной ставкой (НКЛ), траншевая часть","currencyCode":"RUB","rows":[{"metricCode":"RAS_CF_EXCL_BODY_PERCENT","metricName":"Cashflow, все за исключением тела и % — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789012.34,"2024-06-30":13393.04,"2024-09-30":26390.13,"2024-12-31":39387.22}},{"metricCode":"RAS_PRINCIPAL_START","metricName":"Тело долга на начало периода — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789011.34,"2024-06-30":14440.33,"2024-09-30":27437.42,"2024-12-31":40434.51}},{"metricCode":"RAS_ACCUMULATED_INCOME_END","metricName":"Накопленный доход на конец периода — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789010.34,"2024-06-30":15487.62,"2024-09-30":28484.71,"2024-12-31":-41481.8}},{"metricCode":"RAS_LIMIT_FEE_END","metricName":"Комиссия за пользование лимитом на конец периода — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789009.34,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_LIMIT_FEE_PAID_END","metricName":"Накопленные платежи по комиссии за пользование лимитом на конец периода — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789008.34,"2024-06-30":-17582.2,"2024-09-30":30579.29,"2024-12-31":43576.38}},{"metricCode":"RAS_ACCRUED_PERCENT","metricName":"Начисленные проценты за период — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789007.34,"2024-06-30":18629.49,"2024-09-30":31626.58,"2024-12-31":44623.67}},{"metricCode":"RAS_LIMIT_FEE_REMAINDER_END","metricName":"Остаток по комиссии за пользование лимитом на конец периода — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789006.34,"2024-06-30":19676.78,"2024-09-30":32673.87,"2024-12-31":45670.96}},{"metricCode":"RAS_LIMIT_FEE_ACCUMULATED_END","metricName":"Накопленная комиссия за пользование лимитом на конец периода — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789005.34,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_PRINCIPAL_END","metricName":"Тело долга на конец периода — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789004.34,"2024-06-30":21771.36,"2024-09-30":-34768.45,"2024-12-31":47765.54}},{"metricCode":"RAS_CF_TOTAL","metricName":"Cashflow, суммарный — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789003.34,"2024-06-30":-22818.65,"2024-09-30":35815.74,"2024-12-31":48812.83}},{"metricCode":"RAS_CF_PERCENT","metricName":"Cashflow, проценты — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789002.34,"2024-06-30":23865.94,"2024-09-30":36863.03,"2024-12-31":49860.12}},{"metricCode":"RAS_ACCUMULATED_PERCENT_END","metricName":"Накопленные проценты на конец периода — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789001.34,"2024-06-30":0,"2024-09-30":0,"2024-12-31":0}},{"metricCode":"RAS_CF_BODY","metricName":"Cashflow, тело — длинное уточнение наименования метрики для проверки усечения","values":{"2024-03-31":-123456789000.34,"2024-06-30":25960.52,"2024-09-30":38957.61,"2024-12-31":-51954.7}}]}]},"filter":{"fiIds":[],"metrics":{}}}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Отчет финансовых метрик» (FinancialMetricsTable) — вкладки МСФО и РСБУ
+     страницы «Финансовые метрики». Пара во фронтенде — FinancialMetricsTable.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране,
+     на странице дважды (МСФО и РСБУ) — поэтому в разметке нет id.
+     Каркас показан в состоянии «Загрузка», пока страница не передала отчет: кнопка «Фильтр»
+     заблокирована, в таблице скелетоны. Таблицу, тулбар и остальные состояния рисует
+     FinancialMetricsTable.js: PostFinMetricsTable.render(корень, отчет, фильтр). -->
+<section class="lc-financial-metrics-table" data-state="loading">
+  <div class="dtable-toolbar">
+    <div class="tfilter tfilter--disabled" role="group" aria-label="Фильтр таблицы">
+      <button type="button" class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false" disabled><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+    </div>
+  </div>
+  <div class="lc-financial-metrics-table__table" data-fm-table>
+    <div class="dtable dtable--fill" aria-busy="true">
+      <div class="dtable__body">
+        <div class="tbl" data-table>
+          <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 400px repeat(2, 160px) minmax(8px,1fr)">
+            <div class="th th--separator"></div>
+            <div class="th"><span class="th__label" data-grab>Наименование метрики</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--separator"></div>
+          </div>
+          <div class="tbl__row" style="grid-template-columns:8px 400px repeat(2, 160px) minmax(8px,1fr)">
+            <div class="tc tc--separator"></div>
+            <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--separator"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «Отчет финансовых метрик» (FinancialMetricsTable).
+   Только внутренняя раскладка. Цвета, шрифты, отступы — токены ДС; своих значений здесь нет.
+   Тулбар (TableFilter), таблица (Table, TableCell), пустое состояние (.dtable__empty),
+   скелетоны — компоненты ДС: их размеры и состояния отсюда не переопределяются.
+
+   Оси на корне: data-state — loading | empty | data, ставит FinancialMetricsTable.js
+   по отчету. Вид по состоянию задают сами компоненты ДС (пустое тело, скелеты,
+   заблокированная кнопка), CSS виджета его не переключает; режима прав (data-mode) нет —
+   в отчете нечего править. */
+
+/* Тулбар над таблицей и сама таблица — колонкой с ритмом 12px (Table, вариант
+   «тулбар над таблицей»: зазор задает окружение). Корень сжимается по ширине
+   родителя, поэтому горизонтальный скролл остается у тела таблицы, а не у страницы. */
+.lc-financial-metrics-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Хост таблицы: .dtable--fill растягивается на свободную высоту, если родитель ее ограничил
+   (.screen--app страницы); без ограничения таблица растет по числу строк. */
+.lc-financial-metrics-table__table {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Имя ФИ в строке группы — Body S Strong, как на макете. Валюта рядом — штатный
+   .tc__postfix (приглушенный Body S). Два класса — чтобы перебить .tc__text вне
+   зависимости от порядка подключения CSS. */
+.lc-financial-metrics-table__group-name.tc__text {
+  font: var(--type-body-s-strong);
+}
+
+/* Пустой отчет: «Нет данных» — по центру тела таблицы, как на макете (ДС центрирует только
+   по горизонтали). Тело растягивается, только когда в нем одно пустое состояние. */
+.lc-financial-metrics-table .dtable__body:has(> .dtable__empty) {
+  display: flex;
+  flex-direction: column;
+}
+.lc-financial-metrics-table .dtable__body > .dtable__empty { flex: 1 1 auto; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   FinancialMetricsTable.js — отчет финансовых метрик (МСФО или РСБУ):
+   тулбар с кнопкой «Фильтр» и таблица «метрики × даты» по группам ФИ.
+
+   Виджет не читает стор сам: готовый отчет и значение фильтра ему отдает
+   страница. Виджет вшивается на страницу дважды (МСФО и РСБУ), поэтому в
+   разметке нет id; каждый экземпляр рисуется своим корнем.
+
+   Глобальное имя: window.PostFinMetricsTable. Подключается после ds.js
+   (рантаймы ДС: Table, TableCell, TableFilter, Icons) и до KPITable.js —
+   тот строится на низкоуровневых функциях ниже.
+
+   Типы (data/mock-fin-metrics-calc.js, FinMetricsReportRsDto):
+     report = { reportCode, dates: ['ГГГГ-ММ-ДД'…],
+                groups: [{ financialInstrumentId, financialInstrumentName,
+                           currencyCode,
+                           rows: [{ metricCode, metricName,
+                                    values: { 'ГГГГ-ММ-ДД': число | null } }] }] }
+     filter = FmFilterValue = { fiIds: string[], metrics: { [fiId]: string[] } }
+       Пустой filter ({ fiIds: [], metrics: {} }) — фильтра нет. Непустой
+       fiIds — видны только эти ФИ; если у ФИ в metrics[fiId] есть коды —
+       только строки с этими metricCode, нет ключа или пусто — все метрики ФИ.
+       ФИ, у которого после фильтра не осталось строк, не рисуется.
+
+   API:
+     render(root, report, filter)
+       root — корень виджета (.lc-financial-metrics-table). Ставит на корень
+       data-state (loading | empty | data) и data-report (из report.reportCode),
+       перерисовывает тулбар и таблицу. report == null — загрузка (скелетоны).
+       Отчет без групп (report.groups.length === 0) — «Нет данных», кнопка
+       «Фильтр» заблокирована (атрибут disabled); если фильтр скрыл все группы
+       непустого отчета — тоже «Нет данных», но кнопка доступна.
+     drawReport(host, report, filter)
+       Рисует в контейнер host только .dtable: шапка и группы либо «Нет данных».
+       Свернутые группы сохраняются между перерисовками. После вставки вызывает
+       dsIcons.apply, DSTable.bind и DSTable.wireAll, DSTablePin.bindAll.
+     drawSkeleton(host)
+       Загрузка: тот же каркас, ячейки — скелетоны.
+     syncFilterBar(bar, appliedCount, disabled)
+       bar — элемент .tfilter или его контейнер. appliedCount > 0 — чип
+       «Применено: N»; disabled — .tfilter--disabled и disabled на кнопке,
+       чип в этом случае не показывается.
+     bind(root)
+       Один раз вешает события корня (render зовет сам; KPITable — тоже).
+     visibleGroups(report, filter), appliedCount(filter)
+       Применение фильтра и N для чипа (N — число выбранных ФИ).
+     fmtNumber(value) → '1 500 000,00' (неразрывный пробел между разрядами,
+       запятая, обычный минус; null — пустая строка)
+     fmtDate('ГГГГ-ММ-ДД') → 'ДД.ММ.ГГГГ'
+
+   События с корня (bubbles: true, CustomEvent):
+     fmtableaction      detail: { action: 'FILTER' } — клик по «Фильтр»; окно
+                        открывает страница, у кнопки нет data-modal;
+     fmtablefilterreset сброс чипа «Применено: N» (крестик или Backspace /
+                        Delete на чипе). Штатное tfilter:reset ДС на корне
+                        гасится и вместо него уходит это событие.
+   Страница ловит оба и зовет render заново.
+
+   Сворачивание групп, закрепление первой колонки, ширина и порядок колонок —
+   рантаймы ДС (data-table, TableCell), своего кода на это нет.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var NBSP = ' ';
+  var FIRST_COL = '400px';
+  var DATE_COL = '160px';
+  var SKELETON_ROWS = 6;
+  var SKELETON_DATES = 4;
+  /* Колонки не переставляются: даты идут по хронологии. Рантайм ДС (TableReorder.js) не берёт
+     подпись шапки с атрибутом data-grab — его и ставим; ширина колонок меняется как обычно. */
+  var LABEL = '<span class="th__label" data-grab>';
+
+  var RESIZE = '<span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>';
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* ── Форматирование ───────────────────────────────────────────── */
+
+  function fmtNumber(value) {
+    if (value == null || value === '') return '';
+    var n = Number(value);
+    if (!isFinite(n)) return '';
+    var fixed = Math.abs(n).toFixed(2);
+    var parts = fixed.split('.');
+    var int = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP);
+    var negative = n < 0 && Number(fixed) !== 0;
+    return (negative ? '-' : '') + int + ',' + parts[1];
+  }
+
+  function fmtDate(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso == null ? '' : iso));
+    return m ? m[3] + '.' + m[2] + '.' + m[1] : String(iso == null ? '' : iso);
+  }
+
+  /* ── Фильтр ───────────────────────────────────────────────────── */
+
+  function appliedCount(filter) {
+    var ids = filter && filter.fiIds;
+    return ids && ids.length ? ids.length : 0;
+  }
+
+  function visibleGroups(report, filter) {
+    var groups = (report && report.groups) || [];
+    var ids = filter && filter.fiIds;
+    if (!ids || !ids.length) return groups;
+    var metrics = (filter && filter.metrics) || {};
+    var out = [];
+    groups.forEach(function (g) {
+      var id = g.financialInstrumentId;
+      if (ids.indexOf(id) < 0) return;
+      var codes = metrics[id];
+      if (!codes || !codes.length) { out.push(g); return; }
+      var rows = (g.rows || []).filter(function (r) { return codes.indexOf(r.metricCode) >= 0; });
+      if (!rows.length) return;
+      out.push({
+        financialInstrumentId: id,
+        financialInstrumentName: g.financialInstrumentName,
+        currencyCode: g.currencyCode,
+        rows: rows
+      });
+    });
+    return out;
+  }
+
+  /* ── Разметка ─────────────────────────────────────────────────── */
+
+  function gridTemplate(dateCount) {
+    return '8px ' + FIRST_COL + ' '
+      + (dateCount ? 'repeat(' + dateCount + ', ' + DATE_COL + ') ' : '')
+      + 'minmax(8px,1fr)';
+  }
+
+  function nodeId(fiId) {
+    return 'fm-' + String(fiId).replace(/[^A-Za-z0-9_-]/g, '_');
+  }
+
+  function emptyHtml() {
+    return '<div class="dtable dtable--fill"><div class="dtable__body">'
+      + '<div class="dtable__empty"><p class="dtable__empty-title">Нет данных</p></div>'
+      + '</div></div>';
+  }
+
+  function headHtml(grid, dates) {
+    return '<div class="tbl__row tbl__row--head" style="grid-template-columns:' + grid + '">'
+      + '<div class="th th--separator"></div>'
+      + '<div class="th th--pinned">' + LABEL + 'Наименование метрики</span>' + RESIZE + '</div>'
+      + dates.map(function (d) {
+        return '<div class="th th--right">' + LABEL + esc(fmtDate(d)) + '</span>' + RESIZE + '</div>';
+      }).join('')
+      + '<div class="th th--separator"></div></div>';
+  }
+
+  function groupHtml(grid, dates, g, collapsed) {
+    var node = nodeId(g.financialInstrumentId);
+    var open = !collapsed[node];
+    var h = '<div class="tbl__row" data-node="' + node + '" style="grid-template-columns:' + grid + '">'
+      + '<div class="tc tc--separator"></div>'
+      + '<div class="tc tc--tree tc--pinned"><span class="tc__row">'
+      + '<button type="button" class="tc__twisty" aria-expanded="' + open + '" aria-label="' + (open ? 'Свернуть' : 'Развернуть') + '"><i data-icon="chevron-right"></i></button>'
+      + '<span class="tc__text tc__text--truncate lc-financial-metrics-table__group-name">' + esc(g.financialInstrumentName) + '</span>'
+      + (g.currencyCode ? '<span class="tc__postfix">' + esc(g.currencyCode) + '</span>' : '')
+      + '</span></div>'
+      + dates.map(function () { return '<div class="tc"></div>'; }).join('')
+      + '<div class="tc tc--separator"></div></div>';
+    (g.rows || []).forEach(function (r) {
+      var values = r.values || {};
+      h += '<div class="tbl__row"' + (open ? '' : ' hidden') + ' data-parent="' + node + '" style="grid-template-columns:' + grid + '">'
+        + '<div class="tc tc--separator"></div>'
+        + '<div class="tc tc--tree tc--pinned" style="--tc-level:1"><span class="tc__row">'
+        + '<span class="tc__twisty tc__twisty--leaf" aria-hidden="true"></span>'
+        + '<span class="tc__text tc__text--truncate">' + esc(r.metricName) + '</span></span></div>'
+        + dates.map(function (d) {
+          var text = fmtNumber(values[d]);
+          return text
+            ? '<div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">' + text + '</span></span></div>'
+            : '<div class="tc tc--numbers"></div>';
+        }).join('')
+        + '<div class="tc tc--separator"></div></div>';
+    });
+    return h;
+  }
+
+  function skeletonCell(extra) {
+    return '<div class="tc ' + (extra || '') + ' tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>';
+  }
+
+  /* Какие группы были свернуты на экране, пока таблица перерисовывалась. */
+  function collapsedNodes(host) {
+    var out = {};
+    var rows = host.querySelectorAll('.tbl__row[data-node]');
+    for (var i = 0; i < rows.length; i++) {
+      var tw = rows[i].querySelector('.tc__twisty[aria-expanded]');
+      if (tw && tw.getAttribute('aria-expanded') === 'false') out[rows[i].getAttribute('data-node')] = true;
+    }
+    return out;
+  }
+
+  function wire(host) {
+    if (window.dsIcons) window.dsIcons.apply(host);
+    var body = host.querySelector('.dtable__body');
+    if (window.DSTable && body) { window.DSTable.bind(body); window.DSTable.wireAll(host); }
+    if (window.DSTablePin) window.DSTablePin.bindAll(host);
+  }
+
+  /* ── Низкоуровневый API ───────────────────────────────────────── */
+
+  function drawReport(host, report, filter) {
+    if (!host) return;
+    var groups = visibleGroups(report, filter);
+    var collapsed = collapsedNodes(host);
+    if (!groups.length) {
+      host.innerHTML = emptyHtml();
+      return;
+    }
+    var dates = (report && report.dates) || [];
+    var grid = gridTemplate(dates.length);
+    host.innerHTML = '<div class="dtable dtable--fill"><div class="dtable__body">'
+      + '<div class="tbl" data-table>'
+      + headHtml(grid, dates)
+      + groups.map(function (g) { return groupHtml(grid, dates, g, collapsed); }).join('')
+      + '</div></div></div>';
+    wire(host);
+  }
+
+  function drawSkeleton(host) {
+    if (!host) return;
+    var grid = gridTemplate(SKELETON_DATES);
+    var head = '<div class="tbl__row tbl__row--head" style="grid-template-columns:' + grid + '">'
+      + '<div class="th th--separator"></div>'
+      + '<div class="th">' + LABEL + 'Наименование метрики</span></div>';
+    for (var d = 0; d < SKELETON_DATES; d++) {
+      head += '<div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>';
+    }
+    head += '<div class="th th--separator"></div></div>';
+    var rows = '';
+    for (var r = 0; r < SKELETON_ROWS; r++) {
+      rows += '<div class="tbl__row" style="grid-template-columns:' + grid + '"><div class="tc tc--separator"></div>' + skeletonCell('');
+      for (var c = 0; c < SKELETON_DATES; c++) rows += skeletonCell('tc--numbers');
+      rows += '<div class="tc tc--separator"></div></div>';
+    }
+    host.innerHTML = '<div class="dtable dtable--fill" aria-busy="true"><div class="dtable__body"><div class="tbl" data-table>' + head + rows + '</div></div></div>';
+    wire(host);
+  }
+
+  function syncFilterBar(bar, count, disabled) {
+    if (!bar) return;
+    var tf = bar.classList && bar.classList.contains('tfilter') ? bar : bar.querySelector('.tfilter');
+    if (!tf) return;
+    var off = !!disabled;
+    tf.classList.toggle('tfilter--disabled', off);
+    var btn = tf.querySelector('.tfilter__open');
+    if (btn) btn.disabled = off;
+    var chip = tf.querySelector('.tfilter__applied');
+    var n = off ? 0 : (count > 0 ? Math.floor(count) : 0);
+    if (n <= 0) {
+      if (chip) chip.remove();
+      return;
+    }
+    if (!chip) {
+      chip = document.createElement('span');
+      chip.className = 'chip chip--edit chip--m tfilter__applied';
+      chip.tabIndex = 0;
+      chip.innerHTML = '<span class="chip__label"></span>'
+        + '<span class="chip__remove" role="button" aria-label="Сбросить все фильтры"><i data-icon="close"></i></span>';
+      tf.appendChild(chip);
+      if (window.dsIcons) window.dsIcons.apply(chip);
+    }
+    chip.querySelector('.chip__label').textContent = 'Применено: ' + n;
+  }
+
+  /* ── События корня ────────────────────────────────────────────── */
+
+  function emit(root, name, detail) {
+    root.dispatchEvent(new CustomEvent(name, { bubbles: true, detail: detail || {} }));
+  }
+
+  function bind(root) {
+    if (!root || root.__fmTableBound) return;
+    root.__fmTableBound = true;
+    root.addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('.tfilter__open') : null;
+      if (!btn || !root.contains(btn) || btn.disabled) return;
+      emit(root, 'fmtableaction', { action: 'FILTER' });
+    });
+    root.addEventListener('tfilter:reset', function (e) {
+      e.stopPropagation();
+      emit(root, 'fmtablefilterreset');
+    });
+  }
+
+  /* ── Виджет ───────────────────────────────────────────────────── */
+
+  function render(root, report, filter) {
+    if (!root) return;
+    bind(root);
+    var loading = report == null;
+    var empty = !loading && !(report.groups && report.groups.length);
+    root.setAttribute('data-state', loading ? 'loading' : (empty ? 'empty' : 'data'));
+    if (report && report.reportCode) root.setAttribute('data-report', report.reportCode);
+    syncFilterBar(root.querySelector('.tfilter'), appliedCount(filter), loading || empty);
+    var host = root.querySelector('[data-fm-table]');
+    if (loading) drawSkeleton(host);
+    else drawReport(host, report, filter);
+  }
+
+  window.PostFinMetricsTable = {
+    render: render,
+    drawReport: drawReport,
+    drawSkeleton: drawSkeleton,
+    syncFilterBar: syncFilterBar,
+    bind: bind,
+    visibleGroups: visibleGroups,
+    appliedCount: appliedCount,
+    fmtNumber: fmtNumber,
+    fmtDate: fmtDate
+  };
+})();
+</script>
+</body>
+</html>

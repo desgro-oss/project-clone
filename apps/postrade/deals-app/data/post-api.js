@@ -23,6 +23,11 @@
      finInstruments.get(dealId) → Promise<{ cards, updated } | null>
      finInstruments.put(dealId, { cards }) → Promise<{ ok, updated }>
      finInstruments.reset() → Promise
+     — расчёт финансовых метрик сделки (FinMetricsStore):
+     finMetrics.all() → Promise<{ dealId: { calculation, fixations, updated } }>
+     finMetrics.get(dealId) → Promise<{ calculation, fixations, updated } | null>
+     finMetrics.put(dealId, { calculation, fixations }) → Promise<{ ok, updated }>
+     finMetrics.reset() → Promise
    }
 
    Два режима, общие для всех ресурсов:
@@ -39,7 +44,10 @@
    – дерево продуктов — tree (DealProductTreeRsDto, mock-deal-trees.js)
      целиком: сохранённое дерево перекрывает демо-дерево сделки;
    – карточки ФИ — cards (DealFinInstrumentCardRsDto[], mock-fin-instruments.js)
-     целиком: сохранённый список перекрывает демо-карточки сделки.
+     целиком: сохранённый список перекрывает демо-карточки сделки;
+   – расчёт метрик — calculation (DealMetricsCalculationRsDto) и fixations
+     (EirIbsvFixationRsDto[], mock-fin-metrics-calc.js) целиком: сохранённое
+     перекрывает демо-запись сделки.
    ========================================================================= */
 (function () {
   'use strict';
@@ -129,7 +137,7 @@
   var ready = detect().then(function (m) {
     mode = m;
     if (m === 'local' && window.console) {
-      console.info('PostApi: сервер данных не найден — правки состава участников, дерева продуктов и карточек ФИ сохраняются только в этом браузере (localStorage). Контракт сервера — data/API.md');
+      console.info('PostApi: сервер данных не найден — правки состава участников, дерева продуктов, карточек ФИ и расчёта метрик сохраняются только в этом браузере (localStorage). Контракт сервера — data/API.md');
     }
     return m;
   });
@@ -144,6 +152,10 @@
     return { cards: JSON.parse(JSON.stringify(rec.cards)) };
   });
 
+  var finMetrics = resource('/api/post/fin-metrics', 'ibp.post.fin-metrics', function (rec) {
+    return { calculation: JSON.parse(JSON.stringify(rec.calculation)), fixations: JSON.parse(JSON.stringify(rec.fixations || [])) };
+  });
+
   window.PostApi = {
     mode: function () { return mode; },
     ready: ready,
@@ -152,6 +164,7 @@
     put: participants.put,
     reset: participants.reset,
     trees: trees,
-    finInstruments: finInstruments
+    finInstruments: finInstruments,
+    finMetrics: finMetrics
   };
 })();

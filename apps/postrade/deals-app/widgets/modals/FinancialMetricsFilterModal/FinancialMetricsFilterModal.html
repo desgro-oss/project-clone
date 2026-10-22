@@ -1,0 +1,60 @@
+<!-- Окно «Фильтр» отчёта финансовых метрик — связанный артефакт кнопки «Фильтр»
+     (TableFilter) на таблицах отчётов МСФО, РСБУ и KPI. Фрагмент вшивается
+     ассемблером отдельной меткой ds-include: скрим лежит в конце body страницы
+     (якорь #sec:modals), а не внутри таблицы. Окно одно на все вкладки: что в нём
+     показывать, ему отдаёт страница при каждом открытии (FinancialMetricsFilterModal.js).
+
+     Структура — штатная модалка фильтра ДС: .modal--w6.tfm, тело .modal__body--flush >
+     .tfm__body = вертикальные табы-разделы .tfm__nav + .tfm__panel со своим разделом
+     .tfm__sec и сеткой .tfm__grid. Раздел один — «Основная информация»; бейдж на табе
+     показывает число выбранных финансовых инструментов, при нуле скрыт атрибутом hidden.
+     Своего CSS у окна нет.
+
+     В разметке — только первое поле, «Финансовые инструменты»: мультивыбор с чипами в
+     поле (InputAutocomplete + DropdownList). Список опций и чипы заполняет скрипт по
+     финансовым инструментам вкладки. Поле индикаторов для каждого выбранного
+     инструмента скрипт добавляет следом, в порядке выбора, той же разметкой, что и это
+     поле, — поэтому оно стоит прямым ребёнком .tfm__grid (правило сетки ДС: `.tfm__grid > .inp`).
+
+     Подвал: «Очистить фильтр» (сбрасывает поля окна, окно остаётся открытым; выключена,
+     пока очищать нечего) и «Применить» (закрывает окно и отдаёт значение). Ни одна не
+     несёт data-modal-close: закрытие и результат ведёт скрипт. Крестик и Esc закрывают
+     без применения; клик по скриму поле ввода не закрывает — защита включается сама. -->
+
+<div class="modal-scrim" id="fm-filter-scrim" hidden>
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="fmf-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fmf-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="fmf-sec-main"><span class="tab__label">Основная информация</span><span class="tab__badge" id="fmf-badge" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel">
+          <section class="tfm__sec" id="fmf-sec-main" aria-labelledby="fmf-sec-main-t">
+            <p class="tfm__sec-title" id="fmf-sec-main-t">Основная информация</p>
+            <div class="tfm__grid" data-fmf-grid>
+              <div class="inp inp--m tfm__span-2" data-fmf-fi>
+                <label class="ds-label" for="fmf-fi"><span class="ds-label__text">Финансовые инструменты</span></label>
+                <div class="inp__field" data-ddl="fmf-fi-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="fmf-fi" autocomplete="off" placeholder="Выберите финансовые инструменты">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="fmf-fi-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-fmf-clear disabled><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-fmf-apply><span class="btn__label">Применить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

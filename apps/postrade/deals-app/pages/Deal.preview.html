@@ -29,6 +29,8 @@
 <link rel="stylesheet" href="../widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.css">
 <link rel="stylesheet" href="../widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.css">
 <link rel="stylesheet" href="../widgets/tiles/DealRelatedCollateralsTile/DealRelatedCollateralsTile.css">
+<link rel="stylesheet" href="../widgets/modals/FixationModal/FixationModal.css">
+<link rel="stylesheet" href="../widgets/modals/FixationModal/FixationModalTile/FixationModalTile.css">
 <link rel="stylesheet" href="../widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.css">
 <link rel="stylesheet" href="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.css">
 <link rel="stylesheet" href="../widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.css">
@@ -1287,22 +1289,73 @@
         </div>
         <!-- Второй ряд: один тайл в 6 колонок (тайл «Влияние на ЭПС/ВБС» снят 10.10.2026) -->
         <div class="tile-row">
-          <!-- Локальный компонент «Финансовые метрики» — фрагмент страницы сделки.
+          <!-- Локальный компонент «Финансовые метрики» (DealMetricsCalculationTile) — фрагмент
+     страницы сделки: расчёт финансовых метрик по ФИ сделки.
      Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
      Здесь только разметка: внешние отступы и место в колонках задаёт экран.
-     data-state — состояние данных: loading | data | partial | empty | error | updating
-     data-mode  — режим прав:       edit | view
-     Сейчас компонент в состоянии empty: состав полей не согласован (см. паспорт).
-     Пока состав не согласован — строка по центру тела, без EmptyState:
-     помещается в минимальную высоту тайла и не растягивает ряд (DealMetricsCalculationTile.css). -->
-<section data-state="empty" data-mode="view" class="tile lc-fin-metrics col-6 colw-12" data-widget="DealMetricsCalculationTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.html">
+
+     data-state — состояние данных: loading | empty | data | partial | updating
+                  empty — расчёта ещё не было (или нет ФИ); data — рассчитаны все ФИ;
+                  partial — рассчитана часть ФИ; updating — идёт расчёт
+     data-mode  — режим прав: edit | view. Ставит страница (статус сделки и роль),
+                  тайл режим не вычисляет; вид в просмотре — только CSS
+     свои оси (наличие атрибута — да, нет атрибута — нет):
+       data-fm-locked     — у сделки нет ФИ: «Заблокировано»
+       data-fm-error      — последняя попытка расчёта не посчитала ни одного ФИ: «Ошибка»
+       data-fm-calculated — есть успешный расчёт: вид «Рассчитано»
+     Разметка держит все виды сразу, нужный показывает DealMetricsCalculationTile.css по этим
+     атрибутам — так устроен шаблон ДС (templates/local-component/Component.css). Скрипт
+     DealMetricsCalculationTile.js вписывает числа и дату и ставит атрибуты.
+     Пример ниже — вид «Рассчитано частично» (демо-сделка 1027: 3 ФИ из 8).
+     Кнопки и ссылка с data-fm-act: CALCULATE («Рассчитать», «Пересчет метрик») выполняет
+     тайл, связанный со стором; FIXATION и REPORTS уходят событием fmcalcaction. -->
+<section data-fm-calculated="true" id="tile-fm-calc" data-state="loading" data-mode="edit" class="tile lc-fin-metrics col-6 colw-12" data-widget="DealMetricsCalculationTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.html">
   <header class="tile__header">
     <div class="tile__header-main">
       <div class="tile__title-row"><h3 class="tile__title">Финансовые метрики</h3></div>
     </div>
   </header>
+
+  <!-- Ошибка: последняя попытка расчёта не посчитала ни одного ФИ. Полоса Alert в слоте
+       Tile — и над кнопкой «Рассчитать», и над видом «Рассчитано» с прежней датой. Снимается
+       только успешным расчётом. В просмотре и в «Заблокировано» не показывается. -->
+  <div class="tile__alert lc-fin-metrics__alert">
+    <div class="alert alert--error alert--m alert--flush" role="alert" aria-live="assertive">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Расчет не выполнен, некорректные данные в ФИ</p></div>
+    </div>
+  </div>
+
   <div class="tile__body">
-    <p class="lc-fin-metrics__stub">Данные ещё не заведены</p>
+
+    <!-- Загрузка: строка итога и ряд кнопок в габаритах будущих -->
+    <div class="sk-group lc-fin-metrics__loading" aria-busy="true">
+      <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+      <span class="sk-block sk-block--rounded" style="--sk-w:120px;--sk-h:32px" aria-hidden="true"></span>
+    </div>
+
+    <!-- Заблокировано: у сделки нет ФИ — серая строка, без полосы и без кнопки -->
+    <p class="lc-fin-metrics__note lc-fin-metrics__locked">Отсутствуют ФИ для расчета</p>
+
+    <!-- Не рассчитано, просмотр: серая строка, без кнопок и без полосы -->
+    <p class="lc-fin-metrics__note lc-fin-metrics__none">Расчет не выполнен</p>
+
+    <!-- Не рассчитано, правка: первый расчёт. Во время расчёта — лоадер на кнопке -->
+    <div class="lc-fin-metrics__start">
+      <button type="button" class="btn btn--accent btn--s" data-fm-act="CALCULATE"><span class="btn__label">Рассчитать</span></button>
+    </div>
+
+    <!-- Рассчитано: итог, действия и переход к отчетам. В просмотре — без «Рассчитано ФИ: N
+         из M.» и без кнопок, «Отчеты →» встаёт в строку итога справа -->
+    <div class="lc-fin-metrics__done">
+      <p class="lc-fin-metrics__summary"><span class="lc-fin-metrics__count">Рассчитано ФИ: <span data-fm-done>3</span> из <span data-fm-total>8</span>. </span>Последний расчет: <span data-fm-at>22.01.2024, 16:45</span></p>
+      <div class="lc-fin-metrics__buttons">
+        <button type="button" class="btn btn--outline btn--s" data-fm-act="CALCULATE"><span class="btn__label">Пересчет метрик</span></button>
+        <button type="button" class="btn btn--outline btn--s" data-fm-act="FIXATION"><span class="btn__label">Фиксация ЭПС/ВБС</span></button>
+      </div>
+      <button type="button" class="btn btn--outline btn--s lc-fin-metrics__reports" data-fm-act="REPORTS"><i data-icon="file"></i><span class="btn__label">Отчеты</span><i data-icon="arrow-right"></i></button>
+    </div>
+
   </div>
 </section>
         </div>
@@ -1413,6 +1466,272 @@
       </div>
     </footer>
   </div>
+</div>
+<!-- Окно «Фиксация ЭПС/ВБС» тайла «Финансовые метрики» (DealMetricsCalculationTile): скрим, подтверждение
+     незавершённого предварительного расчёта и шаблон карточки фиксации — отдельными фрагментами -->
+<!-- Окно «Фиксация ЭПС/ВБС» — связанный артефакт кнопок «Фиксация ЭПС/ВБС» тайла
+     «Финансовые метрики» (страница сделки) и шапки страницы «Финансовые метрики».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include: скрим лежит в конце
+     body страницы, а не внутри тайла. Рядом вшиваются подтверждение
+     (FixationConfirmModal.html) и шаблон карточки (FixationModalTile/).
+
+     Окно — список карточек фиксации (по одной на ФИ). Карточку рисует скрипт
+     FixationModal.js по шаблону подчасти; в разметке — только каркас: шапка, алерт
+     уровня окна, пустой список, подвал. Алерт показывает ошибку предварительного
+     расчёта (.modal__alert); пока ошибки нет — скрыт атрибутом hidden.
+
+     Подвал: слева «+ Добавить ФИ» (по макету; ДС не рекомендует левые и правые
+     кнопки вместе — отступление записано в паспорте), справа «Сохранить». Кнопки
+     без data-modal-close: окно закрывает скрипт, когда проверка прошла; с ошибкой
+     окно остаётся открытым. Крестик и Esc закрывают без сохранения; клик мимо окна
+     не закрывает (окно с полями ввода — guarded). Ширина — шаг 10 шкалы колонок
+     (1511px): карточка делится на ввод и результат. Высота растёт с числом карточек
+     до предела ДС, дальше скролл тела. -->
+<div class="modal-scrim" id="fm-fix-scrim" hidden data-widget="FixationModal" data-widget-group="modals" data-widget-src="../widgets/modals/FixationModal/FixationModal.html">
+  <div class="modal modal--w10" role="dialog" aria-modal="true" aria-labelledby="fm-fix-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fm-fix-title">Фиксация ЭПС/ВБС</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__alert" data-fix-alert hidden>
+      <div class="alert alert--error alert--m alert--flush" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title" data-fix-alert-title></p>
+          <p class="alert__text" data-fix-alert-text hidden></p>
+        </div>
+      </div>
+    </div>
+    <div class="modal__body">
+      <div class="lc-fixation-modal__list" data-fix-list></div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-left">
+        <button type="button" class="btn btn--transparent btn--m" data-fix-add>
+          <span class="btn__icon"><i data-icon="add"></i></span>
+          <span class="btn__label">Добавить ФИ</span>
+        </button>
+      </div>
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fix-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Подтверждение окна «Фиксация ЭПС/ВБС»: вложенное окно, которое открывается поверх
+     окна фиксации, когда «Сохранить» нажали до конца предварительного расчёта.
+     Паспорт у него общий с окном (FixationModal.md). Свой файл — потому что у
+     фрагмента один корневой элемент, а каждый скрим — отдельный корень.
+
+     «Отменить» закрывает без сохранения (data-modal-close), «Подтвердить» закрывает
+     с результатом «да» — это делает скрипт окна (data-fix-confirm-ok). Рядом с
+     окном фиксации стоит своё подтверждение, а не подтверждение страницы: окно
+     открывается и на странице сделки, где общего подтверждения нет. -->
+<div class="modal-scrim modal-scrim--nested" id="fm-fix-confirm-scrim" hidden data-widget="FixationConfirmModal" data-widget-group="modals" data-widget-src="../widgets/modals/FixationModal/FixationConfirmModal.html">
+  <div class="modal modal--w4" role="alertdialog" aria-modal="true" aria-labelledby="fm-fix-confirm-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fm-fix-confirm-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <div>Процесс предварительного расчета не завершен, сохранить фиксацию ЭПС/ВБС?</div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-fix-confirm-ok><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Локальный компонент «Карточка фиксации» (подчасть окна «Фиксация ЭПС/ВБС»).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include.
+
+     Корень фрагмента — <template>: карточек в окне от одной и больше, поля у них
+     одинаковые, а значения разные. Поэтому компонент отдаёт ЭТАЛОН разметки, а
+     карточки по нему рисует скрипт окна (FixationModal.js): клонирует шаблон и
+     заменяет {uid} в id и for — у каждой карточки свой.
+
+     Слева — ввод: ФИ, дата изменений, тип модификации, комментарий; под ними
+     «ВБС до фиксации» и кнопка «Предварительный расчет», которую после расчёта
+     заменяет чип «Расчет выполнен». Справа — результат: два блока по виду модификации и блок ЕТС (Inset ДС, `tile--inset`). Пока значения нет — прочерк; у процентов постфикс «%»
+     появляется вместе со значением. «⊖» справа — удалить карточку; пока карточка
+     одна, он выключен.
+
+     Состояние карточки — атрибуты корня .lc-fixtile (ставит скрипт окна):
+       data-fx-prelim   idle | busy | done — предварительный расчёт не запускали | идёт | выполнен
+       data-fx-initial  true | false       — выбран тип «Первоначальная»: дата очищена и
+                                             заблокирована, предварительный расчёт недоступен
+       data-fx-ets      idle | loading | ok | empty | error | manual — ЕТС: нет значения | грузится
+                                             (скелетоны) | есть | нет или 0 (жёлтая иконка) | ошибка
+                                             (красная иконка) | введена вручную
+       data-fx-ets-edit true | false       — идёт ручной ввод ЕТС: вместо значения поле и галочка
+
+     Недоступное действие выключается разметкой (disabled у кнопки, disabled у поля),
+     а не только прячется стилем. -->
+
+<div hidden
+     data-off-grid="Эталон карточки фиксации: ширину задаёт окно, а не 12-колоночная сетка страницы" data-widget="FixationModalTile" data-widget-group="modals" data-widget-src="../widgets/modals/FixationModal/FixationModalTile/FixationModalTile.html">
+<template id="lc-fixtile-tpl">
+  <section class="tile tile--headless lc-fixtile" data-fx-card data-fx-prelim="idle" data-fx-initial="false" data-fx-ets="idle" data-fx-ets-edit="false">
+    <div class="tile__body lc-fixtile__body">
+
+      <div class="lc-fixtile__main">
+        <div class="lc-fixtile__fields">
+
+          <div class="inp inp--m inp--fullwidth" data-fx-field="fi">
+            <label class="ds-label" for="fx-fi-{uid}"><span class="ds-label__text">Наименование ФИ</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="fx-fi-{uid}-list">
+                <input class="inp__control" id="fx-fi-{uid}" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="fx-fi-{uid}-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+
+          <!-- Дата: маска ДД.ММ.ГГГГ и календарь — из коробки ДС. Крестик очистки рисует
+               рантайм по значению, руками его не ставим. -->
+          <div class="inp inp--m inp--fullwidth" data-fx-field="date">
+            <label class="ds-label" for="fx-date-{uid}"><span class="ds-label__text">Дата изменений</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="fx-date-{uid}" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="inp inp--m inp--fullwidth" data-fx-field="type">
+            <label class="ds-label" for="fx-type-{uid}"><span class="ds-label__text">Тип модификации</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="fx-type-{uid}-list">
+                <input class="inp__control" id="fx-type-{uid}" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="fx-type-{uid}-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+
+        </div>
+
+        <div class="inp inp--m inp--fullwidth inp--multiline" data-fx-field="comment">
+          <label class="ds-label" for="fx-comment-{uid}"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field">
+            <textarea class="inp__control" id="fx-comment-{uid}" rows="8"></textarea>
+          </div>
+        </div>
+
+        <div class="lc-fixtile__foot">
+          <div class="rof">
+            <span class="ds-label"><span class="ds-label__text">ВБС до фиксации</span></span>
+            <div class="rof__row"><span class="rof__value" data-fx-val="gcaBefore">—</span></div>
+          </div>
+          <button type="button" class="btn btn--outline btn--m" data-fx-prelim-run disabled>
+            <span class="btn__label">Предварительный расчет</span>
+          </button>
+          <span class="chip chip--success chip--m" data-fx-prelim-done hidden>
+            <span class="chip__icon"><i data-icon="check"></i></span>
+            <span class="chip__label">Расчет выполнен</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="lc-fixtile__side">
+        <div class="lc-fixtile__pair">
+
+          <section class="tile tile--inset" data-fx-block="non" aria-labelledby="fx-non-{uid}">
+            <header class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row"><h3 class="tile__title" id="fx-non-{uid}">Несущественная модификация</h3></div>
+              </div>
+            </header>
+            <div class="tile__body lc-fixtile__rows">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ВБС после фиксации</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="nonGca">—</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Day1PnL</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="nonDay1">—</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Доля Day1PnL</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="nonShare">—</span><span class="rof__affix" data-fx-aff="nonShare" hidden>%</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="tile tile--inset" data-fx-block="sub" aria-labelledby="fx-sub-{uid}">
+            <header class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row"><h3 class="tile__title" id="fx-sub-{uid}">Существенная модификация</h3></div>
+              </div>
+            </header>
+            <div class="tile__body lc-fixtile__rows">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ВБС после фиксации</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="subGca">—</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ЭПС после фиксации</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="subEir">—</span><span class="rof__affix" data-fx-aff="subEir" hidden>%</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Δ ЭПС</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="subEirDelta">—</span><span class="rof__affix" data-fx-aff="subEirDelta" hidden>%</span></div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ЕТС — Inset без заголовка: tile--inset + tile--headless.
+             Слева в строке значения — иконка статуса (слот data-fx-ets-icon: скрипт кладёт туда
+             красную «!» или жёлтый треугольник с тултипом), вместо значения при загрузке — скелетон,
+             справа — карандаш ручного ввода; в режиме ввода значение заменяет поле с «%» и
+             кнопка-галочка (Э7). -->
+        <section class="tile tile--inset tile--headless" data-fx-block="ets">
+          <div class="tile__body lc-fixtile__rows lc-fixtile__rows--two">
+            <div class="rof">
+              <span class="ds-label"><span class="ds-label__text">ЕТС после фиксации</span></span>
+              <div class="rof__row lc-fixtile__ets-row">
+                <span class="lc-fixtile__ets-icon" data-fx-ets-icon></span>
+                <span class="sk-line lc-fixtile__sk" data-fx-ets-sk aria-hidden="true"></span>
+                <span class="rof__value" data-fx-val="etsRate">—</span><span class="rof__affix" data-fx-aff="etsRate" hidden>%</span>
+                <div class="inp inp--m lc-fixtile__ets-input" data-fx-ets-input>
+                  <div class="inp__box">
+                    <div class="inp__field">
+                      <input class="inp__control" inputmode="decimal" autocomplete="off" aria-label="Значение ЕТС, %" disabled>
+                      <span class="inp__postfix">%</span>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="ibtn ibtn--neutral ibtn--s lc-fixtile__ets-act" data-fx-ets-pencil
+                        aria-label="Изменить значение ЕТС" disabled><i data-icon="edit"></i></button>
+                <button type="button" class="ibtn ibtn--neutral ibtn--s lc-fixtile__ets-act" data-fx-ets-ok
+                        aria-label="Подтвердить значение ЕТС" disabled><i data-icon="check"></i></button>
+              </div>
+            </div>
+            <div class="rof">
+              <span class="ds-label"><span class="ds-label__text">Δ ЕТС</span></span>
+              <div class="rof__row">
+                <span class="sk-line lc-fixtile__sk" data-fx-ets-sk aria-hidden="true"></span>
+                <span class="rof__value" data-fx-val="etsDelta">—</span><span class="rof__affix" data-fx-aff="etsDelta" hidden>%</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-fx-remove
+              aria-label="Удалить карточку фиксации" data-tooltip="Удалить карточку"><i data-icon="minus-circle"></i></button>
+
+    </div>
+  </section>
+</template>
 </div>
 <!-- Модальные окна тайла «КНР» (CounterpartiesTile → InstrumentsCounterpartiesModal). Скримы живут в конце body, а не внутри тайла:
      вложенный в скрытый родитель скрим не показать. Окно подтверждения —
@@ -3720,6 +4039,12 @@
      валюту, суммы и список инструментов карточки он считает из прикреплённых узлов
      дерева, контрагентов берёт из базы. Хранение — data/API.md -->
 <script src="../data/fin-instruments-store.js"></script>
+<!-- расчёт финансовых метрик: стор читает ФИ сделки из стора ФИ, поэтому после
+     него. Не путать с mock-financial-metrics.js — тот кормит тайл
+     «Финансовые метрики сделки» (RE0033) -->
+<script src="../data/mock-fin-metrics-calc.js"></script>
+<script src="../data/fin-metrics-store.js"></script>
+<script src="../data/fin-metrics-notify.js"></script>
 <script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
 <!-- после ds.js и синхронно: его DSTabs.tabs(...) должен успеть раньше
      автопривязки wireAll на DOMContentLoaded.
@@ -3756,6 +4081,8 @@
      тайл рисует ею список -->
 <script src="../widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.js"></script>
 <script src="../widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
+<script src="../widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.js"></script>
+<script src="../widgets/modals/FixationModal/FixationModal.js"></script>
 <script src="../widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
 <script src="../widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
 <!-- Тайл «Заведение сделки» — статусы по модели (data/deal-status-model.js);
@@ -3904,6 +4231,7 @@
     fillTitle(deal);
     fillChips(deal);
     fillSubtitle(deal);
+    applyRoleMode();
     applyMode(deal);
     watchStatus(deal);
     fillKnr(deal);
@@ -3914,6 +4242,7 @@
     fillProjectInfo(deal);
     fillProducts(deal);
     fillFinInstruments(deal);
+    fillMetricsCalc(deal);
     fillNavigator(deal);
   }
 
@@ -3995,6 +4324,10 @@
     }
     var fi = document.getElementById('tile-fin-instruments');
     if (fi && fi.__fiPaint) fi.__fiPaint();
+    /* вид тайла «Финансовые метрики» в просмотре — CSS, но доступность его
+       кнопок (disabled) зависит от режима — перерисовать */
+    var fm = document.getElementById('tile-fm-calc');
+    if (fm && fm.__fmPaint) fm.__fmPaint();
   }
 
   /* Статусы сделки меняет тайл «Заведение сделки» — чипы шапки, подзаголовок
@@ -4260,6 +4593,56 @@
         window.PostTileFinInstruments.bind(tile, store);
       });
   }
+
+  /* Тайл «Финансовые метрики» — расчёт метрик этой сделки из FinMetricsStore
+     (../data/fin-metrics-store.js поверх mock-fin-metrics-calc.js). Стор
+     считает по карточкам ФИ сделки, поэтому открывается после стора ФИ — в
+     том же порядке, что у fillFinInstruments. Тайл связывает со сторами его
+     собственный скрипт: перерисовка по расчёту и по изменению карточек ФИ,
+     «Рассчитать» и «Пересчет метрик» — store.calculate(), снеки по исходу.
+     Режим (data-mode) тайлу уже поставили applyRoleMode и applyMode, вид в
+     просмотре тайл держит сам. До загрузки тайл стоит в «Загрузке». */
+  function fillMetricsCalc(deal) {
+    var store = window.FinMetricsStore;
+    var cards = window.FinInstrumentsStore;
+    var trees = window.ProductTreeStore;
+    var tile = document.getElementById('tile-fm-calc');
+    if (!store || !cards || !tile || !window.PostTileMetricsCalc) return;
+    Promise.all([store.ready, cards.ready, trees ? trees.ready : null, window.CounterpartiesStore ? window.CounterpartiesStore.ready : null])
+      .then(function () {
+        if (String(cards.dealId()) !== openedId) cards.use(deal.id);
+        store.use(deal.id);
+        window.PostTileMetricsCalc.bind(tile, store);
+      });
+  }
+
+  /* Просмотр по роли. Режим тайла «Финансовые метрики» зависит и от статуса
+     сделки, и от роли (ответ человека 20.10.2026, RE0033). Ролей с разными
+     правами в каталоге пока нет, поэтому роль без права на расчёт показывает
+     сценарий панели: ?fmMode=view. Ставится до applyMode — тот запомнит его
+     исходным режимом тайла (data-mode-own), и смена статуса его не вернёт
+     в правку. Так же устроен ?hardsMode=view у Tranche.html. */
+  function applyRoleMode() {
+    if (!/[?&]fmMode=view/.test(window.location.search)) return;
+    var tile = document.getElementById('tile-fm-calc');
+    if (tile) tile.setAttribute('data-mode', 'view');
+  }
+
+  /* Действия тайла «Финансовые метрики»: тайл шлёт 'fmcalcaction', куда идти,
+     знает страница. REPORTS («Отчеты →») — страница финансовых метрик этой
+     сделки (FinancialMetrics, RE0033 Э4). FIXATION — окно фиксации ЭПС/ВБС
+     (PostFixationModal, RE0033 Э6): готовая фиксация приходит в FinMetricsStore,
+     тайл обновляется по его событию. */
+  document.addEventListener('fmcalcaction', function (e) {
+    var d = e.detail || {};
+    if (d.action === 'FIXATION') {
+      if (window.PostFixationModal) window.PostFixationModal.open();
+      return;
+    }
+    if (d.action !== 'REPORTS') return;
+    var page = /\.preview\.html$/.test(window.location.pathname) ? 'FinancialMetrics.preview.html' : 'FinancialMetrics.html';
+    window.location.href = page + '?id=' + encodeURIComponent(openedId);
+  });
 
   /* «→» в шапке карточки ФИ — переход на страницу финансового инструмента:
      тайл только шлёт 'fiaction' OPEN, куда идти, знает страница. */

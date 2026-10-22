@@ -1,19 +1,87 @@
-/* Локальный компонент «Финансовые метрики».
-   Пока модуль — заглушка, его CSS держит только строку-заглушку. */
+/* Локальный компонент «Финансовые метрики» (DealMetricsCalculationTile).
+   Только внутренняя раскладка и показ своих блоков по состоянию и режиму.
+   Цвета, шрифты, отступы — токены ДС; своих значений здесь нет. Кнопки
+   (Buttons, и «Отчеты →» тоже), полоса ошибки (Alert в слоте Tile) и скелетоны
+   (Skeleton) — компоненты ДС: их размеры и состояния отсюда не
+   переопределяются, переключается только присутствие блоков .lc-fin-metrics__*.
 
-/* Заглушка: состав полей не согласован. Строка по центру тела тайла, без
-   иллюстрации: помещается в минимальную высоту тайла, которую задаёт
-   страница, и не растягивает ряд (решение человека 22.09.2026). Тело
-   занимает свободную высоту тайла — тайл колонка флексом (Tile). */
-.lc-fin-metrics[data-state="empty"] .tile__body {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.lc-fin-metrics__stub {
+   Оси на корне:
+     data-state — loading | empty | data | partial | updating;
+     data-mode  — edit | view, ставит страница;
+     data-fm-locked · data-fm-error · data-fm-calculated — свои оси вида,
+       есть атрибут — да (ставит DealMetricsCalculationTile.js). */
+
+/* ── Раскладка ──────────────────────────────────────────────────────── */
+/* Строки причины — серым Body M, слева вверху тела, как пустота узкого тайла
+   (правила ДС «Локальные компоненты», «Данных нет»). */
+.lc-fin-metrics__note {
   margin: 0;
   font: var(--type-body-m);
   color: var(--text-inactive);
-  text-align: center;
 }
+
+.lc-fin-metrics__start {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+/* «Рассчитано»: строка итога сверху во всю ширину, под ней кнопки слева и
+   «Отчеты →» справа (макет «Tile-Deal-Metrics-Calculation»). */
+.lc-fin-metrics__done {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-16) var(--space-8);
+  min-width: 0;
+}
+.lc-fin-metrics__summary {
+  flex: 1 0 100%;
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+.lc-fin-metrics__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  min-width: 0;
+}
+.lc-fin-metrics__reports { margin-left: auto; }
+
+/* Просмотр: кнопок нет, «Отчеты →» встаёт в строку итога справа. */
+.lc-fin-metrics[data-mode="view"] .lc-fin-metrics__summary { flex: 1 1 auto; }
+
+/* ── Что видно в каком виде ─────────────────────────────────────────── */
+/* По умолчанию свои блоки скрыты; показ — по осям корня. Скрытие — через
+   корень тайла: у классов ДС (.sk-group, .tile__alert) своя display той же
+   специфичности. */
+.lc-fin-metrics .lc-fin-metrics__alert,
+.lc-fin-metrics .lc-fin-metrics__loading,
+.lc-fin-metrics .lc-fin-metrics__locked,
+.lc-fin-metrics .lc-fin-metrics__none,
+.lc-fin-metrics .lc-fin-metrics__start,
+.lc-fin-metrics .lc-fin-metrics__done { display: none; }
+
+/* Загрузка — только скелетоны. */
+.lc-fin-metrics[data-state="loading"] .lc-fin-metrics__loading { display: flex; }
+
+/* Заблокировано — в обоих режимах одна строка. */
+.lc-fin-metrics[data-fm-locked]:not([data-state="loading"]) .lc-fin-metrics__locked { display: block; }
+
+/* Не рассчитано: правка — «Рассчитать», просмотр — «Расчет не выполнен».
+   Сюда же «Идёт расчёт» первого расчёта (updating без data-fm-calculated). */
+.lc-fin-metrics[data-mode="edit"]:not([data-state="loading"]):not([data-fm-locked]):not([data-fm-calculated]) .lc-fin-metrics__start { display: flex; }
+.lc-fin-metrics[data-mode="view"]:not([data-state="loading"]):not([data-fm-locked]):not([data-fm-calculated]) .lc-fin-metrics__none { display: block; }
+
+/* Рассчитано (data, partial и пересчёт — updating с data-fm-calculated). */
+.lc-fin-metrics[data-fm-calculated]:not([data-state="loading"]):not([data-fm-locked]) .lc-fin-metrics__done { display: flex; }
+
+/* Ошибка — полоса над видом, только в правке. */
+.lc-fin-metrics[data-fm-error][data-mode="edit"]:not([data-state="loading"]):not([data-fm-locked]) .lc-fin-metrics__alert { display: block; }
+
+/* Просмотр: без «Рассчитано ФИ: N из M.» и без кнопок — действия не
+   рисуются, а не выключаются (правило прав локальных компонентов). */
+.lc-fin-metrics[data-mode="view"] .lc-fin-metrics__count,
+.lc-fin-metrics[data-mode="view"] .lc-fin-metrics__buttons { display: none; }
+

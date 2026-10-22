@@ -4,7 +4,7 @@ window.ProtoPanelData = {
   "format": 1,
   "app": {
     "id": "tranche-page-v02",
-    "title": "Post \u2014 \u0421\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u0442\u0440\u0430\u043d\u0448\u0430 v02"
+    "title": "Post \u2014 \u041a\u043e\u0440\u0440\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u043a\u0438 \u0420\u0421\u0411\u0423 v02"
   },
   "sources": {
     "flows": "8577280b",

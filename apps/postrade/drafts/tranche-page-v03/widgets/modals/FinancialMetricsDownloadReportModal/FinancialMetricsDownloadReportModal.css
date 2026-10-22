@@ -1,0 +1,34 @@
+/* Окно «Выгрузка отчета»: раскладка тела и строк добавления.
+   Окно, Alert, поля, кнопки, чекбокс и таблица — компоненты ДС; здесь только
+   зазоры и сетка на токенах ДС. */
+
+.lc-fm-download .modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+.lc-fm-download .modal__body[hidden] { display: none; }
+
+.lc-fm-download__lead {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+
+.lc-fm-download__list {
+  margin: 0;
+  padding-left: var(--space-20);
+}
+
+/* Два добавления рядом: поле растягивается, кнопка — по низу поля. */
+.lc-fm-download__adders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+.lc-fm-download__adder {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-8);
+}
+.lc-fm-download__field { flex: 1 1 auto; min-width: 0; }

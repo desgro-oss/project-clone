@@ -25,7 +25,8 @@
      root   — каталог приложения от корня; у группы 'ds' — null. Всё внутри
               него — часть записи: экраны с меню обязаны вести строкой
               пользователя в футере на хаб;
-     icon   — имя глифа из design-system/foundations/Icons/Icons.md. */
+     icon   — имя глифа из design-system/foundations/Icons/Icons.md;
+     shelf  — необязательное, только у приложений: 'actual' | 'archive' — полка в разделе концептов. */
 window.IBPHub = [
   {
     id: 'ds-ibp',
@@ -151,7 +152,8 @@ window.IBPHub = [
     desc: 'Сценарии Post для разработки: шаги, экраны, новые компоненты и снимки состояний; выгрузка папкой md + html',
     href: 'apps/postrade/drafts/dev-specs/pages/index.html',
     root: 'apps/postrade/drafts/dev-specs',
-    icon: 'file-check'
+    icon: 'file-check',
+    shelf: 'actual'
   },
   {
     id: 'early-interest',
@@ -160,7 +162,8 @@ window.IBPHub = [
     desc: 'Транш: карточка «Досрочные проценты», страница досрочных платежей процентов, окна «Новые проценты» и «Порядок погашения» (RE0017)',
     href: 'apps/postrade/drafts/early-interest/pages/Tranche.preview.html',
     root: 'apps/postrade/drafts/early-interest',
-    icon: 'folder'
+    icon: 'folder',
+    shelf: 'archive'
   },
   {
     id: 'early-interest-v02',
@@ -169,7 +172,18 @@ window.IBPHub = [
     desc: 'Транш: тайл «Досрочное погашение процентов», страница платежей со статусами обработки и приоритетом погашения, окно платежа с расчётом задолженности на дату (RE0025)',
     href: 'apps/postrade/drafts/early-interest-v02/pages/Tranche.preview.html',
     root: 'apps/postrade/drafts/early-interest-v02',
-    icon: 'folder'
+    icon: 'folder',
+    shelf: 'archive'
+  },
+  {
+    id: 'early-interest-v03',
+    group: 'concepts',
+    title: 'Post — Досрочное погашение процентов v3',
+    desc: 'Транш: тайл «Досрочное погашение процентов», страница платежей со статусами обработки и горизонтальным тайлом приоритета, окно платежа с авторасчётом задолженности на дату (RE0025, концепт v3)',
+    href: 'apps/postrade/drafts/early-interest-v03/pages/Tranche.preview.html',
+    root: 'apps/postrade/drafts/early-interest-v03',
+    icon: 'folder',
+    shelf: 'actual'
   },
   {
     id: 'ibp-redesign-v1',
@@ -219,19 +233,31 @@ window.IBPHub = [
   {
     id: 'tranche-page',
     group: 'concepts',
-    title: 'Post — Страница транша',
+    title: 'Post — Корректировки РСБУ',
     desc: 'Транш кредитной линии (НКЛ): шапка, общая информация, проценты, комиссии, платежи',
     href: 'apps/postrade/drafts/tranche-page/pages/Tranche.html',
     root: 'apps/postrade/drafts/tranche-page',
-    icon: 'folder'
+    icon: 'folder',
+    shelf: 'archive'
   },
   {
     id: 'tranche-page-v02',
     group: 'concepts',
-    title: 'Post — Страница транша v02',
+    title: 'Post — Корректировки РСБУ v02',
     desc: 'Транш кредитной линии (НКЛ): шапка, общая информация, проценты, комиссии, платежи. Версия 2: корректировки процентов РСБУ',
     href: 'apps/postrade/drafts/tranche-page-v02/pages/Tranche.html',
     root: 'apps/postrade/drafts/tranche-page-v02',
-    icon: 'folder'
+    icon: 'folder',
+    shelf: 'archive'
+  },
+  {
+    id: 'tranche-page-v03',
+    group: 'concepts',
+    title: 'Post — Корректировки РСБУ v3',
+    desc: 'Сделка, транш, финансовые метрики и корректировки процентов РСБУ на базе модуля deals-app. Версия 3: фиксация расчёта начисленных процентов на вкладке РСБУ и корректировка по дельтам (RE0034)',
+    href: 'apps/postrade/drafts/tranche-page-v03/pages/Deal.preview.html',
+    root: 'apps/postrade/drafts/tranche-page-v03',
+    icon: 'folder',
+    shelf: 'actual'
   }
 ];

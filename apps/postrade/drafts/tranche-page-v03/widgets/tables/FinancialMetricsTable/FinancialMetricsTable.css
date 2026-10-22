@@ -1,0 +1,50 @@
+/* Локальный компонент «Отчет финансовых метрик» (FinancialMetricsTable).
+   Только внутренняя раскладка. Цвета, шрифты, отступы — токены ДС; своих значений здесь нет.
+   Тулбар (TableFilter), таблица (Table, TableCell), пустое состояние (.dtable__empty),
+   скелетоны — компоненты ДС: их размеры и состояния отсюда не переопределяются.
+
+   Оси на корне: data-state — loading | empty | data, ставит FinancialMetricsTable.js
+   по отчету. Вид по состоянию задают сами компоненты ДС (пустое тело, скелеты,
+   заблокированная кнопка), CSS виджета его не переключает; режима прав (data-mode) нет:
+   действий в отчете нет, кроме фиксации расчёта РСБУ (opts.ras.readOnly — просмотр). */
+
+/* Тулбар над таблицей и сама таблица — колонкой с ритмом 12px (Table, вариант
+   «тулбар над таблицей»: зазор задает окружение). Корень сжимается по ширине
+   родителя, поэтому горизонтальный скролл остается у тела таблицы, а не у страницы. */
+.lc-financial-metrics-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Хост таблицы: .dtable--fill растягивается на свободную высоту, если родитель ее ограничил
+   (.screen--app страницы); без ограничения таблица растет по числу строк. */
+.lc-financial-metrics-table__table {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Имя ФИ в строке группы — Body S Strong, как на макете. Валюта рядом — штатный
+   .tc__postfix (приглушенный Body S). Два класса — чтобы перебить .tc__text вне
+   зависимости от порядка подключения CSS. */
+.lc-financial-metrics-table__group-name.tc__text {
+  font: var(--type-body-s-strong);
+}
+
+/* Пустой отчет: «Нет данных» — по центру тела таблицы, как на макете (ДС центрирует только
+   по горизонтали). Тело растягивается, только когда в нем одно пустое состояние. */
+.lc-financial-metrics-table .dtable__body:has(> .dtable__empty) {
+  display: flex;
+  flex-direction: column;
+}
+.lc-financial-metrics-table .dtable__body > .dtable__empty { flex: 1 1 auto; }
+
+/* Дельта зафиксированного индикатора (RE0034, Э3): знак «+» или «−» и цвет — токены ДС
+   (--success-dark, --error-dark); ноль цвета не получает. Два класса — перебить .tc__text. */
+.lc-financial-metrics-table__delta--plus .tc__text { color: var(--success-dark); }
+.lc-financial-metrics-table__delta--minus .tc__text { color: var(--error-dark); }

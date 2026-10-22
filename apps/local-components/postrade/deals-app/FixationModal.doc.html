@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/FixationModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фиксация ЭПС/ВБС — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/FixationModal/FixationModal.css">
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Фиксация ЭПС/ВБС">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Окно «Фиксация ЭПС/ВБС» — связанный артефакт кнопок «Фиксация ЭПС/ВБС» тайла
+     «Финансовые метрики» (страница сделки) и шапки страницы «Финансовые метрики».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include: скрим лежит в конце
+     body страницы, а не внутри тайла. Рядом вшиваются подтверждение
+     (FixationConfirmModal.html) и шаблон карточки (FixationModalTile/).
+
+     Окно — список карточек фиксации (по одной на ФИ). Карточку рисует скрипт
+     FixationModal.js по шаблону подчасти; в разметке — только каркас: шапка, алерт
+     уровня окна, пустой список, подвал. Алерт показывает ошибку предварительного
+     расчёта (.modal__alert); пока ошибки нет — скрыт атрибутом hidden.
+
+     Подвал: слева «+ Добавить ФИ» (по макету; ДС не рекомендует левые и правые
+     кнопки вместе — отступление записано в паспорте), справа «Сохранить». Кнопки
+     без data-modal-close: окно закрывает скрипт, когда проверка прошла; с ошибкой
+     окно остаётся открытым. Крестик и Esc закрывают без сохранения; клик мимо окна
+     не закрывает (окно с полями ввода — guarded). Ширина — шаг 10 шкалы колонок
+     (1511px): карточка делится на ввод и результат. Высота растёт с числом карточек
+     до предела ДС, дальше скролл тела. -->
+<div id="fm-fix-scrim" hidden class="modal-scrim modal-scrim--inline" data-widget="FixationModal" data-widget-group="modals" data-widget-src="../../../postrade/deals-app/widgets/modals/FixationModal/FixationModal.html">
+  <div class="modal modal--w10" role="dialog" aria-modal="true" aria-labelledby="fm-fix-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fm-fix-title">Фиксация ЭПС/ВБС</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__alert" data-fix-alert hidden>
+      <div class="alert alert--error alert--m alert--flush" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title" data-fix-alert-title></p>
+          <p class="alert__text" data-fix-alert-text hidden></p>
+        </div>
+      </div>
+    </div>
+    <div class="modal__body">
+      <div class="lc-fixation-modal__list" data-fix-list></div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-left">
+        <button type="button" class="btn btn--transparent btn--m" data-fix-add>
+          <span class="btn__icon"><i data-icon="add"></i></span>
+          <span class="btn__label">Добавить ФИ</span>
+        </button>
+      </div>
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fix-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>0.002</b></span><span>Обновлено: <b>21.10.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
+  <h1>Фиксация ЭПС/ВБС</h1>
+  <p class="lead">Окно фиксации ЭПС/ВБС: расчёт и сохранение фиксации по одному или нескольким ФИ сделки</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/FixationModal">apps/postrade/deals-app/widgets/modals/FixationModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FixationModal (подчасть FixationModalTile; у фронтенда внутри неё Ets и PreliminaryCalculationButton)</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница сделки (Deal) — кнопка «Фиксация ЭПС/ВБС» тайла «Финансовые метрики» (DealMetricsCalculationTile), Страница «Финансовые метрики» (FinancialMetrics) — кнопка «Фиксация ЭПС/ВБС» шапки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a><br><a class="inl" href="../../../postrade/deals-app/pages/FinancialMetrics.preview.html">apps/postrade/deals-app/pages/FinancialMetrics.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="DealMetricsCalculationTile.doc.html">Финансовые метрики (DealMetricsCalculationTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопка «Фиксация ЭПС/ВБС» тайла «Финансовые метрики», Кнопка «Фиксация ЭПС/ВБС» шапки страницы «Финансовые метрики»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">FinMetricsStore (data/fin-metrics-store.js): ФИ сделки, данные карточки, предварительный расчёт, правила, сохранение<br>FinMetricsNotify (data/fin-metrics-notify.js): тост запуска, снеки ошибок и итога</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Задача RE0033, этап Э6 — макеты дизайнера «Фиксация ЭПС_ВБС» и «Первоначальный расчет», ответы человека 20.10.2026 и 21.10.2026 (вопросы 14, 32, 35)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">0.002 · обновлено 21.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Окно фиксации ЭПС/ВБС (ЭПС — эффективная процентная ставка, ВБС — валовая балансовая стоимость). Пользователь выбирает финансовые инструменты (ФИ) сделки, дату изменений и вид модификации, при желании смотрит предварительный расчёт и сохраняет — расчёт фиксации запускается, а результат попадает в историю фиксаций страницы «Финансовые метрики».</p>
+<p class="desc">Окно — список карточек фиксации, по одной на ФИ; карточек от одной до сколько нужно (кнопка «+ Добавить ФИ»). Карточка — подчасть <code class="tok">FixationModalTile</code>.</p>
+<p class="desc"><b>Базовый сценарий</b> (этап Э6 RE0033):</p>
+<ol class="kit-md__ol"><li>Окно открывается с одной пустой карточкой. Предварительный расчёт недоступен, «⊖» (удалить карточку) выключена — карточка единственная.</li><li>Выбраны ФИ и дата изменений → подтягиваются «ВБС до фиксации» и ЕТС с Δ ЕТС; предварительный расчёт становится доступен.</li><li>«Предварительный расчет» → на кнопке лоадер, затем кнопку заменяет чип «Расчет выполнен», блоки «Несущественная» и «Существенная модификация» заполняются. По результату пользователь решает, какой тип модификации выбрать. Типу расчёт не нужен (ответ 35): тип можно выбрать и до расчёта.</li><li>Сброс ФИ или даты сбрасывает предварительный расчёт и данные карточки («ВБС до фиксации», ЕТС); тип и комментарий остаются.</li><li>«Первоначальная» — дата очищается и блокируется, предварительный расчёт блокируется, значения блоков — прочерк. Нужна для нового ФИ, по которому ещё нет первоначальной фиксации.</li><li>«Сохранить» — проверка (ниже); верно → окно закрывается, тост «Расчет фиксации ЭПС/ВБС запущен», расчёт идёт «на бэке»; по его ответу в историю добавляются строки и показывается зелёный снек, на каждый ФИ с ошибкой — красный (ответ 32).</li></ol>
+<p class="desc">Сохранить окно можно, не дожидаясь конца предварительного расчёта: он справочный. Тогда сначала открывается подтверждение «Процесс предварительного расчета не завершен, сохранить фиксацию ЭПС/ВБС?» (вложенное окно <code class="tok">FixationConfirmModal</code>, паспорт общий с окном).</p>
+<p class="desc"><b>ЕТС</b> (этап Э7). Блок ЕТС карточки живёт по статусу ответа <code class="tok">fixationContext</code>:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.4fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Статус</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Карандаш</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">«Сохранить»</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.4fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">скелетоны вместо ЕТС и Δ ЕТС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">алерт «Фиксация не может быть выполнена» / «Выполняется расчет значения ЕТС для ФИ»; гаснет сам, когда ЕТС посчитан</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.4fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">OK</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значение и Δ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">можно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.4fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EMPTY</code> (нет или 0)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">прочерк, жёлтый треугольник, тултип «Значение ЕТС отсутствует или равно 0»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">можно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.4fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FAILED</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">прочерк, красный «!», тултип «Ошибка расчета ЕТС»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">можно (решение человека 21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.4fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MULTIPLE</code> (разные ЕТС у инструментов ФИ)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">до «Сохранить» или предварительного расчёта — прочерк; после — красный «!», тултип «Найдено несколько значений ЕТС для данного ФИ: …»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">после</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нельзя, пока не введена вручную: алерт «Фиксация не может быть выполнена» / «В инструментах, включенных в ФИ, не совпадают значения ЕТС. …»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.4fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">введена вручную</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значение, Δ от прежней ЕТС, иконка скрыта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">можно</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Ручной ввод: карандаш → вместо значения поле с «%», вместо карандаша галочка. Галочка с пустым полем — возврат к прежнему виду; с числом — значение подставлено, Δ посчитана, алерт скрыт; не число — ошибка поля «Введите число». Enter в поле = галочка. Предварительный расчёт при <code class="tok">MULTIPLE</code> алерта не показывает: иконка и карандаш появляются сами. Смена ФИ или даты сбрасывает и ручное значение. Цвет и глиф иконки выбираются по контексту (решение человека 21.10.2026): красная <code class="tok">alert-circle-filled</code> для ошибок, жёлтая <code class="tok">alert-triangle-filled</code> (<code class="tok">rof__icon--warning</code>) для «нет или 0».</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Modal (w10, 1511px; guarded)
+├── шапка: «Фиксация ЭПС/ВБС», крестик
+├── Alert error (уровень окна; скрыт; «Предварительный расчет не выполнен» [+ причина])
+├── тело — скролл, когда карточки не помещаются
+│   └── карточка фиксации (FixationModalTile) × N
+│       ├── ввод: [Наименование ФИ | Дата изменений | Тип модификации]
+│       │         Комментарий
+│       │         «ВБС до фиксации»  ·  «Предварительный расчет» / чип «Расчет выполнен»
+│       ├── результат: [Несущественная модификация | Существенная модификация]
+│       │              [ЕТС после фиксации | Δ ЕТС]
+│       └── «⊖» — удалить карточку
+└── подвал: слева «+ Добавить ФИ», справа «Сохранить»</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.modal--w10</code>, guarded (клик по скриму не закрывает), алерт уровня окна <code class="tok">.modal__alert</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">error, flush; один на окно, заголовок и необязательный текст</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAutocomplete</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">M; одиночный выбор из списка (ФИ, тип модификации)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputDate</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">M; маска ДД.ММ.ГГГГ, календарь</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">M, многострочный (комментарий)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ReadOnlyField</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значения результата; <code class="tok">rof__value--positive</code> / <code class="tok">--negative</code> для знака Δ и Day1PnL; постфикс <code class="tok">%</code>; иконка статуса ЕТС (<code class="tok">rof__icon</code>) с тултипом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.sk-line</code> вместо значений ЕТС и Δ ЕТС, пока ЕТС считается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Предварительный расчет» — outline M с лоадером; «+ Добавить ФИ» — transparent M с иконкой <code class="tok">add</code>; «Сохранить» — accent M</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Chip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">success M, «Расчет выполнен» с галочкой; не интерактивный</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">neutral M, глиф <code class="tok">minus-circle</code> — удалить карточку</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточка без шапки, <code class="tok">.tile.tile--headless</code> (не <code class="tok">.tile--card</code>: тот кликабелен и подсвечивается по hover); блоки результата внутри — Inset (<code class="tok">.tile--inset</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">FixationModalTile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подчасть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">шаблон карточки; паспорт — <code class="tok">FixationModalTile/FixationModalTile.md</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">SnackBar, Toast</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сообщения — через <code class="tok">FinMetricsNotify</code>, не из окна напрямую</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/components/molecules/Alert/Alert.html">Alert</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputDate/InputDate.html">InputDate</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputText/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/components/molecules/DropdownList/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/atoms/Chip/Chip.html">Chip</a> · <a class="inl" href="../../../../design-system/components/molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a> · <a class="inl" href="../../../../design-system/components/atoms/Skeleton/Skeleton.html">Skeleton</a> · <a class="inl" href="../../../../design-system/components/organisms/Tile/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a> · <a class="inl" href="../../../../design-system/components/organisms/SnackBar/SnackBar.html">SnackBar</a> · <a class="inl" href="../../../../design-system/components/molecules/Toast/Toast.html">Toast</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Локальные компоненты</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="FixationModalTile.doc.html">FixationModalTile</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/FixationModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/FixationModal/FixationConfirmModal.html">FixationConfirmModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/FixationModal/FixationModal.css">FixationModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/FixationModal/FixationModal.html">FixationModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/FixationModal/FixationModal.js">FixationModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/FixationModal/FixationModal.md">FixationModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/FixationModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Подчасти</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="FixationModalTile.doc.html">FixationModalTile</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Наименование ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИ сделки, по которому считается фиксация</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбор из списка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FinMetricsStore.fixationCandidates()</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да; один ФИ — одна карточка</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дата изменений</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата, на которую фиксируется ЭПС/ВБС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата, ДД.ММ.ГГГГ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ввод</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да, кроме «Первоначальная» (там пусто и заблокировано)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тип модификации</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вид модификации</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбор: Первоначальная · Несущественная · Существенная</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FIN_METRICS_LABELS.modification</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Комментарий</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пояснение к фиксации</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ввод</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ВБС до фиксации</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ВБС на дату</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, валюта ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixationContext</code> / предрасчёт</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Несущественная модификация: ВБС после фиксации · Day1PnL · Доля Day1PnL</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">результат предварительного расчёта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число · число со знаком · %</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">preliminary</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Существенная модификация: ВБС после фиксации · ЭПС после фиксации · Δ ЭПС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">результат предварительного расчёта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число · % · % со знаком</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">preliminary</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ЕТС после фиксации · Δ ЕТС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ЕТС на дату и её изменение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">% · % со знаком</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixationContext</code>; при ошибке, «нет или 0» и разных ЕТС — ввод руками (<code class="tok">etsRateManual</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет; при разных ЕТС без ручного значения сохранить нельзя</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Порядок строк — порядок отображения. Незаполненное поле — прочерк на своём месте, с места не уходит; постфикс «%» появляется вместе со значением. Числа — с запятой, тысячи — пробелом.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (вопрос 19 RE0033)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Окно открывает только режим правки: в просмотре (по статусу сделки или роли) кнопки «Фиксация ЭПС/ВБС» выключены или не показываются, окно не открывается.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">данные карточки грузятся ~0,6 с (сценарий <code class="tok">?fmEts=slow</code> — ~8 с): в блоке ЕТС скелетоны, <code class="tok">data-fx-ets=&quot;loading&quot;</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточки заполнены, предварительный расчёт выполнен</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">часть полей заполнена, расчёта нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пустая карточка</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">алерт «Предварительный расчет не выполнен»; ошибки полей и правил — ниже</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">идёт предварительный расчёт (лоадер на кнопке)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно всегда в правке</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вопрос 19 RE0033</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Единственная карточка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в окне одна карточка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«⊖» выключена (<code class="tok">disabled</code>, <code class="tok">aria-disabled</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Предрасчёт недоступен</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет ФИ или даты, или тип «Первоначальная»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопка «Предварительный расчет» <code class="tok">disabled</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Предрасчёт идёт</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">после клика</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопка с лоадером, <code class="tok">disabled</code>, <code class="tok">aria-busy</code>; результаты прежнего расчёта не показываются</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Предрасчёт выполнен</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">расчёт вернул результат</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопка скрыта и выключена, чип «Расчет выполнен», блоки заполнены</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Предрасчёт не выполнен</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответ с ошибкой</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">алерт уровня окна, кнопка снова доступна; нет первоначальной фиксации → в алерте причина</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка поля</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не заполнено обязательное или повтор ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">красная рамка, текст ошибки в тултипе на фокусе; снимается правкой поля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ЕТС: нет значения</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">загрузка, нет или 0, ошибка расчёта, разные ЕТС, введена вручную</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">см. таблицу в «Описании»; состояние — <code class="tok">data-fx-ets</code> карточки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно сохраняется</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">после «Сохранить», пока идёт расчёт «на бэке»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно уже закрыто; тост «запущен»</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: да — хотя бы одна карточка с ФИ, датой и типом.</li><li>Обязательные поля внутри: ФИ, дата изменений (кроме «Первоначальная»), тип модификации.</li><li>Что показывает, когда обязательное не заполнено: красная рамка, тултип «Обязательное поле», фокус на первом незаполненном поле, окно не закрывается.</li><li>Что отдаёт наружу: окно само запускает сохранение в <code class="tok">FinMetricsStore</code> и закрывается; <code class="tok">open()</code> возвращает промис — <code class="tok">{ started }</code> или <code class="tok">null</code>, если закрыли без сохранения.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">наименование ФИ в поле усекается, полное — по клику в списке</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно растёт по высоте с числом карточек до предела ДС, дальше скролл тела; шапка и подвал остаются</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно фиксированной ширины w10 (1511px); на узком экране ДС сжимает окно по ширине экрана</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточка делится на ввод (7/12) и результат (5/12)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<h3 class="kit-md__h3">Проверка при сохранении</h3>
+<p class="desc">Порядок (вопрос 36 RE0033 открыт — порядок допущение агента):</p>
+<ol class="kit-md__ol"><li><b>Порядок:</b> поля → ЕТС → правила → подтверждение → сохранение.</li><li><b>Обязательные поля и повтор ФИ</b> — ошибки у полей; окно остаётся. Повтор ФИ проверяется и сразу при выборе: «Невозможно рассчитать более одной фиксации для одного ФИ» у второй и следующих карточек. 1а. <b>ЕТС</b> — пока она считается, алерт «Выполняется расчет значения ЕТС для ФИ»; разные ЕТС у ФИ без ручного значения — алерт «не совпадают значения ЕТС», у таких карточек появляются иконка и карандаш. Окно остаётся. Ошибка расчёта ЕТС и «нет или 0» сохранение не блокируют.</li><li><b>Правила</b> (<code class="tok">FinMetricsStore.checkFixations</code>) — снек на каждое нарушение, окно остаётся:<ul class="bullets kit-md__sub"><li>«Первоначальная» уже есть у ФИ → «Расчет фиксации ЭПС/ВБС не выполнен» / «Для ФИ … уже рассчитана первоначальная фиксация ЭПС/ВБС.»;</li><li>другой тип, а первоначальной ещё нет → «…Измените тип модификации на &quot;Первоначальная&quot;.»;</li><li>дата не позже даты последней фиксации ФИ → «Невозможно рассчитать фиксацию для ФИ … на ДД.ММ.ГГГГ. Дата новой фиксации должна быть позже даты последней фиксации».</li></ul></li><li><b>Предрасчёт ещё идёт</b> → подтверждение; «Отменить» возвращает в окно, «Подтвердить» сохраняет без результата предрасчёта.</li><li><b>Сохранение</b>: окно закрывается, тост «Расчет фиксации ЭПС/ВБС запущен»; по ответу «бэка» — зелёный снек «Фиксация ЭПС/ВБС выполнена» / «ФИ: …» и красный на каждый ФИ с ошибкой «Расчет фиксации ЭПС/ВБС не выполнен» / «Невозможно рассчитать фиксацию для ФИ … на ДД.ММ.ГГГГ.». Успешные ФИ сохраняются, неуспешные — нет.</li></ol>
+<h3 class="kit-md__h3">Предварительный расчёт</h3>
+<p class="desc"><code class="tok">FinMetricsStore.preliminary(fiId, date)</code>: ответ <code class="tok">{ ok, … }</code> или <code class="tok">{ error }</code>. Нет первоначальной фиксации — «Предварительный расчет не выполнен» / «Для ФИ &quot;…&quot; еще не рассчитана первоначальная фиксация ЭПС/ВБС, предварительный расчет невозможен.»; иной сбой — алерт без описания. Устаревший ответ (ФИ или дату уже сменили) отбрасывается.</p>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,2.4fr) minmax(0,1.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,2.4fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить» до конца предрасчёта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно (вложенное)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FixationConfirmModal</code>: «Процесс предварительного расчета не завершен, сохранить фиксацию ЭПС/ВБС?»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Подтвердить» — сохранение; «Отменить» — возврат в окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,2.4fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Фиксация ЭПС/ВБС»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">это окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">после ответа «бэка» в истории фиксаций новые строки, бейдж вкладки растёт</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл «Финансовые метрики», шапка страницы метрик</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Имена методов и хуков выбирает разработка. Нужно: список ФИ сделки с признаком «есть первоначальная фиксация» и датой последней; по ФИ и дате — ВБС до фиксации, ЕТС и Δ ЕТС; предварительный расчёт по ФИ и дате (два варианта результата); запуск расчёта фиксации по списку карточек (ФИ, дата, тип, комментарий, при ручном вводе — ЕТС) с ответом по каждому ФИ. Контекст карточки несёт статус ЕТС: есть · нет или 0 · ошибка расчёта · разные у инструментов (со списком значений). Typedef: <code class="tok">FixationContextRsDto</code>, <code class="tok">FixationPreliminaryRsDto</code>, <code class="tok">EirIbsvFixationRqDto</code> (<code class="tok">data/mock-fin-metrics-calc.js</code>).</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,2.6fr) minmax(0,2fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,2.6fr) minmax(0,2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/mock-fin-metrics-calc.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_DEAL_METRICS_CALC</code>, <code class="tok">FIN_METRICS_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">история фиксаций сделки, подписи видов модификации</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,2.6fr) minmax(0,2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/fin-metrics-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FinMetricsStore</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИ, контекст, предрасчёт, правила, сохранение (имитация с задержкой)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Значения — рыба, детерминированно от id ФИ и даты. Сценарий панели <code class="tok">?fmFix=prefail</code> — предрасчёт падает; <code class="tok">?fmFix=fail</code> — часть ФИ не фиксируется; <code class="tok">?fmEts=slow|failed|empty|multiple</code> — ЕТС грузится ~8 с · ошибка расчёта · нет или 0 · разные ЕТС (значения 14%, 22,5%, 22,5%).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<p class="desc">Окно не рисуется на странице как тайл: страница вшивает скрим меткой без атрибутов и открывает его вызовом <code class="tok">PostFixationModal.open()</code>.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не используется</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно вне сетки страницы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не используется</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у окна одно состояние показа; состояния — у карточек</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не используется</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в просмотре окно не открывается</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.8fr) minmax(0,1.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.8fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/FixationModal/FixationModal.html</code> + <code class="tok">.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FixationModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.8fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Подтверждение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/FixationModal/FixationConfirmModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в <code class="tok">FixationModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.8fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Карточка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/FixationModal/FixationModalTile/</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FixationModalTile</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Подвал Modal: «левые и правые кнопки одновременно не используются»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">слева «+ Добавить ФИ», справа «Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">так на макете; «Добавить ФИ» — действие со списком карточек, не отмена</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Placeholder даты — «ММ.ДД.ГГГГ» на макете</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«ДД.ММ.ГГГГ», как у InputDate ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на макете устаревший порядок; ДС с 05.09.2026 день первым</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тип «Первичная» в тексте тоста макета</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Первоначальная» везде</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответ 14 RE0033</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заголовок подтверждения — «Подтвердите действие»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">оставлен как на макете</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у подтверждения удаления фиксации на странице — «Подтверждение действия»; различие макета, не унифицировано</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Подтверждение вложено в окно фиксации, а не общее страницы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">своё <code class="tok">FixationConfirmModal</code> рядом с окном</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно открывается и на странице сделки, где общего подтверждения нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тултип ошибки поля — справа от поля на макете</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">снизу (<code class="tok">placement: bottom</code>, <code class="tok">align: start</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">так показывает ошибку поля сама ДС (пример в <code class="tok">Tooltip.page.js</code>) и окна модуля; решение человека 21.10.2026 — «согласно ДС»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Чип статуса — <code class="tok">chip--rounded</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чип «Расчет выполнен» без <code class="tok">rounded</code>, как на макете</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">это не статус сущности, а отметка завершения расчёта; решение человека 21.10.2026</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">После предварительного расчёта заполнены оба блока модификации. Нерелевантный блок гасится по выбранному типу? (задача RE0033, вопрос 15)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">неизвестно, оставлено открытым (20.10.2026). Допущение агента (21.10.2026): оба блока показаны, по типу не гасятся</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Как называется «ЕТС»: на макетах не расшифровано (вопрос 16)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">оставлено открытым (20.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">3</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Когда появляется «ВБС до фиксации»: в основном сценарии только после предрасчёта, на листах ЕТС сразу после ФИ и даты (вопрос 34)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">оставлено открытым (21.10.2026). Допущение агента (21.10.2026): вместе с ЕТС после выбора ФИ и даты; нет первоначальной фиксации — прочерк</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">4</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сохранение во время расчётов: пока идёт предрасчёт — подтверждение и сохранение без результата; пока считается ЕТС — ошибка. Что раньше — валидация полей или подтверждение? Что сохраняется без результата? (вопрос 36)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">оставлено открытым (21.10.2026). Допущение агента (21.10.2026): сначала поля и правила, потом подтверждение; фиксацию считает «бэк»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">5</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Что именно сбрасывает смена ФИ или даты: на макете «Сброс» очищены тип и комментарий, а ЕТС остался (вопрос 37)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">оставлено открытым (21.10.2026). Допущение агента (21.10.2026): сбрасываются предрасчёт, ВБС до фиксации и ЕТС; тип и комментарий остаются</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">6</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зелёный снек после выполненной фиксации (ответ 32): текст на макетах не нарисован</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение агента (21.10.2026): «Фиксация ЭПС/ВБС выполнена» / «ФИ: …»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">7</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Что видно в истории, пока расчёт «на бэке» идёт, и при ошибке (вопрос 32)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">оставлено открытым (21.10.2026); в прототипе строка появляется по ответу</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">8</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Список вариантов «Тип модификации» на макете не раскрыт. Состав — Первоначальная, Несущественная, Существенная — по блокам окна и сообщениям</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение агента (21.10.2026), подтвердить</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">9</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Права: кто фиксирует (вопрос 19)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">оставлено открытым (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">10</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«ВБС до фиксации» с макета — «-», «–» и «—» вперемешку; в прототипе везде «—»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение агента (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">11</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Esc при открытом выпадающем списке или календаре (и в поле ручного ввода ЕТС) закрывает всё окно, и введённое теряется (<code class="tok">Modal.js</code>, обработчик Esc в фазе захвата не учитывает DropdownList и DatePicker; проверено чтением кода). Нужно, чтобы Esc закрывал только список или календарь</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дефект ДС, не виджета; решение человека 21.10.2026: «лучше чтобы не закрывало». Файлы ДС агент не правит — передать владельцу ДС. Обходной путь внутри виджета без браузера не проверить</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">12</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Алерт «Выполняется расчет значения ЕТС для ФИ» на макете без имени ФИ (в тексте «для ФИ» оборвано)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение агента (21.10.2026): текст как на макете, имя не подставляем; уточнить</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">13</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Разные ЕТС до «Сохранить» (В2, Н1 макета) — иконка и карандаш видны уже сейчас или появляются при попытке? Пояснение листа — при попытке; кадры показывают иначе (RE0033, вопрос 39)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответ человека 21.10.2026 — по пояснениям; сделано так</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">14</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ручной ввод ЕТС нужен только при ошибке, «нет или 0» и разных ЕТС? При обычной ЕТС (<code class="tok">OK</code>) карандаша нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение агента (21.10.2026): так на макетах, подтвердить</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">15</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ручное значение ЕТС в истории фиксаций — отмечать как введённое вручную? Сейчас в строке просто число</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">оставлено открытым (21.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Допустимые значения ручной ЕТС: только число, отрицательные и больше 100 не отсекаются</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение агента (21.10.2026): правила диапазона макеты не задают</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/FixationModal/FixationModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">FixationModal.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/FixationModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<!-- Подтверждение окна «Фиксация ЭПС/ВБС»: вложенное окно, которое открывается поверх
+     окна фиксации, когда «Сохранить» нажали до конца предварительного расчёта.
+     Паспорт у него общий с окном (FixationModal.md). Свой файл — потому что у
+     фрагмента один корневой элемент, а каждый скрим — отдельный корень.
+
+     «Отменить» закрывает без сохранения (data-modal-close), «Подтвердить» закрывает
+     с результатом «да» — это делает скрипт окна (data-fix-confirm-ok). Рядом с
+     окном фиксации стоит своё подтверждение, а не подтверждение страницы: окно
+     открывается и на странице сделки, где общего подтверждения нет. -->
+<div class="modal-scrim modal-scrim--nested" id="fm-fix-confirm-scrim" hidden data-widget="FixationConfirmModal" data-widget-group="modals" data-widget-src="../../../postrade/deals-app/widgets/modals/FixationModal/FixationConfirmModal.html">
+  <div class="modal modal--w4" role="alertdialog" aria-modal="true" aria-labelledby="fm-fix-confirm-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fm-fix-confirm-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <div>Процесс предварительного расчета не завершен, сохранить фиксацию ЭПС/ВБС?</div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-fix-confirm-ok><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Локальный компонент «Карточка фиксации» (подчасть окна «Фиксация ЭПС/ВБС»).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include.
+
+     Корень фрагмента — <template>: карточек в окне от одной и больше, поля у них
+     одинаковые, а значения разные. Поэтому компонент отдаёт ЭТАЛОН разметки, а
+     карточки по нему рисует скрипт окна (FixationModal.js): клонирует шаблон и
+     заменяет {uid} в id и for — у каждой карточки свой.
+
+     Слева — ввод: ФИ, дата изменений, тип модификации, комментарий; под ними
+     «ВБС до фиксации» и кнопка «Предварительный расчет», которую после расчёта
+     заменяет чип «Расчет выполнен». Справа — результат: два блока по виду модификации и блок ЕТС (Inset ДС, `tile--inset`). Пока значения нет — прочерк; у процентов постфикс «%»
+     появляется вместе со значением. «⊖» справа — удалить карточку; пока карточка
+     одна, он выключен.
+
+     Состояние карточки — атрибуты корня .lc-fixtile (ставит скрипт окна):
+       data-fx-prelim   idle | busy | done — предварительный расчёт не запускали | идёт | выполнен
+       data-fx-initial  true | false       — выбран тип «Первоначальная»: дата очищена и
+                                             заблокирована, предварительный расчёт недоступен
+       data-fx-ets      idle | loading | ok | empty | error | manual — ЕТС: нет значения | грузится
+                                             (скелетоны) | есть | нет или 0 (жёлтая иконка) | ошибка
+                                             (красная иконка) | введена вручную
+       data-fx-ets-edit true | false       — идёт ручной ввод ЕТС: вместо значения поле и галочка
+
+     Недоступное действие выключается разметкой (disabled у кнопки, disabled у поля),
+     а не только прячется стилем. -->
+
+<div hidden
+     data-off-grid="Эталон карточки фиксации: ширину задаёт окно, а не 12-колоночная сетка страницы" data-widget="FixationModalTile" data-widget-group="modals" data-widget-src="../../../postrade/deals-app/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.html">
+<template id="lc-fixtile-tpl">
+  <section class="tile tile--headless lc-fixtile" data-fx-card data-fx-prelim="idle" data-fx-initial="false" data-fx-ets="idle" data-fx-ets-edit="false">
+    <div class="tile__body lc-fixtile__body">
+
+      <div class="lc-fixtile__main">
+        <div class="lc-fixtile__fields">
+
+          <div class="inp inp--m inp--fullwidth" data-fx-field="fi">
+            <label class="ds-label" for="fx-fi-{uid}"><span class="ds-label__text">Наименование ФИ</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="fx-fi-{uid}-list">
+                <input class="inp__control" id="fx-fi-{uid}" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="fx-fi-{uid}-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+
+          <!-- Дата: маска ДД.ММ.ГГГГ и календарь — из коробки ДС. Крестик очистки рисует
+               рантайм по значению, руками его не ставим. -->
+          <div class="inp inp--m inp--fullwidth" data-fx-field="date">
+            <label class="ds-label" for="fx-date-{uid}"><span class="ds-label__text">Дата изменений</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="fx-date-{uid}" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="inp inp--m inp--fullwidth" data-fx-field="type">
+            <label class="ds-label" for="fx-type-{uid}"><span class="ds-label__text">Тип модификации</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="fx-type-{uid}-list">
+                <input class="inp__control" id="fx-type-{uid}" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="fx-type-{uid}-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+
+        </div>
+
+        <div class="inp inp--m inp--fullwidth inp--multiline" data-fx-field="comment">
+          <label class="ds-label" for="fx-comment-{uid}"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field">
+            <textarea class="inp__control" id="fx-comment-{uid}" rows="8"></textarea>
+          </div>
+        </div>
+
+        <div class="lc-fixtile__foot">
+          <div class="rof">
+            <span class="ds-label"><span class="ds-label__text">ВБС до фиксации</span></span>
+            <div class="rof__row"><span class="rof__value" data-fx-val="gcaBefore">—</span></div>
+          </div>
+          <button type="button" class="btn btn--outline btn--m" data-fx-prelim-run disabled>
+            <span class="btn__label">Предварительный расчет</span>
+          </button>
+          <span class="chip chip--success chip--m" data-fx-prelim-done hidden>
+            <span class="chip__icon"><i data-icon="check"></i></span>
+            <span class="chip__label">Расчет выполнен</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="lc-fixtile__side">
+        <div class="lc-fixtile__pair">
+
+          <section class="tile tile--inset" data-fx-block="non" aria-labelledby="fx-non-{uid}">
+            <header class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row"><h3 class="tile__title" id="fx-non-{uid}">Несущественная модификация</h3></div>
+              </div>
+            </header>
+            <div class="tile__body lc-fixtile__rows">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ВБС после фиксации</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="nonGca">—</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Day1PnL</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="nonDay1">—</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Доля Day1PnL</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="nonShare">—</span><span class="rof__affix" data-fx-aff="nonShare" hidden>%</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="tile tile--inset" data-fx-block="sub" aria-labelledby="fx-sub-{uid}">
+            <header class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row"><h3 class="tile__title" id="fx-sub-{uid}">Существенная модификация</h3></div>
+              </div>
+            </header>
+            <div class="tile__body lc-fixtile__rows">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ВБС после фиксации</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="subGca">—</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ЭПС после фиксации</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="subEir">—</span><span class="rof__affix" data-fx-aff="subEir" hidden>%</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Δ ЭПС</span></span>
+                <div class="rof__row"><span class="rof__value" data-fx-val="subEirDelta">—</span><span class="rof__affix" data-fx-aff="subEirDelta" hidden>%</span></div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ЕТС — Inset без заголовка: tile--inset + tile--headless.
+             Слева в строке значения — иконка статуса (слот data-fx-ets-icon: скрипт кладёт туда
+             красную «!» или жёлтый треугольник с тултипом), вместо значения при загрузке — скелетон,
+             справа — карандаш ручного ввода; в режиме ввода значение заменяет поле с «%» и
+             кнопка-галочка (Э7). -->
+        <section class="tile tile--inset tile--headless" data-fx-block="ets">
+          <div class="tile__body lc-fixtile__rows lc-fixtile__rows--two">
+            <div class="rof">
+              <span class="ds-label"><span class="ds-label__text">ЕТС после фиксации</span></span>
+              <div class="rof__row lc-fixtile__ets-row">
+                <span class="lc-fixtile__ets-icon" data-fx-ets-icon></span>
+                <span class="sk-line lc-fixtile__sk" data-fx-ets-sk aria-hidden="true"></span>
+                <span class="rof__value" data-fx-val="etsRate">—</span><span class="rof__affix" data-fx-aff="etsRate" hidden>%</span>
+                <div class="inp inp--m lc-fixtile__ets-input" data-fx-ets-input>
+                  <div class="inp__box">
+                    <div class="inp__field">
+                      <input class="inp__control" inputmode="decimal" autocomplete="off" aria-label="Значение ЕТС, %" disabled>
+                      <span class="inp__postfix">%</span>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="ibtn ibtn--neutral ibtn--s lc-fixtile__ets-act" data-fx-ets-pencil
+                        aria-label="Изменить значение ЕТС" disabled><i data-icon="edit"></i></button>
+                <button type="button" class="ibtn ibtn--neutral ibtn--s lc-fixtile__ets-act" data-fx-ets-ok
+                        aria-label="Подтвердить значение ЕТС" disabled><i data-icon="check"></i></button>
+              </div>
+            </div>
+            <div class="rof">
+              <span class="ds-label"><span class="ds-label__text">Δ ЕТС</span></span>
+              <div class="rof__row">
+                <span class="sk-line lc-fixtile__sk" data-fx-ets-sk aria-hidden="true"></span>
+                <span class="rof__value" data-fx-val="etsDelta">—</span><span class="rof__affix" data-fx-aff="etsDelta" hidden>%</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-fx-remove
+              aria-label="Удалить карточку фиксации" data-tooltip="Удалить карточку"><i data-icon="minus-circle"></i></button>
+
+    </div>
+  </section>
+</template>
+</div>
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/fin-instruments-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-metrics-calc.js"></script>
+<script src="../../../postrade/deals-app/data/fin-metrics-store.js"></script>
+<script src="../../../postrade/deals-app/data/fin-metrics-notify.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTitleModal/DealTitleModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/FixationModal/FixationModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/Navigator/Navigator.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.js"></script>
+<script src="FixationModal.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"FixationModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":null,"scenario":true,"fixtures":{"_":"Демо-данные витрины окна «Фиксация ЭПС/ВБС». Окно рисует карточки само, ФИ сделки берёт из FinMetricsStore (сценарий демо открывает его на сделке 1027); здесь — только значения, которых стор не отдаёт без расчёта: context — как ответ fixationContext, preliminary — как ответ preliminary. Значения выдуманные, но правдоподобной длины.","data":{},"partial":{},"empty":{},"error":{"message":"Предварительный расчет не выполнен"},"long":{},"context":{"grossCarryingBefore":123456789,"etsRate":15.45,"etsDelta":6.43,"etsBefore":9.02,"etsValues":null,"etsStatus":"OK"},"preliminary":{"ok":true,"grossCarryingBefore":123456789,"nonSubstantial":{"gcaAfter":120000000,"day1Pnl":123456789,"day1PnlShare":15.45},"substantial":{"gcaAfter":120000000,"eirAfter":15.45,"eirDelta":3}}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Окно «Фиксация ЭПС/ВБС» — связанный артефакт кнопок «Фиксация ЭПС/ВБС» тайла
+     «Финансовые метрики» (страница сделки) и шапки страницы «Финансовые метрики».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include: скрим лежит в конце
+     body страницы, а не внутри тайла. Рядом вшиваются подтверждение
+     (FixationConfirmModal.html) и шаблон карточки (FixationModalTile/).
+
+     Окно — список карточек фиксации (по одной на ФИ). Карточку рисует скрипт
+     FixationModal.js по шаблону подчасти; в разметке — только каркас: шапка, алерт
+     уровня окна, пустой список, подвал. Алерт показывает ошибку предварительного
+     расчёта (.modal__alert); пока ошибки нет — скрыт атрибутом hidden.
+
+     Подвал: слева «+ Добавить ФИ» (по макету; ДС не рекомендует левые и правые
+     кнопки вместе — отступление записано в паспорте), справа «Сохранить». Кнопки
+     без data-modal-close: окно закрывает скрипт, когда проверка прошла; с ошибкой
+     окно остаётся открытым. Крестик и Esc закрывают без сохранения; клик мимо окна
+     не закрывает (окно с полями ввода — guarded). Ширина — шаг 10 шкалы колонок
+     (1511px): карточка делится на ввод и результат. Высота растёт с числом карточек
+     до предела ДС, дальше скролл тела. -->
+<div class="modal-scrim" id="fm-fix-scrim" hidden>
+  <div class="modal modal--w10" role="dialog" aria-modal="true" aria-labelledby="fm-fix-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fm-fix-title">Фиксация ЭПС/ВБС</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__alert" data-fix-alert hidden>
+      <div class="alert alert--error alert--m alert--flush" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title" data-fix-alert-title></p>
+          <p class="alert__text" data-fix-alert-text hidden></p>
+        </div>
+      </div>
+    </div>
+    <div class="modal__body">
+      <div class="lc-fixation-modal__list" data-fix-list></div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-left">
+        <button type="button" class="btn btn--transparent btn--m" data-fix-add>
+          <span class="btn__icon"><i data-icon="add"></i></span>
+          <span class="btn__label">Добавить ФИ</span>
+        </button>
+      </div>
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fix-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент FixationModal — окно «Фиксация ЭПС/ВБС».
+   Только раскладка списка карточек. Окно, шапку, подвал, алерт и тело задаёт Modal
+   из ДС; карточку — подчасть FixationModalTile. Своих значений здесь нет. */
+
+/* Карточки — стопка с зазором полей формы; высоту и скролл тела ведёт Modal. */
+.lc-fixation-modal__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   FixationModal.js — окно «Фиксация ЭПС/ВБС».
+
+   Окно — список карточек фиксации, по одной на ФИ. Карточку рисует этот файл по
+   шаблону подчасти (FixationModalTile/FixationModalTile.html): клонирует <template>,
+   заменяет {uid} в id и for, привязывает рантаймы ДС. Окно читает и пишет
+   FinMetricsStore (data/fin-metrics-store.js): ФИ сделки, данные карточки по ФИ и
+   дате, предварительный расчёт, правила фиксации, сохранение. Стор должен быть
+   открыт на нужной сделке до open().
+
+   Что делает скрипт сверх рантаймов ДС (в них этого нет — это модель данных):
+     1. Выбор ФИ и типа модификации — одиночный выбор со списком (DSDropdownList);
+        набранный руками текст сверяется со списком, пустое поле снимает выбор.
+     2. Дата изменений: маска и календарь — рантайм ДС; здесь дата разбирается в
+        ISO. Неполная или неверная дата — «не задана».
+     3. Сброс ФИ или даты сбрасывает предварительный расчёт и данные карточки
+        (ВБС до фиксации, ЕТС); тип и комментарий остаются (вопрос 37 RE0033).
+     4. Тип «Первоначальная»: дата очищается и блокируется, предварительный расчёт
+        блокируется, значения блоков — прочерк.
+     5. Предварительный расчёт справочный: тип модификации ему не нужен, сохранить
+        окно можно, не дожидаясь конца расчёта — после подтверждения (вопросы 35, 36).
+     6. «Сохранить»: обязательные поля и повтор ФИ → ошибка у поля; правила стора
+        (дата позже последней, «Первоначальная» одна на ФИ и первая) → снеки; всё
+        верно → окно закрывается, тост «запущен», расчёт идёт в сторе, итог — снеки.
+        Окно с ошибкой не закрывается.
+     7. ЕТС (Э7): пока считается — скелетоны, и «Сохранить» отвечает алертом; ошибка
+        расчёта и «нет или 0» — иконка с тултипом и карандаш, фиксацию не блокируют;
+        разные ЕТС у инструментов ФИ — при «Сохранить» или предварительном расчёте
+        появляются иконка и карандаш, а сохранение блокируется, пока значение не введено
+        вручную (карандаш → поле → галочка). Δ ручного значения — от прежней ЕТС.
+
+   API: window.PostFixationModal
+     bind(scrim, { tpl?, confirm? })  — привязать окно (обработчики — один раз на скрим);
+                                        scrim — корень фрагмента (#fm-fix-scrim); tpl — шаблон
+                                        карточки (по умолчанию #lc-fixtile-tpl), confirm —
+                                        скрим подтверждения (по умолчанию #fm-fix-confirm-scrim).
+                                        Текущим окном становится последнее привязанное.
+     preview(scrim, spec)             — только для витрины: нарисовать окно по описанию,
+                                        без сеанса и DSModal (см. функцию)
+     open() → Promise<{ started } | null>
+                                      — открыть окно с одной пустой карточкой; промис
+                                        закрывается, когда окно закрыли: данные
+                                        запущенной фиксации — started, без сохранения —
+                                        null. Нет ФИ в сделке — окно не открывается (null).
+     isOpen() → boolean
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var TPL_ID = 'lc-fixtile-tpl';
+  var SCRIM_ID = 'fm-fix-scrim';
+  var CONFIRM_ID = 'fm-fix-confirm-scrim';
+  var DASH = '—';
+  var REQUIRED = 'Обязательное поле';
+  var DUPLICATE = 'Невозможно рассчитать более одной фиксации для одного ФИ';
+  var ETS_ALERT_TITLE = 'Фиксация не может быть выполнена';
+  var TYPE_FALLBACK = { INITIAL: 'Первоначальная', NON_SUBSTANTIAL: 'Несущественная', SUBSTANTIAL: 'Существенная' };
+
+  var ui = null;        // привязанное окно
+  var cards = [];       // карточки открытого окна
+  var seq = 0;
+  var session = null;   // открытый сеанс: { resolve, saving }
+  var alertKind = null; // что показывает алерт окна: 'ets-loading' | 'ets-multiple' | null
+
+  function store() { return window.FinMetricsStore; }
+  function $(root, sel) { return root.querySelector(sel); }
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* ── Форматы ────────────────────────────────────────────────────── */
+
+  function fmtNum(n, signed) {
+    if (n == null || isNaN(n)) return DASH;
+    var s = Number(n).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return signed && n > 0 ? '+' + s : s;
+  }
+
+  function round2(x) { return Math.round(x * 100) / 100; }
+
+  /* 14 → «14%», 22.5 → «22,5%» (для тултипа) */
+  function fmtPct(n) { return Number(n).toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + '%'; }
+
+  /* «ДД.ММ.ГГГГ» → ISO; неполная или несуществующая дата — null */
+  function parseDate(text) {
+    var m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(String(text || '').trim());
+    if (!m) return null;
+    var d = new Date(+m[3], +m[2] - 1, +m[1]);
+    if (d.getFullYear() !== +m[3] || d.getMonth() !== +m[2] - 1 || d.getDate() !== +m[1]) return null;
+    return m[3] + '-' + m[2] + '-' + m[1];
+  }
+
+  function typeOptions() {
+    var labels = (window.FIN_METRICS_LABELS && window.FIN_METRICS_LABELS.modification) || TYPE_FALLBACK;
+    return Object.keys(labels).map(function (code) { return { code: code, label: labels[code] }; });
+  }
+
+  /* ── Атрибуты: недоступное — разметкой (урок Л235) ──────────────── */
+
+  function setEnabled(el, on) {
+    if (!el) return;
+    el.disabled = !on;
+    if (on) el.removeAttribute('aria-disabled'); else el.setAttribute('aria-disabled', 'true');
+  }
+
+  function setLoading(btn, on) {
+    var spin = $(btn, '.spin');
+    btn.classList.toggle('btn--loading', on);
+    if (on) {
+      btn.setAttribute('aria-busy', 'true');
+      if (!spin) {
+        spin = document.createElement('span');
+        spin.className = 'spin spin--current';
+        btn.insertBefore(spin, btn.firstChild);
+      }
+    } else {
+      btn.removeAttribute('aria-busy');
+      if (spin) spin.remove();
+    }
+  }
+
+  function rebind(scope) {
+    if (window.dsIcons) window.dsIcons.apply(scope);
+    if (window.DSInput) { window.DSInput.bindAll(scope); window.DSInput.syncAll(scope); }
+    if (window.DSTooltip && window.DSTooltip.bindAll) window.DSTooltip.bindAll(scope);
+  }
+
+  /* ── Ошибка поля: красная рамка и тултип на фокусе ───────────────── */
+  /* bind() навешивает показ тултипа на наведение и фокус навсегда, поэтому, пока
+     ошибки нет, показ гасится сразу за ним (как в DealPeriodModal.js). */
+  function fieldError(input) {
+    var inp = input.closest('.inp');
+    var box = input.closest('.inp__box');
+    var message = '';
+    var api = null;
+
+    function ensure() {
+      if (api || !window.DSTooltip || !box) return api;
+      var o = { type: 'error', placement: 'bottom', align: 'start', multiline: true };
+      var tip = window.DSTooltip.make('', o);
+      box.appendChild(tip);
+      o.tip = tip;
+      api = window.DSTooltip.bind(input, o);
+      ['mouseenter', 'focus'].forEach(function (ev) {
+        input.addEventListener(ev, function () { if (!message && api) api.hide(true); });
+      });
+      return api;
+    }
+    return {
+      set: function (msg) {
+        message = msg;
+        inp.classList.add('inp--error');
+        input.setAttribute('aria-invalid', 'true');
+        var a = ensure();
+        if (!a) return;
+        a.tip.firstChild.textContent = msg;
+        if (document.activeElement === input) a.show(true);
+      },
+      clear: function () {
+        message = '';
+        inp.classList.remove('inp--error');
+        input.removeAttribute('aria-invalid');
+        if (api) api.hide(true);
+      },
+      message: function () { return message; }
+    };
+  }
+
+  /* ── Одиночный выбор со списком ─────────────────────────────────── */
+
+  function select(card, name, options, onChange) {
+    var inp = $(card.el, '[data-fx-field="' + name + '"]');
+    var control = $(inp, '.inp__control');
+    var list = $(inp, '.ddl');
+    var field = $(inp, '[data-ddl]');
+    var cur = null;
+
+    function labelOf(code) {
+      var o = options().filter(function (x) { return x.code === code; })[0];
+      return o ? o.label : '';
+    }
+    function paint() {
+      list.innerHTML = options().map(function (o) {
+        return '<button type="button" class="ddl__item" role="option" aria-selected="' + (o.code === cur ? 'true' : 'false')
+          + '" data-code="' + esc(o.code) + '"><span class="ddl__item-body"><span class="ddl__item-label">' + esc(o.label) + '</span></span></button>';
+      }).join('');
+    }
+    function set(code, silent) {
+      cur = code && options().some(function (o) { return o.code === code; }) ? code : null;
+      control.value = labelOf(cur);
+      paint();
+      if (window.DSInput) window.DSInput.sync(inp);
+      if (!silent) onChange(cur);
+    }
+    /* набранный руками текст: совпал с опцией — выбор; пусто — выбор снят; иначе откат */
+    function commitTyped() {
+      var s = String(control.value || '').trim().toLowerCase();
+      if (!s) { if (cur) set(null); return; }
+      var hit = options().filter(function (o) { return o.label.toLowerCase() === s; })[0];
+      if (hit && hit.code !== cur) set(hit.code); else set(cur, true);
+    }
+
+    paint();
+    if (window.DSDropdownList) {
+      window.DSDropdownList.bind(field, { list: list, onSelect: function (it) { set(it.getAttribute('data-code')); } });
+    }
+    control.addEventListener('change', commitTyped);
+    inp.addEventListener('ds-input:clear', function () { set(null); });
+    return { set: set, get: function () { return cur; }, control: control, error: fieldError(control) };
+  }
+
+  /* ── Карточка ───────────────────────────────────────────────────── */
+
+  /* Разметка карточки по шаблону: у каждой свои id и for */
+  function cardElement() {
+    var tpl = document.getElementById(ui.tplId);
+    var node = tpl.content.firstElementChild.cloneNode(true);
+    var uid = 'c' + (++seq);
+    [node].concat([].slice.call(node.querySelectorAll('*'))).forEach(function (el) {
+      ['id', 'for', 'data-ddl', 'aria-labelledby'].forEach(function (a) {
+        var v = el.getAttribute(a);
+        if (v && v.indexOf('{uid}') !== -1) el.setAttribute(a, v.replace(/\{uid\}/g, uid));
+      });
+    });
+    return node;
+  }
+
+  /* Привязка полей уже вставленной в документ карточки */
+  function wireCard(el) {
+    var card = {
+      el: el, fiId: null, date: null, typeCode: null,
+      ctx: null, prelim: null, prelimState: 'idle', ctxToken: 0, prelimToken: 0, alive: true,
+      etsManual: null, etsShown: false, etsEditing: false, etsIconKey: ''
+    };
+
+    card.fi = select(card, 'fi', function () {
+      return store().fixationCandidates().map(function (c) { return { code: c.id, label: c.name }; });
+    }, function (code) { onFiChange(card, code); });
+    card.type = select(card, 'type', typeOptions, function (code) { onTypeChange(card, code); });
+
+    var dateInp = $(el, '[data-fx-field="date"]');
+    card.dateControl = $(dateInp, '.inp__control');
+    card.dateError = fieldError(card.dateControl);
+    /* ввод, очистка крестиком и выбор в календаре приходят событием input */
+    card.dateControl.addEventListener('input', function () { onDateInput(card); });
+    card.dateControl.addEventListener('change', function () { onDateInput(card); });
+
+    card.comment = $(el, '[data-fx-field="comment"] .inp__control');
+    card.runBtn = $(el, '[data-fx-prelim-run]');
+    card.removeBtn = $(el, '[data-fx-remove]');
+    card.etsInput = $(el, '[data-fx-ets-input] .inp__control');
+    card.etsPencil = $(el, '[data-fx-ets-pencil]');
+    card.etsOk = $(el, '[data-fx-ets-ok]');
+    card.etsError = fieldError(card.etsInput);
+    card.etsPencil.addEventListener('click', function () { startEtsEdit(card); });
+    card.etsOk.addEventListener('click', function () { commitEts(card); });
+    card.etsInput.addEventListener('input', function () { card.etsError.clear(); });
+    card.etsInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); commitEts(card); }
+    });
+    card.runBtn.addEventListener('click', function () { runPreliminary(card); });
+    card.removeBtn.addEventListener('click', function () { removeCard(card); });
+    ['fi', 'type'].forEach(function (n) {
+      card[n].control.addEventListener('input', function () { card[n].error.clear(); if (n === 'fi') markDuplicates(); });
+    });
+    return card;
+  }
+
+  /* ── Значения карточки ──────────────────────────────────────────── */
+
+  function setVal(card, key, text, tone, affix) {
+    var v = $(card.el, '[data-fx-val="' + key + '"]');
+    if (!v) return;
+    v.textContent = text;
+    v.classList.toggle('rof__value--positive', tone === 'positive');
+    v.classList.toggle('rof__value--negative', tone === 'negative');
+    var a = $(card.el, '[data-fx-aff="' + key + '"]');
+    if (a) a.hidden = !affix || text === DASH;
+  }
+
+  function tone(n) { return n > 0 ? 'positive' : n < 0 ? 'negative' : ''; }
+
+  /* Всё, что показано в карточке, выводится из её состояния */
+  function paint(card) {
+    var ctx = card.ctx;
+    var pre = card.prelimState === 'done' ? card.prelim : null;
+    var initial = card.typeCode === 'INITIAL';
+
+    var gca = pre ? pre.grossCarryingBefore : ctx ? ctx.grossCarryingBefore : null;
+    setVal(card, 'gcaBefore', fmtNum(gca));
+
+    setVal(card, 'nonGca', pre ? fmtNum(pre.nonSubstantial.gcaAfter) : DASH);
+    setVal(card, 'nonDay1', pre ? fmtNum(pre.nonSubstantial.day1Pnl, true) : DASH, pre ? tone(pre.nonSubstantial.day1Pnl) : '');
+    setVal(card, 'nonShare', pre ? fmtNum(pre.nonSubstantial.day1PnlShare) : DASH, '', true);
+    setVal(card, 'subGca', pre ? fmtNum(pre.substantial.gcaAfter) : DASH);
+    setVal(card, 'subEir', pre ? fmtNum(pre.substantial.eirAfter) : DASH, '', true);
+    setVal(card, 'subEirDelta', pre ? fmtNum(pre.substantial.eirDelta, true) : DASH, pre ? tone(pre.substantial.eirDelta) : '', true);
+
+    paintEts(card, initial);
+
+    card.el.setAttribute('data-fx-prelim', card.prelimState);
+    card.el.setAttribute('data-fx-initial', initial ? 'true' : 'false');
+
+    /* предварительный расчёт доступен, когда выбраны ФИ и дата и тип не «Первоначальная» */
+    var canRun = !!(card.fiId && card.date) && !initial && card.prelimState === 'idle';
+    setEnabled(card.runBtn, canRun);
+    setLoading(card.runBtn, card.prelimState === 'busy');
+    if (card.prelimState === 'busy') { card.runBtn.disabled = true; card.runBtn.setAttribute('aria-disabled', 'true'); }
+    var chip = $(card.el, '[data-fx-prelim-done]');
+    chip.hidden = card.prelimState !== 'done';
+    if (card.prelimState === 'done') { card.runBtn.disabled = true; card.runBtn.setAttribute('aria-disabled', 'true'); }
+
+    /* «Первоначальная»: дата очищена и заблокирована (и календарь вместе с ней) */
+    var dateInp = $(card.el, '[data-fx-field="date"]');
+    card.dateControl.disabled = initial;
+    dateInp.classList.toggle('inp--disabled', initial);
+    var cal = $(dateInp, '.inp__act[aria-label="Открыть календарь"]');
+    if (cal) setEnabled(cal, !initial);
+  }
+
+  /* ── ЕТС: вид блока по статусу, ручной ввод ─────────────────────── */
+
+  /* Вид блока: состояние (атрибут data-fx-ets), иконка и текст её тултипа */
+  function etsView(card, initial) {
+    var ctx = card.ctx;
+    if (card.ctxLoading) return { state: 'loading' };
+    if (!ctx || initial) return { state: 'idle' };
+    if (card.etsManual != null) return { state: 'manual' };
+    switch (ctx.etsStatus) {
+      case 'OK': return { state: 'ok' };
+      case 'EMPTY': return { state: 'empty', icon: 'alert-triangle-filled', kind: 'warning', tip: 'Значение ЕТС отсутствует или равно 0' };
+      case 'FAILED': return { state: 'error', icon: 'alert-circle-filled', kind: 'error', tip: 'Ошибка расчета ЕТС' };
+      case 'MULTIPLE':
+        if (!card.etsShown) return { state: 'idle' };
+        return { state: 'error', icon: 'alert-circle-filled', kind: 'error',
+          tip: 'Найдено несколько значений ЕТС для данного ФИ: ' + (ctx.etsValues || []).map(fmtPct).join(', ') };
+      default: return { state: 'idle' };
+    }
+  }
+
+  /* Иконка статуса пересоздаётся только при смене вида: у тултипа ДС текст задаётся при привязке */
+  function paintEtsIcon(card, view) {
+    var key = view.icon ? view.kind + '|' + view.tip : '';
+    if (key === card.etsIconKey) return;
+    card.etsIconKey = key;
+    var slot = $(card.el, '[data-fx-ets-icon]');
+    if (!view.icon) { slot.innerHTML = ''; return; }
+    slot.innerHTML = '<span class="rof__icon' + (view.kind === 'warning' ? ' rof__icon--warning' : ' lc-fixtile__ets-icon--error')
+      + '" role="img" tabindex="0" aria-label="' + esc(view.tip) + '" data-tooltip="' + esc(view.tip)
+      + '" data-tooltip-placement="top" data-tooltip-multiline="yes"><i data-icon="' + view.icon + '"></i></span>';
+    rebind(slot);
+  }
+
+  function paintEts(card, initial) {
+    var ctx = card.ctx;
+    var view = etsView(card, initial);
+    var rate = null;
+    var delta = null;
+    if (view.state === 'ok') { rate = ctx.etsRate; delta = ctx.etsDelta; }
+    else if (view.state === 'manual') {
+      rate = card.etsManual;
+      delta = ctx && ctx.etsBefore != null ? round2(card.etsManual - ctx.etsBefore) : null;
+    }
+    setVal(card, 'etsRate', fmtNum(rate), '', true);
+    setVal(card, 'etsDelta', fmtNum(delta, true), tone(delta), true);
+
+    /* карандаш — там, где значение можно ввести руками */
+    var canEdit = view.state === 'empty' || view.state === 'error' || view.state === 'manual';
+    if (!canEdit) card.etsEditing = false;
+    card.el.setAttribute('data-fx-ets', view.state);
+    card.el.setAttribute('data-fx-ets-edit', card.etsEditing ? 'true' : 'false');
+    $(card.el, '[data-fx-block="ets"]').setAttribute('aria-busy', view.state === 'loading' ? 'true' : 'false');
+    setEnabled(card.etsPencil, canEdit && !card.etsEditing);
+    setEnabled(card.etsOk, card.etsEditing);
+    card.etsInput.disabled = !card.etsEditing;
+    paintEtsIcon(card, view);
+  }
+
+  function startEtsEdit(card) {
+    card.etsEditing = true;
+    card.etsError.clear();
+    card.etsInput.value = card.etsManual != null ? String(card.etsManual).replace('.', ',') : '';
+    paint(card);
+    if (window.DSInput) window.DSInput.sync(card.etsInput.closest('.inp'));
+    card.etsInput.focus();
+  }
+
+  /* Галочка: пусто — вернуться к прежнему виду; число — подставить; не число — ошибка поля */
+  function commitEts(card) {
+    var raw = card.etsInput.value.replace(/\s/g, '').replace(',', '.');
+    if (raw) {
+      var n = Number(raw);
+      if (!isFinite(n)) { card.etsError.set('Введите число'); card.etsInput.focus(); return; }
+      card.etsManual = round2(n);
+    }
+    card.etsEditing = false;
+    card.etsError.clear();
+    syncEtsAlert();
+    paint(card);
+    card.etsPencil.focus();
+  }
+
+  /* Алерт ЕТС живёт, пока причина есть: пересчитывается из состояния карточек после любого их
+     изменения (ответ, ручной ввод, сброс), а не только в обработчике ответа */
+  function syncEtsAlert() {
+    if (alertKind === 'ets-loading' && !cards.some(function (c) { return c.ctxLoading; })) hideAlert();
+    else if (alertKind === 'ets-multiple' && !cards.some(unresolvedEts)) hideAlert();
+  }
+
+  /* Разные ЕТС и значение не введено — фиксация невозможна */
+  function unresolvedEts(c) {
+    return !!(c.ctx && c.ctx.etsStatus === 'MULTIPLE' && c.etsManual == null && c.typeCode !== 'INITIAL');
+  }
+
+  function resetCalculation(card) {
+    card.etsManual = null;
+    card.etsShown = false;
+    card.etsEditing = false;
+    card.etsInput.value = '';
+    if (window.DSInput) window.DSInput.sync(card.etsInput.closest('.inp'));
+    card.etsError.clear();
+    card.prelimToken++;
+    card.prelimState = 'idle';
+    card.prelim = null;
+    card.ctxToken++;
+    card.ctx = null;
+    card.ctxLoading = false;
+  }
+
+  function loadContext(card) {
+    if (!card.fiId || !card.date || card.typeCode === 'INITIAL') { paint(card); return; }
+    var token = ++card.ctxToken;
+    card.ctxLoading = true;
+    paint(card);
+    store().fixationContext(card.fiId, card.date).then(function (res) {
+      if (!card.alive || token !== card.ctxToken) return;
+      card.ctx = res;
+      card.ctxLoading = false;
+      /* предрасчёт мог закончиться раньше контекста: разные ЕТС показываем и без «Сохранить» */
+      if (card.prelimState === 'done' && unresolvedEts(card)) card.etsShown = true;
+      syncEtsAlert();
+      paint(card);
+    });
+  }
+
+  /* ── События полей ──────────────────────────────────────────────── */
+
+  function onFiChange(card, code) {
+    card.fiId = code;
+    resetCalculation(card);
+    hideAlert();   // алерт относился к прежнему расчёту
+    card.fi.error.clear();
+    markDuplicates();
+    loadContext(card);
+  }
+
+  function onDateInput(card) {
+    if (card.typeCode === 'INITIAL') return;
+    var iso = parseDate(card.dateControl.value);
+    if (iso === card.date) return;
+    card.date = iso;
+    card.dateError.clear();
+    resetCalculation(card);
+    hideAlert();
+    loadContext(card);
+  }
+
+  function onTypeChange(card, code) {
+    card.typeCode = code;
+    card.type.error.clear();
+    if (code === 'INITIAL') {
+      resetCalculation(card);
+      card.date = null;
+      card.dateControl.value = '';
+      card.dateError.clear();
+      if (window.DSInput) window.DSInput.sync(card.dateControl.closest('.inp'));
+      syncEtsAlert();   // сброс убрал причину алерта ЕТС
+    } else if (!card.date && parseDate(card.dateControl.value)) {
+      card.date = parseDate(card.dateControl.value);
+      loadContext(card);
+    }
+    paint(card);
+  }
+
+  /* ФИ в двух карточках — ошибка у повторных (вторая и далее) */
+  function markDuplicates() {
+    var seen = {};
+    cards.forEach(function (c) {
+      if (c.fiId && seen[c.fiId]) c.fi.error.set(DUPLICATE);
+      else if (c.fi.error.message() === DUPLICATE) c.fi.error.clear();
+      if (c.fiId) seen[c.fiId] = true;
+    });
+  }
+
+  /* ── Алерт уровня окна ──────────────────────────────────────────── */
+
+  function showAlert(title, text, kind) {
+    alertKind = kind || null;
+    var box = $(ui.scrim, '[data-fix-alert]');
+    $(box, '[data-fix-alert-title]').textContent = title;
+    var t = $(box, '[data-fix-alert-text]');
+    t.textContent = text || '';
+    t.hidden = !text;
+    box.hidden = false;
+  }
+  function hideAlert() { alertKind = null; $(ui.scrim, '[data-fix-alert]').hidden = true; }
+
+  /* ── Предварительный расчёт ─────────────────────────────────────── */
+
+  function runPreliminary(card) {
+    if (card.prelimState !== 'idle' || !card.fiId || !card.date || card.typeCode === 'INITIAL') return;
+    hideAlert();
+    var token = ++card.prelimToken;
+    card.prelimState = 'busy';
+    paint(card);
+    store().preliminary(card.fiId, card.date).then(function (res) {
+      if (!card.alive || token !== card.prelimToken) return;
+      if (res && res.ok) {
+        card.prelim = res;
+        card.prelimState = 'done';
+        if (unresolvedEts(card)) card.etsShown = true;   // Н2 листа «разные ЕТС»: алерта нет, иконка и карандаш есть
+        paint(card);
+        return;
+      }
+      card.prelimState = 'idle';
+      paint(card);
+      if (res && res.error === 'NO_INITIAL') {
+        var c = store().fixationCandidates().filter(function (x) { return x.id === card.fiId; })[0];
+        showAlert('Предварительный расчет не выполнен',
+          'Для ФИ "' + (c ? c.name : '') + '" еще не рассчитана первоначальная фиксация ЭПС/ВБС, предварительный расчет невозможен.');
+      } else {
+        showAlert('Предварительный расчет не выполнен');
+      }
+    });
+  }
+
+  /* ── Список карточек ────────────────────────────────────────────── */
+
+  function updateRemove() {
+    cards.forEach(function (c) { setEnabled(c.removeBtn, cards.length > 1); });
+  }
+
+  function addCard(focus) {
+    var el = cardElement();
+    $(ui.scrim, '[data-fix-list]').appendChild(el);
+    rebind(el);
+    var card = wireCard(el);
+    cards.push(card);
+    paint(card);
+    updateRemove();
+    if (focus) {
+      card.el.scrollIntoView({ block: 'nearest' });
+      card.fi.control.focus();
+    }
+    return card;
+  }
+
+  function removeCard(card) {
+    if (cards.length < 2) return;
+    card.alive = false;
+    cards.splice(cards.indexOf(card), 1);
+    card.el.remove();
+    hideAlert();
+    markDuplicates();
+    updateRemove();
+  }
+
+  function clearCards() {
+    cards.forEach(function (c) { c.alive = false; });
+    cards = [];
+    $(ui.scrim, '[data-fix-list]').innerHTML = '';
+  }
+
+  /* ── Сохранение ─────────────────────────────────────────────────── */
+
+  /* Обязательные поля и повтор ФИ; true — всё заполнено */
+  function validate() {
+    var first = null;
+    function bad(card, field, msg) {
+      field.error.set(msg);
+      if (!first) first = field.control;
+    }
+    markDuplicates();
+    cards.forEach(function (c) {
+      if (!c.fiId) bad(c, c.fi, REQUIRED);
+      else if (c.fi.error.message() === DUPLICATE && !first) first = c.fi.control;
+      if (c.typeCode !== 'INITIAL' && !c.date) bad(c, { error: c.dateError, control: c.dateControl }, REQUIRED);
+      if (!c.typeCode) bad(c, c.type, REQUIRED);
+    });
+    if (first) { first.focus(); return false; }
+    return true;
+  }
+
+  function items() {
+    return cards.map(function (c) {
+      var it = { fiId: c.fiId, date: c.typeCode === 'INITIAL' ? null : c.date, modificationTypeCode: c.typeCode, comment: c.comment.value.trim() };
+      if (c.etsManual != null) it.etsRateManual = c.etsManual;
+      return it;
+    });
+  }
+
+  function doSave() {
+    if (!session || session.saving) return;
+    session.saving = true;
+    var list = items();
+    var notify = window.FinMetricsNotify;
+    var done = store().saveFixations(list).then(function (res) {
+      if (notify) notify.fixationResult(res);
+      return res;
+    });
+    if (notify) notify.fixationStarted();
+    session.started = { items: list, done: done };
+    window.DSModal.closeTop(true);   // закрывает окно фиксации (подтверждение к этому моменту уже закрыто)
+  }
+
+  /* ЕТС перед сохранением: ещё считается — ждать; разные у инструментов ФИ — ввести вручную.
+     Ошибка расчёта и «нет или 0» сохранение не блокируют. true — можно дальше. */
+  function checkEts() {
+    if (cards.some(function (c) { return c.ctxLoading; })) {
+      showAlert(ETS_ALERT_TITLE, 'Выполняется расчет значения ЕТС для ФИ', 'ets-loading');
+      return false;
+    }
+    var bad = cards.filter(unresolvedEts);
+    if (!bad.length) return true;
+    bad.forEach(function (c) { c.etsShown = true; paint(c); });
+    showAlert(ETS_ALERT_TITLE,
+      'В инструментах, включенных в ФИ, не совпадают значения ЕТС. Укажите значение ЕТС вручную или исправьте значение в инструментах и попробуйте выполнить фиксацию ЭПС/ВБС снова.',
+      'ets-multiple');
+    return false;
+  }
+
+  function save() {
+    if (!session || session.saving) return;
+    hideAlert();
+    if (!validate()) return;
+    if (!checkEts()) return;
+    var violations = store().checkFixations(items());
+    if (violations.length) {
+      var notify = window.FinMetricsNotify;
+      if (notify) violations.forEach(notify.fixationRule);
+      return;
+    }
+    var busy = cards.some(function (c) { return c.prelimState === 'busy'; });
+    if (!busy) { doSave(); return; }
+    var confirmScrim = document.getElementById(ui.confirmId);
+    if (!confirmScrim) { doSave(); return; }
+    window.DSModal.open(confirmScrim, { nested: true, guarded: true });
+  }
+
+  /* ── Привязка и открытие ────────────────────────────────────────── */
+
+  var confirmWired = false;
+
+  /* Окно привязывается один раз на скрим; «текущим» становится последнее привязанное
+     (на странице оно одно, в витрине — рисуемое сейчас). */
+  function bind(scrim, opts) {
+    opts = opts || {};
+    ui = { scrim: scrim, tplId: opts.tpl || TPL_ID, confirmId: opts.confirm || CONFIRM_ID };
+    if (!scrim.__fixBound) {
+      scrim.__fixBound = true;
+      scrim.addEventListener('click', function (e) {
+        if (e.target.closest('[data-fix-add]')) addCard(true);
+        else if (e.target.closest('[data-fix-save]')) save();
+      });
+    }
+    if (!confirmWired) {
+      confirmWired = true;
+      document.addEventListener('click', function (e) {
+        var ok = e.target.closest && e.target.closest('[data-fix-confirm-ok]');
+        if (!ok || !session) return;
+        var confirmScrim = document.getElementById(ui.confirmId);
+        if (!confirmScrim || !confirmScrim.contains(ok)) return;
+        window.DSModal.closeTop(true);   // закрывает подтверждение
+        doSave();
+      });
+    }
+    return api;
+  }
+
+  /* Витрина: нарисовать окно по готовому описанию, без сеанса и без DSModal — открывает
+     и закрывает его сама витрина. Карточки живые: ФИ, дата, тип и «+ Добавить ФИ» работают;
+     «Сохранить» ничего не запускает (сеанса нет). ФИ берутся из FinMetricsStore — стор
+     должен быть открыт на сделке.
+       spec: { cards: [{ fiId, date (ISO|null), typeCode, comment, ctx, prelim, prelimState,
+                        ctxLoading?, etsShown?, etsManual? }],
+               alert?: { title, text? } }
+       ctx — как ответ fixationContext, prelim — как ответ preliminary, prelimState — idle | busy | done */
+  function preview(scrim, spec) {
+    spec = spec || {};
+    bind(scrim);
+    clearCards();
+    hideAlert();
+    (spec.cards || []).forEach(function (c) {
+      var card = addCard(false);
+      if (c.fiId) { card.fi.set(c.fiId, true); card.fiId = card.fi.get(); }
+      if (c.typeCode) { card.type.set(c.typeCode, true); card.typeCode = card.type.get(); }
+      if (c.date && card.typeCode !== 'INITIAL') {
+        card.date = c.date;
+        card.dateControl.value = c.date.slice(8, 10) + '.' + c.date.slice(5, 7) + '.' + c.date.slice(0, 4);
+        if (window.DSInput) window.DSInput.sync(card.dateControl.closest('.inp'));
+      }
+      if (c.comment) card.comment.value = c.comment;
+      card.ctx = c.ctx || null;
+      card.ctxLoading = !!c.ctxLoading;
+      card.etsShown = !!c.etsShown;
+      card.etsManual = c.etsManual != null ? c.etsManual : null;
+      card.prelim = c.prelim || null;
+      card.prelimState = c.prelimState || (c.prelim ? 'done' : 'idle');
+      paint(card);
+    });
+    markDuplicates();
+    if (spec.alert) showAlert(spec.alert.title, spec.alert.text);
+  }
+
+  function open() {
+    if (!ui) {
+      var scrim = document.getElementById(SCRIM_ID);
+      if (!scrim) return Promise.resolve(null);
+      bind(scrim);
+    }
+    if (session) return session.promise;
+    var S = store();
+    if (!S || !S.fixationCandidates().length) return Promise.resolve(null);
+
+    var resolve;
+    var promise = new Promise(function (r) { resolve = r; });
+    session = { promise: promise, saving: false, started: null };
+    clearCards();
+    hideAlert();
+    addCard(false);
+    window.DSModal.open(ui.scrim, {
+      guarded: true,
+      onClose: function (ok) {
+        var s = session;
+        session = null;
+        clearCards();
+        resolve(ok === true && s && s.started ? { started: s.started } : null);
+      }
+    });
+    return promise;
+  }
+
+  var api = { bind: bind, open: open, preview: preview, isOpen: function () { return !!session; } };
+  window.PostFixationModal = api;
+})();
+</script>
+</body>
+</html>

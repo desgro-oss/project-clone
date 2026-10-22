@@ -3,6 +3,7 @@ spec: EarlyInterestPayments
 title: Досрочное погашение процентов
 module: postrade/drafts/early-interest-v02
 version: "1.000"
+stage: Концепт v2
 date: "16.10.2026"
 designer: Роман Эсэф
 sources:

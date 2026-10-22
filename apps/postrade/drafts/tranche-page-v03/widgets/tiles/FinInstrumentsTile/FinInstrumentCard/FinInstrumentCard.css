@@ -1,0 +1,99 @@
+/* Подчасть «Карточка финансового инструмента» (FinInstrumentCard) тайла
+   FinInstrumentsTile. Только внутренняя раскладка карточки: Card ДС с
+   аккордеоном (.tile--card.tile--accordion), поля — ReadOnlyField, строки
+   инструментов — ProductRow; их размеры и состояния отсюда не
+   переопределяются. Цвета, шрифты, отступы — токены ДС.
+   data-state на корне карточки — empty | data (ставит FinInstrumentCard.js),
+   data-mode — edit | view. */
+
+/* ── Карточка ФИ ────────────────────────────────────────────────────── */
+/* Сетка значений: баланс шире остальных, валюта — узкая, как на макете
+   «Card-Fininstrument». Колонки сжимаемые: длинное значение усекается
+   (ReadOnlyField, одна строка), а не распирает соседей. Второй ряд —
+   сумма под балансом, дата подписания под типом отчётности, плановая
+   дата погашения — под FV/AC. */
+.lc-fin-card__grid {
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) minmax(0, 1fr) minmax(0, 3fr);
+}
+/* У акций пятая колонка — целевой IRR. Пропорции 33 : 24 : 10 : 24 : 16
+   подобраны по макету «Card-Fininstrument» и замеру текста: в карточке
+   шириной 620px целиком помещаются «SBI Voskhod Capital», «МСФО и РСБУ»,
+   «Валюта» и «Целевой IRR»; FV/AC усекается, как на макете. При
+   3 : 2 : 1 : 2 : 2 баланс и тип отчётности усекались. */
+.lc-fin-card__grid--irr {
+  grid-template-columns: minmax(0, 33fr) minmax(0, 24fr) minmax(0, 10fr) minmax(0, 24fr) minmax(0, 16fr);
+}
+.lc-fin-card__amount { grid-column: 1; }
+.lc-fin-card__signed { grid-column: 2 / 4; }
+.lc-fin-card__planned { grid-column: 4 / -1; }
+
+/* Контрагент: наименование — две строки с усечением, риск-метрика
+   прижата вправо и с места не уходит. */
+.lc-fin-card__party .rof__value { flex: 1; }
+.lc-fin-card__party [data-riskmetric] { flex: none; }
+
+/* Признаки «Участие ДККК», «Связанный безусловный опцион» — в строку, как
+   на макете; не помещаются — переносятся. Строка ReadOnlyField
+   (.rof__row) по умолчанию во всю ширину — здесь признак своей ширины,
+   иначе каждый вставал отдельной строкой. */
+.lc-fin-card__flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8) var(--space-24);
+}
+.lc-fin-card__flags > .rof__row { width: auto; }
+
+/* Подзаголовок «Инструменты» со счётчиком и кнопкой справа. */
+.lc-fin-card__nodes-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+}
+.lc-fin-card__nodes-title {
+  margin: 0;
+  font: var(--type-h6-strong);
+  color: var(--text-primary);
+}
+.lc-fin-card__add-node { margin-left: auto; }
+
+/* Строки инструментов — ProductRow вне дерева: зазор между строками как
+   в ветке дерева (8px). */
+.lc-fin-card__nodes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+.lc-fin-card__no-nodes {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* «Требуется переоценка» — тег, а не статус: не rounded, не сжимается. Цвет — как
+   у чипа «Требуется переоценка» реестра «Текущий портфель» (Portfolio.html, .chip--pe):
+   правило Chip ДС — цвет флаг-категории задаёт кейс. */
+.lc-fin-card__pe {
+  background: var(--st-orange-mid);
+  border-color: var(--st-orange-mid);
+  color: var(--text-primary);
+}
+
+/* ── Режим прав ─────────────────────────────────────────────────────── */
+/* В просмотре действия правки не выключаются, а не рисуются вовсе (правило
+   прав локальных компонентов): FinInstrumentCard.js в режиме view строит
+   карточку без меню, «+ Добавить» и ⇄. Эталон и карточки-примеры во
+   фрагменте тайла нарисованы с кнопками — их прячет режим самой карточки
+   или режим тайла, который их держит (пример во фрагменте тайла при смене
+   режима не перерисовывается). Правило одно на оба случая — здесь.
+   «→», шеврон и ⓘ опциона МСФО остаются. Состояния карточки (empty, data)
+   своих правил не имеют: разметку даёт FinInstrumentCard.js, ось
+   состояний в витрине объявляет сценарий демо. */
+.lc-fin-card[data-mode="view"] .menu-anchor,
+.lc-fin-card[data-mode="view"] .lc-fin-card__add-node,
+.lc-fin-card[data-mode="view"] .lc-fin-card__move,
+.lc-fin-instruments[data-mode="view"] .lc-fin-card .menu-anchor,
+.lc-fin-instruments[data-mode="view"] .lc-fin-card__add-node,
+.lc-fin-instruments[data-mode="view"] .lc-fin-card__move { display: none; }

@@ -1,0 +1,155 @@
+/* Локальный компонент «Заведение сделки» (Navigator).
+   Только внутренняя раскладка и показ своих блоков по data-state. Цвета,
+   шрифты, отступы — токены ДС; состояния компонентов ДС отсюда не
+   переопределяются.
+   Режим (data-mode) ставит страница: edit | view. Действия процесса задаёт
+   статусная модель, а не режим, поэтому правил по data-mode здесь нет —
+   что из процесса видно роли без права правки, решает открытый вопрос 4
+   паспорта. */
+
+/* ── Тело: колонка на всю высоту тайла ─────────────────────────────── */
+/* Тайл — flex-колонка (Tile), его высоту задаёт страница. Тело занимает
+   свободную высоту, подвал прижат книзу: кнопки стоят на одном месте, сколько
+   бы шагов ни было у вкладки. Шапка, вкладки и подвал на месте, а степпер,
+   который не помещается, прокручивается в своей области (RE0026).
+   min-height: 0 по всей цепочке — иначе flex-ребёнок не ужимается меньше
+   содержимого и тайл снова растёт. */
+.lc-navigator__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+/* Зазоров между вкладками, областью степпера и подвалом нет: границы
+   закреплённых частей — линия вкладок сверху и линия подвала снизу, степпер
+   прокручивается вплотную к ним. Отступы 20px от вкладок и до подвала —
+   паддинг самой области (ниже). */
+.lc-navigator__content,
+.lc-navigator__panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ── Прокрутка степпера ────────────────────────────────────────────── */
+/* Полоса — общая полоса ДС .ds-scroll (Layout): вид, резерв места и гашение
+   задаёт она. Область выходит в правое поле тайла, а правый паддинг меньше
+   поля на ширину полосы — как у тел Modal и Drawer: край подписей не
+   сдвигается, бегунок стоит в поле тайла, ширина контента одна с полосой и
+   без неё. Паддинг сверху и снизу — прежний зазор 20px до вкладок и подвала:
+   он внутри области, поэтому прокручиваемый контент уходит под линии, а не
+   обрезается белой полосой над подвалом. Он же — запас под рамку фокуса
+   последнего шага («Согласование»). */
+.lc-navigator__scroll {
+  flex: 1;
+  min-height: 0;
+  margin-right: calc(-1 * var(--tile-pad-x));
+  padding-block: var(--space-20);
+  padding-right: calc(var(--tile-pad-x) - var(--scroll-w));
+}
+
+/* ── Степпер ───────────────────────────────────────────────────────── */
+/* Компонента Stepper в ДС нет (бэклог ДС «Компонент Stepper (шаги
+   заведения)») — шаг собран из StepMarker S и подписи, шаги соединяет линия
+   на токенах (паспорт, «Осознанные отклонения»). Маркер стоит у первой
+   строки подписи: длинная подпись переносится, линия тянется от маркера
+   до следующего шага при любой высоте шага. */
+.lc-navigator__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+.lc-navigator__step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  min-width: 0;
+}
+.lc-navigator__step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: var(--space-10);
+  top: calc(var(--space-20) + var(--space-4));
+  bottom: calc(var(--space-4) - var(--space-24));
+  border-left: 1px solid var(--border-light);
+  transform: translateX(-50%);
+}
+.lc-navigator__label {
+  min-width: 0;
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+/* Шаг-действие («Согласование»): подпись — кнопка Transparent S, она выше
+   строки подписи, поэтому маркер центрируется по ней. */
+.lc-navigator__step--action { align-items: center; }
+
+/* Группа шагов («Передача»: РМ · ПМ · Залоги) — заголовок и рамка вокруг
+   вложенных шагов. */
+.lc-navigator__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+  flex: 1;
+}
+.lc-navigator__group-title {
+  margin: 0;
+  font: var(--type-body-s-strong);
+  color: var(--text-secondary);
+}
+.lc-navigator__group .lc-navigator__steps {
+  padding: var(--space-12);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m);
+  gap: var(--space-16);
+}
+.lc-navigator__group .lc-navigator__step:not(:last-child)::after {
+  bottom: calc(var(--space-4) - var(--space-16));
+}
+/* У шага-группы своего маркера нет: линия к следующему шагу идёт от низа
+   рамки, а не от маркера. */
+.lc-navigator__step--group:not(:last-child)::after {
+  top: calc(100% + var(--space-4));
+}
+
+/* ── Подвал ────────────────────────────────────────────────────────── */
+/* Отделён линией на всю ширину тайла, как на макете: поля тела тайла
+   (--tile-pad-x, Tile) компенсируются, кнопки стоят в поле контента. */
+.lc-navigator__foot {
+  flex: none;
+  margin-top: auto;
+  margin-inline: calc(-1 * var(--tile-pad-x));
+  padding: var(--space-16) var(--tile-pad-x) 0;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.lc-navigator__status {
+  margin: 0;
+  font: var(--type-body-m-strong);
+  color: var(--text-primary);
+}
+
+/* ── Что видно в каком состоянии ───────────────────────────────────── */
+.lc-navigator__loading,
+.lc-navigator__error { display: none; }
+
+.lc-navigator[data-state="loading"] .lc-navigator__content,
+.lc-navigator[data-state="error"] .lc-navigator__content,
+.lc-navigator[data-state="loading"] .lc-navigator__actions,
+.lc-navigator[data-state="error"] .lc-navigator__actions { display: none; }
+
+.lc-navigator[data-state="loading"] .lc-navigator__loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+.lc-navigator__loading-steps { gap: var(--space-24); }
+.lc-navigator[data-state="error"] .lc-navigator__error { display: block; }

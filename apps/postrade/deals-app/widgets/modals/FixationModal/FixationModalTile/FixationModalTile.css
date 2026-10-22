@@ -1,0 +1,99 @@
+/* Локальный компонент «Карточка фиксации» (подчасть окна «Фиксация ЭПС/ВБС»).
+   Только внутренняя раскладка и показ блоков по состоянию. Цвета, шрифты, отступы,
+   радиусы — токены ДС; своих значений здесь нет. Поля, кнопки, чип и ReadOnlyField
+   отсюда не переопределяются. */
+
+.lc-fixtile { flex: none; }
+
+/* Карточка без шапки (tile--headless); поля тела — 16 со всех сторон, как на макете:
+   у headless 20/20/32. Записано в паспорте, «Осознанные отклонения». */
+.lc-fixtile.tile--headless > .tile__body { padding: var(--space-16); }
+
+/* Тело — три колонки: ввод слева, результат справа, «⊖» в углу. Слева шире:
+   там комментарий и три поля в ряд. */
+.lc-fixtile__body {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr) auto;
+  gap: var(--space-24);
+  align-items: start;
+}
+
+.lc-fixtile__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+/* ФИ шире всех, дата уже, тип — посередине */
+.lc-fixtile__fields {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 3fr) minmax(0, 4fr);
+  gap: var(--space-16);
+}
+
+/* «ВБС до фиксации» слева, кнопка расчёта (или чип) справа */
+.lc-fixtile__foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-16);
+}
+
+.lc-fixtile__side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+.lc-fixtile__pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+/* Блоки результата — Inset ДС (`.tile--inset`): подложка, поля и заголовок его. Здесь только
+   стопка значений внутри и две колонки у блока ЕТС. */
+.lc-fixtile__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+.lc-fixtile__rows--two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+/* ── Что видно в каком состоянии ────────────────────────────────────── */
+
+/* Расчёт выполнен: кнопку заменяет чип. Кнопка при этом выключена разметкой
+   (disabled ставит скрипт окна), а не только спрятана. */
+.lc-fixtile[data-fx-prelim="done"] [data-fx-prelim-run] { display: none; }
+
+/* ── ЕТС (Э7) ───────────────────────────────────────────────────────── */
+
+/* Строка значения: иконка статуса слева, карандаш или галочка прижаты вправо */
+.lc-fixtile__ets-row { gap: var(--space-8); }
+.lc-fixtile__ets-act { margin-inline-start: auto; }
+
+/* Иконка статуса: слот заполняет скрипт окна; пока статуса нет — пустой, места не занимает */
+.lc-fixtile__ets-icon { display: inline-flex; flex: none; }
+.lc-fixtile__ets-icon:empty { display: none; }
+.lc-fixtile .lc-fixtile__ets-icon--error { color: var(--error); }
+
+/* Скелетон вместо значения, пока ЕТС считается */
+/* высота — строки значения (Body M, 20px): без неё блок прыгает, когда скелетон сменяется значением */
+.lc-fixtile__sk { --sk-w: 96px; --sk-h: 20px; display: none; }
+.lc-fixtile[data-fx-ets="loading"] .lc-fixtile__sk { display: block; }
+.lc-fixtile[data-fx-ets="loading"] [data-fx-block="ets"] .rof__value,
+.lc-fixtile[data-fx-ets="loading"] [data-fx-block="ets"] .rof__affix { display: none; }
+
+/* Ручной ввод: поле вместо значения, вместо карандаша — галочка */
+.lc-fixtile__ets-input { display: none; flex: 1 1 auto; min-width: 0; }
+.lc-fixtile[data-fx-ets-edit="true"] .lc-fixtile__ets-input { display: block; }
+.lc-fixtile[data-fx-ets-edit="true"] [data-fx-val="etsRate"],
+.lc-fixtile[data-fx-ets-edit="true"] [data-fx-aff="etsRate"] { display: none; }
+.lc-fixtile__ets-act { display: none; }
+.lc-fixtile[data-fx-ets-edit="false"]:is([data-fx-ets="empty"], [data-fx-ets="error"], [data-fx-ets="manual"]) [data-fx-ets-pencil],
+.lc-fixtile[data-fx-ets-edit="true"] [data-fx-ets-ok] { display: inline-flex; }

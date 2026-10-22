@@ -11,7 +11,8 @@
 ```
 страница ─▶ CounterpartiesStore (counterparties-store.js) ─┐
 страница ─▶ ProductTreeStore (product-tree-store.js) ──────┼▶ PostApi (post-api.js) ─▶ API
-страница ─▶ FinInstrumentsStore (fin-instruments-store.js) ┘
+страница ─▶ FinInstrumentsStore (fin-instruments-store.js) ┤
+страница ─▶ FinMetricsStore (fin-metrics-store.js) ────────┘
 ```
 
 - Страницы и компоненты зовут только стор.
@@ -21,7 +22,7 @@
 | Режим | Когда | Куда пишется |
 |---|---|---|
 | `server` | страница открыта по http(s), и `GET /api/post/participants` ответил 2xx | база сервера |
-| `local` | страница открыта двойным кликом (`file://`) или с сервера без этого API | `localStorage` браузера, ключи `ibp.post.participants`, `ibp.post.product-trees` и `ibp.post.fin-instruments` |
+| `local` | страница открыта двойным кликом (`file://`) или с сервера без этого API | `localStorage` браузера, ключи `ibp.post.participants`, `ibp.post.product-trees`, `ibp.post.fin-instruments` и `ibp.post.fin-metrics` |
 
 В режиме `local` правки видны только в этом браузере. Консоль сообщает об этом один раз.
 
@@ -83,6 +84,47 @@
 считает их из узлов дерева продуктов, прикреплённых к карточке (`fiIds` узла, ресурс
 `product-trees`; решение человека 02.10.2026). «Сгенерировать автоматически» пишет оба
 ресурса: новые карточки — сюда, связь узлов — в дерево.
+
+## Расчёт финансовых метрик сделки
+
+Запись о сделке хранит состояние последнего расчёта и историю фиксаций ЭПС/ВБС (typedef
+`DealMetricsCalculationRsDto` и `EirIbsvFixationRsDto`, `mock-fin-metrics-calc.js`):
+
+```json
+{ "calculation": { "dealId": 1024, "calcStatusCode": "CALCULATED", "calculatedAt": "2024-01-22T16:45:00.000Z", "calculatedFiIds": ["FI-1024-1"], "lastAttemptFailed": false },
+  "fixations": [ { "fixationId": "FX-1024-1", "financialInstrumentId": "FI-1024-1", "changeDate": "2024-04-22", "modificationTypeCode": "INITIAL", … } ],
+  "updated": "2026-10-21T12:00:00.000Z" }
+```
+
+| Поле | Что это |
+|---|---|
+| `calculation` | последний успешный расчёт (`calculatedAt`, посчитанные ФИ) и признак, что последняя попытка не посчитала ни одного ФИ (`lastAttemptFailed`) |
+| `fixations` | фиксации ЭПС/ВБС сделки по всем её ФИ |
+| `updated` | время сохранения, ISO 8601; ставит сервер |
+
+Окно «Фиксация ЭПС/ВБС» читает и пишет через `FinMetricsStore` (typedef `FixationContextRsDto`,
+`FixationPreliminaryRsDto`, `EirIbsvFixationRqDto`): `fixationCandidates()` — ФИ сделки;
+`fixationContext(fiId, date)` — ВБС до фиксации и ЕТС (статус `OK`, `EMPTY`, `FAILED`, `MULTIPLE`; ручное значение уходит в `saveFixations` как `etsRateManual`); `preliminary(fiId, date)` — справочный
+предварительный расчёт; `checkFixations(items)` — правила (первоначальная — одна на ФИ; остальные
+виды — после неё и позже даты последней фиксации); `saveFixations(items)` — расчёт «на бэке»,
+строки истории появляются по ответу. Отдельных эндпоинтов у окна нет: готовая фиксация кладётся
+в запись `fixations` тем же `PUT`. Сценарии `?fmFix=prefail|fail` (ошибки расчёта) и `?fmEts=slow|failed|empty|multiple`
+(состояния ЕТС) в хранилище не пишутся.
+
+Если сделку не считали, записи нет — стор показывает демо-запись из `mock-fin-metrics-calc.js`, а без
+неё — «не рассчитано». Отчёты (МСФО, РСБУ, KPI), колонки дат и значения **не хранятся**: стор
+собирает их из карточек ФИ сделки и списка посчитанных ФИ. Состояние «Идёт расчёт» тоже не
+хранится — оно живёт в памяти страницы, пока идёт имитация расчёта. Расчёт, ЕТС и значения
+отчётов — допущения прототипа (задача `docs/tasks/RE0033-deal-financial-metrics.md`), настоящий
+бэкенд посчитает сам.
+
+Выгрузка отчёта (окно «Выгрузка отчета», `FinancialMetricsDownloadReportModal`) читает справочник сотрудников
+`MOCK_REPORT_EMPLOYEES` (`mock-report-employees.js`, typedef `ReportEmployeeRsDto`: `employeeId`,
+`fullName`, `positionName`, `externalEmail`, `internalEmail`) — только в сети Сигма, где файл шифруется
+для выбранных получателей. Что бэкенд должен дать: справочник сотрудников с поиском по ФИО, проверку
+e-mail, формирование файла (в Сигме — зашифрованного для списка получателей), ответ об успехе или
+ошибке. Сеть определяет бэкенд по логину; в прототипе — `?net=sigma` (по умолчанию Альфа), ошибка
+выгрузки — `?download=fail`. Файл не формируется — выгрузка имитируется.
 
 ## Команда сделки
 
@@ -166,6 +208,10 @@ DealsStore.update(id, { desk: 'Недвижимость',   // запись: о�
 | `GET /api/post/fin-instruments/:dealId` | `200` — запись; `404` — карточки сделки не сохраняли |
 | `PUT /api/post/fin-instruments/:dealId` | тело `{ cards }` → `200` `{ ok: true, updated }` |
 | `DELETE /api/post/fin-instruments` | `204` — база карточек ФИ очищена (для показов) |
+| `GET /api/post/fin-metrics` | `200` — `{ "<номер сделки>": { calculation, fixations, updated }, … }`; только сохранённые сделки |
+| `GET /api/post/fin-metrics/:dealId` | `200` — запись; `404` — расчёт сделки не сохраняли |
+| `PUT /api/post/fin-metrics/:dealId` | тело `{ calculation, fixations }` → `200` `{ ok: true, updated }` |
+| `DELETE /api/post/fin-metrics` | `204` — база расчётов метрик очищена (для показов) |
 
 **Проверки при записи** (`400` с `{ error }`):
 
@@ -174,7 +220,9 @@ DealsStore.update(id, { desk: 'Недвижимость',   // запись: о�
 - каждый id из `knr` есть в `members`;
 - `tree.id` совпадает с номером сделки из пути; у узла `fiIds` — не больше двух;
 - у карточки ФИ `id` уникален в сделке, `typeCode` и `reportingType` — из справочников
-  `mock-fin-instruments.js`, `name` не пустой.
+  `mock-fin-instruments.js`, `name` не пустой;
+- у расчёта метрик `calculation.dealId` совпадает с номером сделки из пути; `fixationId`
+  уникален в сделке, `modificationTypeCode` — из `INITIAL` · `NON_SUBSTANTIAL` · `SUBSTANTIAL`.
 
 Тело больше 64 КБ — `413`. Другие методы — `405`.
 

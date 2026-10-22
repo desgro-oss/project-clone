@@ -17,6 +17,7 @@ window.IBPKit = {
   "categories": [
     "Общие",
     "Сделка",
+    "Финансовые отчеты сделки",
     "Транш",
     "Расчет FV",
     "Другое"
@@ -166,15 +167,15 @@ window.IBPKit = {
       "id": "DealMetricsCalculationTile",
       "name": "Финансовые метрики",
       "category": "Сделка",
-      "purpose": "Расчёт финансовых метрик по инструментам сделки и выгрузка отчётов",
+      "purpose": "Расчёт финансовых метрик по ФИ сделки, переход к фиксации ЭПС/ВБС и к отчетам",
       "type": "tile",
       "typeLabel": "тайл",
       "module": "postrade/deals-app",
       "doc": "postrade/deals-app/DealMetricsCalculationTile.doc.html",
       "owner": null,
-      "stub": true,
-      "version": "0.003",
-      "updated": "02.10.2026"
+      "stub": false,
+      "version": "0.007",
+      "updated": "21.10.2026"
     },
     {
       "id": "DealPeriodModal",
@@ -303,6 +304,48 @@ window.IBPKit = {
       "updated": "02.10.2026"
     },
     {
+      "id": "FinancialMetricsDownloadReportModal",
+      "name": "Выгрузка отчета",
+      "category": "Финансовые отчеты сделки",
+      "purpose": "Подтвердить выгрузку отчета финансовых метрик (данные К2) и, в сети с шифрованием, выбрать сотрудников, которым будет доступен файл",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/FinancialMetricsDownloadReportModal.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "0.001",
+      "updated": "21.10.2026"
+    },
+    {
+      "id": "FinancialMetricsFilterModal",
+      "name": "Фильтр отчета финансовых метрик",
+      "category": "Финансовые отчеты сделки",
+      "purpose": "Фильтр отчета финансовых метрик — какие ФИ показать и по каким индикаторам",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/FinancialMetricsFilterModal.doc.html",
+      "owner": "FinancialMetricsTable",
+      "stub": false,
+      "version": "0.002",
+      "updated": "21.10.2026"
+    },
+    {
+      "id": "FinancialMetricsTable",
+      "name": "Отчет финансовых метрик",
+      "category": "Финансовые отчеты сделки",
+      "purpose": "Отчет МСФО или РСБУ: группы по ФИ, закрепленная колонка метрик, колонки дат, фильтр",
+      "type": "table",
+      "typeLabel": "таблица",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/FinancialMetricsTable.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "0.002",
+      "updated": "21.10.2026"
+    },
+    {
       "id": "FinInstrumentCard",
       "name": "Карточка финансового инструмента",
       "category": "Сделка",
@@ -329,6 +372,48 @@ window.IBPKit = {
       "stub": false,
       "version": "1.006",
       "updated": "17.10.2026"
+    },
+    {
+      "id": "FixationHistoryTable",
+      "name": "История фиксаций",
+      "category": "Финансовые отчеты сделки",
+      "purpose": "История фиксаций ЭПС/ВБС по ФИ сделки: переключатель По ФИ и По дате, удаление последней фиксации",
+      "type": "table",
+      "typeLabel": "таблица",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/FixationHistoryTable.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "0.002",
+      "updated": "22.10.2026"
+    },
+    {
+      "id": "FixationModal",
+      "name": "Фиксация ЭПС/ВБС",
+      "category": "Сделка",
+      "purpose": "Окно фиксации ЭПС/ВБС: расчёт и сохранение фиксации по одному или нескольким ФИ сделки",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/FixationModal.doc.html",
+      "owner": "DealMetricsCalculationTile",
+      "stub": false,
+      "version": "0.002",
+      "updated": "21.10.2026"
+    },
+    {
+      "id": "FixationModalTile",
+      "name": "Карточка фиксации ЭПС/ВБС",
+      "category": "Сделка",
+      "purpose": "Одна карточка окна «Фиксация ЭПС/ВБС»: ввод по одному ФИ слева, результат предварительного расчёта справа",
+      "type": "part",
+      "typeLabel": "подчасть",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/FixationModalTile.doc.html",
+      "owner": "FixationModal",
+      "stub": false,
+      "version": "0.002",
+      "updated": "21.10.2026"
     },
     {
       "id": "InstrumentsCounterpartiesModal",
@@ -371,6 +456,20 @@ window.IBPKit = {
       "stub": false,
       "version": "1.000",
       "updated": "02.10.2026"
+    },
+    {
+      "id": "KPITable",
+      "name": "Отчет KPI",
+      "category": "Финансовые отчеты сделки",
+      "purpose": "Отчет KPI с переключателем Краткий и Подробный",
+      "type": "table",
+      "typeLabel": "таблица",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/KPITable.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "0.003",
+      "updated": "22.10.2026"
     },
     {
       "id": "LinkChangeModal",

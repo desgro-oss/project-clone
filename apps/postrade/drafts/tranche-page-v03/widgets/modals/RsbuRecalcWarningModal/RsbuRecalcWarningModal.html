@@ -1,0 +1,22 @@
+<!-- Окно предупреждения при пересчёте метрик с нераспределённой дельтой РСБУ (RE0034, Э5).
+     Открывается кликом «Пересчет метрик» на странице финансовых метрик и тайлом «Финансовые
+     метрики» на странице сделки, пока у зафиксированного индикатора расхождение не устранено
+     корректировками. Дату, сумму и ФИ вписывает скрипт при открытии. «Отменить» закрывает без пересчёта
+     (data-modal-close), «Пересчитать» закрывает с результатом «да» (data-rrw-ok). -->
+<div class="modal-scrim" id="rrw-scrim" hidden>
+  <div class="modal modal--w4" role="alertdialog" aria-modal="true" aria-labelledby="rrw-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rrw-title">Пересчитать метрики?</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <div>Расхождение с <span data-rrw-date></span> не устранено: <span data-rrw-amount></span> по ФИ <span data-rrw-fi></span>. После пересчёта фиксация расчёта будет снята, расхождение останется в отчёте РСБУ.</div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-rrw-ok><span class="btn__label">Пересчитать</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

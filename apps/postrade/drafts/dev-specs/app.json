@@ -4,5 +4,6 @@
   "title": "Post — Спецификации на разработку",
   "desc": "Сценарии Post для разработки: шаги, экраны, новые компоненты и снимки состояний; выгрузка папкой md + html",
   "home": "pages/index.html",
-  "icon": "file-check"
+  "icon": "file-check",
+  "shelf": "actual"
 }

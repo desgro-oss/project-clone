@@ -31,7 +31,7 @@
     "dir": "apps/local-components", "registry": "apps/local-components/kit-data.js", "id": "local-kit",
     "title": "Локальные компоненты", "desc": "Тайлы, окна и поповеры модулей: как работают, из чего собраны, зачем",
     "icon": "layout-grid-01",
-    "categories": ["Общие", "Сделка", "Транш", "Расчет FV", "Другое"],
+    "categories": ["Общие", "Сделка", "Финансовые отчеты сделки", "Транш", "Расчет FV", "Другое"],
     "kits": [
       { "id": "local-kit-post", "section": "postrade", "title": "Локальные компоненты Post", "desc": "Тайлы, окна и поповеры модулей Post: как работают, из чего собраны, зачем", "icon": "layout-grid-01" },
       { "id": "local-kit-pre", "section": "pretrade", "title": "Локальные компоненты Pre", "desc": "Тайлы, окна и поповеры модулей Pre: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Другое"] },
