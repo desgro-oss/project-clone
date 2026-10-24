@@ -534,6 +534,19 @@
       + '<span class="prow__meta-text">' + text + '</span></span>';
   }
 
+  /* Заголовок узла — как в дереве продуктов и карточке ФИ: у узла со страницей
+     это ссылка. Транш ведёт на свою страницу (OPEN_NODE), у остальных типов
+     страница ещё не собрана — ссылка без действия; без страницы — текст. */
+  function nodeTitleHTML(n) {
+    var text = esc(n.number + ' ' + n.name);
+    if (n.hasPage === true && n.kind === 'TRANCHE') {
+      return '<a class="prow__title prow__title--link" href="#" data-fi-act="OPEN_NODE" data-fi-id="' + esc(n.id) + '">' + text + '</a>';
+    }
+    return n.hasPage === true
+      ? '<a class="prow__title prow__title--link" href="#">' + text + '</a>'
+      : '<span class="prow__title">' + text + '</span>';
+  }
+
   /* Инструменты ФИ: те же строки, что внутри карточки ФИ сделки, без действий. */
   function nodesHTML(c) {
     if (!(c.nodes || []).length) return '<p class="rof__value">Нет связанных инструментов</p>';
@@ -543,8 +556,8 @@
           + '<span class="prow__status-text">' + esc((DETAIL_LABELS.repaidAt || 'Фактическая дата погашения') + ' ' + fmtDate(n.repaidAt)) + '</span></div>'
         : '';
       var meta = (n.details || []).length ? '<div class="prow__meta">' + n.details.map(metaItemHTML).join('') + '</div>' : '';
-      return '<div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">'
-        + esc(n.number + ' ' + n.name) + '</span></div>' + status + meta + '</div></div>';
+      return '<div class="prow"><div class="prow__main"><div class="prow__head">' + nodeTitleHTML(n) + '</div>'
+        + status + meta + '</div></div>';
     }).join('');
   }
 
@@ -663,6 +676,17 @@
         var r = resolve();
         if (!r) return;
         paint(r.deal, r.id);
+        /* Заголовок связанного инструмента — переход на страницу транша.
+           Ссылка без действия (страница типа ещё не собрана) и href="#"
+           страницу не листают. */
+        document.addEventListener('click', function (e) {
+          var link = e.target.closest && e.target.closest('#tile-fi-nodes .prow__title--link[href="#"]');
+          if (!link) return;
+          e.preventDefault();
+          var id = link.getAttribute('data-fi-id');
+          if (!id) return;
+          window.location.href = 'Tranche.html?id=' + encodeURIComponent(r.deal.id) + '&tr=' + encodeURIComponent(id);
+        });
         document.getElementById('fi-edit').addEventListener('click', function () {
           if (window.PostModalFinInstrumentEdit) window.PostModalFinInstrumentEdit.open(r.id);
         });

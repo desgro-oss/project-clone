@@ -4,5 +4,7 @@
   "title": "Pipeline Scanner ver. 07",
   "desc": "Пайплайн сканер: нить запроса, конструктор, материалы с заключением АР, история и журнал",
   "home": "pages/index.html",
-  "icon": "ai-stars"
+  "icon": "ai-stars",
+  "concept": "Pipeline Scanner",
+  "version": "v7"
 }

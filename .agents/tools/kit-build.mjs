@@ -55,11 +55,28 @@
          `localKit.categories`, у папки виджета нет паспорта; у статусной
          модели — то же о `meta`, или модель не читается;
      КТ3 витрина разошлась с виджетами — паспорт, фрагмент, CSS/JS или
-         страница-хозяин правлены, а пересборки не было;
+         страница-хозяин правлены, а пересборки не было (то же для паспорта
+         страницы: спека правлена, `<Имя>.page.html` не пересобран);
      КТ4 у компонента нет фрагмента `<Имя>.html`;
-     КТ5 в витрине лишняя страница: её виджета больше нет;
+     КТ5 в витрине лишняя страница: её виджета (или спеки страницы) больше нет;
      КТ6 два компонента с одним id — страницы витрины и пункты меню
-         разошлись бы.
+         разошлись бы;
+     КТ7 глоссарий базы знаний (RE0038): вики-ссылка `[[Термин]]` в паспорте
+         или спеке страницы ведёт на термин, которого нет (или у термина нет
+         определения, источников, имя повторяется). Термины —
+         `<knowledgeBase.dir>/glossary/terms/*.md` (glossary.mjs), страница
+         глоссария собирается здесь же.
+   Паспорт страницы модуля (RE0039, решение человека 23.10.2026). У страниц
+   модулей нет страницы в витрине, а спека `pages/<Имя>.screen.md` лежит
+   рядом с HTML и на хабе не открывается. Генератор собирает по спеке
+   страницу `<localKit.dir>/<раздел>/<модуль>/<Имя>.page.html` — для модулей
+   разделов с картой экранов (`screenMap.maps`; концептов нет): шапка и
+   карточка «Паспорт» из YAML-шапки спеки, затем разделы спеки по порядку
+   («Бизнес-смысл» — первым блоком §1). Страница не входит в реестр и меню
+   витрины — её открывают с плитки карты экранов (кебаб «Паспорт страницы»);
+   расхождение со спекой и паспорт удалённой страницы ловят КТ3 и КТ5.
+   Адрес паспорта для карты — `pagePassport` (screen-map.mjs кладёт его в
+   `map-data.js`).
    Нераспознанная ссылка в паспорте — предупреждение, не дефект: паспорта
    приводятся к общему шаблону отдельно (задача 0003).
 
@@ -93,6 +110,7 @@ const oneCss = (name) => {
 // стили оболочки страницы витрины: сплиттер, переключатель, вкладки, docs-split
 const KIT_PAGE_CSS = [oneCss('Splitter'), oneCss('SegmentControl'), oneCss('Tab'), DS_HERE.at.docsSplitCss, DS_HERE.at.docsCss];
 import { assemble, includesOf } from './assemble.mjs';
+import { loadTerms, wikiLinks } from './glossary.mjs';
 import { loadModel, loadRecords, analyse, KIND_LABEL, TRIGGER_LABEL, VIA_LABEL, kindKey, triggerKey } from './status-model.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -219,14 +237,40 @@ const listOf = (v) => (Array.isArray(v) ? v : v ? [v] : []);
 
 /* ---------------- Markdown паспорта → HTML ---------------- */
 
-const emph = (s) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 
-/** Строка Markdown: код, ссылки, жирный; остальное экранируется. */
+/* Вики-ссылки `[[Термин]]` и `[[Термин|текст]]` (RE0038): термин — файл глоссария базы знаний.
+   Состояние сборки: WIKI — { find, hrefTo(term) }, WIKI_FROM — страница, на которую встаёт ссылка
+   (путь ссылки считается от неё), WIKI_MISS — имена без термина → КТ7. Вне сборки (WIKI = null)
+   ссылка остаётся простым текстом. */
+let WIKI = null, WIKI_FROM = null;
+const WIKI_MISS = new Map();
+const wikiHtml = (name, alias) => {
+  const shown = esc(alias || name);
+  if (!WIKI) return shown;
+  const term = WIKI.find(name);
+  if (!term) {
+    if (!WIKI_MISS.has(name)) WIKI_MISS.set(name, new Set());
+    WIKI_MISS.get(name).add(WIKI_FROM || '?');
+    return shown;
+  }
+  return '<a class="inl" href="' + esc(WIKI.hrefTo(WIKI_FROM, term)) + '">' + shown + '</a>';
+};
+
+/** Строка Markdown: код, ссылки, вики-ссылки на термины, жирный; остальное экранируется. */
 export function inline(raw, link) {
-  let out = '', buf = '';
-  const flush = () => { out += emph(esc(buf)); buf = ''; };
+  let out = '', buf = '', bold = false;
+  const flush = () => { out += esc(buf); buf = ''; };
   for (let i = 0; i < raw.length;) {
     const ch = raw[i];
+    /* жирный — состояние, а не пара внутри куска: «**текст `код` текст**» держит жирный через код.
+       Открывается только если дальше есть закрывающая пара, иначе «**» остаётся текстом. */
+    if (ch === '*' && raw[i + 1] === '*' && (bold || raw.indexOf('**', i + 3) > 0) && (bold || raw[i + 2] !== '*')) {
+      flush(); out += bold ? '</b>' : '<b>'; bold = !bold; i += 2; continue;
+    }
+    if (ch === '[' && raw[i + 1] === '[') {
+      const m = /^\[\[([^\[\]|#\n]+?)(?:#[^\[\]|\n]*)?(?:\|([^\[\]\n]*))?\]\]/.exec(raw.slice(i));
+      if (m) { flush(); out += wikiHtml(m[1].trim(), m[2] === undefined ? null : m[2].trim()); i += m[0].length; continue; }
+    }
     if (ch === '`') {
       const j = raw.indexOf('`', i + 1);
       if (j > i) { flush(); out += '<code class="tok">' + esc(raw.slice(i + 1, j)) + '</code>'; i = j + 1; continue; }
@@ -246,7 +290,7 @@ export function inline(raw, link) {
     i++;
   }
   flush();
-  return out;
+  return bold ? out + '</b>' : out;
 }
 
 /* Ячейки строки таблицы: `|` внутри кода ячейку не делит. */
@@ -1210,6 +1254,174 @@ function modelPage(P, cfg, m, ctx) {
   return source;
 }
 
+/* ---------------- паспорт страницы модуля (RE0039) ---------------- */
+
+/* Спеки страниц модулей разделов с картой экранов: по одной на `pages/<Имя>.screen.md`.
+   Концепты (`drafts/`) и разделы без карты не входят — паспорт открывается с плитки карты.
+   Страница спеки — по полю `file` шапки (спека `HomePage` описывает `index.html`), иначе
+   одноимённая. Запись: { id, section, module, specAbs, fm, body, pageAbs, pageKey }. */
+export function pageSpecs(P) {
+  const out = [];
+  const sm = P.screenMap;
+  if (!sm || !P.appsDir) return out;
+  const sections = new Set(sm.maps.map((m) => m && m.section).filter(Boolean));
+  for (const app of findApps(P.root, P.appsDir, P.appsManifest)) {
+    const section = app.dir.split('/')[0];
+    if (!sections.has(section) || isConcept(P, app)) continue;
+    const pages = path.join(app.abs, P.appShape.pages || 'pages');
+    for (const f of filesOf(pages).filter((n) => n.endsWith('.screen.md'))) {
+      const specAbs = path.join(pages, f);
+      const { fm, body } = frontMatter(read(specAbs));
+      const id = f.replace(/\.screen\.md$/, '');
+      const declared = typeof fm.file === 'string' && fm.file.trim() ? path.posix.basename(fm.file.trim().replace(/\\/g, '/')) : id + '.html';
+      const pageAbs = path.join(pages, declared);
+      out.push({ id, section, module: app.dir, specAbs, fm, body, pageAbs, pageKey: declared.replace(/\.preview\.html$/i, '.html') });
+    }
+  }
+  return out;
+}
+
+/** Паспорт страницы модуля `appDir` (`postrade/deals-app`), экран `pageFile` (источник и собранная — один экран):
+    путь страницы паспорта от корня или null — нет спеки, раздела без карты или витрины. */
+export function pagePassport(P, appDir, pageFile) {
+  const cfg = kitConfig(P);
+  if (!cfg) return null;
+  const key = String(pageFile).replace(/\.preview\.html$/i, '.html');
+  const s = pageSpecs(P).find((x) => x.module === appDir && x.pageKey === key);
+  return s ? cfg.dir + '/' + s.module + '/' + s.id + '.page.html' : null;
+}
+
+/* Ячейка «Зачем существует» таблицы «Бизнес-смысл» — подзаголовок страницы паспорта. */
+function whyCell(body) {
+  for (const l of stripComments(body).split('\n')) {
+    if (!l.trim().startsWith('|')) continue;
+    const c = rowCells(l);
+    if (c.length >= 2 && /^Зачем существует$/i.test(c[0].replace(/\*/g, '').trim())) return c[1];
+  }
+  return '';
+}
+
+function pagePassportPage(P, cfg, s, ctx) {
+  const kitAbs = path.join(P.root, cfg.dir);
+  const dir = path.join(kitAbs, s.module);
+  const R = (abs) => rel(dir, abs);
+  const H = (abs) => href(dir, abs);
+  const dsAbs = path.join(P.root, P.ds);
+  const docOf = (o) => path.join(kitAbs, o.module, o.id + '.doc.html');
+  const passOf = (o) => path.join(kitAbs, o.module, o.id + '.page.html');
+  const specDir = path.dirname(s.specAbs);
+  const mapEntry = P.screenMap.maps.find((m) => m && m.section === s.section) || {};
+  const mapTitle = mapEntry.title || 'Карта экранов';
+  const mapPage = path.join(P.screenMap.dirAbs, s.section, 'index.html');
+  const hub = R(path.join(P.root, P.hubPage || 'index.html'));
+  const title = s.fm.title || s.id;
+  const built = (abs) => { const prev = abs.replace(/\.html$/i, '.preview.html'); return /\.html$/i.test(abs) && !/\.preview\.html$/i.test(abs) && existsSync(prev) ? prev : abs; };
+  const pageTarget = existsSync(s.pageAbs) ? built(s.pageAbs) : null;
+  const a = (h, text) => (h ? '<a class="inl" href="' + esc(h) + '">' + text + '</a>' : text);
+
+  /* ссылки из текста спеки: паспорт виджета → его страница, спека другой страницы → её паспорт,
+     файл → файл (страница — собранная); ?параметры и #якорь отбрасываются */
+  const link = (target) => {
+    if (/^[a-z]+:/i.test(target)) return target;
+    if (target.startsWith('#')) return null;
+    let abs;
+    try { abs = path.resolve(specDir, decodeURIComponent(target.split('#')[0].split('?')[0])); } catch { return null; }
+    const comp = ctx.byMd.get(abs);
+    if (comp) return R(docOf(comp));
+    const sib = ctx.bySpec.get(abs);
+    if (sib) return R(passOf(sib));
+    if (!existsSync(abs) || !abs.startsWith(P.root)) return null;
+    return H(built(abs));
+  };
+
+  const widgets = listOf(s.fm.widgets).map((w) => {
+    const c = ctx.byId.get(String(w).split('/').pop());
+    return c ? a(R(docOf(c)), esc(w)) : esc(w);
+  });
+  const dsLinks = listOf(s.fm.components).map((n) => (ctx.dsPages.has(n) ? a(R(ctx.dsPages.get(n)), esc(n)) : esc(n)));
+  const card = kv([
+    ['Файл страницы', a(pageTarget && H(pageTarget), esc(P.rel(s.pageAbs)))],
+    ['Модуль', '<code class="tok">' + esc(P.appsDir + '/' + s.module) + '</code>'],
+    ['Адрес', s.fm.route ? esc(s.fm.route) : ''],
+    ['Пара во фронтенде', s.fm.frontend ? '<code class="tok">' + esc(s.fm.frontend) + '</code>' : 'в спеке не указана'],
+    ['Источник', esc(s.fm.source)],
+    ['Требования', listOf(s.fm.requirements).map(esc).join('<br>')],
+    ['Версия', esc([s.fm.version, s.fm.created && 'создано ' + s.fm.created, s.fm.updated && 'обновлено ' + s.fm.updated].filter(Boolean).join(' · '))],
+    ['Компоненты ДС', joinLinks(dsLinks)],
+    ['Виджеты страницы', widgets.join('<br>')],
+    ['Спека', a(H(s.specAbs), esc(P.rel(s.specAbs)))],
+  ]);
+
+  const { sections, head } = mdSections(s.body, link);
+  const section = (t, html) => '<section class="section kit-md" data-screen-label="' + esc(t) + '">\n<h2>' + esc(t) + '</h2>\n'
+    + html.replace(/(<h[34] class="kit-md__h[34]">[^<]*?)\s*\([A-Za-z][A-Za-z ,'-]*\)(<\/h[34]>)/g, '$1$2') + '\n</section>';
+  const why = whyCell(s.body);
+  const open = pageTarget ? '<a class="btn btn--accent btn--m" href="' + esc(H(pageTarget)) + '"><span class="btn__label">Открыть страницу</span></a>' : '';
+  const docs = [
+    '<header class="masthead">',
+    '  <div class="meta"><span>Тип: <b>страница модуля</b></span>'
+      + (s.fm.version ? '<span>Версия: <b>' + esc(s.fm.version) + '</b></span>' : '')
+      + (s.fm.updated ? '<span>Обновлено: <b>' + esc(s.fm.updated) + '</b></span>' : '') + '</div>',
+    '  <p class="eyebrow">Паспорт страницы · ' + esc(s.module) + '</p>',
+    '  <h1>' + esc(title) + '</h1>',
+    why ? '  <p class="lead">' + inline(why, link) + '</p>' : '',
+    '  <div class="kit-pass__actions">' + open
+      + '<a class="btn btn--outline btn--m" href="' + esc(R(mapPage)) + '"><span class="btn__label">На карте</span></a></div>',
+    '</header>',
+    section('Паспорт', card),
+    ...sections.map((x) => section(x.ru, x.html)),
+    head ? section('Коротко', head) : '',
+    '<footer class="page-foot"><p class="desc">Страница собрана из спеки <code class="tok">' + esc(P.rel(s.specAbs)) + '</code>. Правится спека, затем <code class="tok">node ' + esc(P.tools) + '/' + GEN + '</code>.</p></footer>',
+  ].filter(Boolean).join('\n');
+
+  const docsKit = path.posix.dirname(DS_HERE.at.docsCss);
+  return [
+    '<!DOCTYPE html>',
+    '<!-- СГЕНЕРИРОВАН ' + GEN + ' из ' + P.rel(s.specAbs) + ' — руками не править.',
+    '     Паспорт страницы (RE0039): правка — в спеке; пересобрать — node ' + P.tools + '/' + GEN + ' (гейт сверяет, шаг kit). -->',
+    '<html lang="ru">',
+    '<head>',
+    '<script src="' + esc(R(path.join(P.root, P.boot.head))) + '"></script>',
+    '<meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    '<title>' + esc(title) + ' — паспорт страницы — ' + esc(cfg.title) + '</title>',
+    '<link rel="stylesheet" href="' + esc(R(path.join(dsAbs, DS_HERE.at.docsCss))) + '">',
+    '<link rel="stylesheet" href="' + esc(R(path.join(dsAbs, docsKit, 'ds-toc.css'))) + '">',
+    '<link rel="stylesheet" href="' + esc(R(path.join(kitAbs, 'kit.css'))) + '">',
+    '</head>',
+    '<body>',
+    '<div class="nav-layout">',
+    '  <nav class="nav nav--fixed" id="nav" aria-label="Паспорт страницы">',
+    '    <div class="nav__top">',
+    '      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>',
+    '      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>',
+    '    </div>',
+    '    <div class="nav__list">',
+    '      <a class="nav__item" href="' + esc(hub) + '"><span class="nav__ico"><i data-icon="main-page"></i></span><span class="nav__label">Хаб проектов</span></a>',
+    '      <a class="nav__item" href="' + esc(R(mapPage)) + '"><span class="nav__ico"><i data-icon="tree-view"></i></span><span class="nav__label">' + esc(mapTitle) + '</span></a>',
+    '    </div>',
+    '    <div class="nav__footer">',
+    '      <a class="nav__user" href="' + esc(hub) + '" aria-label="Хаб проектов">',
+    '        <span class="av av--circular av--m"><span class="av__text">АП</span></span>',
+    '        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>',
+    '      </a>',
+    '      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>',
+    '    </div>',
+    '  </nav>',
+    '',
+    '  <main class="page" data-screen-label="' + esc(title) + '">',
+    docs,
+    '  </main>',
+    '</div>',
+    '',
+    '<script src="' + esc(R(path.join(P.root, P.boot.body))) + '" data-ds="' + esc(DS_HERE.at.homeCatalog) + '"></script>',
+    '<script src="' + esc(R(path.join(dsAbs, docsKit, 'ds-toc.js'))) + '"></script>',
+    '</body>',
+    '</html>',
+    '',
+  ].filter((l) => l !== '').join('\n');
+}
+
 /* ---------------- реестр ---------------- */
 
 function registryText(P, cfg, kit, comps) {
@@ -1328,6 +1540,91 @@ function indexText(P, cfg, kit) {
   ].join('\n');
 }
 
+/* Страница «Глоссарий и термины» базы знаний: плитка на термин, определение, источники.
+   Состав — файлы глоссария (glossary.mjs), руками не править. */
+function glossaryPage(P, cfg, gl, file) {
+  const dir = path.dirname(path.join(P.root, file));
+  const R = (abs) => rel(dir, abs);
+  const hub = R(path.join(P.root, P.hubPage || 'index.html'));
+  const page = (P.knowledgeBase.pages || []).find((p) => p.section === 'glossary') || {};
+  const title = esc(page.title || 'Глоссарий и термины');
+  const md = (s) => mdSections(s, () => null).head;
+  const tiles = gl.terms.map((t) => [
+    '<section class="tile col-12" id="' + esc(t.id) + '">',
+    '  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">' + esc(t.name) + '</h2></div>'
+      + (t.aliases.length ? '<p class="tile__subtitle">Также: ' + esc(t.aliases.join(', ')) + '</p>' : '') + '</div></header>',
+    '  <div class="tile__body"><div class="kit-md">' + md(t.def) + '<p class="desc">Источники: ' + inline(t.sources, () => null) + '</p></div></div>',
+    '</section>',
+  ].join('\n')).join('\n');
+  return [
+    '<!DOCTYPE html>',
+    '<!--',
+    '  Глоссарий и термины — страница базы знаний (RE0038). СГЕНЕРИРОВАНО ' + GEN + ' из файлов',
+    '  ' + P.knowledgeBase.dir + '/glossary/terms/<Термин>.md; руками не править — править файл термина.',
+    '  В паспортах и спеках на термин ссылаются вики-ссылкой [[Термин]] или [[Термин|текст]].',
+    '-->',
+    '<html lang="ru">',
+    '<head>',
+    '<script src="' + esc(R(path.join(P.root, P.boot.head))) + '"></script>',
+    '<meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    '<title>' + title + ' — IBP</title>',
+    '<link rel="stylesheet" href="' + esc(R(path.join(P.root, cfg.dir, 'kit.css'))) + '">',
+    '</head>',
+    '<body>',
+    '<div class="nav-layout">',
+    '  <nav class="nav nav--fixed" id="nav" aria-label="' + title + '">',
+    '    <div class="nav__top">',
+    '      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>',
+    '      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>',
+    '    </div>',
+    '    <div class="nav__list">',
+    '      <a class="nav__item" href="' + esc(hub) + '"><span class="nav__ico"><i data-icon="main-page"></i></span><span class="nav__label">Хаб проектов</span></a>',
+    '    </div>',
+    '    <div class="nav__footer">',
+    '      <a class="nav__user" href="' + esc(hub) + '" aria-label="Хаб проектов">',
+    '        <span class="av av--circular av--m"><span class="av__text">АП</span></span>',
+    '        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>',
+    '      </a>',
+    '      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>',
+    '    </div>',
+    '  </nav>',
+    '',
+    '  <div class="screen">',
+    '    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>',
+    '      <li class="crumbs__item"><a class="link link--muted" href="' + esc(hub) + '">Хаб проектов</a></li>',
+    '      <li class="crumbs__item crumbs__item--current">',
+    '        <span class="crumbs__current" aria-current="page">' + title + '</span>',
+    '      </li>',
+    '    </nav>',
+    '    <main class="screen__content">',
+    '',
+    '      <div class="phead">',
+    '        <div class="phead__main">',
+    '          <div class="phead__title-row">',
+    '            <div class="phead__title-group">',
+    '              <h1 class="phead__title">' + title + '</h1>',
+    '            </div>',
+    '          </div>',
+    '          <p class="phead__subtitle">' + esc(page.desc || '') + '</p>',
+    '        </div>',
+    '      </div>',
+    '',
+    '      <div class="grid12">',
+    tiles,
+    '      </div>',
+    '',
+    '    </main>',
+    '  </div>',
+    '</div>',
+    '',
+    '<script src="' + esc(R(path.join(P.root, P.boot.body))) + '" data-ds="' + esc(DS_HERE.at.homeCatalog) + '"></script>',
+    '</body>',
+    '</html>',
+    '',
+  ].join('\n');
+}
+
 /* ---------------- сборка и сверка ---------------- */
 
 /** Что должно лежать в витрине: Map(путь от корня → текст) и дефекты. */
@@ -1340,16 +1637,55 @@ export function plan(P) {
     byMd: new Map(res.comps.map((c) => [c.mdAbs, c])),
     canon: res.canon,
   };
+  const specs = pageSpecs(P);
+  ctx.bySpec = new Map(specs.map((x) => [x.specAbs, x]));
+  const gl = loadTerms(P);
+  res.defects.push(...gl.defects);
+  const glFile = P.knowledgeBase ? P.knowledgeBase.dir + '/glossary/index.html' : null;
+  WIKI_MISS.clear();
+  WIKI = glFile ? {
+    find: gl.find,
+    hrefTo: (from, term) => rel(path.dirname(path.join(P.root, from)), path.join(P.root, glFile)) + '#' + encodeURIComponent(term.id),
+  } : null;
   for (const c of res.comps) {
     if (!c.htmlAbs || res.byId.get(c.id) !== c) continue;
     const file = res.cfg.dir + '/' + c.module + '/' + c.id + '.doc.html';
+    WIKI_FROM = file;
     try { out.set(file, docPage(P, res.cfg, c, ctx)); } catch (e) { res.defects.push('КТ3 ' + file + ' — не собирается: ' + e.message); }
   }
   const models = (res.models || []).filter((m) => res.byId.get(m.id) === m && m.name && m.category && m.purpose);
   for (const m of models) {
     const file = res.cfg.dir + '/' + m.module + '/' + m.id + '.doc.html';
+    WIKI_FROM = file;
     try { out.set(file, modelPage(P, res.cfg, m, ctx)); } catch (e) { res.defects.push('КТ3 ' + file + ' — не собирается: ' + e.message); }
   }
+  /* Паспорта страниц модулей (RE0039): спека → <витрина>/<модуль>/<Имя>.page.html */
+  for (const sp of specs) {
+    const file = res.cfg.dir + '/' + sp.module + '/' + sp.id + '.page.html';
+    WIKI_FROM = file;
+    if (!existsSync(sp.pageAbs)) res.warnings.push(P.rel(sp.specAbs) + ' — страницы ' + P.rel(sp.pageAbs) + ' нет (поле file шапки), паспорт собран без ссылки «Открыть страницу»');
+    try { out.set(file, pagePassportPage(P, res.cfg, sp, ctx)); } catch (e) { res.defects.push('КТ3 ' + file + ' — не собирается: ' + e.message); }
+  }
+  if (glFile) {
+    WIKI_FROM = glFile;
+    try { out.set(glFile, glossaryPage(P, res.cfg, gl, glFile)); } catch (e) { res.defects.push('КТ3 ' + glFile + ' — не собирается: ' + e.message); }
+    /* Спеки страниц без паспорта (концепты, разделы без карты) не рендерятся — ссылки на термины в них только сверяются. */
+    for (const app of findApps(P.root, P.appsDir, P.appsManifest)) {
+      const pages = path.join(app.abs, P.appShape.pages || 'pages');
+      for (const f of filesOf(pages).filter((n) => n.endsWith('.screen.md'))) {
+        if (ctx.bySpec.has(path.join(pages, f))) continue;
+        for (const l of wikiLinks(read(path.join(pages, f)))) {
+          if (gl.find(l.name)) continue;
+          if (!WIKI_MISS.has(l.name)) WIKI_MISS.set(l.name, new Set());
+          WIKI_MISS.get(l.name).add(P.rel(path.join(pages, f)));
+        }
+      }
+    }
+  }
+  for (const [name, where] of WIKI_MISS) {
+    res.defects.push('КТ7 [[' + name + ']] — такого термина нет в глоссарии (' + (P.knowledgeBase ? P.knowledgeBase.dir + '/glossary/terms/' : 'база знаний не объявлена') + '); в ' + [...where].join(', '));
+  }
+  WIKI = null; WIKI_FROM = null;
   const live = [...res.comps.filter((c) => res.byId.get(c.id) === c), ...models];
   if (res.cfg.kits.length) {
     for (const kit of res.cfg.kits) {
@@ -1359,7 +1695,7 @@ export function plan(P) {
   } else {
     out.set(res.cfg.registry, registryText(P, res.cfg, null, live));
   }
-  return { ...res, out, docCount: [...out.keys()].filter((f) => /\.doc\.html$/i.test(f)).length };
+  return { ...res, out, docCount: [...out.keys()].filter((f) => /\.(doc|page)\.html$/i.test(f)).length };
 }
 
 /* Страницы компонентов, лежащие в витрине сейчас. */
@@ -1371,7 +1707,7 @@ function docsOnDisk(P, cfg) {
     for (const e of list) {
       const full = path.join(abs, e.name);
       if (e.isDirectory()) walk(full);
-      else if (/\.doc\.html$/i.test(e.name)) found.push(P.rel(full));
+      else if (/\.(doc|page)\.html$/i.test(e.name)) found.push(P.rel(full));
     }
   };
   walk(path.join(P.root, cfg.dir));
@@ -1395,7 +1731,7 @@ export function check(P, write = false) {
   for (const file of [...docsOnDisk(P, cfg), ...stale]) {
     if (out.has(file)) continue;
     if (write) { unlinkSync(path.join(P.root, file)); removed.push(file); }
-    else defects.push('КТ5 ' + file + ' — ' + (stale.includes(file) ? 'витрины по разделам заменили общую' : 'виджета больше нет') + ', страница лишняя — пересобрать: node ' + P.tools + '/' + GEN);
+    else defects.push('КТ5 ' + file + ' — ' + (stale.includes(file) ? 'витрины по разделам заменили общую' : /\.page\.html$/i.test(file) ? 'спеки страницы больше нет' : 'виджета больше нет') + ', страница лишняя — пересобрать: node ' + P.tools + '/' + GEN);
   }
   return { defects, warnings, written, removed, count: res.docCount };
 }
@@ -1425,6 +1761,7 @@ const MANIFEST = {
   appShape: { pages: 'pages', widgets: 'widgets', data: 'data', refs: 'refs', widgetGroups: ['tiles', 'modals'] },
   tracks: [{ id: 'product', title: 'Проекты', hubGroup: 'projects' }],
   localKit: { dir: 'apps/local-components', registry: 'apps/local-components/kit-data.js', id: 'kit', title: 'Кит', desc: 'тест', icon: 'layout-grid-01', categories: ['Общие', 'Сделка'] },
+  screenMap: { dir: 'apps/screen-map', maps: [{ id: 'map-post', section: 'postrade', title: 'Карта Post', desc: 'тест', icon: 'tree-view' }] },
 };
 const MOD = 'apps/postrade/deals-app';
 const TILE = MOD + '/widgets/tiles/KnrTile/KnrTile';
@@ -1432,9 +1769,10 @@ const MODAL = MOD + '/widgets/modals/KnrModal/KnrModal';
 /* Канон разделов стенда — тот же, что в шаблоне ДС. Стенд держит свой шаблон
    (нет шаблона — КТ1) и канонические паспорта: иначе КТ2 краснел бы на самой
    стендовой сборке. */
-const CANON = ['Описание (Purpose)', 'Раскладка (Layout)', 'Компоненты (Components)', 'Поля (Fields)', 'Права (Permissions)', 'Состояния (States)', 'Обязательность заполнения (Required)', 'Переполнение (Overflow)', 'Поведение (Behavior)', 'Данные (Data dependencies)', 'Для разработчиков (Implementation)', 'Осознанные отклонения (Deviations)', 'Открытые вопросы (Open questions)'];
+const CANON = ['Описание (Purpose)', 'Бизнес-смысл (Business context)', 'Раскладка (Layout)', 'Компоненты (Components)', 'Поля (Fields)', 'Права (Permissions)', 'Состояния (States)', 'Обязательность заполнения (Required)', 'Переполнение (Overflow)', 'Поведение (Behavior)', 'Данные (Data dependencies)', 'Для разработчиков (Implementation)', 'Осознанные отклонения (Deviations)', 'Открытые вопросы (Open questions)'];
 const TPL = '# <Имя>\n\n' + CANON.map((h) => '## ' + h + '\n\nраздел\n').join('\n');
 const BODY_TILE = '## Описание (Purpose)\n\nТайл **КНР**, окно — [KnrModal.md](../../modals/KnrModal/KnrModal.md).\n\n'
+  + '## Бизнес-смысл (Business context)\n\n—\n\n'
   + '## Раскладка (Layout)\n\nTile\n\n'
   + '## Компоненты (Components)\n\nTile\n\n'
   + '## Поля (Fields)\n\n—\n\n'
@@ -1456,6 +1794,12 @@ const DEAL = '<!DOCTYPE html>\n<html><head>\n<script src="../../../ds-config.js"
   + '<ds-include src="../widgets/modals/KnrModal/KnrModal.html"></ds-include>\n'
   + '<script src="../data/mock.js"></script>\n<script src="../../../ds-body.js"></script>\n'
   + '<script src="../widgets/modals/KnrModal/KnrModal.js"></script>\n<script src="../widgets/tiles/KnrTile/KnrTile.js"></script>\n</body></html>\n';
+
+/* Спека страницы стенда (RE0039): шапка по полю file, «Бизнес-смысл» первым блоком §1, ссылка на паспорт виджета. */
+const SPEC_FILE = MOD + '/pages/Deal.screen.md';
+const SPEC = (body = '**Жирный `код` текст.**') => '---\nscreen: Deal\ntitle: Страница сделки\nfile: ' + MOD + '/pages/Deal.html\nroute: Deal.html?id=<номер>\nfrontend: new\nversion: "1.000"\n'
+  + 'components: [Tile]\nwidgets: [tiles/KnrTile]\n---\n\n# Page: Deal\n\n## 1. Назначение (Purpose)\n\n### Бизнес-смысл (Business context)\n\n'
+  + '| Вопрос | Ответ |\n|---|---|\n| Зачем существует | Показать сделку и [КНР](../widgets/tiles/KnrTile/KnrTile.md) |\n\n' + body + '\n\n## 2. Адрес и навигация\n\nПусто.\n';
 
 /* Статусная модель стенда (RE0014): две дорожки, автопереход по after, окно КНР. */
 const MODEL_FILE = MOD + '/data/knr-status-model.js';
@@ -1488,9 +1832,12 @@ function tree(r) {
   put(r, MODAL + '.html', '<div class="modal-scrim" id="knr-scrim" hidden><div class="modal lc-knrm" data-mode="edit"></div></div>\n');
   put(r, MODAL + '.js', 'window.KnrModal = {};\n');
   put(r, MOD + '/pages/Deal.html', DEAL);
+  put(r, SPEC_FILE, SPEC());
   put(r, MODEL_FILE, MODEL());
 }
 
+const KB = { dir: 'apps/knowledge-base', pages: [{ id: 'kb-glossary', section: 'glossary', title: 'Глоссарий и термины', desc: 'тест', icon: 'file-search' }] };
+const TERM = '---' + '\n' + 'aliases: [деск]' + '\n' + '---' + '\n' + 'Подразделение.' + '\n\n' + 'Источники: тест' + '\n';
 const CASES = [
   { name: 'собрано — диффа нет', expect: null, build: true },
   { name: 'витрина не собрана', expect: 'КТ3 apps/local-components/postrade/deals-app/KnrTile.doc.html нет' },
@@ -1527,6 +1874,27 @@ const CASES = [
       check(project(r), true);
       if (!existsSync(path.join(r, 'apps/local-components/postrade/kit-data.js')) || !existsSync(path.join(r, 'apps/local-components/postrade/index.html'))) throw new Error('нет kit-data.js или index.html раздела');
     } },
+  { name: 'термин: вики-ссылка на существующий термин (по псевдониму) собирается ссылкой', expect: null,
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ ...MANIFEST, knowledgeBase: KB }));
+      put(r, KB.dir + '/glossary/terms/Деск.md', TERM);
+      put(r, TILE + '.md', MD_TILE().replace('Тайл **КНР**', 'Тайл [[деск]] и [[Деск|деске]] **КНР**'));
+      check(project(r), true);
+      const html = readFileSync(path.join(r, 'apps/local-components/postrade/deals-app/KnrTile.doc.html'), 'utf8');
+      if (!html.includes('knowledge-base/glossary/index.html#')) throw new Error('в паспорте нет ссылки на глоссарий');
+      if (!existsSync(path.join(r, KB.dir + '/glossary/index.html'))) throw new Error('нет страницы глоссария');
+    } },
+  { name: 'термин: ссылка на несуществующий термин', expect: 'КТ7 [[Нет такого]]',
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ ...MANIFEST, knowledgeBase: KB }));
+      put(r, KB.dir + '/glossary/terms/Деск.md', TERM);
+      put(r, TILE + '.md', MD_TILE().replace('Тайл **КНР**', 'Тайл [[Нет такого]] **КНР**'));
+    } },
+  { name: 'термин: файл без источников', expect: 'КТ7 ' + KB.dir + '/glossary/terms/Деск.md — нет строки «Источники:»',
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ ...MANIFEST, knowledgeBase: KB }));
+      put(r, KB.dir + '/glossary/terms/Деск.md', 'Подразделение.' + '\n');
+    } },
   { name: 'манифест без localKit', expect: 'КТ1',
     mutate: (r) => { const { localKit, ...rest } = MANIFEST; put(r, 'project.json', JSON.stringify(rest)); } },
   { name: 'нет шаблона канона в ДС', expect: 'шаблона локального компонента ДС нет',
@@ -1535,6 +1903,8 @@ const CASES = [
     mutate: (r) => put(r, TILE + '.md', MD_TILE().replace('## Открытые вопросы (Open questions)', '## Свой раздел\n\nсвоё\n\n## Открытые вопросы (Open questions)')) },
   { name: 'канонический раздел пропущен', expect: 'нет канонического раздела «Переполнение»',
     mutate: (r) => put(r, TILE + '.md', MD_TILE().replace('## Переполнение (Overflow)\n\n—\n\n', '')) },
+  { name: 'нет раздела «Бизнес-смысл»', expect: 'нет канонического раздела «Бизнес-смысл»',
+    mutate: (r) => put(r, TILE + '.md', MD_TILE().replace('## Бизнес-смысл (Business context)\n\n—\n\n', '')) },
   { name: 'канонический раздел повторён', expect: 'раздел «Описание» повторён',
     mutate: (r) => put(r, TILE + '.md', MD_TILE().replace('## Описание (Purpose)', '## Описание (Purpose)\n\nдубль\n\n## Описание (Purpose)')) },
   { name: 'текст до первого ##', expect: 'текст до первого «##»',
@@ -1543,6 +1913,15 @@ const CASES = [
     mutate: (r) => put(r, MODEL_FILE, MODEL("name: 'Модель КНР', purpose: 'Статусы КНР'")) },
   { name: 'статусная модель правлена без пересборки', expect: 'КТ3 apps/local-components/postrade/deals-app/knr-status-model.doc.html разошёлся', build: true,
     mutate: (r) => put(r, MODEL_FILE, MODEL().replace("label: 'Готово'", "label: 'Сделано'")) },
+  { name: 'паспорт страницы: спека правлена без пересборки', expect: 'КТ3 apps/local-components/postrade/deals-app/Deal.page.html разошёлся', build: true,
+    mutate: (r) => put(r, SPEC_FILE, SPEC('Другое.')) },
+  { name: 'паспорт страницы: спеки больше нет', expect: 'КТ5 apps/local-components/postrade/deals-app/Deal.page.html — спеки страницы больше нет', build: true,
+    mutate: (r) => rmSync(path.join(r, SPEC_FILE)) },
+  { name: 'паспорт страницы: заголовки без скобок и текст до первого ## — не падает', expect: null,
+    mutate: (r) => {
+      put(r, SPEC_FILE, '---\nscreen: Deal\ntitle: Сделка\nfile: ' + MOD + '/pages/Deal.html\n---\n\n# Deal\n\nТекст до раздела.\n\n## 1. Назначение\n\nтекст\n');
+      check(project(r), true);
+    } },
   { name: 'CRLF в собранной странице — не расхождение', expect: null, build: true,
     mutate: (r) => { const f = path.join(r, 'apps/local-components/postrade/deals-app/KnrTile.doc.html'); writeFileSync(f, readFileSync(f, 'utf8').replace(/\n/g, '\r\n')); } },
 ];
@@ -1649,7 +2028,44 @@ function selftest() {
     const bad = Object.keys(want).filter((k) => !want[k]);
     ok(!bad.length, 'статусная модель — запись и страница', bad.length ? 'нет: ' + bad.join(', ') : 'всё на месте');
   });
-  const total = CASES.length + 5;
+  /* Паспорт страницы: что на странице; концепта и раздела без карты в витрине нет. */
+  withTree((root) => {
+    put(root, 'apps/postrade/drafts/lab/app.json', '{}');
+    put(root, 'apps/postrade/drafts/lab/pages/Lab.screen.md', SPEC());
+    check(project(root), true);
+    const dirPage = 'apps/local-components/postrade/deals-app/';
+    const f = path.join(root, dirPage + 'Deal.page.html');
+    const html = existsSync(f) ? readFileSync(f, 'utf8') : '';
+    const want = {
+      'страница есть': !!html,
+      'заголовок — title спеки': html.includes('<h1>Страница сделки</h1>') && html.includes('Паспорт страницы · postrade/deals-app'),
+      'жирный через код — без сырых звёздочек': html.includes('<b>Жирный <code class="tok">код</code> текст.</b>') && !/\*\*/.test(html.replace(/<code[^>]*>[^<]*<\/code>/g, '')),
+      'подзаголовок без английской скобки': html.includes('<h3 class="kit-md__h3">Бизнес-смысл</h3>') && !html.includes('Business context'),
+      'открыть страницу — файл поля file': html.includes('<a class="btn btn--accent btn--m" href="../../../postrade/deals-app/pages/Deal.html">'),
+      'на карте и в навигации': html.includes('href="../../../screen-map/postrade/index.html"') && html.includes('Карта Post'),
+      'хаб в навигации': html.includes('<a class="nav__item" href="../../../../index.html">'),
+      'виджет — ссылкой на страницу витрины': html.includes('<a class="inl" href="KnrTile.doc.html">tiles/KnrTile</a>'),
+      'ссылка в тексте — на страницу виджета': html.includes('<a class="inl" href="KnrTile.doc.html">КНР</a>'),
+      'зачем существует — подзаголовок': html.includes('<p class="lead">Показать сделку'),
+      'бизнес-смысл первым в §1': html.indexOf('Бизнес-смысл') > html.indexOf('1. Назначение') && html.indexOf('1. Назначение') < html.indexOf('2. Адрес и навигация'),
+      'оглавление ДС': html.includes('docs-kit/ds-toc.js'),
+      'меток нет': !html.includes('<ds-include'),
+      'в реестре паспорта нет': !readFileSync(path.join(root, 'apps/local-components/kit-data.js'), 'utf8').includes('Deal.page.html'),
+      'концепт без паспорта': !existsSync(path.join(root, 'apps/local-components/postrade/drafts')),
+      'pagePassport — по источнику и по собранной': pagePassport(project(root), 'postrade/deals-app', 'Deal.html') === dirPage + 'Deal.page.html'
+        && pagePassport(project(root), 'postrade/deals-app', 'Deal.preview.html') === dirPage + 'Deal.page.html'
+        && pagePassport(project(root), 'postrade/deals-app', 'Other.html') === null && pagePassport(project(root), 'postrade/drafts/lab', 'Lab.html') === null,
+    };
+    const bad = Object.keys(want).filter((k) => !want[k]);
+    ok(!bad.length, 'паспорт страницы модуля — содержимое', bad.length ? 'нет: ' + bad.join(', ') : 'всё на месте');
+    /* раздела без карты нет — паспортов нет */
+    const { screenMap, ...rest } = MANIFEST;
+    put(root, 'project.json', JSON.stringify(rest));
+    rmSync(f);
+    check(project(root), true);
+    ok(!existsSync(f), 'без screenMap паспортов страниц нет', existsSync(f) ? 'страница собралась' : 'не собрана');
+  });
+  const total = CASES.length + 6;
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);

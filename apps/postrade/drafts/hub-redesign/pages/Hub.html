@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Хаб проектов, новый UI — IBP</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body {
+    margin: 0;
+    font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-page);
+  }
+
+  /* ── Раскладка этого экрана ──────────────────────────────────────────────
+     Здесь только grid / flex / gap и только на токенах. */
+
+  /* фоновая иллюстрация стартовой страницы (Layout: cover, opacity .6) */
+  .home-wrap { position: relative; min-height: calc(100vh - var(--layout-crumbs-h)); }
+  .home-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--boot-bg-illustration, none) center/cover no-repeat;
+    opacity: .6;
+    pointer-events: none;
+  }
+  /* содержимое — над абсолютной иллюстрацией */
+  .hub-body { position: relative; }
+
+  /* Выбор команды: сегмент-контрол занимает свою ширину, а не всю строку */
+  .hub-team { display: flex; }
+
+  /* Аккордеон версий раскрывается по всей шапке плитки, а не только по стрелке */
+  [data-acc-header] { cursor: pointer; }
+
+  /* Карточка концепта с одной версией — ссылка: сбрасываем подчёркивание и цвет ссылки */
+  .hub-card { text-decoration: none; color: inherit; }
+
+  /* Перестроение считается от ширины рабочей области, не окна:
+     закрепление бокового меню сужает контент на 216px, не трогая вьюпорт. */
+  @container screen (max-width: 1240px) {
+    .tile-row > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+
+  <!-- ── Боковое меню ────────────────────────────────────────────────────── -->
+  <nav class="nav nav--rail" aria-label="Главное меню">
+    <div class="nav__top">
+      <button class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list">
+      <a class="nav__item nav__item--selected" href="#" aria-current="page"><span class="nav__ico"><i data-icon="main-page"></i></span><span class="nav__label">Хаб проектов</span></a>
+    </div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span><span class="nav__user-role">Дизайнер</span></span>
+      </a>
+      <button class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <!-- ── Рабочая область ─────────────────────────────────────────────────── -->
+  <div class="screen">
+
+    <nav class="crumbs" aria-label="Хлебные крошки">
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Хаб проектов</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="Hub">
+
+      <!-- #sec:content ── Контент: шапки страницы нет (раскладка стартовой страницы) -->
+      <div class="home-wrap">
+        <div class="tile-group hub-body">
+
+          <!-- общий ряд: строится экранным скриптом из window.HUB_COMMON_LINKS -->
+          <div class="tile-row" id="hub-common"></div>
+
+          <!-- выбор команды: строится из window.HUB_TEAMS -->
+          <div class="hub-team" id="hub-team"></div>
+
+          <!-- три колонки выбранной команды -->
+          <div class="tile-row" id="hub-columns" role="status" aria-live="polite"></div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── модальных окон на странице нет -->
+
+<script src="../data/hub-data.js"></script>
+<script src="../../../../ds-body.js"></script>
+<script>
+/* Экранный скрипт: общий ряд, выбор команды и три колонки строятся из данных
+   hub-data.js (снимок реестра хаба). Ссылки в данных — от корня репозитория,
+   страница добавляет путь до него. */
+(function () {
+  'use strict';
+  var ROOT = '../../../../../';
+  var TEAMS = window.HUB_TEAMS || [];
+  var COMMON = window.HUB_COMMON_LINKS || [];
+  var PROJECTS = window.HUB_PROJECTS || [];
+  var GROUPS = window.HUB_GROUPS || [];
+  var SHELVES = [
+    { code: 'ACTUAL', open: true },
+    { code: 'ARCHIVE', open: false }
+  ];
+  var SHELF_LABELS = window.HUB_SHELF_LABELS || {};
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function ic(name) { return '<i data-icon="' + esc(name) + '"></i>'; }
+  function url(path) { return esc(ROOT + path); }
+  function chip(text) { return '<span class="chip chip--s chip--grey"><span class="chip__label">' + esc(text) + '</span></span>'; }
+  function plural(n, one, few, many) {
+    var m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return n + ' ' + one;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return n + ' ' + few;
+    return n + ' ' + many;
+  }
+
+  /* строка — Entity-ссылка; соседние строки только внутри .entity-list */
+  function rowHTML(link) {
+    return '<a class="entity entity--interactive" href="' + url(link.href) + '">'
+      + '<div class="entity__lead"><span class="entity__icon" aria-hidden="true">' + ic(link.iconName) + '</span></div>'
+      + '<div class="entity__main">'
+      + '<div class="entity__titles">'
+      + '<p class="entity__header">' + esc(link.folder) + '</p>'
+      + '<div class="entity__labelrow">'
+      + '<span class="entity__label entity__label--truncate" data-tooltip="' + esc(link.title) + '" data-tooltip-truncated="only">' + esc(link.title) + '</span>'
+      + '</div></div>'
+      + '<div class="entity__subs entity__subs--single"><span class="entity__subs-list">' + esc(link.descText) + '</span></div>'
+      + '</div></a>';
+  }
+  function listHTML(items) { return '<div class="entity-list">' + items.map(rowHTML).join('') + '</div>'; }
+
+  /* строка версии внутри аккордеона */
+  function versionRowHTML(v) {
+    return '<a class="entity entity--interactive" href="' + url(v.href) + '">'
+      + '<div class="entity__lead"><span class="entity__icon" aria-hidden="true">' + ic('folder') + '</span></div>'
+      + '<div class="entity__main">'
+      + '<div class="entity__titles"><div class="entity__labelrow">'
+      + '<span class="entity__label entity__label--truncate" data-tooltip="' + esc(v.versionLabel) + '" data-tooltip-truncated="only">' + esc(v.versionLabel) + '</span>'
+      + '</div></div>'
+      + '<div class="entity__subs entity__subs--single"><span class="entity__subs-list">' + esc(v.descText) + '</span></div>'
+      + '</div>'
+      + (v.shelfCode === 'ARCHIVE' ? '<div class="entity__actions">' + chip(SHELF_LABELS.ARCHIVE || 'Архив') + '</div>' : '')
+      + '</a>';
+  }
+
+  /* группа с одной версией — карточка-ссылка */
+  function cardHTML(g) {
+    var v = g.versions[0];
+    return '<div data-off-grid="Элемент стопки внутри колонки: ширина — тело тайла-колонки, а не сетка страницы">'
+      + '<a class="tile tile--card hub-card" href="' + url(v.href) + '">'
+      + '<header class="tile__header"><div class="tile__header-main">'
+      + '<div class="tile__title-row"><h3 class="tile__title">' + esc(g.title) + '</h3></div>'
+      + '<p class="tile__subtitle">' + esc(g.descText) + '</p>'
+      + '</div><div class="tile__actions">' + chip(v.versionLabel) + '</div></header></a></div>';
+  }
+  /* группа с несколькими версиями — аккордеон, версии внутри */
+  function accordionHTML(g) {
+    var id = 'hub-acc-' + g.groupId;
+    return '<div data-off-grid="Элемент стопки внутри колонки: ширина — тело тайла-колонки, а не сетка страницы">'
+      + '<section class="tile tile--accordion tile--collapsed">'
+      + '<header class="tile__header" data-acc-header><div class="tile__header-main">'
+      + '<div class="tile__title-row"><h3 class="tile__title">' + esc(g.title) + '</h3></div>'
+      + '<p class="tile__subtitle">' + esc(g.descText) + '</p>'
+      + '</div><div class="tile__actions">'
+      + chip(plural(g.versions.length, 'версия', 'версии', 'версий'))
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="' + id + '" aria-label="Развернуть"><span class="tile__chevron">' + ic('chevron-up') + '</span></button>'
+      + '</div></header>'
+      + '<div class="tile__collapsible" id="' + id + '"><div class="tile__body"><div class="entity-list">'
+      + g.versions.map(versionRowHTML).join('')
+      + '</div></div></div></section></div>';
+  }
+  function groupHTML(g) { return g.versions.length > 1 ? accordionHTML(g) : cardHTML(g); }
+  function stackHTML(groups) { return '<div class="tile-stack">' + groups.map(groupHTML).join('') + '</div>'; }
+
+  function emptyHTML(title, text) {
+    return '<div class="es es--m">'
+      + '<span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>'
+      + '<div class="es__body"><p class="es__title">' + esc(title) + '</p><p class="es__text">' + esc(text) + '</p></div>'
+      + '</div>';
+  }
+
+  function tileHTML(title, count, actions, body) {
+    return '<section class="tile col-4 colw-12">'
+      + '<header class="tile__header"><div class="tile__header-main"><div class="tile__title-row">'
+      + '<h2 class="tile__title">' + esc(title) + '</h2>'
+      + '<span class="tile__title-add">' + chip(count) + '</span>'
+      + '</div></div>' + (actions ? '<div class="tile__actions">' + actions + '</div>' : '') + '</header>'
+      + '<div class="tile__body">' + body + '</div></section>';
+  }
+
+  /* команда → записи колонок */
+  function projectsOf(team) { return PROJECTS.filter(function (p) { return p.teamCode === team; }); }
+  function groupsOf(team, kind) { return GROUPS.filter(function (g) { return g.teamCode === team && g.kindCode === kind; }); }
+  function shelfOf(g) { return g.versions[0].shelfCode || 'ACTUAL'; }
+
+  /* колонка «Концепты»: сегмент-контрол полок в шапке, под каждой полкой — своя стопка */
+  function conceptsHTML(team) {
+    var groups = groupsOf(team, 'CONCEPT');
+    var lists = SHELVES.map(function (sh) {
+      return { code: sh.code, list: groups.filter(function (g) { return shelfOf(g) === sh.code; }) };
+    });
+    var segments = lists.map(function (x, i) {
+      return '<button type="button" class="segctrl__item" role="radio" aria-checked="' + (i ? 'false' : 'true') + '" tabindex="' + (i ? '-1' : '0') + '" data-pane="' + x.code + '">'
+        + '<span class="segctrl__label">' + esc(SHELF_LABELS[x.code] || x.code) + '</span><span class="badge badge--text badge--xs">' + x.list.length + '</span></button>';
+    }).join('');
+    var control = '<div class="segctrl segctrl--xs" role="radiogroup" aria-label="Полка концептов" data-shelves><div class="segctrl__thumb"></div>' + segments + '</div>';
+    var panes = lists.map(function (x, i) {
+      var body = x.list.length
+        ? stackHTML(x.list)
+        : emptyHTML('Концептов нет', x.code === 'ARCHIVE' ? 'В архиве у этой команды ничего нет.' : 'Актуальных концептов у этой команды нет.');
+      return '<div data-pane-of="' + x.code + '"' + (i ? ' hidden' : '') + '>' + body + '</div>';
+    }).join('');
+    return tileHTML('Концепты', groups.length, control, panes);
+  }
+
+  function renderColumns(team) {
+    var projects = projectsOf(team);
+    var specs = groupsOf(team, 'SPEC');
+    var host = document.getElementById('hub-columns');
+    host.innerHTML = tileHTML('Проекты', projects.length, '', projects.length ? listHTML(projects) : emptyHTML('Проектов нет', 'У этой команды пока нет проектов.'))
+      + conceptsHTML(team)
+      + tileHTML('Спецификации на разработку', specs.length, '', specs.length ? stackHTML(specs) : emptyHTML('Спецификаций пока нет', 'Появятся, когда сценарий уйдёт в разработку.'));
+    bindShelves(host);
+    if (window.dsIcons) window.dsIcons.apply(host);
+  }
+
+  /* Выбор и клавиатуру ведёт рантайм ДС (DSTabs.segment), экран получает onChange. */
+  function bindShelves(host) {
+    host.querySelectorAll('[data-shelves]').forEach(function (control) {
+      window.DSTabs.segment(control, {
+        onChange: function (index, item) {
+          var key = item.getAttribute('data-pane');
+          control.closest('.tile').querySelectorAll('[data-pane-of]').forEach(function (p) {
+            p.hidden = p.getAttribute('data-pane-of') !== key;
+          });
+        }
+      });
+    });
+  }
+
+  function teamCount(team) {
+    return projectsOf(team).length + groupsOf(team, 'CONCEPT').length + groupsOf(team, 'SPEC').length;
+  }
+  function buildTeams() {
+    var host = document.getElementById('hub-team');
+    var items = TEAMS.map(function (t, i) {
+      return '<button type="button" class="segctrl__item" role="radio" aria-checked="' + (i ? 'false' : 'true') + '" tabindex="' + (i ? '-1' : '0') + '" data-pane="' + esc(t.teamCode) + '">'
+        + '<span class="segctrl__label">' + esc(t.teamName) + '</span><span class="badge badge--text badge--s">' + teamCount(t.teamCode) + '</span></button>';
+    }).join('');
+    host.innerHTML = '<div class="segctrl" role="radiogroup" aria-label="Команда"><div class="segctrl__thumb"></div>' + items + '</div>';
+    window.DSTabs.segment(host.firstChild, {
+      onChange: function (index, item) { renderColumns(item.getAttribute('data-pane')); }
+    });
+  }
+
+  function buildCommon() {
+    document.getElementById('hub-common').innerHTML = COMMON.map(function (link) {
+      return '<section class="tile tile--headless col-3 colw-12"><div class="tile__body">' + listHTML([link]) + '</div></section>';
+    }).join('');
+  }
+
+  /* Клик по шапке аккордеона = клик по его стрелке; сам переключатель, ссылки и кнопки — как есть */
+  document.getElementById('hub-columns').addEventListener('click', function (e) {
+    var header = e.target.closest('[data-acc-header]');
+    if (!header || e.target.closest('.tile__toggle, a, button')) return;
+    var toggle = header.querySelector('.tile__toggle');
+    if (toggle) toggle.click();
+  });
+
+  buildCommon();
+  buildTeams();
+  if (TEAMS.length) renderColumns(TEAMS[0].teamCode);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

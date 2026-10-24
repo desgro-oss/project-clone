@@ -62,18 +62,16 @@
  */
 
 /**
- * Виды задолженности — правка v3 (20.10.2026): три вида начисленных процентов и основной долг.
+ * Виды задолженности — правка v3 (20.10.2026, 23.10.2026): три вида начисленных процентов.
  *   CURRENT_INTEREST      = процентная задолженность + капитализированная процентная задолженность
  *   CAPITALIZED_INTEREST  = капитализированная задолженность + капитализированная капитализированная задолженность
  *   DEFERRED_INTEREST     = отложенная процентная задолженность + отложенная капитализированная задолженность
- *   PRINCIPAL             = сумма выдач денежных средств − сумма погашений основного долга
  * @type {Object<string, string>}
  */
 window.INTEREST_DEBT_TYPE_LABELS = {
   CURRENT_INTEREST: 'Текущие начисленные проценты',
   CAPITALIZED_INTEREST: 'Капитализированные начисленные проценты',
-  DEFERRED_INTEREST: 'Отложенные начисленные проценты',
-  PRINCIPAL: 'Основной долг'
+  DEFERRED_INTEREST: 'Отложенные начисленные проценты'
 };
 
 /** Подписи статусов обработки платежа. @type {Object<string, string>} */
@@ -90,12 +88,12 @@ window.EARLY_INTEREST_PAYMENT_TYPE_LABELS = {
 
 (function () {
   /* распределение по приоритету — как его считает окно платежа (демо-строки собраны тем же правилом) */
-  var ORDER = ['CURRENT_INTEREST', 'CAPITALIZED_INTEREST', 'DEFERRED_INTEREST', 'PRINCIPAL'];
+  var ORDER = ['CURRENT_INTEREST', 'CAPITALIZED_INTEREST', 'DEFERRED_INTEREST'];
   var PERIODS = [
-    { periodStartDate: '2025-01-01', periodEndDate: '2025-03-31', accrued: { CURRENT_INTEREST: 100000, CAPITALIZED_INTEREST: 55000, DEFERRED_INTEREST: 35000, PRINCIPAL: 400000 } },
-    { periodStartDate: '2025-03-31', periodEndDate: '2025-06-30', accrued: { CURRENT_INTEREST: 103700, CAPITALIZED_INTEREST: 56100, DEFERRED_INTEREST: 36650, PRINCIPAL: 400000 } },
-    { periodStartDate: '2025-06-30', periodEndDate: '2025-09-30', accrued: { CURRENT_INTEREST: 108000, CAPITALIZED_INTEREST: 58500, DEFERRED_INTEREST: 38500, PRINCIPAL: 350000 } },
-    { periodStartDate: '2025-09-30', periodEndDate: '2025-12-31', accrued: { CURRENT_INTEREST: 111600, CAPITALIZED_INTEREST: 59900, DEFERRED_INTEREST: 39500, PRINCIPAL: 350000 } }
+    { periodStartDate: '2025-01-01', periodEndDate: '2025-03-31', accrued: { CURRENT_INTEREST: 100000, CAPITALIZED_INTEREST: 55000, DEFERRED_INTEREST: 35000 } },
+    { periodStartDate: '2025-03-31', periodEndDate: '2025-06-30', accrued: { CURRENT_INTEREST: 103700, CAPITALIZED_INTEREST: 56100, DEFERRED_INTEREST: 36650 } },
+    { periodStartDate: '2025-06-30', periodEndDate: '2025-09-30', accrued: { CURRENT_INTEREST: 108000, CAPITALIZED_INTEREST: 58500, DEFERRED_INTEREST: 38500 } },
+    { periodStartDate: '2025-09-30', periodEndDate: '2025-12-31', accrued: { CURRENT_INTEREST: 111600, CAPITALIZED_INTEREST: 59900, DEFERRED_INTEREST: 39500 } }
   ];
 
   function allocate(date, amount) {
@@ -124,7 +122,7 @@ window.EARLY_INTEREST_PAYMENT_TYPE_LABELS = {
       pay('eip-3', 'FAILED', '2025-05-20', 120000.00, 'Частичное погашение капитализированных процентов', 'Сервис обработки платежей не ответил. Сохраните платёж повторно.'),
       pay('eip-4', 'PROCESSED', '2025-06-30', 180500.50, ''),
       pay('eip-5', 'PROCESSED', '2025-08-15', 75000.00, 'Погашение отложенных процентов по графику реструктуризации'),
-      pay('eip-6', 'PROCESSING', '2025-09-30', 210000.00, 'Досрочное погашение по письму контрагента от 26.09.2025')
+      pay('eip-6', 'PROCESSING', '2025-09-30', 200000.00, 'Досрочное погашение по письму контрагента от 26.09.2025')
     ],
     repaymentOrder: { debtTypeCodes: ORDER.slice() }
   };

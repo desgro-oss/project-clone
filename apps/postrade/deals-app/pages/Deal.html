@@ -914,7 +914,7 @@
      правами в каталоге пока нет, поэтому роль без права на расчёт показывает
      сценарий панели: ?fmMode=view. Ставится до applyMode — тот запомнит его
      исходным режимом тайла (data-mode-own), и смена статуса его не вернёт
-     в правку. Так же устроен ?hardsMode=view у Tranche.html. */
+     в правку. */
   function applyRoleMode() {
     if (!/[?&]fmMode=view/.test(window.location.search)) return;
     var tile = document.getElementById('tile-fm-calc');
@@ -937,22 +937,37 @@
     window.location.href = page + '?id=' + encodeURIComponent(openedId);
   });
 
-  /* «→» в шапке карточки ФИ — переход на страницу финансового инструмента:
-     тайл только шлёт 'fiaction' OPEN, куда идти, знает страница. */
+  /* Куда ведёт узел дерева или карточки ФИ — одно место на странице. Правило
+     «есть страница» — флаг hasPage каталога типов; сейчас собрана только
+     страница транша, остальные типы получат адрес вместе со своей страницей. */
+  function nodePage(node) {
+    if (!node || node.hasPage !== true || node.kind !== 'TRANCHE') return null;
+    return 'Tranche.html?id=' + encodeURIComponent(openedId) + '&tr=' + encodeURIComponent(node.id);
+  }
+
+  /* «→» в шапке карточки ФИ — переход на страницу финансового инструмента,
+     заголовок связанного инструмента (OPEN_NODE) — на страницу узла: тайл
+     только шлёт 'fiaction', куда идти, знает страница. */
   document.addEventListener('fiaction', function (e) {
     var d = e.detail || {};
+    if (d.action === 'OPEN_NODE') {
+      var node = d.id && window.ProductTreeStore ? window.ProductTreeStore.node(d.id) : null;
+      var href = nodePage(node);
+      if (href) window.location.href = href;
+      return;
+    }
     if (d.action !== 'OPEN' || !d.id) return;
     var page = /\.preview\.html$/.test(window.location.pathname) ? 'FinInstrument.preview.html' : 'FinInstrument.html';
     window.location.href = page + '?id=' + encodeURIComponent(openedId) + '&fi=' + encodeURIComponent(d.id);
   });
 
   /* Название транша в дереве продуктов — переход на страницу транша: тайл шлёт
-     'ptreeaction' OPEN, куда идти, знает страница. */
+     'ptreeaction' OPEN, куда идти, знает та же функция адреса узла. */
   document.addEventListener('ptreeaction', function (e) {
     var d = e.detail || {};
-    if (d.action !== 'OPEN' || !d.node || d.node.kind !== 'TRANCHE') return;
-    var page = /\.preview\.html$/.test(window.location.pathname) ? 'Tranche.preview.html' : 'Tranche.html';
-    window.location.href = page + '?id=' + encodeURIComponent(openedId) + '&tr=' + encodeURIComponent(d.id);
+    if (d.action !== 'OPEN') return;
+    var href = nodePage(d.node);
+    if (href) window.location.href = href;
   });
 
   /* Ряд «Сведения о проекте» — только у деска «Недвижимость»: это проекты

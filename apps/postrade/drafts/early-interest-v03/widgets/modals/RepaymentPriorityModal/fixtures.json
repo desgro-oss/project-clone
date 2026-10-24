@@ -3,14 +3,12 @@
   "order": [
     "CURRENT_INTEREST",
     "CAPITALIZED_INTEREST",
-    "DEFERRED_INTEREST",
-    "PRINCIPAL"
+    "DEFERRED_INTEREST"
   ],
   "labels": {
     "CURRENT_INTEREST": "Текущие начисленные проценты",
     "CAPITALIZED_INTEREST": "Капитализированные начисленные проценты",
-    "DEFERRED_INTEREST": "Отложенные начисленные проценты",
-    "PRINCIPAL": "Основной долг"
+    "DEFERRED_INTEREST": "Отложенные начисленные проценты"
   },
   "long": {
     "order": [

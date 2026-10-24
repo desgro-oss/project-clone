@@ -22,8 +22,9 @@
    Ошибки у карточки нет: состояние «Ошибка» макета снято — в системе его
    не бывает (решение человека 17.10.2026, задача RE0028).
 
-   Кнопки с data-fi-act (OPEN — «→», EDIT — пункт «Изменить» меню) карточка
-   не обрабатывает: их отдаёт событием fiaction тайл, в котором она стоит.
+   Кнопки с data-fi-act (OPEN — «→», OPEN_NODE — заголовок связанного
+   инструмента, EDIT — пункт «Изменить» меню) карточка не обрабатывает: их
+   отдаёт событием fiaction тайл, в котором она стоит.
    «+ Добавить», ⇄ у инструмента и ссылка у кодов RWA нарисованы по
    макету и пока ничего не делают (паспорт, «Открытые вопросы»).
    ============================================================ */
@@ -136,6 +137,20 @@
       + '<span class="prow__meta-text">' + text + '</span></span>';
   }
 
+  /* Заголовок связанного инструмента — как в дереве продуктов: у узла со
+     страницей это ссылка. Транш ведёт на свою страницу (действие OPEN_NODE,
+     адрес строит страница); у остальных типов страница ещё не собрана, поэтому
+     ссылка без действия. Без страницы — обычный текст. */
+  function titleHTML(n) {
+    var text = esc(n.number + ' ' + n.name);
+    if (n.hasPage === true && n.kind === 'TRANCHE') {
+      return '<a class="prow__title prow__title--link" href="#" data-fi-act="OPEN_NODE" data-fi-id="' + esc(n.id) + '">' + text + '</a>';
+    }
+    return n.hasPage === true
+      ? '<a class="prow__title prow__title--link" href="#">' + text + '</a>'
+      : '<span class="prow__title">' + text + '</span>';
+  }
+
   function nodeHTML(n, edit) {
     var status = n.repaidAt
       ? '<div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i>'
@@ -151,7 +166,7 @@
     /* ⇄ у инструмента в карточке — что делает, не решено (02.10.2026) */
     if (edit) acts += '<button type="button" class="ibtn ibtn--neutral ibtn--l lc-fin-card__move" aria-label="Перенести"><i data-icon="arrow-left-right"></i></button>';
     return '<div class="prow" data-fi-node="' + esc(n.id) + '"><div class="prow__main">'
-      + '<div class="prow__head"><span class="prow__title">' + esc(n.number + ' ' + n.name) + '</span></div>'
+      + '<div class="prow__head">' + titleHTML(n) + '</div>'
       + status + meta + '</div>'
       + (acts ? '<div class="prow__actions">' + acts + '</div>' : '') + '</div>';
   }
@@ -238,7 +253,7 @@
     opts = opts || {};
     var edit = opts.mode !== 'view';
     var open = opts.open === true;
-    return '<article class="tile tile--card tile--accordion lc-fin-card' + (open ? '' : ' tile--collapsed') + '" data-fi-id="' + esc(c.id) + '"'
+    return '<article class="tile tile--accordion lc-fin-card' + (open ? '' : ' tile--collapsed') + '" data-fi-id="' + esc(c.id) + '"'
       + ' data-state="' + stateOf(c) + '" data-mode="' + (edit ? 'edit' : 'view') + '">'
       + headHTML(c, edit, open)
       + '<div class="tile__body"><div class="tile__grid lc-fin-card__grid' + (c.typeCode === 'SHARES' ? ' lc-fin-card__grid--irr' : '') + '">'

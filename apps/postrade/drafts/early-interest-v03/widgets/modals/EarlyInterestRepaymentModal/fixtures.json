@@ -9,22 +9,19 @@
         "accrued": {
           "CURRENT_INTEREST": 100000,
           "CAPITALIZED_INTEREST": 55000,
-          "DEFERRED_INTEREST": 35000,
-          "PRINCIPAL": 400000
+          "DEFERRED_INTEREST": 35000
         }
       }
     ],
     "order": [
       "CURRENT_INTEREST",
       "CAPITALIZED_INTEREST",
-      "DEFERRED_INTEREST",
-      "PRINCIPAL"
+      "DEFERRED_INTEREST"
     ],
     "debtLabels": {
       "CURRENT_INTEREST": "Текущие начисленные проценты",
       "CAPITALIZED_INTEREST": "Капитализированные начисленные проценты",
-      "DEFERRED_INTEREST": "Отложенные начисленные проценты",
-      "PRINCIPAL": "Основной долг"
+      "DEFERRED_INTEREST": "Отложенные начисленные проценты"
     }
   },
   "edit": {
@@ -51,13 +48,6 @@
         "periodEndDate": "2025-03-31",
         "debtTypeCode": "DEFERRED_INTEREST",
         "accruedAmount": 35000,
-        "earlyAmount": 0
-      },
-      {
-        "periodStartDate": "2025-01-01",
-        "periodEndDate": "2025-03-31",
-        "debtTypeCode": "PRINCIPAL",
-        "accruedAmount": 400000,
         "earlyAmount": 0
       }
     ]

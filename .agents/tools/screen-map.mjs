@@ -4,7 +4,7 @@
 
    Зачем (задача RE0015, решения человека 11.10.2026): открыть любую
    страницу проекта быстрее, чем через весь пользовательский сценарий.
-   Глубокие экраны зависят от адреса (`Tranche.preview.html?id=&tr=`): без
+   Глубокие экраны зависят от адреса (`Tranche.html?id=&tr=`): без
    цепочки «хаб → Главная → … → Транш» до них не дойти. Карта — майндмап
    страниц модулей проекта от его главной (одна точка входа), связи «откуда
    куда»; страница открывается в состоянии по умолчанию, с демо-данными.
@@ -60,6 +60,12 @@
      `…#ppmap=<узел>/<состояние>` (действия проигрывает панель прототипа),
      только с параметрами — адрес страницы, шаг сценария — `…#pp=NN`, как
      адрес состояния в панели;
+   - кладёт у узла адрес паспорта страницы `passport` (RE0039): страница
+     `<localKit.dir>/<модуль>/<Имя>.page.html`, которую kit-build собирает из
+     спеки страницы; адрес считается от спеки, а не от собранного файла.
+     Нет спеки или паспорт ещё не собран — `passport: null`/заметка, не дефект
+     (собранность паспорта сверяет шаг `kit` гейта). Без `localKit` в
+     манифесте поля нет (null) и заметок нет;
    - проверяет карту и её покрытие: каждый экран модулей раздела
      (`pages/*.html`; собранная `.preview.html` — тот же экран) стоит на
      карте — новый экран без узла называется по имени. Шага в гейте нет
@@ -104,6 +110,7 @@ import os from 'node:os';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { project, need } from './project.mjs';
+import { pagePassport } from './kit-build.mjs';
 import { loadCore, pageFile, pageProblem, pageCorpus, classText, hasToken, dsCorpus, selectorMisses, selectorDefects, ISSUE_NOTE } from './proto-panel.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -522,8 +529,17 @@ function analyse(P, core, mp, map, apps, lazyDs) {
         stateCount++;
       }
     }
+    let passport = null;
+    if (a && P.manifest && P.manifest.localKit) {
+      const root = pagePassport(P, a.dir, pageFile(n.page));
+      if (!root) notes.push('заметка: ' + at(n.line) + ' — ' + where + ' — паспорта страницы нет: у ' + pageFile(n.page) + ' нет спеки ' + P.appShape.pages + '/<Имя>.screen.md, кебаб «Паспорт страницы» на плитке не рисуется');
+      else {
+        passport = root.slice((P.appsDir + '/').length);
+        if (!isFile(path.join(P.root, root))) notes.push('заметка: ' + at(n.line) + ' — ' + where + ' — паспорт страницы ещё не собран (' + root + '): node ' + P.tools + '/kit-build.mjs');
+      }
+    }
     nodes.push({ id: n.id, app: a ? a.dir : null, title: n.title, page: n.page, href: a ? pagesHref(a) + '/' + encPage(n.page) : null,
-      parent: n.parent, note: n.note, states });
+      parent: n.parent, note: n.note, passport, states });
   }
 
   /* Круг по parent: у схемы нет входа, отрисовщик его не разложит. */
@@ -656,6 +672,7 @@ const MANIFEST = {
   appPlaces: { moduleSuffix: '-app', drafts: 'drafts' }, tracks: [],
   protoPanel: { runtime: '.kit/proto-panel', boot: 'apps/proto-panel.js', dir: 'proto-panel' },
   screenMap: { dir: 'apps/screen-map', maps: [{ id: 'map-post', section: 'postrade', title: 'Карта экранов Post', desc: 'тест', icon: 'flow' }] },
+  localKit: { dir: 'apps/local-components', categories: ['Общие'] },
 };
 const MAP_REL = 'apps/screen-map/postrade/' + SRC;
 const OUT_REL = 'apps/screen-map/postrade/' + OUT;
@@ -771,6 +788,7 @@ function stand(root, runtime) {
   put(root, D + 'pages/Deal.html', '<!DOCTYPE html>\n<ds-include src="../widgets/tiles/Tree/Tree.html"></ds-include>\n<script src="../data/deals.js"></script>\n');
   put(root, D + 'pages/Deal.preview.html', '<!DOCTYPE html>\n<section data-tile="tree"><button data-tree-act="tranche-new">Новый транш</button></section>\n'
     + '<div id="trancheModal" class="modal"></div>\n<script src="../data/deals.js"></script>\n<script>var VIEW = /[?&]view=(full|short)/.exec(location.search);</script>\n');
+  put(root, D + 'pages/Deal.screen.md', '---\nscreen: Deal\ntitle: Сделка\nfile: apps/postrade/deals-app/pages/Deal.preview.html\n---\n\n# Deal\n\n## 1. Назначение\n\nтекст\n');
   put(root, D + 'data/deals.js', "window.DEALS = [{ id: 1024, name: 'Сделка' }];\n");
   /* транш: демо-данные целиком, ?id=&tr= — только в крошки; дерево сделки страница не подключает */
   put(root, D + 'pages/Tranche.html', "<!DOCTYPE html>\n<main id=\"tranche\"></main>\n<script>var KEYS = ['id', 'tr'];</script>\n");
@@ -806,6 +824,8 @@ const CASES = [
       if (run(P_(r), true).written.length) out.push('повторная сборка что-то записала — не идемпотентна');
       const notes = run(P_(r)).notes;
       if (!notes.some((n) => n.includes(MAP_REL + ':' + lineOf(MAP, '      - id: tranche-new') + ' — узел deal, состояние tranche-new — хрупкий селектор'))) out.push('нет заметки о пометке fragile: ' + (notes.join(' | ') || 'заметок нет'));
+      if (!notes.some((n) => n.includes('узел main — паспорта страницы нет: у Main.html нет спеки'))) out.push('нет заметки о странице без спеки: ' + (notes.join(' | ') || 'заметок нет'));
+      if (!notes.some((n) => n.includes('узел deal — паспорт страницы ещё не собран (apps/local-components/postrade/deals-app/Deal.page.html)'))) out.push('нет заметки о несобранном паспорте: ' + (notes.join(' | ') || 'заметок нет'));
       return out;
     } },
   { name: 'генерата нет', expect: 'КЭ7 ' + OUT_REL + ' — генерата нет' },
@@ -906,6 +926,8 @@ function dataCase(runtime) {
       ['адрес узла deal', node('deal').href, 'postrade/deals-app/pages/Deal.preview.html?id=1024'],
       ['родитель deal', node('deal').parent, 'portfolio'],
       ['вход main', node('main').parent, null],
+      ['паспорт: по спеке (поле file — собранная страница), от каталога apps/', node('deal').passport, 'local-components/postrade/deals-app/Deal.page.html'],
+      ['паспорт: нет спеки — null', node('main').passport, null],
       ['своё состояние', state('deal', 'tranche-new').href, 'postrade/deals-app/pages/Deal.preview.html?id=1024#ppmap=deal/tranche-new'],
       ['состояние по параметру', state('deal', 'short').href, 'postrade/deals-app/pages/Deal.preview.html?id=1024&view=short'],
       ['шаг сценария', state('fv-calc', 'statuses/st-formed').href, 'postrade/reports-app/pages/Calc.html?id=16&role=FINANCIER#pp=02'],

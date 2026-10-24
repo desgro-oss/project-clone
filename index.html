@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<!-- Хаб проектов: одна точка входа в дизайн-систему IBP и приложения (apps/):
-     проекты и концепты. Каркас стартовой страницы (Layout): шапки страницы
-     нет, крошка одна, фон — background-illustration. Вместо NavTile — три
-     колонки Tile со списком Entity (.entity-list). Состав меню и колонок — из
-     реестра hub.js; новая запись добавляется в реестр, эта страница не
-     правится. Спека — index.screen.md. -->
+<!-- Хаб проектов: одна точка входа в дизайн-систему IBP, базу знаний и приложения (apps/).
+     Каркас стартовой страницы (Layout): шапки страницы нет, крошка одна, фон —
+     background-illustration. Сверху общий ряд (дизайн-система, глоссарий, общая
+     витрина локальных компонентов), ниже выбор команды (SegmentControl) и три
+     колонки Tile выбранной команды: проекты, концепты, спецификации на разработку.
+     Концепт или спека — одна плитка: версия одна — карточка, версий несколько —
+     аккордеон. Состав — из реестра hub.js (window.IBPHub, window.IBPHubSpecs); новая
+     запись добавляется в реестр, эта страница не правится. Спека — index.screen.md. -->
 <html lang="ru">
 <head>
 <script src="apps/ds-config.js"></script>
@@ -25,25 +27,28 @@
     opacity: .6;
     pointer-events: none;
   }
+  /* содержимое — над абсолютной иллюстрацией */
+  .hub-body { position: relative; }
 
-  /* Сетка колонок — штатная .grid12 стартовой страницы (Layout), ширина колонки —
-     пара .col-3 / .colw-6 (Spacing; Tile, «Ширина тайла задаётся только
-     средствами ДС»). Здесь только подъём над абсолютной иллюстрацией. */
-  .hub-groups { position: relative; }
+  /* Выбор команды: сегмент-контрол занимает свою ширину, а не всю строку */
+  .hub-team { display: flex; }
 
-  /* Отступ между сегмент-контролом фильтра разделов и списком. */
-  .hub-segments { margin-bottom: var(--space-8); }
+  /* Карточка концепта с одной версией — ссылка: сбрасываем подчёркивание и цвет ссылки */
+  .hub-card { text-decoration: none; color: inherit; }
 
-  /* Полки раздела концептов («Актуальное», «Архив») — вложенные плашки-аккордеоны
-     друг под другом. */
-  .hub-shelves { display: flex; flex-direction: column; gap: var(--space-12); }
-  .hub-shelf { min-width: 0; }
+  /* Чип карточки стоит там же, где чип аккордеона: справа резервируется место под стрелку
+     (невидимый IconButton M), а поля карточки (16) добираются до полей аккордеона (20) */
+  .hub-card .tile__actions { margin-right: var(--space-4); }
+  .hub-ph { visibility: hidden; }
 
-  /* Перестроение по рецепту стартовой страницы (Layout): первый шаг — штатная
-     пара .col-N / .colw-N, второй парой не выражается и обязан иметь ту же
-     специфичность (0,2,0) и стоять ниже правила пары. */
-  @container screen (max-width: 1700px) { .grid12 > [class*="colw-"] { grid-column: span var(--colw); } }
-  @container screen (max-width: 900px)  { .grid12 > .tile { grid-column: span 12; } }
+  /* Аккордеон версий раскрывается по всей шапке плитки, а не только по стрелке */
+  [data-acc-header] { cursor: pointer; }
+
+  /* Перестроение считается от ширины рабочей области, не окна:
+     закрепление бокового меню сужает контент на 216px, не трогая вьюпорт. */
+  @container screen (max-width: 1240px) {
+    .tile-row > [class*="colw-"] { grid-column: span var(--colw); }
+  }
 </style>
 </head>
 <body>
@@ -59,8 +64,12 @@
     </nav>
     <main class="screen__content">
       <div class="home-wrap">
-        <!-- колонки строятся экранным скриптом из реестра hub.js -->
-        <div class="grid12 hub-groups" id="hub-groups"></div>
+        <div class="tile-group hub-body">
+          <!-- общий ряд, выбор команды и колонки строятся экранным скриптом из реестра hub.js -->
+          <div class="tile-row" id="hub-common"></div>
+          <div class="hub-team" id="hub-team"></div>
+          <div class="tile-row" id="hub-columns" role="status" aria-live="polite"></div>
+        </div>
       </div>
     </main>
   </div>
@@ -69,27 +78,36 @@
 <script src="apps/ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
 <script src="hub.js"></script>
 <script>
-/* экранный скрипт: меню панели и колонки строятся из реестра window.IBPHub
-   (hub.js); ссылки в реестре — от корня, то есть от папки этой страницы */
+/* экранный скрипт: меню панели, общий ряд, выбор команды и колонки строятся из реестра
+   window.IBPHub и window.IBPHubSpecs (hub.js); ссылки в реестре — от корня, то есть от
+   папки этой страницы */
 (function () {
   'use strict';
   var ENTRIES = window.IBPHub || [];
+  var SPECS = window.IBPHubSpecs || [];
   var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
   var USER_LINK_TO = ' href="index.html" aria-current="page" aria-label="Хаб проектов"';
-  /* порядок колонок и блоков меню */
+  /* порядок и блоки меню */
   var GROUPS = [
     { key: 'ds', label: 'Дизайн-система' },
     { key: 'projects', label: 'Проекты' },
-    { key: 'concepts', label: 'Концепты', bySection: true }
+    { key: 'concepts', label: 'Концепты' },
+    { key: 'kb', label: 'База знаний' }
   ];
-  /* Разделы фильтра концептов: PreTrade первым, Core последним. */
-  var SECTIONS = [
-    { key: 'pretrade', label: 'PreTrade' },
-    { key: 'postrade', label: 'PostTrade' },
+  /* Команды — сегменты выбора; раздел вне списка, где есть записи, — отдельным сегментом в конце. */
+  var TEAMS = [
+    { key: 'postrade', label: 'Post' },
+    { key: 'pretrade', label: 'Pre' },
     { key: 'ib', label: 'IB' },
-    { key: 'common', label: 'Common' },
     { key: 'core', label: 'Core' }
   ];
+  /* Полки концептов: сегменты в шапке колонки; полка группы — полка её последней версии. */
+  var SHELVES = [
+    { key: 'actual', label: 'Актуальное' },
+    { key: 'archive', label: 'Архив' }
+  ];
+  var KIT_DIR = 'apps/local-components/';
+  var accSeq = 0;
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -99,8 +117,24 @@
   function itemsOf(key) { return ENTRIES.filter(function (p) { return p.group === key; }); }
   /* подпись папки: root записи, у ДС — папка стартовой страницы */
   function folderOf(p) { return p.root || p.href.replace(/\/[^/]*$/, ''); }
-  /* раздел записи — второй сегмент пути apps/<раздел>/… */
-  function sectionOf(p) { return folderOf(p).split('/')[1] || ''; }
+  /* раздел записи — второй сегмент пути apps/<раздел>/…; у карты экранов и витрины
+     локальных компонентов — третий (apps/screen-map/<раздел>, apps/local-components/<раздел>) */
+  function sectionOf(p) {
+    var seg = folderOf(p).split('/');
+    return (seg[1] === 'screen-map' || seg[1] === 'local-components') ? (seg[2] || '') : (seg[1] || '');
+  }
+  function isKit(p) { return p.href.indexOf(KIT_DIR) === 0; }
+  /* раздел спеки — первый сегмент её module (postrade/drafts/…) */
+  function specSection(s) { return String(s.module).split('/')[0]; }
+  /* версии — от новой к старой, числа в подписях сравниваются как числа */
+  function byVersionDesc(a, b) { return String(b.label).localeCompare(String(a.label), 'ru', { numeric: true }); }
+  function chip(text) { return '<span class="chip chip--s chip--grey"><span class="chip__label">' + esc(text) + '</span></span>'; }
+  function plural(n, one, few, many) {
+    var m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return n + ' ' + one;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return n + ' ' + few;
+    return n + ' ' + many;
+  }
 
   function buildNav() {
     var nav = document.getElementById('nav');
@@ -155,85 +189,199 @@
       + '</div>'
       + '</a>';
   }
-
   function listHTML(items) { return '<div class="entity-list">' + items.map(rowHTML).join('') + '</div>'; }
-  /* Полки приложений (поле shelf записи, app.json): «Актуальное» — раскрыто, «Архив» — свёрнут.
-     Раздел, где ни у одного приложения нет полки, остаётся плоским списком; приложение без
-     полки в таком разделе — в «Актуальном». */
-  var SHELVES = [
-    { key: 'actual', label: 'Актуальное', open: true },
-    { key: 'archive', label: 'Архив', open: false }
-  ];
-  function shelvesHTML(items, sectionKey) {
-    if (!items.some(function (p) { return p.shelf; })) return listHTML(items);
-    var html = SHELVES.map(function (sh) {
-      var list = items.filter(function (p) { return (p.shelf || 'actual') === sh.key; });
-      if (!list.length) return '';
-      var id = 'hub-shelf-' + sectionKey + '-' + sh.key;
-      return '<div class="hub-shelf" data-off-grid="Полка внутри колонки хаба: ширина — тело плашки-колонки, а не сетка страницы"><section class="tile tile--accordion' + (sh.open ? '' : ' tile--collapsed') + '">'
-        + '<header class="tile__header"><div class="tile__header-main"><div class="tile__title-row">'
-        + '<h3 class="tile__title">' + esc(sh.label) + '</h3>'
-        + '<span class="tile__title-add"><span class="chip chip--s chip--grey"><span class="chip__label">' + list.length + '</span></span></span>'
-        + '</div></div><div class="tile__actions">'
-        + '<button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="' + (sh.open ? 'true' : 'false') + '" aria-controls="' + id + '" aria-label="' + (sh.open ? 'Свернуть' : 'Развернуть') + '"><span class="tile__chevron">' + ic('chevron-up') + '</span></button>'
-        + '</div></header>'
-        + '<div class="tile__collapsible" id="' + id + '"><div class="tile__body">' + listHTML(list) + '</div></div>'
-        + '</section></div>';
-    }).join('');
-    return '<div class="hub-shelves">' + html + '</div>';
-  }
-  /* Фильтр концептов по разделу — сегменты со счётчиками;
-     раздел вне SECTIONS — отдельным сегментом в конце, подписью папки. */
-  function sectionsHTML(items) {
-    var keys = SECTIONS.map(function (x) { return x.key; });
-    items.forEach(function (p) { if (keys.indexOf(sectionOf(p)) < 0) keys.push(sectionOf(p)); });
-    var secs = keys.map(function (k) {
-      var sec = SECTIONS.filter(function (x) { return x.key === k; })[0];
-      return { key: k, label: sec ? sec.label : k, list: items.filter(function (p) { return sectionOf(p) === k; }) };
-    }).filter(function (x) { return x.list.length; });
-    var segments = secs.map(function (x, i) {
-      return '<button type="button" class="segctrl__item" role="radio" aria-checked="' + (i ? 'false' : 'true') + '" tabindex="' + (i ? '-1' : '0') + '" data-pane="' + esc(x.key) + '">'
-        + '<span class="segctrl__label">' + esc(x.label) + '</span><span class="badge badge--text badge--s">' + x.list.length + '</span></button>';
-    }).join('');
-    var panes = secs.map(function (x, i) {
-      return '<div data-pane-of="' + esc(x.key) + '"' + (i ? ' hidden' : '') + '>' + shelvesHTML(x.list, x.key) + '</div>';
-    }).join('');
-    return '<div class="segctrl segctrl--fullwidth hub-segments" role="radiogroup" aria-label="Раздел концептов" data-segctrl><div class="segctrl__thumb"></div>' + segments + '</div>' + panes;
+
+  /* строка версии внутри аккордеона: подпись и описание */
+  function versionRowHTML(v) {
+    return '<a class="entity entity--interactive" href="' + esc(v.href) + '">'
+      + '<div class="entity__lead"><span class="entity__icon" aria-hidden="true">' + ic('folder') + '</span></div>'
+      + '<div class="entity__main">'
+      + '<div class="entity__titles"><div class="entity__labelrow">'
+      + '<span class="entity__label entity__label--truncate" data-tooltip="' + esc(v.label) + '" data-tooltip-truncated="only">' + esc(v.label) + '</span>'
+      + '</div></div>'
+      + '<div class="entity__subs entity__subs--single"><span class="entity__subs-list">' + esc(v.desc) + '</span></div>'
+      + '</div>'
+      + '</a>';
   }
 
-  /* Выбор и клавиатуру ведёт рантайм ДС; список следует за aria-checked. */
-  function bindSegments(host) {
-    host.querySelectorAll('.hub-segments').forEach(function (control) {
-      new MutationObserver(function () {
-        var selected = control.querySelector('[aria-checked="true"]');
-        if (!selected) return;
-        var key = selected.getAttribute('data-pane');
-        control.parentNode.querySelectorAll('[data-pane-of]').forEach(function (p) {
-          p.hidden = p.getAttribute('data-pane-of') !== key;
-        });
-      }).observe(control, { subtree: true, attributes: true, attributeFilter: ['aria-checked'] });
+  /* группа с одной версией — карточка-ссылка */
+  function cardHTML(g) {
+    var v = g.versions[0];
+    return '<div data-off-grid="Элемент стопки внутри колонки: ширина — тело тайла-колонки, а не сетка страницы">'
+      + '<a class="tile tile--card hub-card" href="' + esc(v.href) + '">'
+      + '<header class="tile__header"><div class="tile__header-main">'
+      + '<div class="tile__title-row"><h3 class="tile__title">' + esc(g.title) + '</h3></div>'
+      + '<p class="tile__subtitle">' + esc(g.desc) + '</p>'
+      + '</div>' + (v.label ? '<div class="tile__actions">' + chip(v.label) + '<span class="ibtn ibtn--m hub-ph" aria-hidden="true"></span></div>' : '') + '</header></a></div>';
+  }
+  /* группа с несколькими версиями — аккордеон, версии внутри */
+  function accordionHTML(g) {
+    var id = 'hub-acc-' + (++accSeq);
+    return '<div data-off-grid="Элемент стопки внутри колонки: ширина — тело тайла-колонки, а не сетка страницы">'
+      + '<section class="tile tile--accordion tile--collapsed">'
+      + '<header class="tile__header" data-acc-header><div class="tile__header-main">'
+      + '<div class="tile__title-row"><h3 class="tile__title">' + esc(g.title) + '</h3></div>'
+      + '<p class="tile__subtitle">' + esc(g.desc) + '</p>'
+      + '</div><div class="tile__actions">'
+      + chip(plural(g.versions.length, 'версия', 'версии', 'версий'))
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="' + id + '" aria-label="Развернуть"><span class="tile__chevron">' + ic('chevron-up') + '</span></button>'
+      + '</div></header>'
+      + '<div class="tile__collapsible" id="' + id + '"><div class="tile__body"><div class="entity-list">'
+      + g.versions.map(versionRowHTML).join('')
+      + '</div></div></div></section></div>';
+  }
+  function groupHTML(g) { return g.versions.length > 1 ? accordionHTML(g) : cardHTML(g); }
+  function stackHTML(groups) { return '<div class="tile-stack">' + groups.map(groupHTML).join('') + '</div>'; }
+
+  function emptyHTML(title, text) {
+    return '<div class="es es--m">'
+      + '<span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>'
+      + '<div class="es__body"><p class="es__title">' + esc(title) + '</p><p class="es__text">' + esc(text) + '</p></div>'
+      + '</div>';
+  }
+
+  function tileHTML(title, count, actions, body) {
+    return '<section class="tile col-4 colw-12">'
+      + '<header class="tile__header"><div class="tile__header-main"><div class="tile__title-row">'
+      + '<h2 class="tile__title">' + esc(title) + '</h2>'
+      + '<span class="tile__title-add">' + chip(count) + '</span>'
+      + '</div></div>' + (actions ? '<div class="tile__actions">' + actions + '</div>' : '') + '</header>'
+      + '<div class="tile__body">' + body + '</div></section>';
+  }
+
+  /* ---- данные: реестр → записи команды ---- */
+  var SPEC_ROOTS = SPECS.map(function (s) { return s.root; });
+  function isSpecCatalog(p) { return SPEC_ROOTS.indexOf(p.root) >= 0; }
+  /* запись общего ряда: ДС, база знаний и витрина раздела вне команд (Общие) */
+  function teamKeys() { return TEAMS.map(function (t) { return t.key; }); }
+  function commonList() {
+    var team = teamKeys();
+    var ds = itemsOf('ds');
+    return ds.filter(function (p) { return !isKit(p); })
+      .concat(itemsOf('kb'))
+      .concat(ds.filter(function (p) { return isKit(p) && team.indexOf(sectionOf(p)) < 0; }));
+  }
+  function projectsOf(team) {
+    var kits = itemsOf('ds').filter(function (p) { return isKit(p) && sectionOf(p) === team; });
+    return kits.concat(itemsOf('projects').filter(function (p) { return sectionOf(p) === team; }));
+  }
+  /* концепты команды: записи с одним concept — одна группа; запись без concept — своя группа */
+  function conceptGroupsOf(team) {
+    var groups = [], byKey = {};
+    itemsOf('concepts').filter(function (p) { return sectionOf(p) === team && !isSpecCatalog(p); }).forEach(function (p) {
+      var key = p.concept ? 'c:' + p.concept : 'a:' + p.id;
+      var g = byKey[key];
+      if (!g) { g = byKey[key] = { title: p.concept || p.title, versions: [] }; groups.push(g); }
+      g.versions.push({ label: p.version || '', desc: p.desc, href: p.href, shelf: p.shelf || 'actual' });
+    });
+    return groups.map(finishGroup);
+  }
+  function specGroupsOf(team) {
+    var groups = [], byKey = {};
+    SPECS.filter(function (s) { return specSection(s) === team; }).forEach(function (s) {
+      var g = byKey[s.title];
+      if (!g) { g = byKey[s.title] = { title: s.title, module: s.module, versions: [] }; groups.push(g); }
+      g.versions.push({ label: s.stage || ('Версия ' + s.version), desc: 'версия ' + s.version + (s.date ? ' · ' + s.date : ''), href: s.href, shelf: '' });
+    });
+    return groups.map(function (g) { g.desc = 'Модуль ' + g.module; return finishGroup(g); });
+  }
+  /* версии — от новой к старой; описание и полка группы — по последней версии */
+  function finishGroup(g) {
+    g.versions.sort(byVersionDesc);
+    g.desc = g.desc || g.versions[0].desc;
+    g.shelf = g.versions[0].shelf || 'actual';
+    return g;
+  }
+
+  /* колонка «Концепты»: сегмент-контрол полок в шапке, под каждой полкой — своя стопка */
+  function conceptsHTML(team) {
+    var groups = conceptGroupsOf(team);
+    var lists = SHELVES.map(function (sh) {
+      return { key: sh.key, label: sh.label, list: groups.filter(function (g) { return g.shelf === sh.key; }) };
+    });
+    var segments = lists.map(function (x, i) {
+      return '<button type="button" class="segctrl__item" role="radio" aria-checked="' + (i ? 'false' : 'true') + '" tabindex="' + (i ? '-1' : '0') + '" data-pane="' + x.key + '">'
+        + '<span class="segctrl__label">' + esc(x.label) + '</span><span class="badge badge--text badge--xs">' + x.list.length + '</span></button>';
+    }).join('');
+    var control = '<div class="segctrl segctrl--xs" role="radiogroup" aria-label="Полка концептов" data-shelves><div class="segctrl__thumb"></div>' + segments + '</div>';
+    var panes = lists.map(function (x, i) {
+      var body = x.list.length
+        ? stackHTML(x.list)
+        : emptyHTML('Концептов нет', x.key === 'archive' ? 'В архиве у этой команды ничего нет.' : 'Актуальных концептов у этой команды нет.');
+      return '<div data-pane-of="' + x.key + '"' + (i ? ' hidden' : '') + '>' + body + '</div>';
+    }).join('');
+    return tileHTML('Концепты', groups.length, control, panes);
+  }
+
+  function renderColumns(team) {
+    var projects = projectsOf(team);
+    var specs = specGroupsOf(team);
+    var host = document.getElementById('hub-columns');
+    host.innerHTML = tileHTML('Проекты', projects.length, '', projects.length ? listHTML(projects) : emptyHTML('Проектов нет', 'У этой команды пока нет проектов.'))
+      + conceptsHTML(team)
+      + tileHTML('Спецификации на разработку', specs.length, '', specs.length ? stackHTML(specs) : emptyHTML('Спецификаций пока нет', 'Появятся, когда сценарий уйдёт в разработку.'));
+    bindShelves(host);
+    if (window.dsIcons) window.dsIcons.apply(host);
+  }
+
+  /* Выбор и клавиатуру ведёт рантайм ДС (DSTabs.segment), экран получает onChange. */
+  function bindShelves(host) {
+    host.querySelectorAll('[data-shelves]').forEach(function (control) {
+      window.DSTabs.segment(control, {
+        onChange: function (index, item) {
+          var key = item.getAttribute('data-pane');
+          control.closest('.tile').querySelectorAll('[data-pane-of]').forEach(function (p) {
+            p.hidden = p.getAttribute('data-pane-of') !== key;
+          });
+        }
+      });
     });
   }
 
-  function buildGroups() {
-    var host = document.getElementById('hub-groups');
-    var html = '';
-    GROUPS.forEach(function (g) {
-      var items = itemsOf(g.key);
-      if (!items.length) return;
-      html += '<section class="tile col-3 colw-6">';
-      html += '<header class="tile__header"><div class="tile__header-main"><div class="tile__title-row">'
-        + '<h2 class="tile__title">' + esc(g.label) + '</h2>'
-        + '</div></div></header>';
-      html += '<div class="tile__body">' + (g.bySection ? sectionsHTML(items) : listHTML(items)) + '</div>';
-      html += '</section>';
-    });
-    host.innerHTML = html;
-    bindSegments(host);
+  function teamCount(team) {
+    return projectsOf(team).length + conceptGroupsOf(team).length + specGroupsOf(team).length;
   }
+  /* команды из списка — всегда; раздел вне списка — только если в нём что-то есть */
+  function teamList() {
+    var list = TEAMS.slice();
+    var known = teamKeys();
+    ENTRIES.forEach(function (p) {
+      var k = sectionOf(p);
+      if (k && p.group !== 'ds' && p.group !== 'kb' && known.indexOf(k) < 0) { known.push(k); list.push({ key: k, label: k }); }
+    });
+    return list;
+  }
+  function buildTeams(list) {
+    var host = document.getElementById('hub-team');
+    var items = list.map(function (t, i) {
+      return '<button type="button" class="segctrl__item" role="radio" aria-checked="' + (i ? 'false' : 'true') + '" tabindex="' + (i ? '-1' : '0') + '" data-pane="' + esc(t.key) + '">'
+        + '<span class="segctrl__label">' + esc(t.label) + '</span><span class="badge badge--text badge--s">' + teamCount(t.key) + '</span></button>';
+    }).join('');
+    host.innerHTML = '<div class="segctrl" role="radiogroup" aria-label="Команда" data-team><div class="segctrl__thumb"></div>' + items + '</div>';
+    window.DSTabs.segment(host.firstChild, {
+      onChange: function (index, item) { renderColumns(item.getAttribute('data-pane')); }
+    });
+  }
+
+  function buildCommon() {
+    document.getElementById('hub-common').innerHTML = commonList().map(function (p) {
+      return '<section class="tile tile--headless col-3 colw-12"><div class="tile__body">' + listHTML([p]) + '</div></section>';
+    }).join('');
+  }
+
+  /* Клик по шапке аккордеона = клик по его стрелке; сам переключатель, ссылки и кнопки — как есть */
+  document.getElementById('hub-columns').addEventListener('click', function (e) {
+    var header = e.target.closest('[data-acc-header]');
+    if (!header || e.target.closest('.tile__toggle, a, button')) return;
+    var toggle = header.querySelector('.tile__toggle');
+    if (toggle) toggle.click();
+  });
 
   buildNav();
-  buildGroups();
+  buildCommon();
+  var teams = teamList();
+  buildTeams(teams);
+  renderColumns(teams[0].key);
   if (window.dsIcons) window.dsIcons.apply(document);
 })();
 </script>

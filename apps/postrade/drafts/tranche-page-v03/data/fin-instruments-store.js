@@ -225,7 +225,8 @@
    * @property {boolean} isDkkk · isTypeC · hasLinkedUnconditionalOption
    * @property {string|null} linkedContractNumber · ifrsOptionNodeId
    * @property {string[]} rwaCodes
-   * @property {{id, number, name, details, repaidAt, isIfrsOption}[]} nodes прикреплённые узлы
+   * @property {{id, number, name, details, repaidAt, isIfrsOption, kind, hasPage}[]} nodes прикреплённые узлы;
+   *           kind — 'INSTRUMENT' | 'TRANCHE', hasPage — у узла есть своя страница
    * @property {string|null} repaidAt       самая поздняя дата погашения прикреплённых
    *           узлов; у погашенной карточки — сабхедер шапки, у непогашенной null
    * @property {boolean} isRepaid           узлы есть и все погашены
@@ -256,6 +257,7 @@
       return {
         id: n.raw.id, number: n.view.number, name: n.view.name,
         details: clone(n.view.details || []), repaidAt: n.view.repaidAt || null,
+        kind: n.kind, hasPage: n.view.hasPage === true,
         isIfrsOption: has(card.ifrsOptionNodeId) && card.ifrsOptionNodeId === n.raw.id
       };
     });

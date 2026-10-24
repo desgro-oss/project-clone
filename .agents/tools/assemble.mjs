@@ -42,6 +42,11 @@
          пределах раздела (`postrade/…` ↔ `postrade/…`);
      СБ6 страница модуля берёт виджет из `drafts/`: согласованный модуль не
          зависит от черновика, который могут переписать или удалить.
+     СБ7 собранная копия осиротела: источника `<имя>.html` нет или в нём не
+         осталось меток `<ds-include>` — такую копию никто не пересоберёт и не
+         проверит (СБ1–СБ3 смотрят только от источника к копии). Копию
+         удаляют; сборщик сам ничего не удаляет. Проверяется при полном
+         прогоне (без имён источников).
    Правила СБ4–СБ6 действуют для источников внутри `apps/`.
 
    Использование:
@@ -311,6 +316,33 @@ export function sourcesUnder(dir, out = [], skip = null) {
   return out.sort();
 }
 
+/* СБ7: собранные *.preview.html, у которых нет источника с метками вне
+   комментариев. Обход — как у sourcesUnder (скрытые каталоги, fixtures,
+   витрина пропускаются). */
+export function orphansUnder(dir, out = [], skip = null) {
+  let list;
+  try { list = readdirSync(dir, { withFileTypes: true }); } catch { return out; }
+  for (const e of list) {
+    if (e.name.startsWith('.') || e.name === 'node_modules' || e.name === 'fixtures') continue;
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) { if (full !== skip) orphansUnder(full, out, skip); continue; }
+    if (!/\.preview\.html$/i.test(e.name)) continue;
+    const source = full.replace(/\.preview\.html$/i, '.html');
+    if (!existsSync(source) || !includesOf(readFileSync(source, 'utf8')).length) out.push(full);
+  }
+  return out.sort();
+}
+
+function orphanDefects(P, files) {
+  return files.map((f) => {
+    const rel = slash(path.relative(P.root, f));
+    const source = rel.replace(/\.preview\.html$/i, '.html');
+    return 'СБ7 ' + rel + ' — собранная копия без источника с метками <ds-include> ('
+      + (existsSync(f.replace(/\.preview\.html$/i, '.html')) ? 'в ' + path.basename(source) + ' меток не осталось' : 'нет ' + path.basename(source))
+      + '): удалите копию';
+  });
+}
+
 /* Ближайший вверх каталог приложения (с app.json) внутри apps/, или null. */
 function appRootOf(file, APPS, manifest) {
   for (let d = path.dirname(file); d.startsWith(APPS + path.sep); d = path.dirname(d)) {
@@ -548,7 +580,26 @@ function selftest() {
   } finally {
     rmSync(wroot, { recursive: true, force: true });
   }
-  const total = CASES.length + 3;
+  /* СБ7 (RE0035): осиротевшая копия — меток в источнике не осталось или источник удалён;
+     пара «источник с метками + копия» и метка в комментарии — не сироты. */
+  const oroot = mkdtempSync(path.join(os.tmpdir(), 'assemble-'));
+  try {
+    tree(oroot);
+    const appsDir = path.join(oroot, 'apps');
+    run(project(oroot), sourcesUnder(appsDir), true);
+    const clean = orphansUnder(appsDir).length === 0;
+    put(oroot, 'apps/postrade/deals-app/pages/Deal.html', PAGE('<p>тайлов больше нет</p>'));
+    const noTags = orphanDefects(project(oroot), orphansUnder(appsDir));
+    rmSync(path.join(oroot, 'apps/postrade/deals-app/pages/Deal.html'));
+    const noSource = orphanDefects(project(oroot), orphansUnder(appsDir));
+    const pass = clean && noTags.length === 1 && /СБ7 apps\/postrade\/deals-app\/pages\/Deal\.preview\.html/.test(noTags[0]) && /меток не осталось/.test(noTags[0])
+      && noSource.length === 1 && /нет Deal\.html/.test(noSource[0]);
+    if (!pass) failed++;
+    out.push((pass ? 'ok    ' : 'FAIL  ') + 'СБ7: копия осиротела — без меток в источнике и без источника; пара с метками — нет' + (pass ? '' : ' — ' + JSON.stringify({ clean, noTags, noSource })));
+  } finally {
+    rmSync(oroot, { recursive: true, force: true });
+  }
+  const total = CASES.length + 4;
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);
@@ -587,8 +638,10 @@ function main() {
   const P = need('assemble', HERE);
   const check = a.check;
   const named = a.named;
-  const files = named.length ? named : sourcesUnder(path.join(P.root, P.appsDir || 'apps'), [], P.showcaseAbs);
+  const appsAbs = path.join(P.root, P.appsDir || 'apps');
+  const files = named.length ? named : sourcesUnder(appsAbs, [], P.showcaseAbs);
   const res = run(P, files, !check);
+  if (!named.length) res.defects.push(...orphanDefects(P, orphansUnder(appsAbs, [], P.showcaseAbs)));
   console.log(report(check ? 'assemble --check' : 'assemble', res));
   process.exit(res.defects.length ? 1 : 0);
 }

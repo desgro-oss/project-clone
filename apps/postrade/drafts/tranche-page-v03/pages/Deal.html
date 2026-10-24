@@ -791,13 +791,33 @@
     window.location.href = page + '?id=' + encodeURIComponent(openedId);
   });
 
+  /* Куда ведёт узел дерева или карточки ФИ — одно место на странице. Правило
+     «есть страница» — флаг hasPage каталога типов; в концепте собрана только
+     страница транша. */
+  function nodePage(node) {
+    if (!node || node.hasPage !== true || node.kind !== 'TRANCHE') return null;
+    var page = /\.preview\.html$/.test(window.location.pathname) ? 'Tranche.preview.html' : 'Tranche.html';
+    return page + '?id=' + encodeURIComponent(openedId) + '&tr=' + encodeURIComponent(node.id);
+  }
+
   /* Название транша в дереве продуктов — переход на страницу транша: тайл шлёт
-     'ptreeaction' OPEN, куда идти, знает страница. */
+     'ptreeaction' OPEN, куда идти, знает та же функция адреса узла. */
   document.addEventListener('ptreeaction', function (e) {
     var d = e.detail || {};
-    if (d.action !== 'OPEN' || !d.node || d.node.kind !== 'TRANCHE') return;
-    var page = /\.preview\.html$/.test(window.location.pathname) ? 'Tranche.preview.html' : 'Tranche.html';
-    window.location.href = page + '?id=' + encodeURIComponent(openedId) + '&tr=' + encodeURIComponent(d.id);
+    if (d.action !== 'OPEN') return;
+    var href = nodePage(d.node);
+    if (href) window.location.href = href;
+  });
+
+  /* Заголовок связанного транша в карточке ФИ — тот же переход: тайл шлёт
+     'fiaction' OPEN_NODE. Стрелка «→» карточки в концепте скрыта
+     (hideDeadActions): страницы ФИ здесь нет. */
+  document.addEventListener('fiaction', function (e) {
+    var d = e.detail || {};
+    if (d.action !== 'OPEN_NODE') return;
+    var node = d.id && window.ProductTreeStore ? window.ProductTreeStore.node(d.id) : null;
+    var href = nodePage(node);
+    if (href) window.location.href = href;
   });
 
   /* Ряд «Сведения о проекте» — только у деска «Недвижимость»: это проекты

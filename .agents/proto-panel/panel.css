@@ -387,6 +387,11 @@
 .pp-map__edge { fill: none; stroke: var(--text-secondary); stroke-width: 1.5; }
 .pp-map__node { position: absolute; left: 0; top: 0; z-index: 1; box-sizing: border-box; width: var(--pp-map-card); }
 .pp-map__link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: var(--radius-s); }
+.pp-map__row { display: flex; align-items: flex-start; gap: var(--space-8); }
+.pp-map__row > .pp-map__link { flex: 1 1 auto; min-width: 0; }
+.pp-map__kebab { flex: none; }
+/* меню уходит в плавающий слой ДС — стиль на самом меню, а не через .pp-map__kebab */
+.pp-map__menu .menu__item { text-decoration: none; }
 .pp-map__states { margin-block-start: var(--space-12); }
 .pp-map__state { text-decoration: none; cursor: pointer; }
 .pp-map--tree .pp-map__states { padding-inline-start: var(--space-16); }

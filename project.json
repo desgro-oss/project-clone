@@ -41,6 +41,13 @@
     ]
   },
 
+  "knowledgeBase": {
+    "dir": "apps/knowledge-base",
+    "pages": [
+      { "id": "kb-glossary", "section": "glossary", "title": "Глоссарий и термины", "desc": "Что значат слова предметной области — деск, ЦУП и другие: на них ссылаются паспорта и спеки", "icon": "file-search" }
+    ]
+  },
+
   "screenMap": {
     "dir": "apps/screen-map",
     "maps": [

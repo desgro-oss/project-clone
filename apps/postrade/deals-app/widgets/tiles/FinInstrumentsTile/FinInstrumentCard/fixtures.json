@@ -28,8 +28,8 @@
         "amount": 2500000, "signedAt": "2024-04-22", "plannedMaturityAt": "2024-12-22",
         "isDkkk": true, "rwaCodes": ["6002-1,5%", "6005-5%"],
         "nodes": [
-          { "id": "FX.LOAN.1", "number": "1.1.1.1.", "name": "Транш", "signedAt": "2024-04-22", "amount": 800000 },
-          { "id": "FX.LOAN.2", "number": "1.1.1.2.", "name": "Транш", "signedAt": "2024-04-22", "amount": 800000, "repaidAt": "2021-01-12" }
+          { "id": "FX.LOAN.1", "number": "1.1.1.1.", "name": "Транш", "kind": "TRANCHE", "hasPage": true, "signedAt": "2024-04-22", "amount": 800000 },
+          { "id": "FX.LOAN.2", "number": "1.1.1.2.", "name": "Транш", "kind": "TRANCHE", "hasPage": true, "signedAt": "2024-04-22", "amount": 800000, "repaidAt": "2021-01-12" }
         ]
       }
     },
@@ -43,7 +43,7 @@
         "amount": 2500, "signedAt": "2024-04-22", "plannedMaturityAt": "2024-12-22",
         "isDkkk": true, "hasLinkedUnconditionalOption": true, "rwaCodes": ["6002-1,5%"],
         "nodes": [
-          { "id": "FX.SHARES.1", "number": "2.1.1.", "name": "Акции", "signedAt": "2024-04-22", "amount": 800000 }
+          { "id": "FX.SHARES.1", "number": "2.1.1.", "name": "Акции", "kind": "INSTRUMENT", "hasPage": true, "signedAt": "2024-04-22", "amount": 800000 }
         ]
       }
     },
@@ -57,9 +57,9 @@
         "amount": 2500, "signedAt": "2024-04-22", "plannedMaturityAt": "2024-12-22",
         "isDkkk": true, "rwaCodes": ["6002-1,5%", "6005-5%", "6005.21-3%"],
         "nodes": [
-          { "id": "FX.AY.1", "number": "2.1.1.", "name": "Акции", "signedAt": "2024-04-22", "amount": 800000 },
-          { "id": "FX.AY.2", "number": "3.1.1.1.", "name": "Пут: РЕПО", "signedAt": "2024-04-22", "amount": 800000, "repaidAt": "2021-01-12" },
-          { "id": "FX.AY.3", "number": "3.1.1.2.", "name": "Пут: РЕПО", "signedAt": "2024-04-22", "amount": 800000, "isIfrsOption": true }
+          { "id": "FX.AY.1", "number": "2.1.1.", "name": "Акции", "kind": "INSTRUMENT", "hasPage": true, "signedAt": "2024-04-22", "amount": 800000 },
+          { "id": "FX.AY.2", "number": "3.1.1.1.", "name": "Пут: РЕПО", "kind": "INSTRUMENT", "hasPage": true, "signedAt": "2024-04-22", "amount": 800000, "repaidAt": "2021-01-12" },
+          { "id": "FX.AY.3", "number": "3.1.1.2.", "name": "Пут: РЕПО", "kind": "INSTRUMENT", "hasPage": true, "signedAt": "2024-04-22", "amount": 800000, "isIfrsOption": true }
         ]
       }
     },
@@ -73,7 +73,7 @@
         "amount": 2500, "signedAt": "2024-04-22", "plannedMaturityAt": "2024-12-22",
         "isDkkk": true, "rwaCodes": ["6002-1,5%"],
         "nodes": [
-          { "id": "FX.REPO.1", "number": "3.1.1.2.", "name": "Пут: РЕПО", "signedAt": "2024-04-22", "amount": 800000 }
+          { "id": "FX.REPO.1", "number": "3.1.1.2.", "name": "Пут: РЕПО", "kind": "INSTRUMENT", "hasPage": true, "signedAt": "2024-04-22", "amount": 800000 }
         ]
       }
     },
@@ -87,7 +87,7 @@
         "amount": 2500, "signedAt": "2024-04-22", "plannedMaturityAt": "2024-12-22",
         "isDkkk": true, "rwaCodes": ["6002-1,5%"],
         "nodes": [
-          { "id": "FX.RECV.1", "number": "2.1.1.", "name": "Дебиторская задолженность", "signedAt": "2024-04-22", "amount": 800000 }
+          { "id": "FX.RECV.1", "number": "2.1.1.", "name": "Дебиторская задолженность", "kind": "INSTRUMENT", "hasPage": true, "signedAt": "2024-04-22", "amount": 800000 }
         ]
       }
     }

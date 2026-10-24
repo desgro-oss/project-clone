@@ -25,6 +25,7 @@
       "href": "ib/banker-app/pages/index.html",
       "parent": null,
       "note": null,
+      "passport": "local-components/ib/banker-app/HomePage.page.html",
       "states": []
     },
     {
@@ -35,6 +36,7 @@
       "href": "ib/banker-app/pages/RequestThread.html",
       "parent": "main",
       "note": null,
+      "passport": "local-components/ib/banker-app/RequestThread.page.html",
       "states": [
         {
           "id": "example",

@@ -1,0 +1,542 @@
+{
+  "scope": "mixed",
+  "date": "23.10.2026",
+  "files": [
+    {
+      "file": "apps/core/dashboard-app/pages/HomePage.screen.md",
+      "module": "core/dashboard-app",
+      "kind": "spec",
+      "version": "1.004",
+      "rulesVersion": null,
+      "updated": null
+    },
+    {
+      "file": "apps/core/dashboard-app/widgets/modals/MeetingCreateModal/MeetingCreateModal.md",
+      "module": "core/dashboard-app",
+      "kind": "passport",
+      "version": "1.001",
+      "rulesVersion": "2.000",
+      "updated": "15.10.2026"
+    },
+    {
+      "file": "apps/core/dashboard-app/widgets/modals/TaskCreateModal/TaskCreateModal.md",
+      "module": "core/dashboard-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "09.10.2026"
+    },
+    {
+      "file": "apps/core/dashboard-app/widgets/tiles/DateBadge/DateBadge.md",
+      "module": "core/dashboard-app",
+      "kind": "passport",
+      "version": "1.004",
+      "rulesVersion": "2.000",
+      "updated": "15.10.2026"
+    },
+    {
+      "file": "apps/core/dashboard-app/widgets/tiles/HomeProfileTile/HomeProfileTile.md",
+      "module": "core/dashboard-app",
+      "kind": "passport",
+      "version": "1.003",
+      "rulesVersion": "2.000",
+      "updated": "15.10.2026"
+    },
+    {
+      "file": "apps/core/dashboard-app/widgets/tiles/HomeTasksTile/HomeTasksTile.md",
+      "module": "core/dashboard-app",
+      "kind": "passport",
+      "version": "1.005",
+      "rulesVersion": "2.000",
+      "updated": "15.10.2026"
+    },
+    {
+      "file": "apps/core/dashboard-app/widgets/tiles/MeetingsTile/MeetingsTile.md",
+      "module": "core/dashboard-app",
+      "kind": "passport",
+      "version": "1.004",
+      "rulesVersion": "2.000",
+      "updated": "15.10.2026"
+    },
+    {
+      "file": "apps/core/dashboard-app/widgets/tiles/NewsTile/NewsTile.md",
+      "module": "core/dashboard-app",
+      "kind": "passport",
+      "version": "1.004",
+      "rulesVersion": "2.000",
+      "updated": "15.10.2026"
+    },
+    {
+      "file": "apps/core/dashboard-app/widgets/tiles/StatCard/StatCard.md",
+      "module": "core/dashboard-app",
+      "kind": "passport",
+      "version": "1.001",
+      "rulesVersion": "2.000",
+      "updated": "15.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/pages/Deal.screen.md",
+      "module": "postrade/deals-app",
+      "kind": "spec",
+      "version": "0.010",
+      "rulesVersion": null,
+      "updated": "21.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/pages/FinInstrument.screen.md",
+      "module": "postrade/deals-app",
+      "kind": "spec",
+      "version": "0.001",
+      "rulesVersion": null,
+      "updated": "09.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/pages/FinancialMetrics.screen.md",
+      "module": "postrade/deals-app",
+      "kind": "spec",
+      "version": "1.000",
+      "rulesVersion": null,
+      "updated": null
+    },
+    {
+      "file": "apps/postrade/deals-app/pages/MainPage.screen.md",
+      "module": "postrade/deals-app",
+      "kind": "spec",
+      "version": "1.004",
+      "rulesVersion": null,
+      "updated": "30.09.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/pages/Portfolio.screen.md",
+      "module": "postrade/deals-app",
+      "kind": "spec",
+      "version": "1.027",
+      "rulesVersion": null,
+      "updated": "21.09.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/pages/Tranche.screen.md",
+      "module": "postrade/deals-app",
+      "kind": "spec",
+      "version": "1.001",
+      "rulesVersion": null,
+      "updated": null
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.002",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.002",
+      "rulesVersion": "2.000",
+      "updated": "16.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.006",
+      "rulesVersion": "2.000",
+      "updated": "09.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.004",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/DealTitleModal/DealTitleModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.002",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.001",
+      "rulesVersion": "2.000",
+      "updated": "21.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.002",
+      "rulesVersion": "2.000",
+      "updated": "21.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/FixationModal/FixationModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.002",
+      "rulesVersion": "2.000",
+      "updated": "21.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.002",
+      "rulesVersion": "2.000",
+      "updated": "21.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.006",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.008",
+      "rulesVersion": "2.000",
+      "updated": "10.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.001",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "10.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.001",
+      "rulesVersion": "2.000",
+      "updated": "10.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "10.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "10.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.001",
+      "rulesVersion": "2.000",
+      "updated": "10.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.002",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.002",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.003",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.002",
+      "rulesVersion": "2.000",
+      "updated": "21.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.002",
+      "rulesVersion": "2.000",
+      "updated": "22.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tables/KPITable/KPITable.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.003",
+      "rulesVersion": "2.000",
+      "updated": "22.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.010",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.003",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.004",
+      "rulesVersion": "2.000",
+      "updated": "09.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.007",
+      "rulesVersion": "2.000",
+      "updated": "21.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.006",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.005",
+      "rulesVersion": "2.000",
+      "updated": "23.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tiles/DealRelatedCollateralsTile/DealRelatedCollateralsTile.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "0.003",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.001",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.003",
+      "rulesVersion": "2.000",
+      "updated": "23.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.008",
+      "rulesVersion": "2.000",
+      "updated": "23.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tiles/Navigator/Navigator.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.003",
+      "rulesVersion": "2.000",
+      "updated": "16.10.2026"
+    },
+    {
+      "file": "apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md",
+      "module": "postrade/deals-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "file": "apps/postrade/post-reports-app/pages/FairValueCalculation.screen.md",
+      "module": "postrade/post-reports-app",
+      "kind": "spec",
+      "version": "0.001",
+      "rulesVersion": null,
+      "updated": null
+    },
+    {
+      "file": "apps/postrade/post-reports-app/pages/FairValueRegister.screen.md",
+      "module": "postrade/post-reports-app",
+      "kind": "spec",
+      "version": "0.001",
+      "rulesVersion": null,
+      "updated": null
+    },
+    {
+      "file": "apps/postrade/post-reports-app/widgets/modals/CreateFairValueCalculationModal/CreateFairValueCalculationModal.md",
+      "module": "postrade/post-reports-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "08.10.2026"
+    },
+    {
+      "file": "apps/postrade/post-reports-app/widgets/modals/DownloadReportModal/DownloadReportModal.md",
+      "module": "postrade/post-reports-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "08.10.2026"
+    },
+    {
+      "file": "apps/postrade/post-reports-app/widgets/modals/FairValueInstrumentablesUploadFileModal/FairValueInstrumentablesUploadFileModal.md",
+      "module": "postrade/post-reports-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "08.10.2026"
+    },
+    {
+      "file": "apps/postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.md",
+      "module": "postrade/post-reports-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "08.10.2026"
+    },
+    {
+      "file": "apps/postrade/post-reports-app/widgets/modals/ReservesFvComponentsModal/ReservesFvComponentsModal.md",
+      "module": "postrade/post-reports-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "08.10.2026"
+    },
+    {
+      "file": "apps/postrade/post-reports-app/widgets/modals/ReservesFvModal/ReservesFvModal.md",
+      "module": "postrade/post-reports-app",
+      "kind": "passport",
+      "version": "1.000",
+      "rulesVersion": "2.000",
+      "updated": "08.10.2026"
+    }
+  ]
+}

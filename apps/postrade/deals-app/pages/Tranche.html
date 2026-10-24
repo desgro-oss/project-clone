@@ -188,7 +188,6 @@
               <div class="tile__body"><p class="tr-status">Заполнено</p>
                 <button type="button" class="btn btn--outline btn--s"><span class="btn__label">Пересчитать</span></button></div>
             </section>
-            <ds-include src="../widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.html" class="col-3 colw-6" id="tile-rsbu-adjustments"></ds-include>
         </div>
       </section>
 
@@ -276,7 +275,6 @@
 <script src="../data/product-tree-store.js"></script>
 <script src="../data/tranche-context.js"></script>
 <script src="../data/tranche-data.js"></script>
-<script src="../widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.js"></script>
 <script>
 /* Экранный скрипт: меню по каталогу ролей и демо-данные транша в поля с data-f.
    Форматирование — только при выводе: суммы «1 000 000,00», даты ДД.ММ.ГГГГ. */
@@ -368,16 +366,14 @@
   /* Адрес: Tranche.html?id=<номер сделки>&tr=<id транша>. Номер и название
      транша, договора и сделки в шапке и крошках — из дерева продуктов и записи
      сделки (TrancheContext), как на странице сделки. Без параметров — каркас:
-     первый транш первой сделки, где он есть. Параметры идут в крошки и на
-     страницу корректировок. */
-  var IS_PREVIEW = /.preview.html$/.test(window.location.pathname);
-
+     первый транш первой сделки, где он есть. Параметры идут в крошки. */
   function head(ctx) {
     var title = ctx.trancheLabel;
     document.getElementById('tr-title').textContent = title;
     document.title = title + ' — IBP';
-    var dealPage = IS_PREVIEW ? 'Deal.preview.html' : 'Deal.html';
-    var dealHref = dealPage + ctx.dealQuery;
+    /* Deal.preview.html, а не Deal.html: страница сделки модульная — тайлы
+       вшивает ассемблер (.agents/tools/assemble.mjs), Deal.html — источник с метками. */
+    var dealHref = 'Deal.preview.html' + ctx.dealQuery;
     window.TrancheContext.paintCrumbs(document.querySelector('[data-breadcrumbs]'), [
       null,
       { href: 'Portfolio.html' },
@@ -387,26 +383,12 @@
     ]);
   }
 
-  /* Тайл «Корректировки процентов РСБУ»: locked | none | filled.
-     Из данных; параметр адреса ?hardsState=… переопределяет (сценарии панели прототипа),
-     ?hardsMode=view — без права редактирования (нет кнопки «Внести корректировку»). */
-  function rsbuState(ctx) {
-    var m = /[?&]hardsState=(locked|none|filled)/.exec(location.search);
-    var st = m ? m[1] : window.MOCK_TRANCHE.rsbuInterestAdjustmentsState;
-    var mode = /[?&]hardsMode=view/.test(location.search) ? 'view' : 'edit';
-    window.PostTileRsbuAdjustments.render(document.getElementById('tile-rsbu-adjustments'), {
-      state: st, mode: mode, count: window.MOCK_RSBU_ADJUSTMENTS.adjustments.length,
-      query: ctx ? ctx.trancheQuery : ''
-    });
-  }
-
   /* Дерево продуктов подтягивает сохранённые правки (ProductTreeStore.ready) —
      номер и название транша читаются после него. */
   buildNav(); fill();
   window.ProductTreeStore.ready.then(function () {
     var ctx = window.TrancheContext.resolve(location.search);
     if (ctx) head(ctx);
-    rsbuState(ctx);
     if (window.dsIcons) window.dsIcons.apply(document);
   });
   if (window.dsIcons) window.dsIcons.apply(document);

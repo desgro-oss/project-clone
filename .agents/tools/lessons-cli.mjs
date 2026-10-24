@@ -1378,7 +1378,11 @@ const inShowcase = (rel) => Boolean(SHOWCASE_REL) && rel.startsWith(SHOWCASE_REL
    хаба (П4, П5, П7: запись хаба держит root на папке карты), сверку карты —
    генератор screen-map.mjs, шага в гейте нет (решение человека 11.10.2026). */
 const MAP_REL = PRJ.screenMap ? PRJ.screenMap.dir : null;
-const inMap = (rel) => Boolean(MAP_REL) && rel.startsWith(MAP_REL + '/');
+/* База знаний (`knowledgeBase.dir`, RE0038) — тоже не экраны: те же исключения, что у карты;
+   её страницу сверяет сторож хаба, термины и страницу — шаг `kit` (kit-build, КТ6). */
+const KB_REL = PRJ.knowledgeBase ? PRJ.knowledgeBase.dir : null;
+const inKb = (rel) => Boolean(KB_REL) && rel.startsWith(KB_REL + '/');
+const inMap = (rel) => (Boolean(MAP_REL) && rel.startsWith(MAP_REL + '/')) || inKb(rel);
 const SELF = fileURLToPath(import.meta.url);
 
 /* Корневые текстовые файлы в отпечаток идут ВСЕ, а не списком: до 21.09.2026
@@ -1705,7 +1709,7 @@ function gateStepsFor(rel, deleted) {
   if (deleted) {
     if (rel.startsWith(DS_REL + '/')) add('lint-global', 'parity');
     // удалённый виджет оставляет в витрине лишнюю страницу (КТ5)
-    if (SHOWCASE_REL && (screenArea || inShowcase(rel))) add('kit');
+    if (SHOWCASE_REL && (screenArea || inShowcase(rel) || inKb(rel))) add('kit');
     return s;
   }
   // экран: в репозитории — каталоги треков из манифеста (TRACK_DIRS) и хаб; вне репозитория — только через --changed (проверка откатом на копии)
@@ -1789,7 +1793,7 @@ function gateStepsFor(rel, deleted) {
   if ((screenArea && !inFixtures && html) || rel === 'project.json') add('assemble');
   if (rel === TOOL_REL + '/assemble.mjs') add('assemble-selftest', 'assemble', 'readme-selftest', 'promote-selftest', 'panel-selftest', 'kit-selftest', 'kit');
   // витрина: паспорт, фрагмент, CSS/JS, фикстуры виджета, страница-хозяин и данные приложения, сама витрина
-  if (SHOWCASE_REL && ((screenArea && !inFixtures) || inShowcase(rel) || rel === 'project.json')) add('kit');
+  if (SHOWCASE_REL && ((screenArea && !inFixtures) || inShowcase(rel) || inKb(rel) || rel === 'project.json')) add('kit');
   if (rel === TOOL_REL + '/kit-build.mjs') add('kit-selftest', 'kit', 'scaffold-selftest');
   if (rel === TOOL_REL + '/module-readme.mjs') add('readme-selftest', 'readme', 'promote-selftest');
   if (rel === TOOL_REL + '/promote.mjs') add('promote-selftest');

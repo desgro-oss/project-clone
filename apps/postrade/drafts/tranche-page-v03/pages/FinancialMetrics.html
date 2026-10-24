@@ -471,7 +471,6 @@
   function doFixRas(id) {
     if (!loaded || isView() || store.state().busy) return;
     var res = store.fixRas(id);
-    if (res && res.ok) syncUrl();
     if (res && res.ok && window.FinMetricsNotify) window.FinMetricsNotify.rasFixed(fiName(id));
     /* контрол, на котором стоял фокус, заменён чипом — фокус переносим на чип */
     var chip = document.querySelector('#panel-ras [data-fm-fixed-chip]');
@@ -486,29 +485,15 @@
   /* Служебный переключатель состояния фиксации — таб System панели прототипа (не в интерфейсе):
      состояния включает и сам пересчёт (зафиксировано → после пересчёта → фиксация снята, Э5), а
      переключатель или адрес `rasFix` задают их напрямую; состояние сохраняется в хранилище
-     вместе с переносами (RE0034, Э4). */
-  function syncUrl() {
-    try {
-      var u = new URL(window.location.href);
-      u.searchParams.set('rasFix', store.rasState());
-      window.history.replaceState(null, '', u.toString());
-    } catch (e) { /* file:// и т. п. */ }
-  }
+     вместе с переносами (RE0034, Э4). Адрес в состояние не пишется: параметры `rasFix`/`rasMoves`
+     снимаются при действии человека (RE0035, Э4), иначе reload или возврат браузером «назад»
+     подменил бы сохранённое состояние старым. Сброс фиксации и переносов объявлен в сторе
+     (`data/fin-metrics-store.js`) — он есть на любой странице концепта (RE0035, Э4). */
   (window.PP_SYSTEM = window.PP_SYSTEM || []).push(
     { id: 'ras-state', title: 'Фиксация расчёта РСБУ', desc: 'Нет фиксации · зафиксировано до пересчёта · после позднего платежа и пересчёта.',
       options: [{ value: 'none', label: 'Нет' }, { value: 'fixed', label: 'Зафиксировано' }, { value: 'recalc', label: 'После пересчёта' }],
       value: function () { return store.rasState(); },
-      set: function (v) { store.setRasState(v); syncUrl(); } },
-    { id: 'ras-reset', title: 'Фиксация расчёта РСБУ и переносы', action: 'Сбросить',
-      run: function () {
-        store.resetRas();
-        try {
-          var u = new URL(window.location.href);
-          u.searchParams.set('rasFix', 'none');
-          u.searchParams.set('rasMoves', 'none');
-          window.history.replaceState(null, '', u.toString());
-        } catch (e) { /* file:// и т. п. */ }
-      } }
+      set: function (v) { store.setRasState(v); } }
   );
 
   /* ---------- подтверждение действия ---------- */
@@ -563,7 +548,6 @@
       var run = function () {
         store.calculate().then(function (res) {
           if (window.FinMetricsNotify) window.FinMetricsNotify.calculation(res);
-          syncUrl();
         });
       };
       if (un && window.PostRsbuRecalcWarning) {

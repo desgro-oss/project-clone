@@ -51,7 +51,6 @@
  * @property {number} lastCounterpartyPaymentAmount последний платёж от контрагента
  * @property {string} lastCounterpartyPaymentCurrencyCode валюта платежа
  * @property {string} lastCounterpartyPaymentDate дата платежа (ISO)
- * @property {string} rsbuInterestAdjustmentsState              состояние карточки «Корректировки процентов РСБУ»: locked | none | filled
  */
 
 /** @type {TrancheRsDto} */
@@ -84,36 +83,5 @@ window.MOCK_TRANCHE = {
   nextPaymentOverdue: true,
   lastCounterpartyPaymentAmount: 1000000.00,
   lastCounterpartyPaymentCurrencyCode: 'RUB',
-  lastCounterpartyPaymentDate: '2023-02-22',
-  rsbuInterestAdjustmentsState: 'none'
-};
-
-/**
- * Корректировка процентов РСБУ: сумма, которая прибавляется/вычитается начиная с исходной даты.
- * Source: invented (09.10.2026) — заменить на DTO, когда он появится.
- * @typedef {Object} RsbuInterestAdjustmentRsDto
- * @property {string} startDate          исходная дата — одна из дат процентных платежей (ISO)
- * @property {string} endDate            целевая дата — любая дата, вводится руками (ISO)
- * @property {number} adjustmentAmount   сумма корректировки в валюте инструмента; может быть отрицательной
- * @property {string} comment            комментарий
- */
-
-/**
- * Корректировки процентов РСБУ транша.
- * Source: invented (09.10.2026).
- * @typedef {Object} RsbuInterestAdjustmentsRsDto
- * @property {string} currencyCode                          валюта сумм, ISO 4217
- * @property {string[]} startDateOptions                    даты для списка «Исходная дата» — даты процентных платежей (ISO); в демо — рыба
- * @property {RsbuInterestAdjustmentRsDto[]} adjustments    внесённые корректировки (демо для состояния filled)
- */
-
-/** @type {RsbuInterestAdjustmentsRsDto} */
-window.MOCK_RSBU_ADJUSTMENTS = {
-  currencyCode: 'RUB',
-  startDateOptions: ['2025-01-31', '2025-02-28', '2025-03-31', '2025-04-30', '2025-05-31', '2025-06-30', '2025-07-31', '2025-08-31', '2025-09-30'],
-  adjustments: [
-    { startDate: '2025-03-31', endDate: '2025-04-10', adjustmentAmount: 150000.00, comment: 'Корректировка по просьбе контрагента' },
-    { startDate: '2025-06-30', endDate: '2025-07-15', adjustmentAmount: -42500.50, comment: 'Корректировка после сверки с бухгалтерией' },
-    { startDate: '2025-09-30', endDate: '2025-10-03', adjustmentAmount: 98000.00,  comment: '' }
-  ]
+  lastCounterpartyPaymentDate: '2023-02-22'
 };

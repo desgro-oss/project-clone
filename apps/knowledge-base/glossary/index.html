@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!--
+  Глоссарий и термины — страница базы знаний (RE0038). СГЕНЕРИРОВАНО kit-build.mjs из файлов
+  apps/knowledge-base/glossary/terms/<Термин>.md; руками не править — править файл термина.
+  В паспортах и спеках на термин ссылаются вики-ссылкой [[Термин]] или [[Термин|текст]].
+-->
+<html lang="ru">
+<head>
+<script src="../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Глоссарий и термины — IBP</title>
+<link rel="stylesheet" href="../../local-components/kit.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Глоссарий и термины">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list">
+      <a class="nav__item" href="../../../index.html"><span class="nav__ico"><i data-icon="main-page"></i></span><span class="nav__label">Хаб проектов</span></a>
+    </div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="../../../index.html">Хаб проектов</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Глоссарий и термины</span>
+      </li>
+    </nav>
+    <main class="screen__content">
+
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <h1 class="phead__title">Глоссарий и термины</h1>
+            </div>
+          </div>
+          <p class="phead__subtitle">Что значат слова предметной области — деск, ЦУП и другие: на них ссылаются паспорта и спеки</p>
+        </div>
+      </div>
+
+      <div class="grid12">
+<section class="tile col-12" id="вбс">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">ВБС</h2></div><p class="tile__subtitle">Также: валовая балансовая стоимость, валовой балансовой стоимости</p></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Валовая балансовая стоимость. ВБС сделки показывается на дату в разрезе продуктов (суммы по продуктам собираются из финансовых инструментов сделки); ВБС на дату фиксации запоминается фиксацией ЭПС/ВБС. Расшифровка сокращения в тайле «Финансовые метрики сделки» у владельца продукта не подтверждена — не решено (25.09.2026); в паспорте тайла расчёта метрик расшифровка взята с плашки макета.</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.md</code> (поля и вопрос 6), <code class="tok">apps/postrade/deals-app/widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.md</code> (расшифровка — плашка макета)</p></div></div>
+</section>
+<section class="tile col-12" id="гсз">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">ГСЗ</h2></div><p class="tile__subtitle">Также: группа связанных заемщиков, группы связанных заемщиков, группе связанных заемщиков</p></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Группа связанных заемщиков. Некоторые контрагенты объединяются банком в такую группу по каким-либо признакам, признаки могут быть разными. ГСЗ указывается у сделки в тайле «Описание сделки» и в колонке «ГСЗ» реестра «Текущий портфель ДИД».</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/refs/Текущий портфель.md</code> (колонка «ГСЗ»), <code class="tok">apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md</code> (поле «Группа связанных заемщиков»)</p></div></div>
+</section>
+<section class="tile col-12" id="деск">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">Деск</h2></div><p class="tile__subtitle">Также: деск, дески, десков</p></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Подразделение, по которому ведётся сделка: Недвижимость, Телекоммуникации, Розничная торговля, Природные ресурсы и другие. У каждого деска своя команда, разбирающаяся в своём направлении: тот, кто силён в телекоммуникациях, не ведёт сделки по недвижимости — там свои нюансы, правила и процессы.</p>
+<p class="desc">Деск близок к отрасли клиента, но не совпадает с ней. Точное определение и полный список десков заказчик уточняет — не решено (23.10.2026).</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/refs/Текущий портфель.md</code> (поле «Деск»), пояснения заказчика 23.09.2026</p></div></div>
+</section>
+<section class="tile col-12" id="етс">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">ЕТС</h2></div></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Показатель в окне фиксации ЭПС/ВБС: «ЕТС после фиксации» и «Δ ЕТС» (значение в процентах и его изменение). Значение берётся по инструментам, включённым в ФИ; бывает: есть, нет или 0, ошибка расчёта, разные у инструментов ФИ — тогда его вводят вручную. Расшифровка сокращения на макетах не дана — не решено (23.10.2026).</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/widgets/modals/FixationModal/FixationModal.md</code> (блок ЕТС, вопрос 2), <code class="tok">docs/tasks/RE0033-deal-financial-metrics.md</code> (вопрос 16: «ЕТС» нигде не расшифрована)</p></div></div>
+</section>
+<section class="tile col-12" id="к2">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">К2</h2></div></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Признак данных в предупреждении окна выгрузки отчёта финансовых метрик: «Вы выгружаете документ, содержащий данные К2». Такие данные — только для внутреннего использования; их используют строго в соответствии с бизнес-процессом и не передают лицам, не задействованным в нём; информация о выгрузке фиксируется и направляется в службу безопасности. Что такое К2 и расшифровка — не решено (23.10.2026).</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.md</code> (тексты интерфейса окна выгрузки), <code class="tok">docs/tasks/RE0033-deal-financial-metrics.md</code> (макет окна «Выгрузка отчёта»)</p></div></div>
+</section>
+<section class="tile col-12" id="кнр">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">КНР</h2></div><p class="tile__subtitle">Также: ключевой носитель риска, ключевого носителя риска, ключевые носители риска, ключевых носителей риска</p></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Ключевой носитель риска — основной контрагент по сделке. В одной сделке можно назначить несколько КНР. КНР отмечают среди участников сделки в окне контрагентов; те же КНР видны в колонке «КНР» реестра «Текущий портфель ДИД».</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/refs/Текущий портфель.md</code> (колонка «КНР»), <code class="tok">apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md</code> (тайл «КНР» страницы сделки)</p></div></div>
+</section>
+<section class="tile col-12" id="кпки">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">КПКИ</h2></div></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Место одобрения сделки: в источниках слово встречается в формулировках «метрики проекта на момент одобрения сделки на КПКИ», «Решение КПКИ», «класс жилья по презентации на КПКИ». Расшифровка и состав — не решено (23.10.2026).</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md</code> (тайл «Сведения о проекте»)</p></div></div>
+</section>
+<section class="tile col-12" id="нкл">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">НКЛ</h2></div></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Вид инструмента в дереве продуктов сделки: «Договор займа (НКЛ)», «НКЛ с баланса ПАО», «Внутригрупповой кредит (НКЛ)». Данные НКЛ с баланса ПАО в системе не хранятся — они лежат в стороннем сервисе. Расшифровка сокращения — не решено (23.10.2026).</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.md</code> (НКЛ с баланса ПАО, пояснения человека 22.09.2026), <code class="tok">apps/postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.md</code> (виды инструментов дерева)</p></div></div>
+</section>
+<section class="tile col-12" id="осз">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">ОСЗ</h2></div></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">не решено (23.10.2026): в источниках слово встречается как показатель финансовых метрик (ОСЗ по сделке и по контрагенту), расшифровка у владельца продукта не подтверждена — в паспорте тайла «Финансовые метрики сделки» вопрос 6 (25.09.2026).</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.md</code> (вопрос 6: «расшифровки ВБС и ОСЗ — не решено»), <code class="tok">apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md</code> (колонка «ОСЗ по контрагенту»)</p></div></div>
+</section>
+<section class="tile col-12" id="пмз">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">ПМЗ</h2></div><p class="tile__subtitle">Также: РМ, ПМ, подразделения приёма на мониторинг</p></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">РМ, ПМ и ПМЗ — три подразделения, которые принимают сделку на мониторинг ГК СБИ: после направления сделки на передачу каждое подтверждает, что всё проверило и приняло сделку; кнопки «РМ принял», «ПМ принял», «ПМЗ принял» нажимает сотрудник ЦУП. Когда приняли все три, мониторинг сделки встаёт в «На мониторинге ГК СБИ». Расшифровка аббревиатур — не решено (23.10.2026).</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/refs/Текущий портфель.md</code> (статус «Направлена на передачу»: три подразделения подтверждают приём, кнопки нажимает сотрудник ЦУП), <code class="tok">apps/postrade/deals-app/data/deal-status-model.md</code> (дорожка «Мониторинг», отметки РМ, ПМ, ПМЗ), <code class="tok">apps/postrade/deals-app/widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.md</code> (окно отметки приёма)</p></div></div>
+</section>
+<section class="tile col-12" id="сделка-ограниченного-доступа">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">Сделка ограниченного доступа</h2></div><p class="tile__subtitle">Также: ограниченный доступ, сделки ограниченного доступа</p></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Признак сделки со значением «Да» или «Нет». Большинство сделок — «Нет». Сделку со значением «Да» видят только роли, которым доступен просмотр сделок ограниченного доступа; у остальных значение «Да» не показывается вовсе, они видят только сделки со значением «Нет». Признак меняет только руководитель ЦУП (заказчик 23.09.2026).</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/refs/Текущий портфель.md</code> (поле «Ограниченный доступ»), <code class="tok">apps/postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md</code></p></div></div>
+</section>
+<section class="tile col-12" id="фи">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">ФИ</h2></div><p class="tile__subtitle">Также: финансовый инструмент, финансовые инструменты, финансового инструмента, финансовых инструментов</p></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Финансовый инструмент — отдельная сущность сделки, карточка с параметрами: тип (Кредит, Акции, Доп. доходность, РЕПО, Дебиторская задолженность), тип отчетности, контрагенты, признаки. Баланс, валюта, сумма и дата подписания ФИ приходят из инструментов и траншей дерева продуктов сделки, прикреплённых к карточке. Не путать с инструментом дерева продуктов: к одному ФИ прикрепляются инструменты и транши.</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/refs/Текущий портфель.md</code> (колонка «Private Equity»: «Финансовый инструмент» как отдельная сущность сделки), <code class="tok">apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md</code> (типы, связь с деревом продуктов), решение человека 02.10.2026</p></div></div>
+</section>
+<section class="tile col-12" id="цуп">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">ЦУП</h2></div><p class="tile__subtitle">Также: ЦУП, центр управления портфелем</p></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Центр управления портфелем — подразделение банка, которое проверяет и утверждает сделку. У сделки есть отдельная дорожка статусов ЦУП: назначение ответственного сотрудника, проверка контрагентов и дат, утверждение или возврат на корректировку; после утверждения сотрудник ЦУП отправляет сделку на мониторинг.</p>
+<p class="desc">Роли внутри ЦУП (директор, сотрудник, руководитель) и полный состав функций ЦУП — не решено (23.10.2026).</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/data/deal-status-model.md</code> (дорожка ЦУП), <code class="tok">apps/postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md</code> (поле «Сотрудник ЦУП»)</p></div></div>
+</section>
+<section class="tile col-12" id="экд">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">ЭКД</h2></div></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Источник документов, которые смотрят по клиенту и по участникам сделки: у клиента — тайл «Документы» с подписью «Источник: ЭКД» (файл, дата загрузки, «Показать содержание», «Открыть»); у сделки — кнопка «Документы ЭКД по сделке» тайла «Описание сделки» и окно «Документы по сделке», где документы смотрят по каждому участнику отдельно. Расшифровка сокращения и состав документов — не решено (23.10.2026).</p><p class="desc">Источники: <code class="tok">docs/tasks/MS0014-ibp-redesign-context-pages.md</code> (тайл «Документы», «Источник: ЭКД»), <code class="tok">apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md</code> (кнопка «Документы ЭКД по сделке»), <code class="tok">apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.md</code> (документы ведутся по контрагенту)</p></div></div>
+</section>
+<section class="tile col-12" id="эпс">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">ЭПС</h2></div><p class="tile__subtitle">Также: эффективная процентная ставка, эффективной процентной ставки</p></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Эффективная процентная ставка. Значение ЭПС по финансовому инструменту запоминается фиксацией ЭПС/ВБС на дату изменений вместе с ВБС и видом модификации: первоначальная, несущественная или существенная.</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.md</code> (расшифровка — плашка макета), <code class="tok">apps/postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.md</code> (что запоминает фиксация)</p></div></div>
+</section>
+<section class="tile col-12" id="fv">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">FV</h2></div><p class="tile__subtitle">Также: справедливая стоимость, справедливой стоимости, fair value</p></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Справедливая стоимость (Fair Value). В модуле отчётов раздела Post FV считается расчётом на дату по финансовым инструментам: расчёт формируют в реестре расчетов FV, отправляют в <a class="inl" href="index.html#lp">LP</a>, а риск-менеджер утверждает. Сумма FV есть только у расчётов в статусах «Рассчитан» и «Утвержден». Как FV связан с признаком «FV/AC» карточки финансового инструмента сделки — не решено (23.10.2026).</p><p class="desc">Источники: <code class="tok">apps/postrade/post-reports-app/pages/FairValueCalculation.screen.md</code> (назначение страницы), <code class="tok">apps/postrade/post-reports-app/pages/FairValueRegister.screen.md</code> (сумма FV по статусам), <code class="tok">docs/tasks/RE0012-fv-calculation.md</code> (статусы и роли расчёта)</p></div></div>
+</section>
+<section class="tile col-12" id="lp">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">LP</h2></div><p class="tile__subtitle">Также: Loan Pricing, LP</p></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Loan Pricing (LP) — получатель данных расчёта <a class="inl" href="index.html#fv">FV</a>: расчёт отправляют в LP, расчёт у него идёт («Отправлен в LP», «Рассчитывается LP»), после чего расчёт становится «Рассчитан». Найденную в файле инструмента ошибку LP возвращает статусом «Возвращен из LP». Что именно считает LP и кто его ведёт — не решено (23.10.2026).</p><p class="desc">Источники: <code class="tok">apps/postrade/post-reports-app/pages/FairValueCalculation.screen.md</code> (отправка в Loan Pricing, статусы), <code class="tok">docs/tasks/RE0012-fv-calculation.md</code> (раздел 3, модель статусов)</p></div></div>
+</section>
+<section class="tile col-12" id="operations">
+  <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">Operations</h2></div><p class="tile__subtitle">Также: оперейшенс</p></div></header>
+  <div class="tile__body"><div class="kit-md"><p class="desc">Подразделение банка, которое вместе с <a class="inl" href="index.html#%D1%86%D1%83%D0%BF">ЦУП</a> проверяет сделку на этапе утверждения. Operations в большей степени интересуют продукты и инструменты сделки, даты покупки и продажи, суммы и комиссии. По итогам проверки Operations принимает сделку (статус «На сопровождении») или возвращает на корректировку. У сделки есть отдельная дорожка статусов Operations.</p><p class="desc">Источники: <code class="tok">apps/postrade/deals-app/refs/Текущий портфель.md</code> (статусы сделки и «Статус Operations»), <code class="tok">apps/postrade/deals-app/data/deal-status-model.md</code> (дорожка Operations)</p></div></div>
+</section>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+</body>
+</html>

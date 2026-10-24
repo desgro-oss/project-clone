@@ -23,6 +23,10 @@
      ссылка — Entity (`a`, открывается и в новой вкладке). Ширина карточки и
      зазоры — токены в `panel.css` (`.pp-map__board`, `--pp-map-card`),
      скрипт читает их вычисленные значения;
+   - кебаб карточки (`mind`, RE0039): у узла с паспортом страницы (`node.passport`,
+     адрес от `apps/`) справа от Entity — IconButton `more-dots` с ContextMenu ДС
+     (`data-menu`): «Открыть страницу» и «Паспорт страницы». Узел без паспорта —
+     карточка без кебаба; в `tree` меню нет;
    - `tree`: дерево строк ДС (ProductRow `.prow-tree`); корень дерева —
      служебный узел без строки, чтобы каждый уровень сдвигался (у ДС группа
      детей корня не сдвигается); текущая страница — `.is-selected` и
@@ -50,7 +54,10 @@
   var SVGNS = 'http://www.w3.org/2000/svg';
   var PREVIEW = /\.preview\.html$/i;
   var ICON_ROOT = 'main-page', ICON_PAGE = 'file';
-  var DEFAULT_LABELS = { map: 'Screen map', states: 'Page states', empty: 'No pages on the map' };
+  var DEFAULT_LABELS = {
+    map: 'Screen map', states: 'Page states', empty: 'No pages on the map',
+    actions: 'Page actions', open: 'Open page', passport: 'Page passport'
+  };
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -125,11 +132,28 @@
       }).join('') + '</div>';
   }
 
+  /* кебаб карточки: «Открыть страницу» и «Паспорт страницы»; без паспорта — пустая строка */
+  function kebabHTML(n, o) {
+    if (!n.passport) return '';
+    var menu = 'pp-map-m-' + n.id;
+    function item(href, icon, text) {
+      return '<a class="menu__item" role="menuitem" href="' + esc(href) + '"><span class="menu__item-icon"><i data-icon="' + icon + '"></i></span>'
+        + '<span class="menu__item-label">' + esc(text) + '</span></a>';
+    }
+    return '<span class="menu-anchor pp-map__kebab"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="' + esc(lab(o, 'actions')) + '"'
+      + ' data-menu="' + esc(menu) + '" data-menu-align="end"><i data-icon="more-dots"></i></button>'
+      + '<div id="' + esc(menu) + '" class="menu menu--floating pp-map__menu" role="menu" hidden>'
+      + item(abs(n.href, o.base), ICON_PAGE, lab(o, 'open'))
+      + item(abs(n.passport, o.base), 'passport', lab(o, 'passport'))
+      + '</div></span>';
+  }
+
   function cardHTML(n, ix, o, hereId) {
     var on = n.id === hereId;
     var app = ix.appTitle[n.app] || n.app || '';
     return '<div class="tile tile--card pp-map__node' + (on ? ' is-selected' : '') + '" role="listitem" data-pp-map-node="' + esc(n.id) + '">'
       + '<div class="tile__body">'
+      + '<div class="pp-map__row">'
       + '<a class="entity entity--s pp-map__link" href="' + esc(abs(n.href, o.base)) + '"' + (on ? ' aria-current="page"' : '') + '>'
       + '<div class="entity__lead"><span class="entity__icon entity__icon--accent" aria-hidden="true"><i data-icon="' + (n.id === ix.root ? ICON_ROOT : ICON_PAGE) + '"></i></span></div>'
       + '<div class="entity__main"><div class="entity__titles">'
@@ -138,6 +162,8 @@
       + '</div>'
       + '<div class="entity__subs entity__subs--single"><span class="entity__subs-list" data-tooltip="' + esc(n.page) + '" data-tooltip-truncated="only">' + esc(n.page) + '</span></div>'
       + '</div></a>'
+      + kebabHTML(n, o)
+      + '</div>'
       + chipsHTML(n, o, !o.states)
       + '</div></div>';
   }
@@ -222,6 +248,14 @@
     try { if (window.dsIcons && window.dsIcons.apply) window.dsIcons.apply(host); } catch (e) { /* нет глифов */ }
     try { if (window.DSTooltip && window.DSTooltip.bindAll) window.DSTooltip.bindAll(host); } catch (e) { /* нет тултипов */ }
     try { if (window.DSChip && window.DSChip.refresh) window.DSChip.refresh(host); } catch (e) { /* нет рантайма чипов */ }
+    try { if (window.DSMenu && window.DSMenu.bindAll) window.DSMenu.bindAll(host); } catch (e) { /* нет рантайма меню */ }
+    /* пункты меню — ссылки: Enter ссылка берёт сама, Space — нет; слушатель на самом меню (оно уходит в слой ДС) */
+    Array.prototype.forEach.call(host.querySelectorAll('.pp-map__menu'), function (m) {
+      m.addEventListener('keydown', function (e) {
+        var a = e.key === ' ' && e.target.closest ? e.target.closest('a.menu__item') : null;
+        if (a) { e.preventDefault(); a.click(); }
+      });
+    });
   }
   /* только свой тултип: глобальные закрывашки ДС закрыли бы слои страницы (ПН10) */
   function hideOwnTip(host) {
@@ -290,7 +324,7 @@
         return;
       }
       var card = e.target.closest && e.target.closest('.pp-map__node');
-      if (!card || !host.contains(card) || e.target.closest('button')) return;
+      if (!card || !host.contains(card) || e.target.closest('button, .menu')) return;
       var link = card.querySelector('.pp-map__link');
       if (!link) return;
       /* клик с модификаторами (новая вкладка, окно) — с теми же клавишами */

@@ -160,6 +160,14 @@ export function project(from = HERE) {
   const screenMap = sm && norm(sm.dir)
     ? { dir: norm(sm.dir), dirAbs: abs(norm(sm.dir)), maps: Array.isArray(sm.maps) ? sm.maps : [] }
     : null;
+  /* База знаний (`knowledgeBase`, RE0038): страницы со знанием о предметной области —
+     пока глоссарий. Лежит в `apps/`, но экраном не является; запись хаба — в
+     группе `kb` («База знаний»), root — папка страницы. Страницу и термины
+     собирает glossary.mjs через kit-build. null — манифест базу не объявляет. */
+  const kbm = m.knowledgeBase && typeof m.knowledgeBase === 'object' ? m.knowledgeBase : null;
+  const knowledgeBase = kbm && norm(kbm.dir)
+    ? { dir: norm(kbm.dir), dirAbs: abs(norm(kbm.dir)), pages: Array.isArray(kbm.pages) ? kbm.pages : [] }
+    : null;
   return {
     error: null, root, manifest: m,
     ds, dsAbs: abs(ds), dsFrom, dsError: dsConf && dsConf.error || null,
@@ -179,6 +187,8 @@ export function project(from = HERE) {
     showcase, showcaseAbs: abs(showcase),
     /** Карта экранов: { dir, dirAbs, maps } или null. */
     screenMap,
+    /** База знаний: { dir, dirAbs, pages } или null. */
+    knowledgeBase,
     /** Путь от корня проекта, слэшами вперёд. */
     rel: (p) => path.relative(root, path.resolve(root, p)).split(path.sep).join('/'),
   };

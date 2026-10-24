@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 809.
+Документов: 837.
 
 ## Корень (4)
 
@@ -174,7 +174,7 @@
 |---|---|
 | [design-system/tools/ds-lint.md](../design-system/tools/ds-lint.md) | Линтер ДС: правила и проверки |
 
-## Агентная система (45)
+## Агентная система (47)
 
 | Документ | Аннотация |
 |---|---|
@@ -197,6 +197,7 @@
 | [.agents/commands/concepts.md](../.agents/commands/concepts.md) | — |
 | [.agents/commands/dev-spec.md](../.agents/commands/dev-spec.md) | — |
 | [.agents/commands/handoff.md](../.agents/commands/handoff.md) | — |
+| [.agents/commands/know-sweep.md](../.agents/commands/know-sweep.md) | — |
 | [.agents/commands/panel.md](../.agents/commands/panel.md) | — |
 | [.agents/commands/promote.md](../.agents/commands/promote.md) | — |
 | [.agents/commands/resume.md](../.agents/commands/resume.md) | — |
@@ -219,6 +220,7 @@
 
 | Документ | Аннотация |
 |---|---|
+| [.agents/skills/business-context/SKILL.md](../.agents/skills/business-context/SKILL.md) | Бизнес-смысл и глоссарий: как не дать им устареть |
 | [.agents/skills/composition-review/SKILL.md](../.agents/skills/composition-review/SKILL.md) | Приёмка композиции |
 | [.agents/skills/concept-design/SKILL.md](../.agents/skills/concept-design/SKILL.md) | Проектирование концептов |
 | [.agents/skills/dev-spec/SKILL.md](../.agents/skills/dev-spec/SKILL.md) | Спецификация на разработку |
@@ -249,7 +251,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (568)
+## Приложения (583)
 
 | Документ | Аннотация |
 |---|---|
@@ -700,6 +702,35 @@
 |---|---|
 | [apps/ib/potentials-app/README.md](../apps/ib/potentials-app/README.md) | potentials-app — модуль раздела ib |
 
+### apps/knowledge-base
+
+| Документ | Аннотация |
+|---|---|
+| [apps/knowledge-base/README.md](../apps/knowledge-base/README.md) | База знаний |
+
+### apps/knowledge-base/glossary
+
+| Документ | Аннотация |
+|---|---|
+| [apps/knowledge-base/glossary/terms/FV.md](../apps/knowledge-base/glossary/terms/FV.md) | — |
+| [apps/knowledge-base/glossary/terms/LP.md](../apps/knowledge-base/glossary/terms/LP.md) | — |
+| [apps/knowledge-base/glossary/terms/Operations.md](../apps/knowledge-base/glossary/terms/Operations.md) | — |
+| [apps/knowledge-base/glossary/terms/ВБС.md](../apps/knowledge-base/glossary/terms/ВБС.md) | — |
+| [apps/knowledge-base/glossary/terms/ГСЗ.md](../apps/knowledge-base/glossary/terms/ГСЗ.md) | — |
+| [apps/knowledge-base/glossary/terms/Деск.md](../apps/knowledge-base/glossary/terms/Деск.md) | — |
+| [apps/knowledge-base/glossary/terms/ЕТС.md](../apps/knowledge-base/glossary/terms/ЕТС.md) | — |
+| [apps/knowledge-base/glossary/terms/К2.md](../apps/knowledge-base/glossary/terms/К2.md) | — |
+| [apps/knowledge-base/glossary/terms/КНР.md](../apps/knowledge-base/glossary/terms/КНР.md) | — |
+| [apps/knowledge-base/glossary/terms/КПКИ.md](../apps/knowledge-base/glossary/terms/КПКИ.md) | — |
+| [apps/knowledge-base/glossary/terms/НКЛ.md](../apps/knowledge-base/glossary/terms/НКЛ.md) | — |
+| [apps/knowledge-base/glossary/terms/ОСЗ.md](../apps/knowledge-base/glossary/terms/ОСЗ.md) | — |
+| [apps/knowledge-base/glossary/terms/ПМЗ.md](../apps/knowledge-base/glossary/terms/ПМЗ.md) | — |
+| [apps/knowledge-base/glossary/terms/Сделка ограниченного доступа.md](../apps/knowledge-base/glossary/terms/Сделка%20ограниченного%20доступа.md) | — |
+| [apps/knowledge-base/glossary/terms/ФИ.md](../apps/knowledge-base/glossary/terms/ФИ.md) | — |
+| [apps/knowledge-base/glossary/terms/ЦУП.md](../apps/knowledge-base/glossary/terms/ЦУП.md) | — |
+| [apps/knowledge-base/glossary/terms/ЭКД.md](../apps/knowledge-base/glossary/terms/ЭКД.md) | — |
+| [apps/knowledge-base/glossary/terms/ЭПС.md](../apps/knowledge-base/glossary/terms/ЭПС.md) | — |
+
 ### apps/local-components
 
 | Документ | Аннотация |
@@ -724,7 +755,6 @@
 | [apps/postrade/deals-app/pages/FinancialMetrics.screen.md](../apps/postrade/deals-app/pages/FinancialMetrics.screen.md) | Финансовые метрики |
 | [apps/postrade/deals-app/pages/MainPage.screen.md](../apps/postrade/deals-app/pages/MainPage.screen.md) | Главная страница |
 | [apps/postrade/deals-app/pages/Portfolio.screen.md](../apps/postrade/deals-app/pages/Portfolio.screen.md) | Текущий портфель ДИД |
-| [apps/postrade/deals-app/pages/RsbuInterestAdjustments.screen.md](../apps/postrade/deals-app/pages/RsbuInterestAdjustments.screen.md) | Корректировки процентов РСБУ |
 | [apps/postrade/deals-app/pages/Tranche.screen.md](../apps/postrade/deals-app/pages/Tranche.screen.md) | Страница транша |
 | [apps/postrade/deals-app/proto-panel/comments.md](../apps/postrade/deals-app/proto-panel/comments.md) | Комментарии к прототипу |
 | [apps/postrade/deals-app/refs/Текущий портфель.md](../apps/postrade/deals-app/refs/Текущий%20портфель.md) | Новая страница "Текущий портфель ДИД" |
@@ -783,8 +813,6 @@
 | [apps/postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.md](../apps/postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.md) | Окно «Продукты» (ProductsModal) |
 | [apps/postrade/deals-app/widgets/modals/RepaymentModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/RepaymentModal/CHANGELOG.md) | Окно погашения (RepaymentModal) — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.md](../apps/postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.md) | Окно погашения (RepaymentModal) |
-| [apps/postrade/deals-app/widgets/modals/RsbuAdjustmentModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/RsbuAdjustmentModal/CHANGELOG.md) | Модальное окно внесения корректировки (RsbuAdjustmentModal) — журнал изменений |
-| [apps/postrade/deals-app/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.md](../apps/postrade/deals-app/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.md) | Модальное окно внесения корректировки |
 | [apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/CHANGELOG.md](../apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/CHANGELOG.md) | Поповер связанных сделок (RelatedDealsPopover) — журнал изменений |
 | [apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md](../apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md) | Widget: RelatedDealsPopover — Поповер связанных сделок |
 | [apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/CHANGELOG.md](../apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/CHANGELOG.md) | Контрагенты сделки (DealCounterpartiesTable) — журнал изменений |
@@ -819,8 +847,6 @@
 | [apps/postrade/deals-app/widgets/tiles/Navigator/Navigator.md](../apps/postrade/deals-app/widgets/tiles/Navigator/Navigator.md) | Заведение сделки |
 | [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/CHANGELOG.md) | Сведения о проекте — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md) | Widget: ProjectInformationTile — Сведения о проекте |
-| [apps/postrade/deals-app/widgets/tiles/RsbuInterestAdjustmentsTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/RsbuInterestAdjustmentsTile/CHANGELOG.md) | Корректировки процентов РСБУ — журнал изменений |
-| [apps/postrade/deals-app/widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.md](../apps/postrade/deals-app/widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.md) | Корректировки процентов РСБУ |
 
 ### apps/postrade/deals-app — снимки задач
 
@@ -887,6 +913,12 @@
 | [apps/postrade/drafts/early-interest-v03/widgets/tiles/EarlyInterestRepaymentTile/EarlyInterestRepaymentTile.md](../apps/postrade/drafts/early-interest-v03/widgets/tiles/EarlyInterestRepaymentTile/EarlyInterestRepaymentTile.md) | Досрочное погашение процентов |
 | [apps/postrade/drafts/early-interest-v03/widgets/tiles/RepaymentPriorityTile/CHANGELOG.md](../apps/postrade/drafts/early-interest-v03/widgets/tiles/RepaymentPriorityTile/CHANGELOG.md) | Приоритет погашения — журнал изменений |
 | [apps/postrade/drafts/early-interest-v03/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.md](../apps/postrade/drafts/early-interest-v03/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.md) | Приоритет погашения |
+
+### apps/postrade/drafts/hub-redesign
+
+| Документ | Аннотация |
+|---|---|
+| [apps/postrade/drafts/hub-redesign/pages/Hub.screen.md](../apps/postrade/drafts/hub-redesign/pages/Hub.screen.md) | Хаб проектов, новый UI |
 
 ### apps/postrade/drafts/tranche-page
 
@@ -1057,7 +1089,7 @@
 |---|---|
 | [apps/screen-map/README.md](../apps/screen-map/README.md) | Карта экранов |
 
-## Задачи и заметки (112)
+## Задачи и заметки (123)
 
 ### Архив/черновики
 
@@ -1156,6 +1188,12 @@
 | [docs/tasks/RE0032-spec-inspector.md](tasks/RE0032-spec-inspector.md) | Лёгкий инспектор Devmode в окне снимка спецификации |
 | [docs/tasks/RE0033-deal-financial-metrics.md](tasks/RE0033-deal-financial-metrics.md) | Финансовые метрики сделки: тайл расчёта на странице сделки и страница отчётов |
 | [docs/tasks/RE0034-rsbu-interest-fixation.md](tasks/RE0034-rsbu-interest-fixation.md) | Фиксация расчёта начисленных процентов РСБУ и корректировка по дельтам (концепт v3) |
+| [docs/tasks/RE0035-rsbu-out-of-module.md](tasks/RE0035-rsbu-out-of-module.md) | Корректировки РСБУ — убрать из модуля и витрины, оставить только в концептах |
+| [docs/tasks/RE0035-rsbu-out-of-module.review.md](tasks/RE0035-rsbu-out-of-module.review.md) | RE0035 — ревью: корректировки РСБУ убраны из модуля |
+| [docs/tasks/RE0036-fi-card-links.md](tasks/RE0036-fi-card-links.md) | Карточка ФИ без наведения и нажатия; связанный инструмент — заголовок-ссылка, как в дереве |
+| [docs/tasks/RE0037-early-interest-spec-fixes.md](tasks/RE0037-early-interest-spec-fixes.md) | Спека «Досрочное погашение процентов»: скругление окон и описание колонок таблицы окна платежа |
+| [docs/tasks/RE0038-business-context.md](tasks/RE0038-business-context.md) | Раздел «Бизнес-смысл» во всех локальных компонентах и спеках страниц модулей |
+| [docs/tasks/RE0039-page-passports.md](tasks/RE0039-page-passports.md) | Паспорт страницы: описание страниц модулей на карте экранов |
 | [docs/tasks/README.md](tasks/README.md) | Задачи: как заводить, какие файлы бывают, как считать затраты |
 
 ### Снимки задач
@@ -1185,6 +1223,11 @@
 | [docs/tasks/RE0032-spec-inspector.handoff.md](tasks/RE0032-spec-inspector.handoff.md) | RE0032 Лёгкий инспектор Devmode в окне снимка спеки — handoff |
 | [docs/tasks/RE0033-deal-financial-metrics.handoff.md](tasks/RE0033-deal-financial-metrics.handoff.md) | Финансовые метрики сделки (RE0033) — handoff |
 | [docs/tasks/RE0034-rsbu-interest-fixation.handoff.md](tasks/RE0034-rsbu-interest-fixation.handoff.md) | Фиксация расчёта процентов РСБУ (RE0034) — handoff |
+| [docs/tasks/RE0035-rsbu-out-of-module.handoff.md](tasks/RE0035-rsbu-out-of-module.handoff.md) | Корректировки РСБУ — убрать из модуля (RE0035) — handoff |
+| [docs/tasks/RE0036-fi-card-links.handoff.md](tasks/RE0036-fi-card-links.handoff.md) | RE0036 — handoff |
+| [docs/tasks/RE0037-early-interest-spec-fixes.handoff.md](tasks/RE0037-early-interest-spec-fixes.handoff.md) | RE0037 «Спека Досрочное погашение процентов: скругление окон и колонки таблицы» — handoff |
+| [docs/tasks/RE0038-business-context.handoff.md](tasks/RE0038-business-context.handoff.md) | RE0038 — handoff |
+| [docs/tasks/RE0039-page-passports.handoff.md](tasks/RE0039-page-passports.handoff.md) | RE0039 — handoff |
 
 ## Служебное (1)
 

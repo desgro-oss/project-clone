@@ -33,7 +33,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.004",
-      "updated": "15.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "HomeProfileTile",
@@ -47,7 +47,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.003",
-      "updated": "15.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "HomeTasksTile",
@@ -61,7 +61,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.005",
-      "updated": "15.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "MeetingCreateModal",
@@ -75,7 +75,7 @@ window.IBPKit = {
       "owner": "MeetingsTile",
       "stub": false,
       "version": "1.001",
-      "updated": "15.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "MeetingsTile",
@@ -89,7 +89,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.004",
-      "updated": "15.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "NewsTile",
@@ -103,7 +103,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.004",
-      "updated": "15.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "StatCard",
@@ -117,7 +117,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.001",
-      "updated": "15.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "TaskCreateModal",
@@ -131,7 +131,7 @@ window.IBPKit = {
       "owner": "HomeTasksTile",
       "stub": false,
       "version": "1.000",
-      "updated": "09.10.2026"
+      "updated": "23.10.2026"
     }
   ]
 };

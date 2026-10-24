@@ -154,6 +154,7 @@ export function check(from = HERE) {
   // группа → каталог трека, в котором обязан лежать root записи (у ds root нет)
   const GROUP_DIRS = { ds: null };
   for (const t of P.tracks) if (t.hubGroup) GROUP_DIRS[t.hubGroup] = t.dir;
+  if (P.knowledgeBase) GROUP_DIRS.kb = P.knowledgeBase.dir;
   const AREAS = [...new Set(P.tracks.map((t) => t.dir).filter(Boolean))];
   /* Форма после Ш7: общий каталог приложений, трек — в записи приложения. */
   const APPS = P.appsDir ? path.join(repo, P.appsDir) : null;
@@ -166,7 +167,8 @@ export function check(from = HERE) {
   const inShowcase = (f) => Boolean(P.showcaseAbs) && inside(f, P.showcaseAbs);
   /* Карта экранов (project.json → screenMap.dir, RE0015) — не приложение: её
      запись на хабе держит root на папке карты; П4, П5, П7 — как у всех. */
-  const inMap = (f) => Boolean(P.screenMap) && inside(f, P.screenMap.dirAbs);
+  const inMap = (f) => (Boolean(P.screenMap) && inside(f, P.screenMap.dirAbs))
+    || (Boolean(P.knowledgeBase) && inside(f, P.knowledgeBase.dirAbs));   // и база знаний (RE0038): тоже не приложение
   stats.areas = AREAS;
   const regFile = path.join(repo, REGISTRY);
 

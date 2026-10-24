@@ -32,6 +32,7 @@
       "href": "postrade/deals-app/pages/MainPage.html",
       "parent": null,
       "note": null,
+      "passport": "local-components/postrade/deals-app/MainPage.page.html",
       "states": []
     },
     {
@@ -42,6 +43,7 @@
       "href": "postrade/deals-app/pages/Portfolio.html",
       "parent": "main",
       "note": null,
+      "passport": "local-components/postrade/deals-app/Portfolio.page.html",
       "states": [
         {
           "id": "deal-new",
@@ -100,89 +102,19 @@
       "href": "postrade/deals-app/pages/Deal.preview.html?id=1024",
       "parent": "portfolio",
       "note": null,
+      "passport": "local-components/postrade/deals-app/Deal.page.html",
       "states": []
     },
     {
       "id": "tranche",
       "app": "postrade/deals-app",
       "title": "\u0422\u0440\u0430\u043d\u0448",
-      "page": "Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1",
-      "href": "postrade/deals-app/pages/Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1",
+      "page": "Tranche.html?id=1024&tr=1024.d1.p1.i1.t1",
+      "href": "postrade/deals-app/pages/Tranche.html?id=1024&tr=1024.d1.p1.i1.t1",
       "parent": "deal",
       "note": null,
-      "states": [
-        {
-          "id": "hards-locked",
-          "kind": "do",
-          "title": "\u0422\u0440\u0435\u0431\u0443\u0435\u0442\u0441\u044f \u0440\u0430\u0441\u0447\u0451\u0442 \u043f\u0440\u043e\u0446\u0435\u043d\u0442\u043d\u044b\u0445 \u043f\u043b\u0430\u0442\u0435\u0436\u0435\u0439",
-          "page": "Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=locked",
-          "href": "postrade/deals-app/pages/Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=locked",
-          "note": null,
-          "issues": [],
-          "do": []
-        },
-        {
-          "id": "hards-none",
-          "kind": "do",
-          "title": "\u041a\u043e\u0440\u0440\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u043a\u0438 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u044e\u0442",
-          "page": "Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=none",
-          "href": "postrade/deals-app/pages/Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=none",
-          "note": null,
-          "issues": [],
-          "do": []
-        },
-        {
-          "id": "hards-filled",
-          "kind": "do",
-          "title": "\u041a\u043e\u0440\u0440\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u043a\u0438 \u0432\u043d\u0435\u0441\u0435\u043d\u044b",
-          "page": "Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled",
-          "href": "postrade/deals-app/pages/Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled",
-          "note": null,
-          "issues": [],
-          "do": []
-        },
-        {
-          "id": "hards-view",
-          "kind": "do",
-          "title": "\u041a\u043e\u0440\u0440\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u043a\u0438 \u0431\u0435\u0437 \u043f\u0440\u0430\u0432\u0430 \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f",
-          "page": "Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled&hardsMode=view",
-          "href": "postrade/deals-app/pages/Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled&hardsMode=view",
-          "note": null,
-          "issues": [],
-          "do": []
-        }
-      ]
-    },
-    {
-      "id": "rsbu",
-      "app": "postrade/deals-app",
-      "title": "\u041a\u043e\u0440\u0440\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u043a\u0438 \u0420\u0421\u0411\u0423",
-      "page": "RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1",
-      "href": "postrade/deals-app/pages/RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1",
-      "parent": "tranche",
-      "note": null,
-      "states": [
-        {
-          "id": "adjustment-new",
-          "kind": "do",
-          "title": "\u041d\u043e\u0432\u0430\u044f \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u043a\u0430",
-          "page": "RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&open=add",
-          "href": "postrade/deals-app/pages/RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&open=add",
-          "note": null,
-          "issues": [],
-          "do": []
-        },
-        {
-          "id": "filled",
-          "kind": "do",
-          "title": "\u041a\u043e\u0440\u0440\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u043a\u0438 \u0432\u043d\u0435\u0441\u0435\u043d\u044b",
-          "page": "RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled",
-          "href": "postrade/deals-app/pages/RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled",
-          "note": null,
-          "issues": [],
-          "do": []
-        }
-      ]
+      "passport": "local-components/postrade/deals-app/Tranche.page.html",
+      "states": []
     },
     {
       "id": "fin-metrics",
@@ -192,6 +124,7 @@
       "href": "postrade/deals-app/pages/FinancialMetrics.preview.html?id=1024",
       "parent": "deal",
       "note": null,
+      "passport": "local-components/postrade/deals-app/FinancialMetrics.page.html",
       "states": []
     },
     {
@@ -202,6 +135,7 @@
       "href": "postrade/deals-app/pages/FinInstrument.preview.html?id=1024&fi=FI-1024-1",
       "parent": "deal",
       "note": null,
+      "passport": "local-components/postrade/deals-app/FinInstrument.page.html",
       "states": []
     },
     {
@@ -212,6 +146,7 @@
       "href": "postrade/post-reports-app/pages/FairValueRegister.preview.html",
       "parent": "main",
       "note": null,
+      "passport": "local-components/postrade/post-reports-app/FairValueRegister.page.html",
       "states": [
         {
           "id": "register/register-new",
@@ -245,6 +180,7 @@
       "href": "postrade/post-reports-app/pages/FairValueCalculation.preview.html?id=16&role=FINANCIER",
       "parent": "fv-register",
       "note": null,
+      "passport": "local-components/postrade/post-reports-app/FairValueCalculation.page.html",
       "states": [
         {
           "id": "statuses-financier/st-forming",

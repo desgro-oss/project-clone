@@ -170,7 +170,7 @@
 
     /* ── Расчёт ─────────────────────────────────────────────────────── */
     /* Период, в который попала дата, и начисления на эту дату. Моки: начисления равны суммам первого
-       демо-периода на 31.03.2025 и растут на ACCRUAL_PER_DAY за каждый день вперёд (основной долг от даты не зависит) (уменьшаются при
+       демо-периода на 31.03.2025 и растут на ACCRUAL_PER_DAY за каждый день вперёд (уменьшаются при
        уходе в прошлое) — задолженность копится вместе с процентами. В жизни это не всегда так: на
        графике платежей есть и погашения, после которых задолженность падает; с реальными данными
        логика заменится (решение человека 16.10.2026). Квартал вне демо-периодов строится по дате.
@@ -180,7 +180,7 @@
       var t = Date.UTC(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10)));
       var k = Math.max(ACCRUAL_MIN, 1 + Math.round((t - ACCRUAL_ANCHOR) / 86400000) * ACCRUAL_PER_DAY);
       var out = {};
-      Object.keys(base).forEach(function (code) { out[code] = code === 'PRINCIPAL' ? base[code] : Math.round(base[code] * k); });
+      Object.keys(base).forEach(function (code) { out[code] = Math.round(base[code] * k); });
       return out;
     }
     function periodFor(iso) {

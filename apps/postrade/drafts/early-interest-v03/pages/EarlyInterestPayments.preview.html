@@ -73,7 +73,7 @@
      только чтение, кнопок нет). Приоритет есть всегда (по умолчанию — исходный порядок),
      поэтому data-state — только data.
      Значения в разметке — демо; поля и обработчик карандаша ставит RepaymentPriorityTile.js. -->
-<section data-state="data" data-mode="edit" id="tile-repay-order" class="tile lc-repay-order col-12" data-widget="RepaymentPriorityTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.html">
+<section data-state="data" data-mode="edit" id="tile-repay-order" class="tile lc-repay-order col-6" data-widget="RepaymentPriorityTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.html">
   <header class="tile__header">
     <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Приоритет погашения</h3></div></div>
     <div class="tile__actions">
@@ -85,7 +85,6 @@
       <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">1</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Текущие начисленные проценты</span></div></div></div></div>
       <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">2</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Капитализированные начисленные проценты</span></div></div></div></div>
       <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">3</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Отложенные начисленные проценты</span></div></div></div></div>
-      <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">4</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Основной долг</span></div></div></div></div>
     </div>
   </div>
 </section>
@@ -366,7 +365,7 @@
       + (postfix ? '<span class="tc__postfix">' + esc(postfix) + '</span>' : '') + '</span></div>';
   }
   function statusCell(code) {
-    return '<div class="tc" data-col="status"><span class="chip chip--s chip--fit ' + TONE[code] + '"><span class="chip__label">' + esc(STATUS[code]) + '</span></span></div>';
+    return '<div class="tc" data-col="status"><span class="chip chip--s chip--fit chip--rounded ' + TONE[code] + '"><span class="chip__label">' + esc(STATUS[code]) + '</span></span></div>';
   }
   /* платёж «В обработке» править и удалять нельзя — кнопки выключены */
   function actionsCell(r) {

@@ -92,7 +92,8 @@
     base: new URL('../../', location.href).href,
     here: location.href,
     states: on,
-    labels: { map: 'Карта экранов IB', states: 'Состояния страницы', empty: 'На карте нет страниц' }
+    labels: { map: 'Карта экранов IB', states: 'Состояния страницы', empty: 'На карте нет страниц',
+      actions: 'Действия со страницей', open: 'Открыть страницу', passport: 'Паспорт страницы' }
   });
   sw.addEventListener('change', function () {
     sw.setAttribute('aria-checked', String(sw.checked));

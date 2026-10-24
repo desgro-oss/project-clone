@@ -4,5 +4,7 @@
   "title": "Pipeline Management ver. 01",
   "desc": "Сделки и лиды всех pipeline: канбан по стадиям и дескам, таблица",
   "home": "pages/index.html",
-  "icon": "layout-grid-01"
+  "icon": "layout-grid-01",
+  "concept": "Pipeline Management",
+  "version": "v1"
 }

@@ -60,7 +60,7 @@
 
       <!-- #sec:content ── Приоритет погашения над таблицей досрочных платежей -->
       <div class="grid12">
-        <ds-include src="../widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.html" class="col-12" id="tile-repay-order"></ds-include>
+        <ds-include src="../widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.html" class="col-6" id="tile-repay-order"></ds-include>
       </div>
 
       <div class="dtable dtable--fill">
@@ -206,7 +206,7 @@
       + (postfix ? '<span class="tc__postfix">' + esc(postfix) + '</span>' : '') + '</span></div>';
   }
   function statusCell(code) {
-    return '<div class="tc" data-col="status"><span class="chip chip--s chip--fit ' + TONE[code] + '"><span class="chip__label">' + esc(STATUS[code]) + '</span></span></div>';
+    return '<div class="tc" data-col="status"><span class="chip chip--s chip--fit chip--rounded ' + TONE[code] + '"><span class="chip__label">' + esc(STATUS[code]) + '</span></span></div>';
   }
   /* платёж «В обработке» править и удалять нельзя — кнопки выключены */
   function actionsCell(r) {

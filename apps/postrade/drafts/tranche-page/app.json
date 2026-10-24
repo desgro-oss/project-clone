@@ -2,8 +2,10 @@
   "id": "tranche-page",
   "track": "rnd",
   "title": "Post — Корректировки РСБУ",
-  "desc": "Транш кредитной линии (НКЛ): шапка, общая информация, проценты, комиссии, платежи",
+  "desc": "Транш: шапка, общая информация, проценты, комиссии, платежи",
   "home": "pages/Tranche.html",
   "icon": "folder",
-  "shelf": "archive"
+  "shelf": "archive",
+  "concept": "Корректировки РСБУ",
+  "version": "v1"
 }

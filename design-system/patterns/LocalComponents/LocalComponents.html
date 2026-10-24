@@ -42,7 +42,7 @@ ol.tight li b{font-weight:600}
   <header class="masthead">
     <p class="eyebrow">Правила и паттерны</p>
     <h1>Локальные компоненты</h1>
-    <p class="meta"><span>Версия: <b>2.000</b></span><span>Обновлено: <b>02.10.2026</b></span></p>
+    <p class="meta"><span>Версия: <b>2.001</b></span><span>Обновлено: <b>23.10.2026</b></span></p>
     <p class="lead">Локальный компонент знает предметную область: он собран из компонентов этой ДС, но фиксирует конкретный состав полей, порядок, термины и правила отображения одного продукта. Тайлы, таблицы, модальные окна, поповеры, контекстные меню — всё это локальные компоненты и живёт по правилам с этой страницы. Сами компоненты и их паспорта хранятся в проекте продукта; здесь — правила и шаблон, по которым их заводит любая команда.</p>
   </header>
 
@@ -382,6 +382,14 @@ ol.tight li b{font-weight:600}
       <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
         <div class="tc tc--separator"></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Бизнес-смысл</b> (Business context)</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зачем компонент существует, кто и когда его заполняет, кто пользуется результатом, бизнес-правила; под таблицей — источники. Слова предметной области не объясняются: на них ссылаются вики-ссылкой на термин Глоссария</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">3</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Раскладка</b> (Layout)</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дерево блоков и их компонентов в порядке на экране</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div>
@@ -389,7 +397,7 @@ ol.tight li b{font-weight:600}
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
         <div class="tc tc--separator"></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">3</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">4</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты</b> (Components)</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Варианты и ключевые параметры компонентов ДС и локальных компонентов внутри</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Из чего собран»: компоненты ДС со ссылками на их страницы, локальные компоненты, подчасти, файлы</span></span></div>
@@ -397,7 +405,7 @@ ol.tight li b{font-weight:600}
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
         <div class="tc tc--separator"></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">4</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">5</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Поля</b> (Fields)</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поля в порядке отображения: смысл, тип и единица, источник, обязательность</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div>
@@ -405,7 +413,7 @@ ol.tight li b{font-weight:600}
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
         <div class="tc tc--separator"></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">5</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">6</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Права</b> (Permissions)</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Матрица «роль → просмотр / редактирование», что видно в каждом режиме</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div>
@@ -413,7 +421,7 @@ ol.tight li b{font-weight:600}
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
         <div class="tc tc--separator"></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">6</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">7</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Состояния</b> (States)</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обязательный набор из раздела «Состояния» этой страницы и подраздел «Свои состояния»</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Все состояния рядом»: копия фрагмента на каждую пару «состояние × режим»</span></span></div>
@@ -421,7 +429,7 @@ ol.tight li b{font-weight:600}
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
         <div class="tc tc--separator"></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">7</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">8</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Обязательность заполнения</b> (Required)</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обязателен ли компонент целиком и какие поля внутри; что видно, когда обязательное не заполнено, и что отдаётся наружу</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div>
@@ -429,7 +437,7 @@ ol.tight li b{font-weight:600}
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
         <div class="tc tc--separator"></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">8</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">9</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Переполнение</b> (Overflow)</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст, много строк, узкая и полная ширина: обрезка, перенос, «ещё N», сворачивание</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div>
@@ -437,7 +445,7 @@ ol.tight li b{font-weight:600}
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
         <div class="tc tc--separator"></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">9</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">10</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Поведение</b> (Behavior)</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Парой «триггер → результат»: подраздел «Связанные артефакты» и свои правила — проверка ввода, выбор, сохранение, когда компонент показывается</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div>
@@ -445,7 +453,7 @@ ol.tight li b{font-weight:600}
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
         <div class="tc tc--separator"></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">10</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">11</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Данные</b> (Data dependencies)</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Что нужно от бэкенда и демо-данные прототипа: файлы, типы, источник имён</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div>
@@ -453,7 +461,7 @@ ol.tight li b{font-weight:600}
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
         <div class="tc tc--separator"></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">11</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">12</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Для разработчиков</b> (Implementation)</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Параметры метки, скрипт компонента, соответствие файлов прототипа и фронтенда</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div>
@@ -461,7 +469,7 @@ ol.tight li b{font-weight:600}
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
         <div class="tc tc--separator"></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">12</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">13</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Осознанные отклонения</b> (Deviations)</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правило ДС или макета → как сделано → почему</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div>
@@ -469,7 +477,7 @@ ol.tight li b{font-weight:600}
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 0.2fr 0.95fr 1.45fr 1fr 8px;">
         <div class="tc tc--separator"></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">13</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">14</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открытые вопросы</b> (Open questions)</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Что не решено и от кого нужен ответ; допущения — с пометкой и датой</span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div>

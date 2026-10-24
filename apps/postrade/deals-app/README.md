@@ -9,8 +9,8 @@
 Форма модуля — `../../README.md`: `pages/`, `widgets/<группа>/<Имя>/`,
 `data/`, `refs/`; дерево ниже собирается само.
 
-Панель прототипа: Alt+Shift+P на любой странице; сценарии — proto-panel/flows.yaml (тайл
-«Корректировки процентов РСБУ» на странице транша, страница корректировок).
+Панель прототипа: Alt+Shift+P на любой странице; сценарии — proto-panel/flows.yaml
+(финансовые метрики сделки: расчёт, страница метрик, фиксация, выгрузка).
 
 ## Экраны
 
@@ -31,10 +31,10 @@
 
 ## Виджеты
 
-12 тайлов и таблица страницы сделки, 22 модальных окна и поповер. Наполнены девять
+11 тайлов и таблица страницы сделки, 25 модальных окон и поповер. Наполнены девять
 тайлов — «КНР», «Сроки сделки», «Команда сделки», «Описание сделки», «Финансовые метрики
 сделки», «Сведения о проекте», «Продукты сделки», «Финансовые инструменты», «Заведение
-сделки», у каждого свои окна; остальные 3
+сделки», у каждого свои окна; остальные 2
 тайла и таблица — заглушки (`data-state="empty"`): оболочка есть, состав полей не
 согласован. Имена сверены с деревом фронтенда 24.09.2026: где пара нашлась,
 имя — как у фронтенда; где нет — осталось нашим, с типом в конце.
@@ -229,11 +229,7 @@ deals-app/
 │   ├── MainPage.screen.md                      ← спека
 │   ├── Portfolio.html                          ← Текущий портфель ДИД
 │   ├── Portfolio.screen.md                     ← спека
-│   ├── RsbuInterestAdjustments.html            ← Корректировки процентов РСБУ — источник, собирается в RsbuInterestAdjustments.preview.html
-│   ├── RsbuInterestAdjustments.preview.html    ← собранная страница — открывать её
-│   ├── RsbuInterestAdjustments.screen.md       ← спека
-│   ├── Tranche.html                            ← Страница транша — источник, собирается в Tranche.preview.html
-│   ├── Tranche.preview.html                    ← собранная страница — открывать её
+│   ├── Tranche.html                            ← Страница транша
 │   └── Tranche.screen.md                       ← спека
 ├── widgets/
 │   ├── modals/                                 ← модальные окна
@@ -410,20 +406,13 @@ deals-app/
 │   │   │   ├── ProductTreeConfirmModal.html
 │   │   │   ├── ProductTreeConfirmModal.js
 │   │   │   └── ProductTreeConfirmModal.md
-│   │   ├── RepaymentModal/                     ← Окно погашения
-│   │   │   ├── CHANGELOG.md
-│   │   │   ├── fixtures.json
-│   │   │   ├── RepaymentModal.css
-│   │   │   ├── RepaymentModal.html
-│   │   │   ├── RepaymentModal.js
-│   │   │   └── RepaymentModal.md
-│   │   └── RsbuAdjustmentModal/                ← Модальное окно внесения корректировки
+│   │   └── RepaymentModal/                     ← Окно погашения
 │   │       ├── CHANGELOG.md
 │   │       ├── fixtures.json
-│   │       ├── RsbuAdjustmentModal.css
-│   │       ├── RsbuAdjustmentModal.html
-│   │       ├── RsbuAdjustmentModal.js
-│   │       └── RsbuAdjustmentModal.md
+│   │       ├── RepaymentModal.css
+│   │       ├── RepaymentModal.html
+│   │       ├── RepaymentModal.js
+│   │       └── RepaymentModal.md
 │   ├── popovers/                               ← поповеры и тултипы
 │   │   └── RelatedDealsPopover/                ← Поповер связанных сделок
 │   │       ├── CHANGELOG.md
@@ -535,19 +524,12 @@ deals-app/
 │       │   ├── Navigator.html
 │       │   ├── Navigator.js
 │       │   └── Navigator.md
-│       ├── ProjectInformationTile/             ← Сведения о проекте
-│       │   ├── CHANGELOG.md
-│       │   ├── ProjectInformationTile.css
-│       │   ├── ProjectInformationTile.html
-│       │   ├── ProjectInformationTile.js
-│       │   └── ProjectInformationTile.md
-│       └── RsbuInterestAdjustmentsTile/        ← Корректировки процентов РСБУ
+│       └── ProjectInformationTile/             ← Сведения о проекте
 │           ├── CHANGELOG.md
-│           ├── fixtures.json
-│           ├── RsbuInterestAdjustmentsTile.css
-│           ├── RsbuInterestAdjustmentsTile.html
-│           ├── RsbuInterestAdjustmentsTile.js
-│           └── RsbuInterestAdjustmentsTile.md
+│           ├── ProjectInformationTile.css
+│           ├── ProjectInformationTile.html
+│           ├── ProjectInformationTile.js
+│           └── ProjectInformationTile.md
 ├── data/
 │   ├── API.md
 │   ├── counterparties-store.js                 ← CounterpartiesStore — база контрагентов и состав участников сделки.

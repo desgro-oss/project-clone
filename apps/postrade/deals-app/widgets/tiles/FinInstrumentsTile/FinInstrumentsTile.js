@@ -33,7 +33,9 @@
      EDIT   — DealFinancialInstrumentEditModal (пункт «Изменить» меню
               карточки — временный: что в меню, не решено, 02.10.2026).
      OPEN   — «→» в шапке карточки: страница сделки открывает страницу ФИ
-              (FinInstrument.html).
+              (FinInstrument.html);
+     OPEN_NODE — заголовок связанного инструмента со своей страницей (сейчас
+              транш): страница открывает страницу узла.
    «+ Добавить», ⇄ у инструмента и ссылка у кодов RWA нарисованы по
    макету и пока ничего не делают: что они делают, человек опишет позже
    (02.10.2026).
@@ -190,6 +192,11 @@
   }
 
   document.addEventListener('click', function (e) {
+    /* Заголовок-ссылка карточки — href="#" только ради курсора и фокуса:
+       перехода по нему быть не должно. Ссылка без действия (страница ещё не
+       собрана) тоже не прыгает наверх. */
+    var link = e.target.closest && e.target.closest(ROOT + ' .prow__title--link[href="#"]');
+    if (link) e.preventDefault();
     var el = e.target.closest && e.target.closest('[data-fi-act]');
     if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true') return;
     var tile = ownerOf(el);

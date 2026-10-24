@@ -4,5 +4,7 @@
   "title": "AI Pitcher ver. 02",
   "desc": "Прототип v02: чат с конструктором запроса и просмотром материала",
   "home": "pages/index.html",
-  "icon": "ai-stars"
+  "icon": "ai-stars",
+  "concept": "AI Pitcher",
+  "version": "v2"
 }

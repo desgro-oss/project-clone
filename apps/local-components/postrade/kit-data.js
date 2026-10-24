@@ -35,7 +35,7 @@ window.IBPKit = {
       "owner": "DealDescriptionTile",
       "stub": false,
       "version": "1.002",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "CounterpartiesTile",
@@ -49,7 +49,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "0.010",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "CounterpartyCard",
@@ -63,7 +63,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "0.006",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealCounterpartiesTable",
@@ -77,7 +77,7 @@ window.IBPKit = {
       "owner": null,
       "stub": true,
       "version": "0.003",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealDescriptionModal",
@@ -91,7 +91,7 @@ window.IBPKit = {
       "owner": "DealDescriptionTile",
       "stub": false,
       "version": "1.000",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealDescriptionTile",
@@ -105,7 +105,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.003",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealFinancialInstrumentCreateModal",
@@ -119,7 +119,7 @@ window.IBPKit = {
       "owner": "FinInstrumentsTile",
       "stub": false,
       "version": "1.000",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealFinancialInstrumentEditModal",
@@ -133,7 +133,7 @@ window.IBPKit = {
       "owner": "FinInstrumentsTile",
       "stub": false,
       "version": "1.002",
-      "updated": "16.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealFinancialMetricsModal",
@@ -147,7 +147,7 @@ window.IBPKit = {
       "owner": "DealFinancialMetricsTile",
       "stub": false,
       "version": "1.006",
-      "updated": "09.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealFinancialMetricsTile",
@@ -161,7 +161,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.004",
-      "updated": "09.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealMetricsCalculationTile",
@@ -175,7 +175,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "0.007",
-      "updated": "21.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealPeriodModal",
@@ -189,7 +189,7 @@ window.IBPKit = {
       "owner": "DealPeriodTile",
       "stub": false,
       "version": "0.004",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealPeriodTile",
@@ -203,7 +203,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "0.006",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealProductTreeTile",
@@ -216,8 +216,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/DealProductTreeTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.004",
-      "updated": "09.10.2026"
+      "version": "1.005",
+      "updated": "23.10.2026"
     },
     {
       "id": "DealProjectInformationModal",
@@ -231,7 +231,7 @@ window.IBPKit = {
       "owner": "ProjectInformationTile",
       "stub": false,
       "version": "1.000",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealRelatedCollateralsTile",
@@ -245,7 +245,7 @@ window.IBPKit = {
       "owner": null,
       "stub": true,
       "version": "0.003",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealTeamModal",
@@ -259,7 +259,7 @@ window.IBPKit = {
       "owner": "DealTeamTile",
       "stub": false,
       "version": "1.000",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealTeamTile",
@@ -273,7 +273,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.001",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DealTitleModal",
@@ -287,7 +287,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.000",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DidProductsModal",
@@ -301,7 +301,7 @@ window.IBPKit = {
       "owner": "DealProductTreeTile",
       "stub": false,
       "version": "1.002",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "FinancialMetricsDownloadReportModal",
@@ -315,7 +315,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "0.001",
-      "updated": "21.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "FinancialMetricsFilterModal",
@@ -329,7 +329,7 @@ window.IBPKit = {
       "owner": "FinancialMetricsTable",
       "stub": false,
       "version": "0.002",
-      "updated": "21.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "FinancialMetricsTable",
@@ -343,7 +343,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "0.002",
-      "updated": "21.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "FinInstrumentCard",
@@ -356,8 +356,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/FinInstrumentCard.doc.html",
       "owner": "FinInstrumentsTile",
       "stub": false,
-      "version": "1.001",
-      "updated": "17.10.2026"
+      "version": "1.003",
+      "updated": "23.10.2026"
     },
     {
       "id": "FinInstrumentsTile",
@@ -370,8 +370,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/FinInstrumentsTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.006",
-      "updated": "17.10.2026"
+      "version": "1.008",
+      "updated": "23.10.2026"
     },
     {
       "id": "FixationHistoryTable",
@@ -385,7 +385,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "0.002",
-      "updated": "22.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "FixationModal",
@@ -399,7 +399,7 @@ window.IBPKit = {
       "owner": "DealMetricsCalculationTile",
       "stub": false,
       "version": "0.002",
-      "updated": "21.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "FixationModalTile",
@@ -413,7 +413,7 @@ window.IBPKit = {
       "owner": "FixationModal",
       "stub": false,
       "version": "0.002",
-      "updated": "21.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "InstrumentsCounterpartiesModal",
@@ -427,7 +427,7 @@ window.IBPKit = {
       "owner": "CounterpartiesTile",
       "stub": false,
       "version": "0.008",
-      "updated": "10.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "InstrumentsModal",
@@ -441,7 +441,7 @@ window.IBPKit = {
       "owner": "DealProductTreeTile",
       "stub": false,
       "version": "1.000",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "InstrumentTransferModal",
@@ -455,7 +455,7 @@ window.IBPKit = {
       "owner": "DealProductTreeTile",
       "stub": false,
       "version": "1.000",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "KPITable",
@@ -469,7 +469,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "0.003",
-      "updated": "22.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "LinkChangeModal",
@@ -483,7 +483,7 @@ window.IBPKit = {
       "owner": "DealProductTreeTile",
       "stub": false,
       "version": "1.001",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "Navigator",
@@ -497,7 +497,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.003",
-      "updated": "16.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "NavigatorAppointmentOfResponsibleModal",
@@ -511,7 +511,7 @@ window.IBPKit = {
       "owner": "Navigator",
       "stub": false,
       "version": "1.000",
-      "updated": "10.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "NavigatorApprovalModal",
@@ -525,7 +525,7 @@ window.IBPKit = {
       "owner": "Navigator",
       "stub": false,
       "version": "1.001",
-      "updated": "10.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "NavigatorChangeReasonModal",
@@ -539,7 +539,7 @@ window.IBPKit = {
       "owner": "Navigator",
       "stub": false,
       "version": "1.000",
-      "updated": "10.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "NavigatorDealCloseModal",
@@ -553,7 +553,7 @@ window.IBPKit = {
       "owner": "Navigator",
       "stub": false,
       "version": "1.000",
-      "updated": "10.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "NavigatorForwardToTransferModal",
@@ -567,7 +567,7 @@ window.IBPKit = {
       "owner": "Navigator",
       "stub": false,
       "version": "1.001",
-      "updated": "10.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "ProductsModal",
@@ -581,7 +581,7 @@ window.IBPKit = {
       "owner": "DealProductTreeTile",
       "stub": false,
       "version": "1.002",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "ProductTreeConfirmModal",
@@ -595,7 +595,7 @@ window.IBPKit = {
       "owner": "DealProductTreeTile",
       "stub": false,
       "version": "1.000",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "ProjectInformationTile",
@@ -609,7 +609,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.000",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "RelatedDealsPopover",
@@ -623,7 +623,7 @@ window.IBPKit = {
       "owner": "DealDescriptionTile",
       "stub": false,
       "version": "1.002",
-      "updated": "02.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "RepaymentModal",
@@ -637,35 +637,7 @@ window.IBPKit = {
       "owner": "DealProductTreeTile",
       "stub": false,
       "version": "1.000",
-      "updated": "02.10.2026"
-    },
-    {
-      "id": "RsbuAdjustmentModal",
-      "name": "Модальное окно внесения корректировки",
-      "category": "Транш",
-      "purpose": "Внести или поправить корректировку процентов РСБУ транша — период, сумму и комментарий",
-      "type": "modal",
-      "typeLabel": "модальное окно",
-      "module": "postrade/deals-app",
-      "doc": "postrade/deals-app/RsbuAdjustmentModal.doc.html",
-      "owner": "RsbuInterestAdjustmentsTile",
-      "stub": false,
-      "version": "1.001",
-      "updated": "12.10.2026"
-    },
-    {
-      "id": "RsbuInterestAdjustmentsTile",
-      "name": "Корректировки процентов РСБУ",
-      "category": "Транш",
-      "purpose": "Сводка по корректировкам процентов РСБУ транша — сколько внесено, с переходом на страницу корректировок и входом в добавление",
-      "type": "tile",
-      "typeLabel": "тайл",
-      "module": "postrade/deals-app",
-      "doc": "postrade/deals-app/RsbuInterestAdjustmentsTile.doc.html",
-      "owner": null,
-      "stub": false,
-      "version": "1.002",
-      "updated": "12.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "CreateFairValueCalculationModal",
@@ -679,7 +651,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.000",
-      "updated": "08.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "DownloadReportModal",
@@ -693,7 +665,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.000",
-      "updated": "08.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "FairValueInstrumentablesUploadFileModal",
@@ -707,7 +679,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.000",
-      "updated": "08.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "FairValueUserMetricsModal",
@@ -721,7 +693,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.000",
-      "updated": "08.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "ReservesFvComponentsModal",
@@ -735,7 +707,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.000",
-      "updated": "08.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "ReservesFvModal",
@@ -749,7 +721,7 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "1.000",
-      "updated": "08.10.2026"
+      "updated": "23.10.2026"
     },
     {
       "id": "deal-status-model",

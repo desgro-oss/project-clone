@@ -33,35 +33,8 @@ nodes:
   - id: tranche
     app: deals-app
     title: Транш
-    page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1
+    page: Tranche.html?id=1024&tr=1024.d1.p1.i1.t1
     parent: deal
-    states:
-      # тайл «Корректировки процентов РСБУ»: тексты — из паспорта RsbuInterestAdjustmentsTile.md
-      - id: hards-locked
-        title: Требуется расчёт процентных платежей
-        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=locked
-      - id: hards-none
-        title: Корректировки отсутствуют
-        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=none
-      - id: hards-filled
-        title: Корректировки внесены
-        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled
-      - id: hards-view
-        title: Корректировки без права редактирования
-        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled&hardsMode=view
-
-  - id: rsbu
-    app: deals-app
-    title: Корректировки РСБУ
-    page: RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1
-    parent: tranche
-    states:
-      - id: adjustment-new
-        title: Новая корректировка
-        page: RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&open=add
-      - id: filled
-        title: Корректировки внесены
-        page: RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled
 
   - id: fin-metrics
     app: deals-app

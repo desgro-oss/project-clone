@@ -796,6 +796,10 @@ const isModalSnap = (s) => !!(s && s.target && /\.modal\b/.test(s.target));
 /** Ширина окна в шагах ДС (`modal--w2` = 289 px, шаг ≈ 152,6 px: w3 = 442, w4 = 595, w7 = 1053) по ширине кадра. */
 export const modalColumns = (px) => Math.max(2, Math.round((px - 289) / 152.6) + 2);
 
+/** Кадр-вырезка (окно, тайл) стоит на подложке страницы спеки: собственный фон снимка (`html`, `body`) прозрачный.
+    Иначе под скруглёнными углами окна видна прямоугольная плашка цвета фона страницы — окно читается прямоугольным (RE0037). */
+const CROP_FRAME_CSS = 'html,body{background:transparent!important}';
+
 /* ---------------- инспектор в окне снимка (RE0032) ---------------- */
 
 /** Модули Devmode, которые идут в окно снимка, — в порядке FILES панели (оболочка spec-lite.js ставит им заглушки панели). */
@@ -940,6 +944,7 @@ export function exportHtml(spec, body, capture, inspector) {
       return [s.id, { id: s.id, n: num[s.id], title: s.title, page: s.page, target: s.target, mark: s.mark, height: s.height, w: c.w, h: c.h, crop: !!s.target, modal: isModalSnap(s), htmlAttrs: c.htmlAttrs, body: c.body, local: c.local.join('\n') }];
     })),
     capture: { taken: capture.taken, viewport: capture.viewport, userAgent: capture.userAgent },
+    frame: { crop: CROP_FRAME_CSS },
   };
   const json = JSON.stringify(data).replace(/</g, '\\u003c');
   const meta = ['Модуль <code>' + esc(spec.module) + '</code>', spec.version ? 'версия ' + esc(spec.version) : '', spec.date ? esc(spec.date) : '', spec.designer ? 'дизайнер ' + esc(spec.designer) : ''].filter(Boolean).join(' · ');
@@ -1014,6 +1019,9 @@ const PAGE_CSS = [
   '.sp-snap__frame{display:block;width:100%;padding:0;border:0;background:var(--bg-page);cursor:zoom-in;overflow:hidden;position:relative;text-align:left}',
   '.sp-snap__scale{display:block;transform-origin:0 0}',
   '.sp-snap iframe,.sp-zoom iframe{display:block;border:0;background:var(--bg-page)}',
+  /* кадр окна: фон прозрачный — под скруглёнными углами видно скрим рамки, а не плашку фона;
+     скругление и тень — токенами окна ДС: своя тень окна срезана краем кадра (RE0037) */
+  '.sp-snap--modal iframe,.sp-zoom__stage--modal iframe{background:transparent;border-radius:var(--radius-modal);box-shadow:var(--shadow-modal-form)}',
   '.sp-snap__frame iframe{pointer-events:none}',
   'figcaption{font:var(--type-body-s);color:var(--text-secondary);margin-top:var(--space-8)}',
   '.sp-snap figcaption{margin-top:auto;padding-top:var(--space-8)}',
@@ -1135,6 +1143,7 @@ function viewer() {
   function srcdoc(s, live) {
     var css = FREEZE;
     if (s.crop) {
+      css += data.frame.crop;   // фон снимка прозрачный: под углами окна показывает скрим рамки, а не фон страницы
       css += '[data-snap-target]{position:fixed!important;left:0!important;top:0!important;right:auto!important;bottom:auto!important;margin:0!important;'
         + 'width:' + s.w + 'px!important;height:' + s.h + 'px!important;min-width:0!important;max-width:none!important;max-height:none!important;transform:none!important;z-index:2147483646!important}'
         + '[data-snap-anc]{background:transparent!important;box-shadow:none!important}';
@@ -2118,6 +2127,24 @@ function selftest() {
     assert.equal(back.snaps['tile-a'].body, capture.snaps['tile-a'].body);
     const again = exportHtml(fm.spec, split.body, back);
     assert.equal(captureFromHtml(again).snaps['tile-a'].local[0], '.x{}');
+  });
+  t('кадр окна: фон прозрачный, скругление и тень ДС (RE0037)', () => {
+    const m = {
+      taken: capture.taken, viewport: capture.viewport, userAgent: capture.userAgent, shared: capture.shared, fonts: capture.fonts,
+      snaps: { 'modal-a': { w: 1053, h: 600, htmlAttrs: 'lang="ru"', body: '<body><div data-snap-target class="modal">A</div></body>', local: ['body{background:#fff}'] } },
+    };
+    const body = '# Д\n\n## 1. Коротко\nОкно.\n<!-- snap: modal-a -->\n';
+    const src = fm.spec.snaps.concat([{ id: 'modal-a', title: 'Окно', page: 'Page.preview.html', target: '#ei-pay .modal', do: [], line: 1 }]);
+    const html = exportHtml({ ...fm.spec, snaps: src }, body, m);
+    assert.ok(html.includes('class="sp-snap sp-snap--modal" id="snap-modal-a"'), 'окно — кадр со скримом');
+    const rules = /\.sp-snap--modal iframe[^{]*\{([^}]*)\}/.exec(html.split('</script>')[0]);
+    assert.ok(rules, 'правила кадра окна в CSS страницы');
+    assert.ok(/border-radius:var\(--radius-modal\)/.test(rules[1]), rules[1]);
+    assert.ok(/box-shadow:var\(--shadow-modal-form\)/.test(rules[1]), rules[1]);
+    assert.ok(/background:transparent/.test(rules[1]), rules[1]);
+    const data = JSON.parse(html.split('id="devspec-data">')[1].split('</script>')[0]);
+    assert.ok(/html,body\{background:transparent!important\}/.test(data.frame.crop), 'фон снимка (html, body) прозрачный');
+    assert.ok(/s\.crop[\s\S]{0,80}data\.frame\.crop/.test(html), 'кадр-вырезка берёт прозрачный фон из данных');
   });
   t('маркер в пункте списка — снимок, а не текст; в md — с отступом пункта', () => {
     const body = '# Д\n\n1. Шаг\n   <!-- snap: tile-a -->\n2. Дальше\n';

@@ -21,6 +21,16 @@
    Сторожу хаба остаётся проверить, что генератор отработал, и что экраны
    ведут обратно в хаб.
 
+   Новый UI хаба (24.10.2026, концепт hub-redesign): концепт — одна плитка с
+   версиями, а не по плитке на версию. Версии одного концепта связывают
+   необязательные поля app.json `concept` (название концепта) и `version`
+   (подпись версии: «v3») — только вместе; записи с одним `concept` хаб
+   собирает в аккордеон. Спецификации на разработку (RE0016) — отдельный
+   массив `window.IBPHubSpecs`: по записи на `<приложение>/refs/<Spec>/<Spec>.dev-spec.md`
+   (front matter: spec, title, module, version, stage, date); href —
+   `<root>/pages/Spec.html?spec=<Spec>`. Спеки с одним title хаб собирает в
+   аккордеон версий так же, как концепты.
+
    Формат `hub.js` прежний — обычный `<script>` с `window.IBPHub`: хаб
    открывается двойным кликом (`file://`), где `fetch` не работает. Страница
    хаба (`index.html`) не меняется (решение владельца Р6).
@@ -62,20 +72,57 @@ const APP_FIELDS = ['id', 'track', 'title', 'desc', 'home', 'icon'];
    (архив). Хаб раскладывает по полкам аккордеонами тот раздел концептов, где поле есть хотя бы
    у одного приложения; приложение без поля в таком разделе — в «Актуальном». */
 const SHELVES = ['actual', 'archive'];
+/* Необязательные `concept` + `version` — версия концепта: записи с одним `concept` — одна плитка-аккордеон. */
+const SPEC_FIELDS = ['spec', 'title', 'module', 'version'];
 const DS_FIELDS = ['id', 'title', 'desc', 'icon'];
 const KIT_FIELDS = ['id', 'title', 'desc', 'icon'];
+const KB_FIELDS = ['id', 'section', 'title', 'desc', 'icon'];
 const MAP_FIELDS = ['id', 'section', 'title', 'desc', 'icon', 'after'];
 
 const js = (v) => (v === null ? 'null' : "'" + String(v).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n') + "'");
 
-/** Записи реестра из манифеста и app.json приложений: { entries, defects }. */
+/** Front matter спеки (ключ: значение, одна строка; списки и вложенное пропускаются). */
+function frontOf(text) {
+  const lines = text.split(/\r?\n/);
+  if (lines[0] !== '---') return {};
+  const end = lines.indexOf('---', 1);
+  const out = {};
+  for (const l of end > 0 ? lines.slice(1, end) : []) {
+    const m = l.match(/^([A-Za-z]+):\s*(.+?)\s*$/);
+    if (m) out[m[1]] = m[2].replace(/^["']|["']$/g, '');
+  }
+  return out;
+}
+
+/** Спеки на разработку приложения: refs/<Spec>/<Spec>.dev-spec.md → записи IBPHubSpecs. */
+function collectSpecs(P, dir, defects) {
+  const refs = path.join(P.root, P.appsDir, dir, 'refs');
+  if (!existsSync(refs)) return [];
+  const out = [];
+  for (const e of readdirSync(refs, { withFileTypes: true })) {
+    if (!e.isDirectory()) continue;
+    const file = path.join(refs, e.name, e.name + '.dev-spec.md');
+    if (!existsSync(file)) continue;
+    const rel = P.appsDir + '/' + dir + '/refs/' + e.name + '/' + e.name + '.dev-spec.md';
+    const front = frontOf(readFileSync(file, 'utf8'));
+    const miss = SPEC_FIELDS.filter((k) => !front[k]);
+    if (miss.length) { defects.push('ХБ4 ' + rel + ' — нет полей front matter: ' + miss.join(', ')); continue; }
+    if (front.spec !== e.name) { defects.push('ХБ4 ' + rel + ' — spec «' + front.spec + '» не совпадает с папкой «' + e.name + '»'); continue; }
+    const root = P.appsDir + '/' + dir;
+    out.push({ id: front.spec, title: front.title, module: front.module, version: front.version, ...(front.stage ? { stage: front.stage } : {}), ...(front.date ? { date: front.date } : {}), href: root + '/pages/Spec.html?spec=' + encodeURIComponent(front.spec), root });
+  }
+  return out;
+}
+
+/** Записи реестра из манифеста и app.json приложений: { entries, specs, defects }. */
 export function collect(P) {
   const defects = [];
   if (!P.appsDir || !P.hubRegistry) {
     defects.push('ХБ1 project.json не объявляет каталог приложений или реестр хаба (apps.dir, hub.registry)');
-    return { entries: [], defects };
+    return { entries: [], specs: [], defects };
   }
   const entries = [];
+  const specs = [];
   const ds = (P.manifest.hub && P.manifest.hub.ds) || null;
   if (ds) {
     const miss = DS_FIELDS.filter((k) => typeof ds[k] !== 'string' || !ds[k].trim());
@@ -108,12 +155,15 @@ export function collect(P) {
     if (!byTrack.has(app.track)) { defects.push('ХБ4 ' + rel + ' — track «' + app.track + '» не из треков манифеста: ' + [...byTrack.keys()].join(', ')); continue; }
     if (app.hub === false) continue;        // приложение без строки на хабе
     if (app.shelf !== undefined && !SHELVES.includes(app.shelf)) { defects.push('ХБ4 ' + rel + ' — shelf «' + app.shelf + '» не из списка: ' + SHELVES.join(', ')); continue; }
+    if ((app.concept === undefined) !== (app.version === undefined)) { defects.push('ХБ4 ' + rel + ' — concept и version задаются только вместе'); continue; }
+    if (app.concept !== undefined && (typeof app.concept !== 'string' || !app.concept.trim() || typeof app.version !== 'string' || !app.version.trim())) { defects.push('ХБ4 ' + rel + ' — concept и version — непустые строки'); continue; }
     byTrack.get(app.track).push({ ...app, dir });
+    specs.push(...collectSpecs(P, dir, defects));
   }
   for (const t of tracks) {
     for (const app of byTrack.get(t.id).sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))) {
       const root = P.appsDir + '/' + app.dir;
-      entries.push({ id: app.id, group: t.hubGroup, title: app.title, desc: app.desc, href: root + '/' + app.home.replace(/^\.\//, ''), root, icon: app.icon, ...(app.shelf ? { shelf: app.shelf } : {}) });
+      entries.push({ id: app.id, group: t.hubGroup, title: app.title, desc: app.desc, href: root + '/' + app.home.replace(/^\.\//, ''), root, icon: app.icon, ...(app.shelf ? { shelf: app.shelf } : {}), ...(app.concept ? { concept: app.concept, version: app.version } : {}) });
     }
   }
   /* Карты экранов (задача RE0015, решение человека 11.10.2026): пункт карты —
@@ -133,11 +183,23 @@ export function collect(P) {
       entries.splice(i + 1 + n, 0, { id: m.id, group: entries[i].group, title: m.title, desc: m.desc, href: root + '/index.html', root, icon: m.icon });
     }
   }
-  return { entries, defects };
+  /* База знаний (RE0038, решение человека 23.10.2026): отдельная колонка «База знаний»,
+     по записи на страницу; root — папка страницы внутри knowledgeBase.dir. */
+  const kbm = P.manifest.knowledgeBase;
+  if (kbm && Array.isArray(kbm.pages)) {
+    for (const k of kbm.pages) {
+      const miss = KB_FIELDS.filter((f) => typeof (k && k[f]) !== 'string' || !k[f].trim());
+      if (!P.knowledgeBase || miss.length) { defects.push('ХБ4 project.json → knowledgeBase.pages — ' + (P.knowledgeBase ? 'нет полей: ' + miss.join(', ') : 'нет dir — каталога базы знаний')); continue; }
+      const root = P.knowledgeBase.dir + '/' + k.section;
+      entries.push({ id: k.id, group: 'kb', title: k.title, desc: k.desc, href: root + '/index.html', root, icon: k.icon });
+    }
+  }
+  specs.sort((a, b) => (a.title < b.title ? -1 : a.title > b.title ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  return { entries, specs, defects };
 }
 
 /** Текст hub.js. */
-export function render(P, entries) {
+export function render(P, entries, specs = []) {
   const groups = P.tracks.filter((t) => t.hubGroup)
     .map((t) => '     ' + t.hubGroup.padEnd(8) + ' — приложения трека ' + t.id + (t.desc ? ': ' + t.desc : '') + ';');
   const head = [
@@ -145,7 +207,7 @@ export function render(P, entries) {
     '',
     '   СГЕНЕРИРОВАН ' + GEN + ' из ' + P.appsDir + '/<id>/' + P.appsManifest + ' и project.json → hub.ds' + (P.manifest.localKit ? ', localKit' : '') + '. Руками не',
     '   править: запись приложения — его ' + P.appsManifest + ', пересобрать — node ' + P.tools + '/' + GEN,
-    '   (гейт сверяет, шаг hub). Хаб строит из реестра и меню, и три колонки; сама',
+    '   (гейт сверяет, шаг hub). Хаб строит из реестра и меню, и колонки; сама',
     '   страница не правится.',
     '',
     '   Обычный <script>, а не JSON: страницы открываются по file://, а fetch по',
@@ -154,13 +216,14 @@ export function render(P, entries) {
     '   Группы (колонки хаба, в этом порядке):',
     '     ds       — дизайн-система (запись — project.json → hub.ds)' + (P.manifest.localKit ? ' и витрина локальных компонентов (project.json → localKit)' : '') + ';',
     ...groups,
+    ...(P.manifest.knowledgeBase ? ["     kb       — база знаний (project.json → knowledgeBase.pages): глоссарий и термины;"] : []),
     '   Группа приложения — hubGroup его трека (project.json → tracks).',
     ...(P.manifest.screenMap ? ['   Карта экранов (project.json → screenMap.maps) — сразу под записью приложения',
       '   after, в его колонке; root — папка карты, не приложения.'] : []),
     '',
     '   Поля:',
     '     id     — уникальный ключ, латиница; у приложения — его каталог;',
-    "     group  — 'ds' | " + P.tracks.filter((t) => t.hubGroup).map((t) => "'" + t.hubGroup + "'").join(' | ') + ';',
+    "     group  — 'ds' | " + P.tracks.filter((t) => t.hubGroup).map((t) => "'" + t.hubGroup + "'").join(' | ') + (P.manifest.knowledgeBase ? " | 'kb'" : '') + ';',
     '     title  — название строки на хабе и пункта меню;',
     '     desc   — описание одной строкой;',
     '     href   — стартовая страница от корня: каталог приложения + home из ' + P.appsManifest + ';',
@@ -168,18 +231,29 @@ export function render(P, entries) {
     '              него — часть записи: экраны с меню обязаны вести строкой',
     '              пользователя в футере на хаб;',
     '     icon   — имя глифа из ' + P.ds + '/' + DSP.layout().specOf('Icons') + ';',
-    "     shelf  — необязательное, только у приложений: 'actual' | 'archive' — полка в разделе концептов. */",
+    "     shelf  — необязательное, только у приложений: 'actual' | 'archive' — полка в разделе концептов;",
+    '     concept, version — необязательные, только вместе, только у приложений: название концепта',
+    '              и подпись версии; записи с одним concept — одна плитка-аккордеон на хабе.',
+    '',
+    '   Спецификации на разработку — window.IBPHubSpecs (после реестра): id (имя спеки), title (название',
+    '   сценария; спеки с одним title — версии), module (раздел/модуль, чьи страницы сняты), version,',
+    '   stage (подпись версии, необязательно), date (необязательно), href (страница спеки от корня),',
+    '   root (каталог приложения со спеками). */',
   ].join('\n');
-  const body = entries.map((e) => '  {\n' + ['id', 'group', 'title', 'desc', 'href', 'root', 'icon', 'shelf']
-    .filter((k) => k !== 'shelf' || e.shelf)
+  const OPTIONAL = ['shelf', 'concept', 'version'];
+  const body = entries.map((e) => '  {\n' + ['id', 'group', 'title', 'desc', 'href', 'root', 'icon', 'shelf', 'concept', 'version']
+    .filter((k) => !OPTIONAL.includes(k) || e[k])
     .map((k) => '    ' + k + ': ' + js(e[k])).join(',\n') + '\n  }').join(',\n');
-  return head + '\nwindow.IBPHub = [\n' + body + '\n];\n';
+  const specBody = specs.map((e) => '  {\n' + ['id', 'title', 'module', 'version', 'stage', 'date', 'href', 'root']
+    .filter((k) => e[k])
+    .map((k) => '    ' + k + ': ' + js(e[k])).join(',\n') + '\n  }').join(',\n');
+  return head + '\nwindow.IBPHub = [\n' + body + '\n];\n\nwindow.IBPHubSpecs = [' + (specs.length ? '\n' + specBody + '\n' : '') + '];\n';
 }
 
 export function check(P, write = false) {
-  const { entries, defects } = collect(P);
+  const { entries, specs, defects } = collect(P);
   if (defects.length) return { defects, written: [] };
-  const text = render(P, entries);
+  const text = render(P, entries, specs);
   const file = path.join(P.root, P.hubRegistry);
   if (write) {
     if (!existsSync(file) || readFileSync(file, 'utf8') !== text) { writeFileSync(file, text, 'utf8'); return { defects, written: [P.hubRegistry], entries }; }
@@ -239,6 +313,16 @@ const CASES = [
   { name: 'приложение со скрытой записью (hub: false)', expect: null, build: true,
     mutate: (r) => { put(r, 'apps/postrade/zeta-app/app.json', app('zeta-app', 'product', { hub: false })); check(project(r), true);
       if (readFileSync(path.join(r, 'hub.js'), 'utf8').includes('zeta-app')) put(r, 'hub.js', 'сломан'); } },
+  { name: 'concept без version', expect: 'ХБ4 apps/beta/app.json — concept и version задаются только вместе',
+    mutate: (r) => put(r, 'apps/beta/app.json', app('beta', 'rnd', { concept: 'Бета' })) },
+  { name: 'версия концепта и спека на разработку попадают в реестр', expect: null, build: true,
+    mutate: (r) => {
+      put(r, 'apps/beta/app.json', app('beta', 'rnd', { concept: 'Бета', version: 'v2' }));
+      put(r, 'apps/beta/refs/Spec1/Spec1.dev-spec.md', '---\nspec: Spec1\ntitle: Сценарий\nmodule: postrade/beta\nversion: "1.000"\nstage: Концепт v2\n---\n');
+      check(project(r), true);
+      const h = readFileSync(path.join(r, 'hub.js'), 'utf8');
+      if (!h.includes("concept: 'Бета'") || !h.includes("version: 'v2'") || !h.includes("window.IBPHubSpecs = [\n  {\n    id: 'Spec1'") || !h.includes("href: 'apps/beta/pages/Spec.html?spec=Spec1'")) put(r, 'hub.js', 'сломан');
+    } },
   { name: 'манифест без каталога приложений', expect: 'ХБ1',
     mutate: (r) => { const { apps, ...rest } = MANIFEST; put(r, 'project.json', JSON.stringify(rest)); } },
 ];

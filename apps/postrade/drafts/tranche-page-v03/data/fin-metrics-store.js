@@ -45,13 +45,14 @@
      trancheFiIds() → string[]               — ФИ сделки, к которым прикреплён транш
                  (фиксация расчёта РСБУ доступна только им, RE0034)
      rasState() → 'none'|'fixed'|'recalc'    — состояние фиксации расчёта РСБУ
-     setRasState(v)                          — сменить состояние (таб System панели)
+     setRasState(v)                          — сменить состояние (таб System на любой странице концепта)
      rasFixation() → null | { fiId, metricCode, fixedAt, firstDate, recalculated, fixed, actual,
                  delta, rawDelta } — фиксация индикатора «Начисленные проценты за период»;
                  fixed · actual · delta · rawDelta — { 'ГГГГ-ММ-ДД': число } на даты от фиксации;
                  actual · delta — с учётом переносов, rawDelta — без; firstDate — первая дата расхождения
      fixRas(fiId) → { ok } | { error: 'NOT_TRANCHE'|'ALREADY' } — зафиксировать расчёт
-     resetRas()                              — сбросить фиксацию и переносы (таб System панели)
+     resetRas()                              — сбросить фиксацию и переносы (таб System на любой
+                 странице концепта); параметры ras снимаются из адреса
      fiOfTranche(trancheId) → fiId|null      — ФИ, к которому прикреплён транш (вопрос 4: первый)
      rasEventDates(fiId) → string[]          — даты событий индикатора ФИ (ISO)
      rasMoves(fiId?) → [{ id, fiId, startDate, endDate, amount, comment, settled? }] — переносы;
@@ -115,6 +116,12 @@
    страницы и в хранилище не пишет, пока человек сам не сделал действие (фиксация, перенос,
    переключатель System) — после него состояние сохраняется как обычно. Значения, дельты и
    переносы — рыба, детерминированно (Source: invented 22.10.2026).
+
+   Чистый старт ручного сценария (RE0035, Э4): ?rasReset=1 на первой странице сценария. Сбрасывает
+   только фиксацию и переносы РСБУ этой сделки (расчёт метрик и фиксации ЭПС/ВБС остаются),
+   записывает пустое ras в хранилище и снимает параметр из адреса — обновление страницы не стирает
+   ход прохождения. «Сбросить» в табе System объявлено здесь же, поэтому есть на любой странице
+   концепта; оно делает то же самое и снимает из адреса rasFix и rasMoves.
 
    Хранение. Расчёт и фиксации кладёт в память страницы и в PostApi.finMetrics
    (localStorage или сервер данных, data/API.md) после каждого расчёта и
@@ -214,6 +221,15 @@
     };
     delete current.calculation.fixations;
     applyRasUrl(dealId);
+    /* ?rasReset=1 — чистый старт ручного сценария панели (RE0035, Э4): сбрасываем только фиксацию и
+       переносы РСБУ, расчёт метрик и фиксации ЭПС/ВБС остаются. Параметр снимаем из адреса, иначе
+       обновление страницы стирало бы ход прохождения. */
+    if (rasResetParam()) {
+      current.ras = emptyRas();
+      rasFromUrl = false;
+      commit();
+      stripRasParams(['rasReset', 'rasFix', 'rasMoves'], true);
+    }
     busy = false;
     running = null;
     emit({ reason: 'use' });
@@ -284,7 +300,11 @@
         } else {
           current.calculation.lastAttemptFailed = true;
         }
+        /* пересчёт — тоже действие человека: адрес больше не задаёт состояние, результат пишется
+           в хранилище, а параметры показа снимаются, чтобы F5 не вернул старое (RE0035, Э4) */
+        rasFromUrl = false;
         commit();
+        stripRasParams(['rasFix', 'rasMoves']);
         busy = false;
         running = null;
         emit({ reason: 'calculated' });
@@ -617,10 +637,42 @@
     }
   }
 
-  /* Человек сделал действие — адресное состояние становится настоящим и пишется. */
+  /* ?rasReset=1 — просьба о чистом старте (RE0035, Э4). */
+  function rasResetParam() {
+    return /[?&]rasReset=1/.test(window.location && window.location.search || '');
+  }
+
+  /* Убрать из адреса параметры состояния. replaceState на file:// браузер может запретить — тогда,
+     если reloadOnFail, одна перезагрузка на адрес без параметра (она нужна для чистого старта:
+     иначе F5 вернёт снятое); иначе адрес просто не меняем — состояние уже в хранилище. */
+  function stripRasParams(names, reloadOnFail) {
+    var q = window.location && window.location.search || '';
+    var had = false;
+    names.forEach(function (n) { if (new RegExp('[?&]' + n + '=').test(q)) had = true; });
+    if (!had) return;
+    var href = window.location.href;
+    try {
+      var u = new URL(href);
+      names.forEach(function (n) { u.searchParams.delete(n); });
+      href = u.toString();
+    } catch (e) { return; }
+    try {
+      window.history.replaceState(null, '', href);
+    } catch (e) {
+      if (reloadOnFail) {
+        try { window.location.replace(href); } catch (e2) { /* адрес не меняем */ }
+      }
+    }
+  }
+
+  /* Человек сделал действие — адресное состояние становится настоящим и пишется. Параметры rasFix
+     и rasMoves при этом снимаются из адреса: адрес — вход для показа готового состояния, а не второй
+     источник правды. Иначе reload или возврат браузером «назад» подменил бы сохранённое состояние
+     старым значением из адреса (RE0035, Э4). */
   function touchRas(reason, detail) {
     rasFromUrl = false;
     commit();
+    stripRasParams(['rasFix', 'rasMoves']);
     var d = detail || {};
     d.reason = reason;
     emit(d);
@@ -744,7 +796,20 @@
   function resetRas() {
     current.ras = emptyRas();
     touchRas('ras-state');
+    /* снятое состояние не должно вернуться из адреса при обновлении страницы (RE0035, Э4) */
+    stripRasParams(['rasReset', 'rasFix', 'rasMoves']);
   }
+
+  /* Служебное действие таба System — «Сбросить» (RE0035, Э4). Объявлено в сторе, а не на странице:
+     стор грузят все страницы концепта, поэтому действие есть на любой из них. id один на страницу —
+     страница своего дубля не объявляет. */
+  (window.PP_SYSTEM = window.PP_SYSTEM || []).push({
+    id: 'ras-reset',
+    title: 'Фиксация расчёта РСБУ и переносы',
+    desc: 'Вернуть демо-состояние сделки: фиксации и переносов нет.',
+    action: 'Сбросить',
+    run: function () { resetRas(); }
+  });
 
   /* Сверка при пересчёте (Э5). Позднего платежа в прототипе нет: пересчёт зафиксированного
      расчёта считается пересчётом после платежа (решение человека 22.10.2026) — появляется дельта.

@@ -103,6 +103,11 @@
       "agent": "ai-designer",
       "template": "Сценарий команды — файл .agents/commands/handoff.md: прочитай его целиком и выполни. Аргументы команды целиком: $ARGUMENTS"
     },
+    "know-sweep": {
+      "description": "Ревизия бизнес-смысла и глоссария — что устарело относительно источников, и разбор только этого",
+      "agent": "ai-designer",
+      "template": "Сценарий команды — файл .agents/commands/know-sweep.md: прочитай его целиком и выполни. Аргументы команды целиком: $ARGUMENTS"
+    },
     "resume": {
       "description": "Продолжить задачу в новой сессии по её handoff-файлу",
       "agent": "ai-designer",
