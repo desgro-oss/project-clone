@@ -1,7 +1,0 @@
-{
-  "_": "Демо-данные витрины: по объекту на вид тайла (аргумент PostTileRsbuAdjustments.render). state — locked | none | filled, count — число внесённых корректировок.",
-
-  "none":   { "state": "none",   "count": 0 },
-  "filled": { "state": "filled", "count": 3 },
-  "locked": { "state": "locked", "count": 0 }
-}
