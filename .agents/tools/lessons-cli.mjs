@@ -567,7 +567,8 @@ const FIX_LEVELS = ['исполняемое', 'временное', 'неизм�
 
 /* Ярлыки полей. Канон — пять; всё остальное сводится к ним в Э3. */
 const CANON = ['Дата/зона', 'Симптом', 'Причина', 'Правило', 'Закрепление'];
-const OPTIONAL = ['Для приёмки', 'Промоут'];
+/* `Признак` (RE0040) — форма ситуации, в которой урок должен вспомниться. */
+const OPTIONAL = ['Для приёмки', 'Промоут', 'Признак'];
 /* Без `\b`: граница слова в JS считается по ASCII, после кириллической буквы
    её нет — `/^Правило\b/` не совпадает НИ С ЧЕМ и молча даёт «правила нет»
    у всех 92 записей. Тот же класс, что Л51: регулярка синтаксически верна,
@@ -1356,6 +1357,7 @@ const BOOT_DIR = PRJ.boot && PRJ.boot.dir;   // загрузчик ДС (Ш8): �
 const AGENT_CONFIG = path.join(HERE, 'agent-config.mjs');
 const RUNLOG = path.join(HERE, 'runlog.mjs');
 const FRAGMENTS = path.join(HERE, 'fragments.mjs');
+const AFTER_WRITE = path.join(HERE, 'after-write.mjs');
 const MANIFEST_CHECK = path.join(HERE, 'manifest-check.mjs');
 const ASSEMBLE = path.join(HERE, 'assemble.mjs');
 const MODULE_README = path.join(HERE, 'module-readme.mjs');
@@ -1554,6 +1556,7 @@ function gateStep(id, paths = null) {
        порядок чтения, один файл на прогон гейта. Заведён 21.09.2026 вместе с
        хранением «файл на прогон» (шапка runlog.mjs). */
     case 'runlog-selftest': return { title: 'runlog --selftest (журнал прогонов)', args: [RUNLOG, '--selftest'], cwd: ROOT };
+    case 'after-write-selftest': return { title: 'after-write --selftest (хук после записи экрана)', args: [AFTER_WRITE, '--selftest'], cwd: ROOT };
     case 'fragments-selftest': return { title: 'fragments --selftest (фрагмент: вшитый и widgets/)', args: [FRAGMENTS, '--selftest'], cwd: ROOT };
     /* Манифест проекта (Ш1 реструктуризации): project.json описывает, где ДС,
        харнес, хаб и треки. Идёт первым: при разошедшемся манифесте остальные
@@ -1801,11 +1804,13 @@ function gateStepsFor(rel, deleted) {
   // корень и каталоги из манифеста читают все: правка общего модуля — прогон всех его потребителей
   if (rel === TOOL_REL + '/project.mjs') add('manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'registry-selftest', 'registry', 'runlog-selftest',
     'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'scaffold-selftest', 'snapshot-selftest', 'panel-selftest', 'panel',
-    'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor', 'etalons', 'ctx-budget', 'check', 'stats');
+    'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor', 'etalons', 'ctx-budget', 'check', 'stats', 'after-write-selftest');
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
   if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
   if (rel === TOOL_REL + '/runlog.mjs') add('runlog-selftest');
   if (rel === TOOL_REL + '/fragments.mjs') add('fragments-selftest');
+  // хук зовёт сенсор: правка хука или сенсора — самопроверка хука (RE0040, вопрос 5)
+  if (rel === TOOL_REL + '/after-write.mjs' || rel === TOOL_REL + '/layout-check.mjs') add('after-write-selftest');
   if (rel === TOOL_REL + '/manifest-check.mjs') add('manifest-selftest', 'manifest');
   if (underKit('skills/[^/]+/references/[^/]+\\.html$').test(rel)) add('etalons');
   if (/(^|\/)lessons(-raw)?\.md$/.test(rel) && rel.startsWith(KIT_REL + '/')) add('check', 'stats');
@@ -1816,9 +1821,9 @@ function gateStepsFor(rel, deleted) {
   return s;
 }
 
-const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'scaffold-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'brief', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'fragments-selftest', 'vendor-selftest', 'vendor'];
+const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'scaffold-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'brief', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'fragments-selftest', 'after-write-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'scaffold-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'syntax', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'fragments-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'theme-build', 'theme-selftest', 'theme-files-selftest', 'ds-check', 'etalons', 'anchors', 'check', 'coverage', 'brief', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'scaffold-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'syntax', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'fragments-selftest', 'after-write-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'theme-build', 'theme-selftest', 'theme-files-selftest', 'ds-check', 'etalons', 'anchors', 'check', 'coverage', 'brief', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром
@@ -1869,6 +1874,52 @@ function runGateStepAsync(step) {
       end(code);
     });
   });
+}
+
+/* Объём обязательного чтения ведущей роли (RE0040, Э5) — метрика, не сторож:
+   вердикт не краснит. Каждый заход и каждый субагент платит его до первого
+   действия; строка нужна, чтобы рост постоянного входа был виден, а не
+   обнаруживался по счёту токенов.
+
+   Список файлов не ведётся вручную — он выводится из тех же указателей, по
+   которым читает агент (второй перечень разошёлся бы с первым, Л43):
+     - корневой AGENTS.md и строки его таблицы «Где что», где в колонке «когда
+       читать» стоит «целиком» (кроме «целиком не читать»);
+     - `instructions` адаптера CLI и файл роли с `mode: primary`;
+     - кураторская выжимка уроков — рабочий вход всех ролей (process.md §13).
+   Знаки — по символам, как в замере задачи. */
+function readBudget() {
+  const files = [];
+  const add = (rel) => {
+    const r = String(rel || '').replace(/^\.\//, '');
+    if (r && !files.includes(r) && existsSync(path.join(ROOT, r))) files.push(r);
+  };
+  const entry = path.join(ROOT, 'AGENTS.md');
+  if (existsSync(entry)) {
+    add('AGENTS.md');
+    for (const line of rd(entry).split(/\r?\n/)) {
+      if (!line.startsWith('|')) continue;
+      const cells = line.split('|').map((c) => c.trim());
+      const when = cells[cells.length - 2] || '';
+      if (!/целиком/u.test(when) || /не читать/u.test(when)) continue;
+      for (const m of (cells[2] || '').matchAll(/`([^`]+\.md)`/g)) add(m[1]);
+    }
+  }
+  const cfg = ADAPTER_REL && path.join(ROOT, ADAPTER_REL, 'opencode.json');
+  if (cfg && existsSync(cfg)) {
+    try {
+      const j = JSON.parse(rd(cfg));
+      for (const p of j.instructions || []) add(p);
+      for (const [name, a] of Object.entries(j.agents || {})) if (a && a.mode === 'primary') add(KIT_REL + '/agents/' + name + '.md');
+    } catch { /* форму конфига сторожит agent-config */ }
+  }
+  add(path.relative(ROOT, CUR).split(path.sep).join('/'));
+  const sizes = files.map((f) => [f, [...rd(path.join(ROOT, f))].length]);
+  const total = sizes.reduce((s, [, n]) => s + n, 0);
+  const num = (n) => n.toLocaleString('ru-RU').replace(/\s/g, ' ');
+  return 'ЧТЕНИЕ ведущей роли до первого действия: ' + num(total) + ' знаков, файлов ' + files.length
+    + (files.length ? ' (' + sizes.map(([f, n]) => f + ' ' + num(n)).join(' · ') + ')' : ' — указатели «целиком» не найдены')
+    + ' — метрика, вердикт не меняет';
 }
 
 // пул пофайловых шагов: процессов не больше, чем ядер, и не больше четырёх
@@ -2131,6 +2182,7 @@ async function gate() {
   logAfter();
   if (st.code !== 0 && debtLine) log('ВНИМАНИЕ: ' + debtLine.trim() + ' — курация обязательна (скилл lessons)');
   if (калибровка) log('ВНИМАНИЕ: ' + калибровка.trim());
+  log(readBudget());
   log(failedNow.length ? 'ВЕРДИКТ: FAIL (' + failedNow.length + ' из ' + fresh.length + ')' : 'ВЕРДИКТ: OK (' + fresh.length + ' шаг.)');
   return failedNow.length ? 1 : 0;
 }

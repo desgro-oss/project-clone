@@ -1,14 +1,14 @@
 ---
 id: 'RE0037'
 title: 'Спека «Досрочное погашение процентов»: скругление окон и описание колонок таблицы окна платежа'
-status: review
+status: done
 priority: medium
 effort: small
 type: fix
 dependencies: []
 tags: ['postrade', 'dev-specs', 'dev-spec', 'early-interest', 'EarlyInterestRepaymentModal']
 created: 2026-10-23
-updated: 2026-10-23
+updated: 2026-10-25
 ---
 
 # Спека «Досрочное погашение процентов»: скругление и колонки (RE0037)

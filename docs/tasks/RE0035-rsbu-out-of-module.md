@@ -1,14 +1,14 @@
 ---
 id: 'RE0035'
 title: 'Корректировки РСБУ — убрать из модуля и витрины, оставить только в концептах'
-status: review
+status: done
 priority: medium
 effort: medium
 type: screen
 dependencies: []
 tags: ['postrade', 'deals-app', 'RsbuInterestAdjustments', 'local-components', 'screen-map', 'dev-specs']
 created: 2026-10-23
-updated: 2026-10-24
+updated: 2026-10-25
 ---
 
 # Корректировки РСБУ — убрать из модуля и витрины (RE0035)

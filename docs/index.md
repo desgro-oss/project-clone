@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 837.
+Документов: 839.
 
 ## Корень (4)
 
@@ -1089,7 +1089,7 @@
 |---|---|
 | [apps/screen-map/README.md](../apps/screen-map/README.md) | Карта экранов |
 
-## Задачи и заметки (123)
+## Задачи и заметки (125)
 
 ### Архив/черновики
 
@@ -1194,6 +1194,7 @@
 | [docs/tasks/RE0037-early-interest-spec-fixes.md](tasks/RE0037-early-interest-spec-fixes.md) | Спека «Досрочное погашение процентов»: скругление окон и описание колонок таблицы окна платежа |
 | [docs/tasks/RE0038-business-context.md](tasks/RE0038-business-context.md) | Раздел «Бизнес-смысл» во всех локальных компонентах и спеках страниц модулей |
 | [docs/tasks/RE0039-page-passports.md](tasks/RE0039-page-passports.md) | Паспорт страницы: описание страниц модулей на карте экранов |
+| [docs/tasks/RE0040-harness2-takeaways.md](tasks/RE0040-harness2-takeaways.md) | Харнес: хук проверки после записи экрана и четыре приёма из Harness² |
 | [docs/tasks/README.md](tasks/README.md) | Задачи: как заводить, какие файлы бывают, как считать затраты |
 
 ### Снимки задач
@@ -1228,6 +1229,7 @@
 | [docs/tasks/RE0037-early-interest-spec-fixes.handoff.md](tasks/RE0037-early-interest-spec-fixes.handoff.md) | RE0037 «Спека Досрочное погашение процентов: скругление окон и колонки таблицы» — handoff |
 | [docs/tasks/RE0038-business-context.handoff.md](tasks/RE0038-business-context.handoff.md) | RE0038 — handoff |
 | [docs/tasks/RE0039-page-passports.handoff.md](tasks/RE0039-page-passports.handoff.md) | RE0039 — handoff |
+| [docs/tasks/RE0040-harness2-takeaways.handoff.md](tasks/RE0040-harness2-takeaways.handoff.md) | RE0040 — handoff |
 
 ## Служебное (1)
 

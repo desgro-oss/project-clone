@@ -1,14 +1,14 @@
 ---
 id: 'RE0039'
 title: 'Паспорт страницы: описание страниц модулей на карте экранов'
-status: review
+status: done
 priority: medium
 effort: medium
 type: harness
 dependencies: ['RE0035', 'RE0038']
 tags: ['screen-map', 'local-components', 'kit-build', 'screen-spec', 'hub']
 created: 2026-10-23
-updated: 2026-10-23
+updated: 2026-10-25
 ---
 
 # Паспорт страницы на карте экранов (RE0039)

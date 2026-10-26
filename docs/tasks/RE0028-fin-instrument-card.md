@@ -1,14 +1,14 @@
 ---
 id: 'RE0028'
 title: 'Карточка ФИ — отдельный компонент витрины со всеми состояниями макета'
-status: review
+status: done
 priority: medium
 effort: small
 type: feature
 dependencies: ['RE0027']
 tags: ['local-components', 'FinInstrumentsTile', 'FinInstrumentCard']
 created: 2026-10-17
-updated: 2026-10-17
+updated: 2026-10-25
 ---
 
 # Карточка ФИ — отдельный компонент витрины (RE0028)

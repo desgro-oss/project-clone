@@ -26,7 +26,7 @@
 
 ## Проверки
 - `lessons-cli gate`: `ВЕРДИКТ: OK (11 шаг.)`.
-- `page-run`: четыре страницы витрины со сценарием `tmp/scenarios/KitMetricsDemos.scenario.mjs`, страница
+- `page-run`: четыре страницы витрины со сценарием `<Имя>.kit.scenario.mjs` в папках четырёх виджетов, страница
   метрик (`FinancialMetrics.scenario.mjs`, `FilterOpenReview.scenario.mjs`) — OK.
 - Приёмка Э9 (отдельный агент): NEEDS-WORK → исправлено; повторная не проводилась (правки текстовые и две строки сброса сеанса).
 

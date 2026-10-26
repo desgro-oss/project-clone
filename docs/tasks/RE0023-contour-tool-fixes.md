@@ -1,7 +1,7 @@
 ---
 id: 'RE0023'
 title: 'Перенос правок и дефектов оснастки из контрольного захода в контуре'
-status: review
+status: done
 priority: high
 effort: medium
 type: harness
@@ -11,7 +11,7 @@ tags:
   - tooling
   - contour
 created: 2026-10-15
-updated: 2026-10-15
+updated: 2026-10-25
 ---
 
 # Перенос правок и дефектов оснастки из контура (RE0023)

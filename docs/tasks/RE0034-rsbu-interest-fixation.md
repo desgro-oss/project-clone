@@ -1,14 +1,14 @@
 ---
 id: 'RE0034'
 title: 'Фиксация расчёта начисленных процентов РСБУ и корректировка по дельтам (концепт v3)'
-status: review
+status: done
 priority: high
 effort: large
 type: screen
 dependencies: ['RE0033']
 tags: ['postrade', 'tranche-page-v03', 'FinancialMetrics', 'RsbuInterestAdjustments', 'DealMetricsCalculationTile']
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-10-25
 ---
 
 # Фиксация расчёта начисленных процентов РСБУ и корректировка по дельтам (RE0034)

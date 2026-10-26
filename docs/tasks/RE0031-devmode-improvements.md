@@ -1,14 +1,14 @@
 ---
 id: 'RE0031'
 title: 'Улучшение Devmode: светлая панель, box model с радиусами, тулбар, направляющие, подсказки с закреплением, медиа'
-status: in-progress
+status: done
 priority: medium
 effort: large
 type: harness
 dependencies: [RE0030]
 tags: [proto-panel, devmode]
 created: 2026-10-19
-updated: 2026-10-19
+updated: 2026-10-25
 ---
 
 # Улучшение Devmode (RE0031)

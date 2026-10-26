@@ -1,14 +1,14 @@
 ---
 id: 'RE0032'
 title: 'Лёгкий инспектор Devmode в окне снимка спецификации'
-status: in-progress
+status: done
 priority: medium
 effort: medium
 type: harness
 dependencies: [RE0031, RE0016]
 tags: [dev-spec, devmode, proto-panel]
 created: 2026-10-19
-updated: 2026-10-19
+updated: 2026-10-25
 ---
 
 # Лёгкий инспектор Devmode в окне снимка спецификации (RE0032)

@@ -1,7 +1,7 @@
 ---
 id: 'RE002'
 title: 'ДС: компонент в своей папке со всеми файлами — структура как в ibp-ui-kit'
-status: pending
+status: done
 priority: medium
 effort: large
 dependencies: ['RE001']

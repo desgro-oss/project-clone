@@ -218,9 +218,11 @@ deals-app/
 ├── pages/
 │   ├── Deal.html                               ← Сделка — источник, собирается в Deal.preview.html
 │   ├── Deal.preview.html                       ← собранная страница — открывать её
+│   ├── Deal.scenario.mjs
 │   ├── Deal.screen.md                          ← спека
 │   ├── FinancialMetrics.html                   ← Финансовые метрики — источник, собирается в FinancialMetrics.preview.html
 │   ├── FinancialMetrics.preview.html           ← собранная страница — открывать её
+│   ├── FinancialMetrics.scenario.mjs
 │   ├── FinancialMetrics.screen.md              ← спека
 │   ├── FinInstrument.html                      ← Финансовый инструмент — источник, собирается в FinInstrument.preview.html
 │   ├── FinInstrument.preview.html              ← собранная страница — открывать её
@@ -302,21 +304,30 @@ deals-app/
 │   │   │   ├── FinancialMetricsDownloadReportModal.html
 │   │   │   ├── FinancialMetricsDownloadReportModal.js
 │   │   │   ├── FinancialMetricsDownloadReportModal.md
+│   │   │   ├── FinancialMetricsDownloadReportModal.scenario.mjs
 │   │   │   └── fixtures.json
 │   │   ├── FinancialMetricsFilterModal/        ← Фильтр отчета финансовых метрик
 │   │   │   ├── CHANGELOG.md
 │   │   │   ├── FinancialMetricsFilterModal.css
 │   │   │   ├── FinancialMetricsFilterModal.html
 │   │   │   ├── FinancialMetricsFilterModal.js
+│   │   │   ├── FinancialMetricsFilterModal.kit-copies.scenario.mjs
+│   │   │   ├── FinancialMetricsFilterModal.kit.scenario.mjs
 │   │   │   ├── FinancialMetricsFilterModal.md
+│   │   │   ├── FinancialMetricsFilterModal.open.scenario.mjs
 │   │   │   └── fixtures.json
 │   │   ├── FixationModal/                      ← Фиксация ЭПС/ВБС
 │   │   │   ├── CHANGELOG.md
 │   │   │   ├── FixationConfirmModal.html
 │   │   │   ├── FixationModal.css
+│   │   │   ├── FixationModal.ets.scenario.mjs
+│   │   │   ├── FixationModal.from-deal.scenario.mjs
 │   │   │   ├── FixationModal.html
 │   │   │   ├── FixationModal.js
+│   │   │   ├── FixationModal.kit.scenario.mjs
 │   │   │   ├── FixationModal.md
+│   │   │   ├── FixationModal.rules.scenario.mjs
+│   │   │   ├── FixationModal.scenario.mjs
 │   │   │   ├── FixationModalTile/
 │   │   │   │   ├── CHANGELOG.md
 │   │   │   │   ├── FixationModalTile.css
@@ -432,6 +443,7 @@ deals-app/
 │   │   │   ├── FinancialMetricsTable.css
 │   │   │   ├── FinancialMetricsTable.html
 │   │   │   ├── FinancialMetricsTable.js
+│   │   │   ├── FinancialMetricsTable.kit.scenario.mjs
 │   │   │   ├── FinancialMetricsTable.md
 │   │   │   └── fixtures.json
 │   │   ├── FixationHistoryTable/               ← История фиксаций
@@ -439,6 +451,7 @@ deals-app/
 │   │   │   ├── FixationHistoryTable.css
 │   │   │   ├── FixationHistoryTable.html
 │   │   │   ├── FixationHistoryTable.js
+│   │   │   ├── FixationHistoryTable.kit.scenario.mjs
 │   │   │   ├── FixationHistoryTable.md
 │   │   │   └── fixtures.json
 │   │   └── KPITable/                           ← Отчет KPI
@@ -447,6 +460,7 @@ deals-app/
 │   │       ├── KPITable.css
 │   │       ├── KPITable.html
 │   │       ├── KPITable.js
+│   │       ├── KPITable.kit.scenario.mjs
 │   │       └── KPITable.md
 │   └── tiles/                                  ← тайлы
 │       ├── CounterpartiesTile/                 ← Контрагенты
@@ -476,6 +490,7 @@ deals-app/
 │       │   ├── DealMetricsCalculationTile.html
 │       │   ├── DealMetricsCalculationTile.js
 │       │   ├── DealMetricsCalculationTile.md
+│       │   ├── DealMetricsCalculationTile.scenario.mjs
 │       │   └── fixtures.json
 │       ├── DealPeriodTile/                     ← Сроки сделки
 │       │   ├── CHANGELOG.md

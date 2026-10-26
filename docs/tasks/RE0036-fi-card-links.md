@@ -1,14 +1,14 @@
 ---
 id: 'RE0036'
 title: 'Карточка ФИ без наведения и нажатия; связанный инструмент — заголовок-ссылка, как в дереве'
-status: review
+status: done
 priority: medium
 effort: medium
 type: screen
 dependencies: ['RE0035']
 tags: ['postrade', 'deals-app', 'FinInstrumentsTile', 'FinInstrumentCard', 'ProductRow', 'Tile']
 created: 2026-10-23
-updated: 2026-10-23
+updated: 2026-10-25
 ---
 
 # Карточка ФИ без наведения и нажатия; связанный инструмент — ссылка (RE0036)

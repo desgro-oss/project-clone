@@ -1,14 +1,14 @@
 ---
 id: 'RE0027'
 title: 'Витрина: «Все состояния» сеткой по осям и минимальная высота тайла (проба на РСБУ)'
-status: review
+status: done
 priority: medium
 effort: small
 type: feature
 dependencies: ['RE0004']
 tags: ['local-components', 'RsbuInterestAdjustmentsTile']
 created: 2026-10-17
-updated: 2026-10-17
+updated: 2026-10-25
 ---
 
 # Витрина: «Все состояния» сеткой по осям и минимальная высота тайла (RE0027)

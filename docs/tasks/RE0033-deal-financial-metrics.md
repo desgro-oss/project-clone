@@ -1,14 +1,14 @@
 ---
 id: 'RE0033'
 title: 'Финансовые метрики сделки: тайл расчёта на странице сделки и страница отчётов'
-status: open
+status: done
 priority: high
 effort: large
 type: screen
 dependencies: ['RE0013', 'RE0028']
 tags: ['postrade', 'deals-app', 'DealMetricsCalculationTile', 'FinancialMetrics']
 created: 2026-10-20
-updated: 2026-10-21
+updated: 2026-10-25
 ---
 
 # Финансовые метрики сделки: тайл расчёта и страница отчётов (RE0033)
@@ -399,7 +399,7 @@ Day1PnL»), «Существенная модификация» («ВБС пос
   итога; стор — `fixationCandidates`, `fixationContext`, `preliminary`, `checkFixations`,
   `saveFixations`, сценарий `?fmFix=prefail|fail`; подключено на `FinancialMetrics` и `Deal`; потоки
   панели `fm-fixation` (состояния 34–43); паспорта окна (вопросы 1–10) и подчасти; решения агента
-  44–54. Проверено сценариями `page-run` (`tmp/scenarios/FixationModal*.scenario.mjs`,
+  44–54. Проверено сценариями `page-run` (`apps/postrade/deals-app/widgets/modals/FixationModal/FixationModal*.scenario.mjs`,
   `FixationFromDeal.scenario.mjs`), гейт `ВЕРДИКТ: OK`. Приёмка (21.10.2026, отдельный агент с
   ролью `screen-reviewer`): NEEDS-WORK → исправлено: заголовок снеков фиксации (один вид),
   `tile--headless` у карточки, спека страницы и комментарий в `FinancialMetrics.html` (подтверждение окна
@@ -419,7 +419,7 @@ Day1PnL»), «Существенная модификация» («ВБС пос
   статусы `OK · EMPTY · FAILED · MULTIPLE`, сценарий `?fmEts=slow|failed|empty|multiple`; потоки панели
   `fm-fixation` (состояния 44–49); витрина окна (демо-сценарии ЕТС); паспорта окна и подчасти 0.002
   (вопросы 12–16); решения агента 55–60, вопросы 43–44. Проверено сценарием `page-run`
-  (`tmp/scenarios/FixationModalEts.scenario.mjs`, все четыре статуса и загрузка) и регрессией Э6;
+  (`apps/postrade/deals-app/widgets/modals/FixationModal/FixationModal.ets.scenario.mjs`, все четыре статуса и загрузка) и регрессией Э6;
   старые сценарии Э6 дополнены ожиданием конца загрузки ЕТС
 - [x] Э8 · выгрузка XLSX (21.10.2026) — виджет `FinancialMetricsDownloadReportModal` (пара фронтенда
   `DownloadReportModal`; одно окно на всю страницу, один скрим `fm-download-scrim`): без шифрования —
@@ -431,7 +431,7 @@ Day1PnL»), «Существенная модификация» («ВБС пос
   `fin-metrics-notify.js`, раздел в `data/API.md`; паспорт (вопросы 1–5), `CHANGELOG.md`,
   `fixtures.json`, демо витрины (`FinancialMetricsDownloadReportModal.demo.js`: живое окно и снимки
   видов), спека страницы, поток панели `fm-export` (состояния 50–53); решения агента 61–64, вопрос 45.
-  Проверено сценарием `page-run` (`tmp/scenarios/DownloadReportModal.scenario.mjs`: Альфа, Сигма,
+  Проверено сценарием `page-run` (`apps/postrade/deals-app/widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.scenario.mjs`: Альфа, Сигма,
   ошибка), потоком панели и регрессией Э4–Э7 (устаревшую проверку «FIXATION отправлен» в
   `FinancialMetrics.scenario.mjs` заменили проверкой, что окно фиксации открыто), гейт `ВЕРДИКТ: OK`.
   Вид окна в браузере не сверен (в сессии его не было). Приёмка (21.10.2026, отдельный агент с ролью `screen-reviewer`): PASS, блокеров нет;

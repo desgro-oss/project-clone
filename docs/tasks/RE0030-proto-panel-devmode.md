@@ -1,14 +1,14 @@
 ---
 id: 'RE0030'
 title: 'Панель прототипа: Devmode — инспектор вёрстки, закрепление панели, масштаб страницы'
-status: review
+status: done
 priority: medium
 effort: large
 type: harness
 dependencies: [MS0005, MS0005a, MS0016]
 tags: [proto-panel, devmode]
 created: 2026-10-19
-updated: 2026-10-19
+updated: 2026-10-25
 ---
 
 # Панель прототипа: Devmode — инспектор вёрстки, закрепление панели, масштаб страницы (RE0030)

@@ -1,7 +1,7 @@
 ---
 id: 'RE012'
 title: 'Расчет FV: реестр расчетов, страница расчета, окна ФИ и выгрузки'
-status: pending
+status: done
 priority: high
 effort: large
 dependencies: []
