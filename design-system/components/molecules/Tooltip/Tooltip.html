@@ -24,7 +24,7 @@
 
   /* section */
 
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
 
   
   .row { display:flex; flex-wrap:wrap; align-items:flex-start; gap:40px; }
@@ -40,16 +40,16 @@
       repeating-conic-gradient(#f2f5f5 0% 25%, #fbfcfc 0% 50%) 0 / 22px 22px; }
 
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
 
-  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+  .pg__code { margin-top:4px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* select + text input */
   .pg-text { width:100%; height:40px; padding:0 14px; border:1px solid var(--border-primary); border-radius:9px;
-    background: var(--bg-tile); color: var(--text-primary); font: var(--type-body-m); }
+    background: var(--bg-tile); color: var(--text-primary); font: var(--type-body-m-reg); }
   .pg-text:focus-visible { outline:2px solid var(--primary); outline-offset:1px; }
 
-  .toggle { display:inline-flex; align-items:center; gap:11px; padding:9px 12px; border:1px solid var(--border-light); border-radius:9px; font: var(--type-body-m); color: var(--text-primary); cursor:pointer; user-select:none; background: var(--bg-tile); transition:.12s; }
+  .toggle { display:inline-flex; align-items:center; gap:11px; padding:9px 12px; border:1px solid var(--border-light); border-radius:9px; font: var(--type-body-m-reg); color: var(--text-primary); cursor:pointer; user-select:none; background: var(--bg-tile); transition:.12s; }
 
   /* target chip used inside stages */
   .tgt { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:10px;
@@ -60,7 +60,7 @@
   .vgrid { display:grid; grid-template-columns: repeat(3, 1fr); gap:34px 26px; }
   @media (max-width:760px){ .vgrid { grid-template-columns: repeat(2,1fr); } }
   .vcell { display:flex; flex-direction:column; align-items:flex-start; gap:12px; }
-  .vcell .cap { font: var(--type-body-xs); color: var(--text-inactive); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .vcell .cap { font: var(--type-body-xs-reg); color: var(--text-inactive); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
   .vcell .tipbox { display:flex; align-items:center; justify-content:flex-start; min-height:46px; }
 
   /* ---------- anatomy ---------- */
@@ -68,14 +68,14 @@
   @media (max-width:760px){ .anat { grid-template-columns:1fr; } }
   .anat__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:54px 44px; display:flex; justify-content:center; }
   .anat__legend { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; counter-reset:a; }
-  .anat__legend li { display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m); color: var(--text-primary); }
-  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center; }
-  .anat__legend li .t .k { font: var(--type-body-m-strong); color: var(--text-primary); }
+  .anat__legend li { display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m-reg); color: var(--text-primary); }
+  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center; }
+  .anat__legend li .t .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
 
   /* spec / paddings */
   .spec { display:flex; align-items:center; gap:44px; flex-wrap:wrap; }
-  .spec__cap { font: var(--type-body-s); color: var(--text-secondary); max-width:40ch; text-wrap:pretty; }
-  .spec__cap b { color: var(--text-primary); font: var(--type-body-s-strong); }
+  .spec__cap { font: var(--type-body-s-reg); color: var(--text-secondary); max-width:40ch; text-wrap:pretty; }
+  .spec__cap b { color: var(--text-primary); font: var(--type-body-s-strong-smb); }
   /* paddings diagram */
   .padbox { position:relative; display:inline-block; margin:8px 0; }
   .padtip { display:inline-block; background: var(--bg-hint); border-radius:14px; padding:28px 42px; }
@@ -89,7 +89,7 @@
   /* ---------- type swatch ---------- */
   .types { display:flex; gap:48px; flex-wrap:wrap; }
   .type-item { display:flex; flex-direction:column; gap:14px; }
-  .type-item .th { font: var(--type-body-s-strong); color: var(--text-secondary); }
+  .type-item .th { font: var(--type-body-s-strong-smb); color: var(--text-secondary); }
 
   /* ---------- collision / live boxes ---------- */
   .vp { position:relative; height:300px; border:1px dashed var(--border-primary); border-radius:14px; overflow:hidden;
@@ -98,7 +98,7 @@
       repeating-conic-gradient(var(--cgrey-50) 0% 25%, var(--bg-tile) 0% 50%) 0 / 20px 20px; }
   .vp .tgt { position:absolute; cursor:grab; touch-action:none; background: var(--primary); border-color: var(--primary-dark); color:#fff; }
   .vp .tgt:active { cursor:grabbing; }
-  .vp .hint-drag { position:absolute; left:14px; bottom:12px; font: var(--type-body-xs); color: var(--text-primary); }
+  .vp .hint-drag { position:absolute; left:14px; bottom:12px; font: var(--type-body-xs-reg); color: var(--text-primary); }
 
   /* trigger demo toolbar */
   .toolbar { position:relative; display:inline-flex; gap:8px; padding:10px 12px; background: var(--bg-tile); border:1px solid var(--border-light); border-radius:12px; }
@@ -112,16 +112,16 @@
   .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
   .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
-  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong-smb); padding:14px 20px 0; }
   .guide-card__body { padding:26px 20px; flex:1; display:flex; align-items:center; justify-content:center; min-height:120px; }
-  .guide-card__cap { padding:0 20px 20px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+  .guide-card__cap { padding:0 20px 20px; font: var(--type-body-xs-reg); color: var(--text-inactive); text-wrap:pretty; }
 
   /* ---------- reference tables ---------- */
-  .ref-table th, .ref-table td { text-align:left; padding:16px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); vertical-align:middle; }
+  .ref-table th, .ref-table td { text-align:left; padding:16px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); vertical-align:middle; }
 
   @media (max-width:760px){ .color-ref { grid-template-columns:1fr; } }
   
-  .cref-group > h3 { font: var(--type-h5-strong); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
+  .cref-group > h3 { font: var(--type-h5-strong-smb); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
   .cref-row { display:grid; grid-template-columns: 36px 1fr auto; gap:14px; align-items:center; padding:9px 22px; }
   .cref-sw .cf { position:absolute; inset:0; }
 
@@ -129,14 +129,14 @@
   .use-tiles { display:grid; grid-template-columns: repeat(3,1fr); gap:20px; }
   @media (max-width:820px){ .use-tiles { grid-template-columns:1fr; } }
   .use-tile__stage { padding:30px 20px; display:flex; align-items:center; justify-content:center; background: var(--tertiary-light); min-height:110px; }
-  .use-truncate { max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font:var(--type-body-m); color:var(--text-primary); border-bottom:1px dashed var(--border-primary); cursor:default; }
+  .use-truncate { max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font:var(--type-body-m-reg); color:var(--text-primary); border-bottom:1px dashed var(--border-primary); cursor:default; }
   .use-field { display:flex; flex-direction:column; gap:6px; width:100%; max-width:200px; }
-  .use-field__label { font:var(--type-body-s-strong); color:var(--text-primary); }
-  .use-field__input { height:40px; border:1.5px solid var(--error); border-radius:9px; padding:0 12px; font:var(--type-body-m); color:var(--text-primary); background:var(--bg-tile); display:flex; align-items:center; gap:8px; }
+  .use-field__label { font:var(--type-body-s-strong-smb); color:var(--text-primary); }
+  .use-field__input { height:40px; border:1.5px solid var(--error); border-radius:9px; padding:0 12px; font:var(--type-body-m-reg); color:var(--text-primary); background:var(--bg-tile); display:flex; align-items:center; gap:8px; }
   .use-field__input svg { width:18px; height:18px; color:var(--error); flex:none; }
 
   /* ---------- developer handoff ---------- */
-  .subhead { font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px; }
+  .subhead { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0 0 16px; }
   .subhead.mt { margin-top: 34px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
@@ -177,7 +177,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>2.011</b></span><span>Обновлено: <b>21.09.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>2.013</b></span><span>Обновлено: <b>28.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>Tooltip</h1>
     <p class="lead">Всплывающая подсказка при наведении или фокусе на объект — иконку, IconButton, обрезанный текст или поле с ошибкой. Контент — строка, тултип не может быть пустым. Хинт может быть со стрелкой или без неё, в любом из 12 краевых положений.</p>
@@ -300,11 +300,11 @@
     <div class="panel">
       <div class="row" style="gap:32px; align-items:flex-start;">
         <div style="display:flex; flex-direction:column; gap:10px;">
-          <span class="th" style="font:var(--type-body-s-strong); color:var(--text-secondary);">Короткий контент — обтекание</span>
+          <span class="th" style="font:var(--type-body-s-strong-smb); color:var(--text-secondary);">Короткий контент — обтекание</span>
           <div id="size-short"></div>
         </div>
         <div style="display:flex; flex-direction:column; gap:10px;">
-          <span class="th" style="font:var(--type-body-s-strong); color:var(--text-secondary);">Длинный контент — перенос по max-width</span>
+          <span class="th" style="font:var(--type-body-s-strong-smb); color:var(--text-secondary);">Длинный контент — перенос по max-width</span>
           <div id="size-long"></div>
         </div>
       </div>
@@ -341,7 +341,7 @@
     <p class="desc">Тултип размещается с одной из 4 сторон объекта (<code class="tok">top</code> · <code class="tok">bottom</code> · <code class="tok">left</code> · <code class="tok">right</code>), а стрелка выравнивается вдоль края по одному из 3 положений (<code class="tok">start</code> · <code class="tok">center</code> · <code class="tok">end</code>) — всего 12 комбинаций. Стрелка всегда направлена на объект подсказки.</p>
     <div class="panel">
       <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:26px;">
-        <span style="font:var(--type-body-m-strong); color:var(--text-primary);">12 положений стрелки</span>
+        <span style="font:var(--type-body-m-strong-smb); color:var(--text-primary);">12 положений стрелки</span>
         <button type="button" class="toggle" id="vtype-toggle" aria-pressed="false"><span class="sw-mini"></span><span>Показать Error</span></button>
       </div>
       <div class="vgrid" id="variants-grid"></div>
@@ -360,7 +360,7 @@
     <p class="desc">Если у предпочтительной стороны не хватает места, тултип разворачивается на противоположную сторону, а вдоль края смещается, чтобы не выходить за границы экрана — при этом стрелка остаётся направленной на объект. Перетащите цель к краям области, чтобы увидеть поведение.</p>
     <div class="panel">
       <div class="row" style="margin-bottom:18px; gap:18px; align-items:center;">
-        <span style="font:var(--type-body-s-strong); color:var(--text-secondary);">Предпочтительная сторона</span>
+        <span style="font:var(--type-body-s-strong-smb); color:var(--text-secondary);">Предпочтительная сторона</span>
         <div class="pg-select" style="width:180px;">
           <select id="flip-prefer">
             <option value="top">Top</option>
@@ -426,9 +426,9 @@
   <!-- TYPOGRAPHY -->
   <section class="section" data-screen-label="Typography">
     <h2>Типографика</h2>
-    <p class="desc">Текст тултипа набирается гарнитурой <b>SB Sans Text</b> токеном <code class="tok">--type-body-s</code>.</p>
+    <p class="desc">Текст тултипа набирается гарнитурой <b>SB Sans Text</b> токеном <code class="tok">--type-body-s-reg</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 0.77fr 1.03fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.77fr 1.03fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Контент</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 0.77fr 1.03fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.77fr 1.03fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Контент</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
     <table id="typo-table" style="display:none"><tbody></tbody></table>
   </section>
@@ -638,16 +638,19 @@ const spec = {
   border-radius: var(--tip-radius);
   background: var(--tip-bg);
   color: var(--tip-fg);
-  font: var(--type-body-s);          /* Body S — 14/16 */
-  letter-spacing: 0;
-  white-space: nowrap;               /* по умолчанию — одна строка, обтекание контента */
+  font: var(--type-body-s-reg);          /* Body S — 14/16 */
+  letter-spacing: var(--type-ls);
+  /* Текст тултипа не усекается никогда (решение человека 28.10.2026): короткий — одна строка
+     по ширине контента, длинный переносится в границах --tip-max; слово длиннее строки — тоже. */
+  white-space: normal;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
   overflow: hidden;
-  text-overflow: ellipsis;           /* защита, если контент длиннее --tip-max и JS не переключил на --multiline */
   box-shadow: 0 4px 14px rgba(40, 50, 55, .18);
   z-index: var(--tip-z);
 }
 
-/* перенос длинного контента — ограничение по --tip-max */
+/* перенос длинного контента — с 2.013 это поведение по умолчанию; класс оставлен для совместимости */
 .tip--multiline { white-space: normal; text-wrap: pretty; }
 
 /* ---------- rich — заголовок + описание + действие ------------------------ *
@@ -666,8 +669,8 @@ const spec = {
   white-space: normal;
   text-wrap: pretty;
 }
-.tip__title { font: var(--type-body-s-strong); color: var(--tip-fg); }
-.tip__text  { font: var(--type-body-s); color: var(--tip-fg); opacity: .82; }
+.tip__title { font: var(--type-body-s-strong-smb); color: var(--tip-fg); }
+.tip__text  { font: var(--type-body-s-reg); color: var(--tip-fg); opacity: .82; }
 .tip__actions { display: flex; gap: 4px; margin-top: 8px; }
 .tip__action {
   appearance: none;

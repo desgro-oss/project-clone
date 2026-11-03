@@ -1,0 +1,30 @@
+{
+  "_": "Демо-данные витрины: по одному объекту на состояние (ключи — значения data-state) и long — те же данные с самыми длинными значениями. Объект — раздел balanceCurrency записи договора: balanceCode (код баланса), currencyCode (код валюты ISO), totalLimitAmount (число). Пустое значение — null. Значения выдуманные (рыба): смысл имеют форма и длина.",
+
+  "data": {
+    "balanceCode": "SBIL",
+    "currencyCode": "RUB",
+    "totalLimitAmount": 123456789
+  },
+
+  "partial": {
+    "_": "Баланс и валюта выбраны, сумму лимита не вводили: поле на месте, значение — прочерк.",
+    "balanceCode": "SBIL",
+    "currencyCode": "RUB",
+    "totalLimitAmount": null
+  },
+
+  "empty": {
+    "_": "Раздел не заполнялся (в записи договора balanceCurrency = null). С правом на правку — кнопка «Заполнить», без права — строка «Не заполнено».",
+    "balanceCode": null,
+    "currencyCode": null,
+    "totalLimitAmount": null
+  },
+
+  "long": {
+    "_": "Самые длинные значения: подпись баланса из справочника, большая сумма лимита.",
+    "balanceCode": "PROMFINANCE",
+    "currencyCode": "EUR",
+    "totalLimitAmount": 98765432109.87
+  }
+}

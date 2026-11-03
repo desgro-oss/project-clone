@@ -925,6 +925,25 @@
     });
 
     window.addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+    /* Типографская тема (RE0048): переключатель в theme-bar. Выбор применяет
+       DSTypography (data-typography + --type-ls), он же его помнит; страница
+       слушает ds:typographychange, чтобы сегмент следовал за внешней сменой
+       (?typography= или панель прототипа). */
+    var typoMode = $('typo-mode');
+    if (typoMode && window.DSTypography && window.DSTabs) {
+      var seg = window.DSTabs.segment(typoMode, {
+        onChange: function (i, el) { window.DSTypography.set(el.getAttribute('data-value')); }
+      });
+      var syncTypo = function () {
+        var cur = window.DSTypography.get();
+        var items = typoMode.querySelectorAll('.segctrl__item');
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].getAttribute('data-value') === cur) { seg.select(items[i], true); break; }
+        }
+      };
+      syncTypo();
+      document.addEventListener('ds:typographychange', syncTypo);
+    }
     document.addEventListener('ds:themechange', function () {
       if (suppress || dirty) return;
       var s = A.selection();

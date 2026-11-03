@@ -195,8 +195,8 @@
       ['Мин. высота', cs.minHeight],
       ['Зазор между частями', cs.rowGap],
       ['Иллюстрация', getComputedStyle(illu).width + ' × ' + getComputedStyle(illu).height],
-      ['Название', getComputedStyle(title).fontSize + '/' + getComputedStyle(title).lineHeight + ' ' + getComputedStyle(title).fontWeight + ' (--type-h4-strong)'],
-      ['Описание', getComputedStyle(desc).fontSize + '/' + getComputedStyle(desc).lineHeight + ' (--type-body-s)']
+      ['Название', getComputedStyle(title).fontSize + '/' + getComputedStyle(title).lineHeight + ' ' + getComputedStyle(title).fontWeight + ' (--type-h4-strong-smb)'],
+      ['Описание', getComputedStyle(desc).fontSize + '/' + getComputedStyle(desc).lineHeight + ' (--type-body-s-reg)']
     ];
     document.body.removeChild(host);
     var tb = document.querySelector('#dev-spec-table');

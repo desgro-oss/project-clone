@@ -17,9 +17,9 @@
 <style>
 
   /* masthead */
-  .masthead p { font: var(--type-body-l); color: var(--text-secondary); max-width: 60ch; margin: 0; text-wrap: pretty; }
+  .masthead p { font: var(--type-body-l-reg); color: var(--text-secondary); max-width: 60ch; margin: 0; text-wrap: pretty; }
   .legend { display:flex; gap:18px; flex-wrap:wrap; margin-top:24px; }
-  .legend span { display:inline-flex; align-items:center; gap:8px; font: var(--type-body-s); color: var(--text-secondary); }
+  .legend span { display:inline-flex; align-items:center; gap:8px; font: var(--type-body-s-reg); color: var(--text-secondary); }
   .legend .key { width:16px; height:16px; border-radius:4px; border:1px solid var(--border-primary); }
   .legend .key.alpha { background-image:
       linear-gradient(45deg,#d9e0e0 25%,transparent 25%),
@@ -31,12 +31,12 @@
   /* category */
   .category { margin-top: 64px; }
   .cat-head { margin-bottom: 28px; }
-  .cat-head h2 { font: var(--type-h3-strong); margin: 0 0 6px; color: var(--text-primary); }
-  .cat-head p { font: var(--type-body-m); color: var(--text-secondary); margin: 0; }
+  .cat-head h2 { font: var(--type-h3-strong-smb); margin: 0 0 6px; color: var(--text-primary); }
+  .cat-head p { font: var(--type-body-m-reg); color: var(--text-secondary); margin: 0; }
 
   /* группы-таблицы */
   .ctable { margin-top: 28px; }
-  .ctable .gname { font: var(--type-h5-strong); color: var(--text-primary); margin: 0 0 10px; }
+  .ctable .gname { font: var(--type-h5-strong-smb); color: var(--text-primary); margin: 0 0 10px; }
 
   /* образец цвета */
   .sw { display:inline-block; width:22px; height:22px; border-radius:var(--radius-xs); border:1px solid rgba(40,50,55,.12); vertical-align:middle; position:relative; overflow:hidden; flex:none; }
@@ -53,12 +53,12 @@
   .tabs-body { margin-top: 8px; }
 
   /* вкладка «Базовые токены» */
-  .pane-lead { font: var(--type-body-m); color: var(--text-secondary); max-width: 82ch;
+  .pane-lead { font: var(--type-body-m-reg); color: var(--text-secondary); max-width: 82ch;
     margin: 28px 0 0; text-wrap: pretty; }
   .pane-lead + .pane-lead { margin-top: 12px; }
   .pgrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(420px, 1fr));
     gap: 40px 32px; margin-top: 40px; align-items: start; }
-  .pgroup .gname { font: var(--type-h5-strong); color: var(--text-primary); margin: 0 0 10px; }
+  .pgroup .gname { font: var(--type-h5-strong-smb); color: var(--text-primary); margin: 0 0 10px; }
 
 </style>
   <link rel="stylesheet" href="../../docs-kit/ds-nav.css">

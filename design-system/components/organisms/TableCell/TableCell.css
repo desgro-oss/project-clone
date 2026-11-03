@@ -18,7 +18,7 @@
   min-height: 48px;
   min-width: 0;
   padding: 6px 16px;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-primary);
   background: var(--bg-table-default);
   border-bottom: 1px solid var(--border-light);
@@ -85,11 +85,27 @@
 .tbl__row--selected.tbl__row--hover > .tc,
 .tbl__row[aria-selected="true"]:hover > .tc,
 .tc--selected.tc--hover       { background: color-mix(in srgb, var(--emerald-500) 10%, transparent); }
+/* Закреплённая ячейка непрозрачна в любом состоянии строки (2.029). Тон
+   выделения полупрозрачный (8% и 10%): у обычной ячейки под ним фон таблицы,
+   а закреплённая (position: sticky) лежит поверх проезжающих колонок — без
+   подложки сквозь неё читался их текст. Тон кладётся слоем поверх
+   непрозрачной --bg-table-default. Селекторы — те же, что выше, с
+   .tc--pinned вместо .tc: специфичность и порядок состояний не меняются. */
+.tbl__row--selected > .tc--pinned,
+.tbl__row[aria-selected="true"] > .tc--pinned,
+.tc--pinned.tc--selected      { background: linear-gradient(var(--primary-bg), var(--primary-bg)), var(--bg-table-default); }
+.tbl__row--selected:hover > .tc--pinned,
+.tbl__row--selected.tbl__row--hover > .tc--pinned,
+.tbl__row[aria-selected="true"]:hover > .tc--pinned,
+.tc--pinned.tc--selected.tc--hover { background: linear-gradient(color-mix(in srgb, var(--emerald-500) 10%, transparent), color-mix(in srgb, var(--emerald-500) 10%, transparent)), var(--bg-table-default); }
 
 /* --- error --- */
 /* Состояния disabled у таблицы нет: строку/ячейку недоступной не делаем. */
 .tc--error       { color: var(--error); }
 .tc--error-bg    { background: var(--error-bg-light); }
+/* закреплённая — поверх непрозрачной подложки (в темах тон ошибки бывает
+   полупрозрачным); :where — та же специфичность, что у .tc--error-bg */
+:where(.tc--pinned).tc--error-bg { background: linear-gradient(var(--error-bg-light), var(--error-bg-light)), var(--bg-table-default); }
 .tc--error .tc__prefix,
 .tc--error .tc__postfix { color: var(--error); }
 
@@ -105,16 +121,19 @@
   flex: 1 1 auto;
 }
 .tc--right .tc__row  { justify-content: flex-end; }
+/* в ячейке только IconButton (колонка действий) — зазор между кнопками 12px,
+   как у скрытых действий: две кнопки M — 16 + 20 + 12 + 20 + 16 = 84px */
+.tc__row:has(> .ibtn, > .tip-anchor > .ibtn):not(:has(> :not(.ibtn, .tip-anchor, .tip))) { gap: 12px; }
 
 .tc__text {
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-primary);
   min-width: 0;
 }
 
 .tc__prefix,
 .tc__postfix {
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-inactive);
   flex: none;
   white-space: nowrap;
@@ -160,7 +179,7 @@
    тот же, что у обычного текста ячейки (.tc__text). До 2.022 стоял
    --text-inactive, и пустая ячейка читалась как выключенная. Пара правила —
    в read-only-field.css (состояние Empty). */
-.tc__empty { color: var(--text-primary); font: var(--type-body-s); }
+.tc__empty { color: var(--text-primary); font: var(--type-body-s-reg); }
 
 /* вторая строка (subtext) — опциональна для любого типа контента */
 .tc__body {
@@ -171,7 +190,7 @@
   flex: 1 1 auto;
 }
 .tc__subtext {
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-secondary);
   max-width: 100%;
   overflow: hidden;
@@ -282,7 +301,11 @@
 .tc--separator.tc--focus[data-pin-side] { background: var(--bg-table-pinned-focus); }
 .tbl__row--selected > .tc--separator[data-pin-side],
 .tbl__row[aria-selected="true"] > .tc--separator[data-pin-side],
-.tc--separator.tc--selected[data-pin-side] { background: var(--primary-bg); }
+.tc--separator.tc--selected[data-pin-side] { background: linear-gradient(var(--primary-bg), var(--primary-bg)), var(--bg-table-default); }
+/* выбранная строка под курсором — тот же тон, что у закреплённой колонки рядом */
+.tbl__row--selected:hover > .tc--separator[data-pin-side],
+.tbl__row--selected.tbl__row--hover > .tc--separator[data-pin-side],
+.tbl__row[aria-selected="true"]:hover > .tc--separator[data-pin-side] { background: linear-gradient(color-mix(in srgb, var(--emerald-500) 10%, transparent), color-mix(in srgb, var(--emerald-500) 10%, transparent)), var(--bg-table-default); }
 /* разделителю доступны ТОЛЬКО состояния строки (hover/focus/selected/фон
    колонки) — контентных признаков у него быть не может */
 .tc--separator::before { content: none; }
@@ -354,7 +377,7 @@
 /* ================================================================== */
 .th {
   gap: 6px;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border-primary);
   user-select: none;
@@ -371,8 +394,36 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
   overflow: hidden;
-  overflow-wrap: break-word;
+  /* перенос только между словами: слово не рвётся («Действи / я» — нельзя) */
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: manual;
 }
+/* Одно слово шире колонки — одна строка с многоточием. Класс ставит рантайм
+   TableHeadLabel.js: в CSS нельзя узнать, что слово не помещается.
+   У колонки действий (.th--actions) — всегда одна строка, без рантайма. */
+.th__label--line,
+.th--actions .th__label {
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* Перед многоточием осталась бы одна буква («Д…») — видно только «…».
+   Текст остаётся в DOM: его читает скринридер и тултип усечения. */
+.th__label--dots { position: relative; color: transparent; }
+.th__label--dots::after {
+  content: '…';
+  position: absolute;
+  inset: 0;
+  color: var(--text-secondary);
+  text-align: inherit;
+}
+
+/* --- колонка действий: в ячейках тела только IconButton -------------------
+   Ширину по иконкам (поля ячейки + кнопки + зазоры) ставит Table.js при
+   подключении таблицы — фиксированный трек в px, свободное место не делит,
+   порог 96px при ресайзе к ней не применяется. Кнопки — .tc--center. */
+.th--actions { justify-content: center; text-align: center; }
 .th__icon { flex: none; display: inline-flex; color: var(--text-secondary); }
 .th__icon :is(svg,[data-icon]){ display: block; width: 18px; height: 18px; }
 /* --- инструменты шапки: сортировка и закрепление колонки ---------------- */
@@ -412,7 +463,9 @@
 /* Ручка на правой границе шапки: зона захвата 9px. Наведение на ЛЮБОЕ место
    шапки проявляет линию приглушённым тоном — границу не нужно искать курсором;
    наведение на саму ручку, фокус с клавиатуры и перетаскивание — активный тон.
-   Ширина колонки не опускается ниже порога 96px (components/organisms/Table/TableResize.js). */
+   Ширина колонки не опускается ниже порога 96px, но не больше исходной ширины;
+   колонка действий (только IconButton) — до своего содержимого
+   (components/organisms/Table/TableResize.js). */
 .th__resize {
   position: absolute;
   top: 0; right: -4px;
@@ -500,22 +553,24 @@
    строк вне текущей страницы пагинации на экране), оставалась бы видимой.
    Тот же класс дефекта, что чинили в Modal 1.005 (.modal-scrim[hidden]). */
 .tbl__row[hidden] { display: none; }
-/* min-width: max-content — ТОЛЬКО у прокручиваемой по горизонтали таблицы.
-   Там строка обязана резервировать полную ширину контента (сумму треков):
-   иначе grid ужимает треки под ширину контейнера, scrollWidth === clientWidth,
-   прокручивать нечего — и position: sticky на колонках не даёт ничего (ездить
-   не от чего). Это же правило раньше держало корректный scrollWidth при
-   удержании колонок через transform.
-   Таблице БЕЗ горизонтального скролла это правило вредит: под max-content
-   доля-трек (fr) разворачивается по содержимому, колонка растягивается под
-   самый длинный текст, усечение (.tc__text--truncate) не срабатывает вовсе,
-   а строка вылезает за контейнер (инцидент 04.09.2026 — правило стояло на всех
-   .tbl__row без разбора, усечение в fr-колонках не работало нигде). */
-/* max(100%, max-content): строка не уже контейнера — при суженных колонках
-   хвостовой трек (minmax(8px,1fr)) забирает остаток, и линия строки (border
-   ячеек) доходит до правого края. */
+/* min-width: min-content — ТОЛЬКО у прокручиваемой по горизонтали таблицы.
+   Там строка обязана резервировать ширину всех колонок: иначе колонки
+   выходят за пределы строки, а закреплённая ячейка (position: sticky) не
+   покидает свою строку — при горизонтальном скролле она уезжает вместе с
+   контентом (инцидент 27.10.2026, «Поиск клиентов», 32 колонки).
+   min-content у grid-строки — сумма минимумов треков: доля-трек (fr) под
+   min-content не растёт (CSS Grid: используемая доля fr равна нулю), поэтому
+   minmax(180px, 1.4fr) даёт ровно 180px, и усечение (.tc__text--truncate)
+   работает. Строка не уже контейнера и без этого правила — она блочная и
+   занимает всю его ширину; min-width лишь не даёт ей стать уже колонок.
+   НЕ max-content: под ним доля-трек разворачивается по содержимому, колонка
+   растягивается под самый длинный текст и усечение не срабатывает вовсе
+   (инцидент 04.09.2026). НЕ max(100%, max-content): max()/min()/clamp()
+   принимают только длины и проценты, браузер отбрасывает такое объявление
+   целиком и молча — с 07.10 по 27.10.2026 правила не было, закрепление не
+   работало ни в одной прокручиваемой таблице (урок; линтер, правило B19). */
 .tbl--scroll .tbl__row,
-.dtable__body .tbl__row { min-width: max(100%, max-content); }
+.dtable__body .tbl__row { min-width: min-content; }
 .tbl__row:last-child .tc { border-bottom: none; }
 
 /* закреплённая колонка не уезжает при горизонтальном скролле таблицы —
@@ -529,7 +584,7 @@
    Старое обоснование «sticky не работает для колонок grid-раскладки» неверно:
    ограничение по grid-области не мешает, проверено — многоколоночное левое
    закрепление и хвостовой правый блок держатся штатно. Условие одно —
-   строка шире скроллпорта (min-width: max-content выше).
+   строка шире скроллпорта (min-width: min-content выше).
    Смещения (left/right) пишет инлайном tbl-pin.js — один раз на изменение
    состава/ширин колонок, НЕ на скролл. Здесь — position, z-index (колонка
    поверх скроллящегося контента) и тень-разделитель. */

@@ -36,6 +36,9 @@
  * @property {boolean} goalsFixed        «Цели зафиксированы»
  * @property {boolean} residentRf        «Резидент РФ»
  * @property {number|null} headerCounter счётчик с ⓘ в шапке (смысл неизвестен, вопрос 8)
+ * @property {PriorityCode} priorityCode приоритет — наш рейтинг клиента по набору параметров: MAX · HIGH ·
+ *                                       MEDIUM · LOW, подписи — PRIORITY_LABELS (решение пользователя 26.10.2026,
+ *                                       заменил AI score); как считается — не решено (26.10.2026)
  * @property {string} industry           отрасль
  * @property {string} macro              макроотрасль
  * @property {string} sub                подотрасль
@@ -178,6 +181,7 @@
       growthCompany: !!o.growthCompany, didGrowthCompany: !!o.didGrowthCompany, topClient: !!o.topClient,
       keyClient: !!o.keyClient, goalsFixed: o.goalsFixed !== undefined ? !!o.goalsFixed : true,
       residentRf: true, headerCounter: o.headerCounter !== undefined ? o.headerCounter : 26,
+      priorityCode: o.priorityCode || 'LOW',
       industry: o.industry, macro: o.macro, sub: o.sub, segment: o.segment || 'Крупный бизнес',
       terBank: o.terBank || 'CA', gosb: o.gosb || '8634',
       gcmId: o.gcmId || '04630',
@@ -339,7 +343,7 @@
     industry: 'Сельское хозяйство', macro: 'Агропромышленный комплекс', sub: 'Цветоводство',
     segment: 'Крупный бизнес', terBank: 'CA', gosb: '8634', gcmId: '04630',
     addedAt: '2021-06-14', lastActivityAt: '2026-10-09',
-    inQuarterPlan: true, responsibleAnalystId: '04127', seed: 42, revenue: 346,
+    inQuarterPlan: true, responsibleAnalystId: '04127', seed: 42, revenue: 346, priorityCode: 'MAX',
     comments: [
       { authorId: '04127', time: '14:20', date: '2026-10-08', text: 'Проведён страт. диалог по инвестиционной программе: клиент подтверждает потребность в финансировании второй очереди тепличного комплекса до конца Q1 2027.', system: false },
       { authorId: '02940', time: '10:05', date: '2026-09-30', text: 'Согласованы условия проработки с ДКК. Подготовить расчёт структуры к 20.10.', system: false },
@@ -558,14 +562,14 @@
     legalAddress: '125212, г. Москва, Ленинградское шоссе, д. 39, стр. 1, этаж 4, помещ. II',
     growthCompany: true, didGrowthCompany: true, quarterChip: 'Q3 2026',
     industry: 'Сельское хозяйство', macro: 'Агропромышленный комплекс', sub: 'Растениеводство',
-    terBank: 'CA', gosb: '8634', seed: 31, revenue: 214, inQuarterPlan: true
+    terBank: 'CA', gosb: '8634', seed: 31, revenue: 214, priorityCode: 'MAX', inQuarterPlan: true
   });
   var siren = mkClient({
     id: '3000012347', name: 'ООО «Сирень»', fullName: 'Общество с ограниченной ответственностью «Сирень»',
     holdingId: 'H-1', holdingName: 'ГК «Цветы»', inn: '5024113302', ogrn: '1175024011544',
     legalAddress: '141014, Московская обл., г. Мытищи, Волковское шоссе, д. 5, стр. 1',
     industry: 'Сельское хозяйство', macro: 'Агропромышленный комплекс', sub: 'Цветоводство',
-    terBank: 'CA', gosb: '8634', seed: 17, revenue: 96, topClient: false
+    terBank: 'CA', gosb: '8634', seed: 17, revenue: 96, priorityCode: 'MEDIUM', topClient: false
   });
 
   /* ── ГК «АгроСоюз» ─────────────────────────────────────────────────── */
@@ -575,21 +579,21 @@
     legalAddress: '620144, Свердловская обл., г. Екатеринбург, ул. Малышева, д. 51, оф. 902',
     didGrowthCompany: true, topClient: true, industry: 'Производство пищевых продуктов',
     macro: 'Агропромышленный комплекс', sub: 'Мукомольные изделия', terBank: 'SZB', gosb: '5228',
-    seed: 55, revenue: 421, gcmId: '04711', inQuarterPlan: true
+    seed: 55, revenue: 421, priorityCode: 'MAX', gcmId: '04711', inQuarterPlan: true
   });
   var niva = mkClient({
     id: '3000020012', name: 'ООО «Нива-Центр»', fullName: 'Общество с ограниченной ответственностью «Нива-Центр»',
     holdingId: 'H-2', holdingName: 'ГК «АгроСоюз»', inn: '6652334462', ogrn: '1166654043322',
     legalAddress: '620144, Свердловская обл., г. Екатеринбург, ул. Малышева, д. 51, оф. 904',
     industry: 'Производство пищевых продуктов', macro: 'Агропромышленный комплекс', sub: 'Кондитерские изделия',
-    terBank: 'SZB', gosb: '5228', seed: 28, revenue: 178
+    terBank: 'SZB', gosb: '5228', seed: 28, revenue: 178, priorityCode: 'HIGH'
   });
   var kolos = mkClient({
     id: '3000020013', name: 'ООО «Колос»', fullName: 'Общество с ограниченной ответственностью «Колос»',
     holdingId: 'H-2', holdingName: 'ГК «АгроСоюз»', inn: '6652334479', ogrn: '1176654054433',
     legalAddress: '620017, Свердловская обл., г. Екатеринбург, пр-т Космонавтов, д. 38, лит. Б',
     industry: 'Сельское хозяйство', macro: 'Агропромышленный комплекс', sub: 'Растениеводство',
-    terBank: 'SZB', gosb: '5228', seed: 12, revenue: 84, segment: 'Средний бизнес'
+    terBank: 'SZB', gosb: '5228', seed: 12, revenue: 84, priorityCode: 'LOW', segment: 'Средний бизнес'
   });
 
   /* ── ГК «ТехноМир» ─────────────────────────────────────────────────── */
@@ -598,21 +602,21 @@
     holdingId: 'H-3', holdingName: 'ГК «ТехноМир»', inn: '7814001122', ogrn: '1147847005566',
     legalAddress: '194100, г. Санкт-Петербург, Лесной пр-т, д. 63, лит. А, пом. 7-Н',
     growthCompany: true, industry: 'Машиностроение', macro: 'Промышленность', sub: 'Комплектующие',
-    terBank: 'SZB', gosb: '9013', seed: 37, revenue: 268, gcmId: '04711'
+    terBank: 'SZB', gosb: '9013', seed: 37, revenue: 268, priorityCode: 'HIGH', gcmId: '04711'
   });
   var tehmash = mkClient({
     id: '3000031005', name: 'АО «ТехноМаш»', fullName: 'Акционерное общество «ТехноМаш»',
     holdingId: 'H-3', holdingName: 'ГК «ТехноМир»', inn: '7814001139', ogrn: '1157847066778',
     legalAddress: '194100, г. Санкт-Петербург, Лесной пр-т, д. 63, лит. Б',
     didGrowthCompany: true, topClient: true, industry: 'Машиностроение', macro: 'Промышленность',
-    sub: 'Приборостроение', terBank: 'SZB', gosb: '9013', seed: 63, revenue: 512, inQuarterPlan: true
+    sub: 'Приборостроение', terBank: 'SZB', gosb: '9013', seed: 63, revenue: 512, priorityCode: 'MAX', inQuarterPlan: true
   });
   var mikro = mkClient({
     id: '3000031006', name: 'ООО «МикроПрибор»', fullName: 'Общество с ограниченной ответственностью «МикроПрибор»',
     holdingId: 'H-3', holdingName: 'ГК «ТехноМир»', inn: '7814001146', ogrn: '1167847078899',
     legalAddress: '195279, г. Санкт-Петербург, ш. Революции, д. 69, к. 2, лит. Е',
     industry: 'Машиностроение', macro: 'Промышленность', sub: 'Приборостроение',
-    terBank: 'SZB', gosb: '9013', seed: 9, revenue: 61, segment: 'Средний бизнес'
+    terBank: 'SZB', gosb: '9013', seed: 9, revenue: 61, priorityCode: 'LOW', segment: 'Средний бизнес'
   });
 
   /* ── ГК «ЛесТрейд» ─────────────────────────────────────────────────── */
@@ -622,14 +626,14 @@
     legalAddress: '603005, г. Нижний Новгород, ул. Нижегородская, д. 12, оф. 301',
     growthCompany: true, didGrowthCompany: true, industry: 'Лесозаготовка',
     macro: 'Лесопромышленный комплекс', sub: 'Пиломатериалы', terBank: 'PVB', gosb: '7121',
-    seed: 44, revenue: 305, gcmId: '04711', inQuarterPlan: true
+    seed: 44, revenue: 305, priorityCode: 'HIGH', gcmId: '04711', inQuarterPlan: true
   });
   var lestrade = mkClient({
     id: '3000042008', name: 'ООО «ЛесТрейд Логистика»', fullName: 'Общество с ограниченной ответственностью «ЛесТрейд Логистика»',
     holdingId: 'H-4', holdingName: 'ГК «ЛесТрейд»', inn: '5262003318', ogrn: '1195262022344',
     legalAddress: '603005, г. Нижний Новгород, ул. Нижегородская, д. 12, оф. 305',
     industry: 'Лесозаготовка', macro: 'Лесопромышленный комплекс', sub: 'Целлюлоза',
-    terBank: 'PVB', gosb: '7121', seed: 21, revenue: 142
+    terBank: 'PVB', gosb: '7121', seed: 21, revenue: 142, priorityCode: 'MEDIUM'
   });
 
   /* ── ГК «СтройИндустрия» ───────────────────────────────────────────── */
@@ -638,7 +642,7 @@
     holdingId: 'H-5', holdingName: 'ГК «СтройИндустрия»', inn: '6321045530', ogrn: '1206321023455',
     legalAddress: '432072, Ульяновская обл., г. Ульяновск, Московское шоссе, д. 92, корп. 5',
     industry: 'Производство стройматериалов', macro: 'Строительство', sub: 'Бетон и ЖБИ',
-    terBank: 'SRB', gosb: '4402', seed: 26, revenue: 187
+    terBank: 'SRB', gosb: '4402', seed: 26, revenue: 187, priorityCode: 'MEDIUM'
   });
 
   /** @type {ClientRsDto[]} */

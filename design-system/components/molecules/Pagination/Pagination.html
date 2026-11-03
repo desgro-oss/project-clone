@@ -29,8 +29,8 @@
   
 
   
-  .section > h3 { font: var(--type-h5-strong); margin:34px 0 8px; color: var(--text-primary); display:flex; align-items:center; gap:10px; }
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:82ch; text-wrap:pretty; }
+  .section > h3 { font: var(--type-h5-strong-smb); margin:34px 0 8px; color: var(--text-primary); display:flex; align-items:center; gap:10px; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:82ch; text-wrap:pretty; }
 
   
   .panel.flush { padding: 0; overflow: hidden; }
@@ -41,9 +41,9 @@
 
   
 
-  .subhead { font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px; }
+  .subhead { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0 0 16px; }
   .subhead.mt { margin-top: 30px; }
-  .demo-rowlabel { font: var(--type-body-xs); color: var(--text-inactive); margin-bottom:10px; }
+  .demo-rowlabel { font: var(--type-body-xs-reg); color: var(--text-inactive); margin-bottom:10px; }
 
   /* ---------- демо-стадия (docs-split) ---------- */
   .pg__stage { flex:1; min-height:0; width:100%; padding:44px 30px; display:flex; align-items:flex-start; justify-content:center; border-radius:16px 16px 0 0;
@@ -59,17 +59,17 @@
   .pg__widthctl .lbl b { color: var(--text-secondary); font-variant-numeric:tabular-nums; }
 
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
 
   .toggles { display:flex; flex-direction:column; gap:9px; }
-  .toggle { display:inline-flex; align-items:center; gap:11px; padding:9px 12px; border:1px solid var(--border-light); border-radius:9px; font: var(--type-body-m); color: var(--text-primary); cursor:pointer; user-select:none; background: var(--bg-tile); transition:.12s; }
+  .toggle { display:inline-flex; align-items:center; gap:11px; padding:9px 12px; border:1px solid var(--border-light); border-radius:9px; font: var(--type-body-m-reg); color: var(--text-primary); cursor:pointer; user-select:none; background: var(--bg-tile); transition:.12s; }
 
-  .pg__code { margin-top:14px; font: var(--type-body-s); color: var(--text-inactive); }
+  .pg__code { margin-top:14px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* ---------- mock table ---------- */
   .tbl { display:flex; flex-direction:column; }
-  .tbl__row { display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; padding:14px 20px; font: var(--type-body-s); color: var(--text-primary); border-bottom:1px solid var(--border-light); }
-  .tbl__row--head { font: var(--type-body-xs); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.04em; background: var(--tertiary-light); }
+  .tbl__row { display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; padding:14px 20px; font: var(--type-body-s-reg); color: var(--text-primary); border-bottom:1px solid var(--border-light); }
+  .tbl__row--head { font: var(--type-body-xs-reg); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.04em; background: var(--tertiary-light); }
   .tbl__row--focus { background: var(--bg-table-default-focus); }
   .tbl__status { color: var(--success-dark); }
   .tbl--wide .tbl__row { grid-template-columns: repeat(8, 160px); width: max-content; }
@@ -91,14 +91,14 @@
   .demo-split__pane--list { width: var(--split-frac); }
   .demo-split__pane--detail { flex:1 1 auto; padding:24px 26px; overflow:auto; }
   .demo-split__pane--list .tbl { flex:1 1 auto; overflow:auto; }
-  .demo-split__detailhead { font: var(--type-h6-strong); color: var(--text-primary); margin-bottom:16px; }
-  .demo-split__detailrow { display:flex; justify-content:space-between; gap:14px; padding:9px 0; border-bottom:1px solid var(--border-light); font: var(--type-body-s); color: var(--text-secondary); }
+  .demo-split__detailhead { font: var(--type-h6-strong-smb); color: var(--text-primary); margin-bottom:16px; }
+  .demo-split__detailrow { display:flex; justify-content:space-between; gap:14px; padding:9px 0; border-bottom:1px solid var(--border-light); font: var(--type-body-s-reg); color: var(--text-secondary); }
   .demo-split__detailrow b { color: var(--text-primary); font-weight:600; }
 
   /* ---------- windowing examples ---------- */
   .window-row { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:14px 0; border-bottom:1px solid var(--border-light); flex-wrap:wrap; }
   .window-row:last-child { border-bottom:none; }
-  .window-row__cap { font: var(--type-body-s); color: var(--text-secondary); flex:1 1 220px; }
+  .window-row__cap { font: var(--type-body-s-reg); color: var(--text-secondary); flex:1 1 220px; }
 
   /* ---------- compact demo ---------- */
   .compact-demo { border:1px solid var(--border-light); border-radius:14px; padding:16px 18px; background: var(--bg-tile); }
@@ -120,40 +120,40 @@
   .btn-states { display:flex; flex-wrap:wrap; gap:14px; }
   .btnstate { width:104px; display:flex; flex-direction:column; align-items:center; gap:10px; }
   .btnstate__box { width:100%; height:64px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-light); border-radius:12px; background: var(--bg-popup); }
-  .btnstate__cap { margin:0; font: var(--type-body-xs); color: var(--text-secondary); text-align:center; }
+  .btnstate__cap { margin:0; font: var(--type-body-xs-reg); color: var(--text-secondary); text-align:center; }
 
   /* ---------- anatomy ---------- */
   .anat { display:flex; flex-direction:column; gap:32px; }
   .anat__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:64px 30px 46px; display:flex; justify-content:center; overflow-x:auto; }
   .anat-dia { position:relative; }
-  .anat-dia .mk { position:absolute; width:22px; height:22px; border-radius:50%; background:var(--text-primary); color:#fff; font:var(--type-body-xs); font-weight:600; display:flex; align-items:center; justify-content:center; transform:translate(-50%,-50%); }
+  .anat-dia .mk { position:absolute; width:22px; height:22px; border-radius:50%; background:var(--text-primary); color:#fff; font:var(--type-body-xs-reg); font-weight:600; display:flex; align-items:center; justify-content:center; transform:translate(-50%,-50%); }
   .anat__legend { list-style:none; margin:0; padding:0; display:grid; grid-template-columns: repeat(2, 1fr); gap:16px 28px; counter-reset:a; }
   @media (max-width:720px){ .anat__legend { grid-template-columns:1fr; } }
   .anat__legend li { display:flex; gap:14px; align-items:flex-start; }
-  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center; }
-  .anat__legend li .t .k { font: var(--type-body-m-strong); color: var(--text-primary); display:block; }
+  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center; }
+  .anat__legend li .t .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); display:block; }
 
   /* ---------- state spec tables ---------- */
   .spec { border:1px solid var(--border-light); border-radius:14px; overflow:hidden; }
   .spec + .spec { margin-top:16px; }
   .spec__row { display:grid; grid-template-columns: 230px 200px 1fr; align-items:center; gap:16px; padding:20px; }
   @media (max-width:760px){ .spec__row{ grid-template-columns:1fr; gap:14px; } }
-  .spec__cline { display:grid; grid-template-columns: 130px 18px 160px 1fr; align-items:center; gap:10px; font:var(--type-body-s); color:var(--text-secondary); }
+  .spec__cline { display:grid; grid-template-columns: 130px 18px 160px 1fr; align-items:center; gap:10px; font:var(--type-body-s-reg); color:var(--text-secondary); }
   @media (max-width:560px){ .spec__cline{ grid-template-columns: 100px 16px 1fr; } .spec__cline .raw{ display:none; } }
 
   /* ---------- reference tables ---------- */
-  .ref-table th, .ref-table td { text-align:left; padding:15px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); vertical-align:middle; }
+  .ref-table th, .ref-table td { text-align:left; padding:15px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); vertical-align:middle; }
 
   /* ---------- color reference ---------- */
   
   @media (max-width:760px){ .color-ref { grid-template-columns:1fr; } }
   
-  .cref-group > h3 { font: var(--type-h5-strong); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
+  .cref-group > h3 { font: var(--type-h5-strong-smb); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
   .cref-row { display:grid; grid-template-columns: 36px 1fr auto; gap:14px; align-items:center; padding:9px 22px; }
   .cref-sw .cf { position:absolute; inset:0; }
 
   /* ---------- developer code panels ---------- */
-  .code-panel__name { font: var(--type-body-s-strong); color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; }
+  .code-panel__name { font: var(--type-body-s-strong-smb); color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; }
 </style>
   <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
   <link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
@@ -276,7 +276,7 @@
     <h2>Размеры</h2>
     <p class="desc">Один фиксированный размер: высота строки пагинатора равна высоте строки таблицы (единая сетка колонтитула), кнопки номеров и стрелок — квадрат 32&nbsp;px. Отдельных размерных модификаций (M/S/XS) у компонента нет — под разную плотность таблицы меняется не пагинатор, а высота строки, к которой он подстраивается через <code class="tok">--pgn-h</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.66fr 1.08fr 1.08fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.66fr 1.08fr 1.08fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Высота строки</span></span></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">56 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--pgn-h</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.66fr 1.08fr 1.08fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Кнопка номера / стрелки</span></span></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">32 × 32 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--pgn-num-size</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.66fr 1.08fr 1.08fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Паддинг строки по X</span></span></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">20 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--pgn-pad-x</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.66fr 1.08fr 1.08fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Типографика номеров / range</span></span></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">Body S · 14/16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.66fr 1.08fr 1.08fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.66fr 1.08fr 1.08fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Высота строки</span></span></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">56 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--pgn-h</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.66fr 1.08fr 1.08fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Кнопка номера / стрелки</span></span></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">32 × 32 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--pgn-num-size</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.66fr 1.08fr 1.08fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Паддинг строки по X</span></span></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">20 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--pgn-pad-x</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.66fr 1.08fr 1.08fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Типографика номеров / range</span></span></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">Body S · 14/16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
   
 <div class="subsec" data-screen-label="Radius">
@@ -360,7 +360,7 @@
     <h2>Типографика</h2>
     <p class="desc">Номера страниц и служебный текст набираются гарнитурой <b>SB Sans Text</b>; текущая страница — тем же токеном, но strong.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.62fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.62fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Номер страницы (default)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.62fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Номер страницы (текущая)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-strong</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-strong)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.62fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Счётчик диапазона</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.62fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Триггер «Показывать строк»</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.62fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Счётчик Bulk-режима</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.62fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.62fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Номер страницы (default)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.62fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Номер страницы (текущая)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-strong-smb</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-strong-smb)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.62fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Счётчик диапазона</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.62fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Триггер «Показывать строк»</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.62fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Счётчик Bulk-режима</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
     <table id="typo-table" style="display:none"><tbody></tbody></table>
   </section>
@@ -642,7 +642,7 @@ DSPagination.footer({
   gap: 4px;
   white-space: nowrap;
 }
-.pgn__pagesize-label { font: var(--type-body-s); color: var(--text-secondary); }
+.pgn__pagesize-label { font: var(--type-body-s-reg); color: var(--text-secondary); }
 .pgn__pagesize-label b { color: var(--text-primary); font-weight: 600; }
 /* чеврон — IconButton M: круглый стейт-слой 32px, translucent-рипл currentColor */
 .pgn__pagesize-btn {
@@ -679,7 +679,7 @@ DSPagination.footer({
    RANGE — счётчик «N из M»
    ========================================================================= */
 .pgn__range {
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -728,7 +728,7 @@ DSPagination.footer({
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--text-secondary);
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   font-variant-numeric: tabular-nums;
   cursor: pointer;
   transition: background-color .12s ease, color .12s ease;
@@ -741,7 +741,7 @@ DSPagination.footer({
 .pgn__num[aria-current="page"] {
   background: var(--bg-table-default-focus);
   color: var(--text-primary);
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   cursor: default;
 }
 .pgn__num[aria-current="page"]:hover { background: var(--bg-table-default-focus); }
@@ -754,7 +754,7 @@ DSPagination.footer({
   align-items: center;
   justify-content: center;
   color: var(--text-inactive);
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   user-select: none;
 }
 
@@ -828,7 +828,7 @@ DSPagination.footer({
   width: 100%;
 }
 .pgn-row--bulk { background: var(--bg-tile); }
-.pgn-bulk__count { font: var(--type-body-m); color: var(--text-secondary); white-space: nowrap; }
+.pgn-bulk__count { font: var(--type-body-m-reg); color: var(--text-secondary); white-space: nowrap; }
 .pgn-bulk__count b { color: var(--text-primary); font-weight: 600; }
 .pgn-bulk__actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
@@ -841,7 +841,7 @@ DSPagination.footer({
   flex-wrap: wrap;
   gap: 4px 24px;
   min-width: 0;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
   white-space: nowrap;
 }

@@ -4,7 +4,7 @@
 
 .lc-rsbu-adj .tile__body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-12); }
 
-.lc-rsbu-adj__text { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+.lc-rsbu-adj__text { margin: 0; font: var(--type-body-m-reg); color: var(--text-secondary); }
 
 /* База — все три текста скрыты, нужный открывают оси */
 .lc-rsbu-adj__text { display: none; }

@@ -30,7 +30,7 @@
   /* шаг: маркер + подпись — как в подписи шага StepForm */
   function step(marker, text, muted) {
     const row = document.createElement('div');
-    row.style.cssText = 'display:flex; align-items:center; gap:var(--space-8); font:var(--type-body-s-strong); color:var(' + (muted ? '--text-inactive' : '--text-primary') + ');';
+    row.style.cssText = 'display:flex; align-items:center; gap:var(--space-8); font:var(--type-body-s-strong-smb); color:var(' + (muted ? '--text-inactive' : '--text-primary') + ');';
     row.appendChild(marker);
     row.appendChild(document.createTextNode(text));
     return row;

@@ -7,7 +7,7 @@
    наименование контрагента во втором (макет). Ступень — H6 Strong. */
 .lc-deal-ecm__heading {
   margin: 0;
-  font: var(--type-h6-strong);
+  font: var(--type-h6-strong-smb);
   color: var(--text-primary);
   overflow-wrap: anywhere;
 }
@@ -39,6 +39,6 @@
 /* Участников нет — одна строка причины, как «Не заполнено» в тайлах сделки. */
 .lc-deal-ecm__empty {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-inactive);
 }

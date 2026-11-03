@@ -3,7 +3,7 @@
    Цвета, шрифты, отступы — токены ДС. */
 
 .lc-early-int .tile__body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-12); }
-.lc-early-int__text { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+.lc-early-int__text { margin: 0; font: var(--type-body-m-reg); color: var(--text-secondary); }
 .lc-early-int__summary { width: 100%; }
 
 /* База — тексты, сводка и кнопка скрыты; нужное открывают оси */

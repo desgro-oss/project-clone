@@ -1,0 +1,164 @@
+<!-- Окно «Фильтр» списка дополнительных соглашений (ДС) — связанный артефакт кнопки
+     «Фильтр» (TableFilter) на внутренней странице «Договор и дополнительные соглашения».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include: скрим лежит в конце
+     body страницы (якорь #sec:modals), а не внутри тайла. Кнопка «Фильтр» и чип
+     «Применено: N» живут на странице, не в окне.
+
+     Структура — штатная модалка фильтра ДС (образец — FinancialMetricsFilterModal):
+     .modal--w6.tfm, тело .modal__body--flush > .tfm__body = вертикальные табы-разделы
+     .tfm__nav + .tfm__panel с двумя разделами .tfm__sec подряд (табы — якорные ссылки,
+     панель прокручивается). Раздел «Основная информация»: номер соглашения, дата
+     подписания (InputDateRange), тип изменения (одиночный выбор: InputAutocomplete +
+     DropdownList), ключевые изменения (мультивыбор с чипами). Раздел «Решение»: номер
+     решения, дата решения (InputDateRange), уровень одобрения (мультивыбор с чипами).
+     Бейдж таба — число заполненных полей раздела, при нуле скрыт атрибутом hidden;
+     диапазон дат считается за одно поле. Макет подписывает дату «Дата соглашения»;
+     в окне «Дата подписания» (ответ человека 27.10.2026).
+
+     Списки опций и чипы пустые: скрипт (AdditionalAgreementsFilterModal.js) строит их из
+     глобалов LOAN_CHANGE_TYPE_LABELS, LOAN_KEY_CHANGE_LABELS, LOAN_APPROVAL_LEVEL_LABELS
+     и заполняет поля текущим фильтром при каждом открытии. Значений полей в разметке нет:
+     эталон — пустое окно (состояния — fixtures.json).
+
+     Подвал: «Очистить фильтр» (сбрасывает поля окна, окно остаётся открытым; выключена,
+     пока очищать нечего) и «Сохранить» (проверяет даты, закрывает окно и отдаёт фильтр
+     событием agreementsfilter). Ни одна не несёт data-modal-close: закрытие и результат
+     ведёт скрипт. Крестик и Esc закрывают без сохранения.
+
+     Даты: на каждой половине диапазона префикс «От»/«До» (правило InputDateRange: префикс
+     всегда есть; на макете его нет). Поле в .inp__box — якорь тултипа ошибки формата даты
+     (правило InputText: текст ошибки только в тултипе на фокусе). Крестика очистки в
+     разметке нет намеренно: его рисует рантайм по значению. -->
+
+<div class="modal-scrim" id="agreements-filter-scrim" hidden>
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="aaf-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="aaf-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="aaf-sec-main"><span class="tab__label">Основная информация</span><span class="tab__badge" data-aaf-badge="main" hidden>0</span></button>
+          <button type="button" class="tab tab--m tab--vert" data-target="aaf-sec-decision"><span class="tab__label">Решение</span><span class="tab__badge" data-aaf-badge="decision" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel">
+
+          <section class="tfm__sec" id="aaf-sec-main" aria-labelledby="aaf-sec-main-t">
+            <p class="tfm__sec-title" id="aaf-sec-main-t">Основная информация</p>
+            <div class="tfm__grid">
+
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="aaf-number"><span class="ds-label__text">Номер соглашения</span></label>
+                <div class="inp__field">
+                  <input class="inp__control" id="aaf-number" name="number" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Дата подписания</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">От</span>
+                        <input class="inp__control" id="aaf-sign-from" name="signFrom" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата подписания, от">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">До</span>
+                        <input class="inp__control" id="aaf-sign-to" name="signTo" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата подписания, до">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="aaf-change-type"><span class="ds-label__text">Тип изменения</span></label>
+                <div class="inp__field" data-ddl="aaf-change-type-list">
+                  <input class="inp__control" id="aaf-change-type" name="changeTypeCode" autocomplete="off" placeholder="Выберите тип изменения">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="aaf-change-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+              </div>
+
+              <div class="inp inp--m tfm__span-2" data-aaf-multi="keyChangeCodes">
+                <label class="ds-label" for="aaf-key-changes"><span class="ds-label__text">Ключевые изменения</span></label>
+                <div class="inp__field" data-ddl="aaf-key-changes-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="aaf-key-changes" autocomplete="off" placeholder="Выберите ключевые изменения">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="aaf-key-changes-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+
+            </div>
+          </section>
+
+          <section class="tfm__sec" id="aaf-sec-decision" aria-labelledby="aaf-sec-decision-t">
+            <p class="tfm__sec-title" id="aaf-sec-decision-t">Решение</p>
+            <div class="tfm__grid">
+
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="aaf-decision-number"><span class="ds-label__text">Номер решения</span></label>
+                <div class="inp__field">
+                  <input class="inp__control" id="aaf-decision-number" name="decisionNumber" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Дата решения</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">От</span>
+                        <input class="inp__control" id="aaf-decision-from" name="decisionFrom" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата решения, от">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">До</span>
+                        <input class="inp__control" id="aaf-decision-to" name="decisionTo" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата решения, до">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="inp inp--m tfm__span-2" data-aaf-multi="approvalLevelCodes">
+                <label class="ds-label" for="aaf-approval"><span class="ds-label__text">Уровень одобрения</span></label>
+                <div class="inp__field" data-ddl="aaf-approval-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="aaf-approval" autocomplete="off" placeholder="Выберите уровни одобрения">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="aaf-approval-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-aaf-clear disabled><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-aaf-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

@@ -41,9 +41,9 @@
   function current(d) { try { return String(d.value ? d.value() : ''); } catch (e) { return ''; } }
 
   function itemHTML(d) {
-    var head = '<div class="pp-sys__head"><p class="ds-body-m pp-subtitle">' + esc(d.title || d.id) + '</p>'
-      + (d.desc ? '<p class="ds-body-s pp-muted">' + esc(d.desc) + '</p>' : '')
-      + (d.reload ? '<p class="ds-body-xs pp-muted">' + esc(t('system.reloads')) + '</p>' : '') + '</div>';
+    var head = '<div class="pp-sys__head"><p class="ds-body-m-reg pp-subtitle">' + esc(d.title || d.id) + '</p>'
+      + (d.desc ? '<p class="ds-body-s-reg pp-muted">' + esc(d.desc) + '</p>' : '')
+      + (d.reload ? '<p class="ds-body-xs-reg pp-muted">' + esc(t('system.reloads')) + '</p>' : '') + '</div>';
     if (d.action) {
       return '<section class="pp-sys__item">' + head + '<div class="pp-row"><button type="button" class="btn btn--outline btn--s" data-pp-sys-run="' + esc(d.id) + '">'
         + '<span class="btn__label">' + esc(d.action) + '</span></button></div></section>';
@@ -66,8 +66,8 @@
     }
     var choices = defs.filter(function (d) { return d.options; }), acts = defs.filter(function (d) { return d.action; });
     pane.innerHTML = '<div class="pp-sys">'
-      + (choices.length ? '<p class="ds-body-s pp-muted">' + esc(t('system.states')) + '</p>' + choices.map(itemHTML).join('') : '')
-      + (acts.length ? '<p class="ds-body-s pp-muted">' + esc(t('system.actions')) + '</p>' + acts.map(itemHTML).join('') : '')
+      + (choices.length ? '<p class="ds-body-s-reg pp-muted">' + esc(t('system.states')) + '</p>' + choices.map(itemHTML).join('') : '')
+      + (acts.length ? '<p class="ds-body-s-reg pp-muted">' + esc(t('system.actions')) + '</p>' + acts.map(itemHTML).join('') : '')
       + '</div>';
     ctx.wire(pane);
     /* Сегменты оживляет рантайм ДС (бегунок, стрелки, Home/End); выбор — его onChange. */

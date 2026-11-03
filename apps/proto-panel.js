@@ -8,10 +8,12 @@
    картой экранов — ещё и её данные (map-data.js) для инструмента «Карта». */
 (function () {
   var APPS = [
+    "core/clients-app",
     "core/dashboard-app",
     "core/drafts/ibp-redesign-v1",
     "core/drafts/ibp-redesign-v2",
     "ib/drafts/ai-bankster-prototype-v02",
+    "ib/funds-app",
     "postrade/deals-app",
     "postrade/drafts/early-interest",
     "postrade/drafts/early-interest-v02",
@@ -19,6 +21,7 @@
     "postrade/drafts/tranche-page",
     "postrade/drafts/tranche-page-v02",
     "postrade/drafts/tranche-page-v03",
+    "postrade/drafts/tranche-page-v04",
     "postrade/post-reports-app"
   ];
   var RUNTIME = "../.agents/proto-panel/";

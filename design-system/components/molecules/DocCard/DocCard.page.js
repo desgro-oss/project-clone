@@ -86,7 +86,7 @@
       const m = document.createElement('div');
       m.style.cssText = 'display:flex; flex-direction:column; gap:var(--space-8);';
       const p = document.createElement('p');
-      p.style.cssText = 'margin:0; font:var(--type-body-m); color:var(--text-primary);';
+      p.style.cssText = 'margin:0; font:var(--type-body-m-reg); color:var(--text-primary);';
       p.textContent = text;
       m.appendChild(p);
       m.appendChild(node);

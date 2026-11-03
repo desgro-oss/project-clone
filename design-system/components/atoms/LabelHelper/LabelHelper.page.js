@@ -178,7 +178,7 @@ function classListHelper(o){ return 'ds-helper ds-helper--' + o.align + (o.statu
       }
 
       const content = document.createElement('span'); content.className = cls + '__content';
-      const title = document.createElement('span'); title.style.cssText = 'font:var(--type-body-m); color:' + (state.status==='disabled' ? 'var(--text-inactive)' : 'var(--text-primary)') + ';';
+      const title = document.createElement('span'); title.style.cssText = 'font:var(--type-body-m-reg); color:' + (state.status==='disabled' ? 'var(--text-inactive)' : 'var(--text-primary)') + ';';
       title.textContent = fieldTitle(kind);
       content.appendChild(title);
       if (showHelper) content.appendChild(makeHelper({ text: state.status==='error' ? 'Нужно выбрать хотя бы один вариант' : 'Пояснение к пункту', align:'left', status: state.status, icon: state.status==='error' && state.helperIcon }));
@@ -212,7 +212,7 @@ function classListHelper(o){ return 'ds-helper ds-helper--' + o.align + (o.statu
   box.innerHTML = '<span class="cb__mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>';
   root.appendChild(box);
   const content = document.createElement('span'); content.className = 'cb__content';
-  const title = document.createElement('span'); title.style.cssText='font:var(--type-body-m); color:var(--text-primary);'; title.textContent = 'Получать уведомления';
+  const title = document.createElement('span'); title.style.cssText='font:var(--type-body-m-reg); color:var(--text-primary);'; title.textContent = 'Получать уведомления';
   content.appendChild(title);
   content.appendChild(makeHelper({ text:'Не чаще одного раза в день', align:'left', status:'default' }));
   root.appendChild(content);
@@ -330,7 +330,7 @@ function classListHelper(o){ return 'ds-helper ds-helper--' + o.align + (o.statu
     const root = document.createElement('label'); root.className='cb'; root.style.pointerEvents='none';
     root.innerHTML = '<span class="cb__box"><span class="cb__mark"></span></span>';
     const content = document.createElement('span'); content.className='cb__content';
-    const t=document.createElement('span'); t.style.cssText='font:var(--type-body-m); color:var(--text-primary);'; t.textContent='Показывать архив';
+    const t=document.createElement('span'); t.style.cssText='font:var(--type-body-m-reg); color:var(--text-primary);'; t.textContent='Показывать архив';
     content.appendChild(t); content.appendChild(makeHelper({ text:'Скрытые сделки тоже попадут в список' }));
     root.appendChild(content);
     cell('Checkbox', 'использует Helper', root);
@@ -342,7 +342,7 @@ function classListHelper(o){ return 'ds-helper ds-helper--' + o.align + (o.statu
     const rbIcon = ((window.DS_ICONS||{})['radio-button-checked']||'').replace(/fill="(?!none)[^"]*"/g,'fill="currentColor"');
     root.innerHTML = '<span class="rb__box"><span class="rb__mark">'+rbIcon+'</span></span>';
     const content = document.createElement('span'); content.className='rb__content';
-    const t=document.createElement('span'); t.style.cssText='font:var(--type-body-m); color:var(--text-primary);'; t.textContent='Ежемесячно';
+    const t=document.createElement('span'); t.style.cssText='font:var(--type-body-m-reg); color:var(--text-primary);'; t.textContent='Ежемесячно';
     content.appendChild(t); content.appendChild(makeHelper({ text:'Списание 1-го числа' }));
     root.appendChild(content);
     cell('Radiobutton', 'использует Helper', root);
@@ -353,7 +353,7 @@ function classListHelper(o){ return 'ds-helper ds-helper--' + o.align + (o.statu
     const root = document.createElement('label'); root.className='sw sw--on'; root.style.pointerEvents='none';
     root.innerHTML = '<span class="sw__control"><span class="sw__thumb"></span></span>';
     const content = document.createElement('span'); content.className='sw__content';
-    const t=document.createElement('span'); t.style.cssText='font:var(--type-body-m); color:var(--text-primary);'; t.textContent='Двухфакторная аутентификация';
+    const t=document.createElement('span'); t.style.cssText='font:var(--type-body-m-reg); color:var(--text-primary);'; t.textContent='Двухфакторная аутентификация';
     content.appendChild(t); content.appendChild(makeHelper({ text:'Потребует код при каждом входе' }));
     root.appendChild(content);
     cell('Switch', 'использует Helper', root);
@@ -374,8 +374,8 @@ function classListHelper(o){ return 'ds-helper ds-helper--' + o.align + (o.statu
  * ===================================================================== */
 (function(){
   const rows = [
-    ['Label',  'Label',  '--type-body-xs', 'SB Sans Text', '12 / 16'],
-    ['Helper', 'Helper', '--type-body-xs', 'SB Sans Text', '12 / 16'],
+    ['Label',  'Label',  '--type-body-xs-reg', 'SB Sans Text', '12 / 16'],
+    ['Helper', 'Helper', '--type-body-xs-reg', 'SB Sans Text', '12 / 16'],
   ];
   const tb = document.querySelector('#typo-table tbody');
   if (!tb) return;
@@ -477,8 +477,8 @@ function classListHelper(o){ return 'ds-helper ds-helper--' + o.align + (o.statu
   const sizeTbody = document.querySelector('#size-table');
   if (sizeTbody) {
     const rows = [
-      ['Label', '--type-body-xs', data.labelSize + ' / ' + data.labelLh + ' px', data.labelIconSize + ' px'],
-      ['Helper', '--type-body-xs', data.helperSize + ' / ' + data.helperLh + ' px', data.helperIconSize + ' px (только Error)'],
+      ['Label', '--type-body-xs-reg', data.labelSize + ' / ' + data.labelLh + ' px', data.labelIconSize + ' px'],
+      ['Helper', '--type-body-xs-reg', data.helperSize + ' / ' + data.helperLh + ' px', data.helperIconSize + ' px (только Error)'],
     ];
     sizeTbody.innerHTML = rows.map(r => `<div class="tbl__row" style="grid-template-columns:8px 0.7fr 1fr 1.1fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">${r[0]}</span></span></div><div class="tc"><code>${r[1]}</code></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">${r[2]}</span></span></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">${r[3]}</span></span></div><div class="tc tc--separator"></div></div>`).join('');
   }

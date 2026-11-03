@@ -1,17 +1,24 @@
-/* Профиль и вкладки закреплены сверху и общие для обеих вкладок (решение
+/* Профиль и вкладки закреплены сверху и общие для всех вкладок (решение
    пользователя 20.10.2026); прокручивается содержимое панели. */
 /* Отступы главной (решение пользователя 20.10.2026): сверху — как поля слева
    и справа; профиль → вкладки → панель — 12px; снизу поля нет — прокручиваемая
    панель доходит до края экрана, нижний отступ даёт сам дашборд. */
-.screen__content:has(> #home-tabs) { padding-top: var(--layout-pad-x); padding-bottom: 0; gap: var(--space-12); }
-#home-profile { flex: none; }
+.screen__content:has(> #home-tabs) { padding-top: var(--layout-pad-x); padding-bottom: 0; gap: 0; }
+#home-profile { flex: none; margin-bottom: var(--space-12); }
 #home-tabs { flex: none; }
-.home-panel { flex: 1; min-height: 0; min-width: 0; }
+/* Вкладки → панель — 12px внутри панели, а не зазором между ними: окно
+   прокрутки начинается сразу под вкладками, и содержимое при прокрутке
+   уходит под их нижнюю границу (решение пользователя 23.10.2026). */
+.home-panel { flex: 1; min-height: 0; min-width: 0; padding-top: var(--space-12); }
 .home-projects { display: flex; flex-direction: column; gap: var(--space-16); padding-bottom: var(--layout-pad-bottom); } /* прежнее нижнее поле экрана — канбан его перекрывает до края */
+/* «Поиск клиентов»: таблица на всю оставшуюся высоту (Table, .dtable--fill),
+   нижнее поле — как у «Моих проектов» */
+.home-clients { display: flex; flex-direction: column; padding-bottom: var(--layout-pad-bottom); }
 #home-dashboard-content { min-width: 0; }
 @media (max-height: 700px) {
   /* Низкое окно: прокручивается вся главная, без обрезки общей шапки. */
   .screen--app:has(#home-tabs) { height: auto; min-height: 100vh; overflow: visible; }
   .home-projects .lead-board { min-height: 60vh; }
   .home-projects .lead-registry { min-height: 60vh; }
+  .home-clients > * { min-height: 60vh; }
 }

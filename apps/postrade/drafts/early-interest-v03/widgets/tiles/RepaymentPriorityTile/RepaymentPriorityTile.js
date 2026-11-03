@@ -15,7 +15,7 @@
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
   function row(i, label) {
-    return '<div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">' + (i + 1) + '</span></div>'
+    return '<div class="entity"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">' + (i + 1) + '</span></div>'
       + '<div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">' + esc(label) + '</span></div></div></div></div>';
   }
 

@@ -31,15 +31,15 @@
   gap: var(--space-8);
   min-width: 0;
   margin: 0;
-  font: var(--type-body-s);
-  letter-spacing: 0;
+  font: var(--type-body-s-reg);
+  letter-spacing: var(--type-ls);
   color: var(--text-secondary);
 }
 
 /* ---------- sizes --------------------------------------------------------- */
-.note--xs { --note-icon: 16px; gap: var(--space-4); font: var(--type-body-xs); }
-.note--s  { --note-icon: 18px; gap: var(--space-8); font: var(--type-body-s); }
-.note--m  { --note-icon: 20px; gap: var(--space-8); font: var(--type-body-m); }
+.note--xs { --note-icon: 16px; gap: var(--space-4); font: var(--type-body-xs-reg); }
+.note--s  { --note-icon: 18px; gap: var(--space-8); font: var(--type-body-s-reg); }
+.note--m  { --note-icon: 20px; gap: var(--space-8); font: var(--type-body-m-reg); }
 
 /* ---------- parts ---------------------------------------------------------
    Коробка иконки — высотой в строку текста (1lh от шрифта заметки): глиф

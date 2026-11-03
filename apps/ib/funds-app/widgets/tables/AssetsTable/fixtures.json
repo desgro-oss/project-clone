@@ -1,0 +1,32 @@
+{
+  "_": "Демо-данные конструктора витрины: объект на состояние данных (ключи — значения data-state) и long — те же данные с самыми длинными значениями (контрол «Длинные значения»). Форма — аргумент AssetsTable.render: { fund: FundItemDto, assets: AssetItemDto[] } (data/funds.js). Значения выдуманные, правдоподобной длины. Рисует их сценарий демо функцией AssetsTable.render.",
+  "data": {
+    "fund": { "objectId": "fnd-001", "name": "Интеррос", "alias": "Интеррос — Потанин", "inn": "7706419639", "kpp": "1157746316598", "partyId": "pty-1001" },
+    "assets": [
+      { "objectId": "ast-001", "fundId": "fnd-001", "name": "Роза Хутор", "alias": null, "inn": "7706419639", "kpp": "770601001", "partyId": "pty-2001", "acquisitionYear": "2021-01-01", "ev": 245000000, "mcap": 220000000, "ownershipPercent": 90, "ownershipValue": 198000000, "gicsIndustry": { "code": "HOTELS_RESORTS", "name": "Отели, курорты и круизы" } },
+      { "objectId": "ast-002", "fundId": "fnd-001", "name": "Турьев Хутор", "alias": null, "inn": "7706419640", "kpp": "770601001", "partyId": "pty-2002", "acquisitionYear": "2021-01-01", "ev": 145000000, "mcap": 140000000, "ownershipPercent": 100, "ownershipValue": 140000000, "gicsIndustry": { "code": "HOTELS_RESORTS", "name": "Отели, курорты и круизы" } },
+      { "objectId": "ast-004", "fundId": "fnd-001", "name": "Норильский Никель", "alias": null, "inn": "7706419642", "kpp": "770601001", "partyId": "pty-2004", "acquisitionYear": "2021-01-01", "ev": 2945000000, "mcap": 2800000000, "ownershipPercent": 55, "ownershipValue": 1540000000, "gicsIndustry": { "code": "METALS_MINING", "name": "Металлы и добыча" } },
+      { "objectId": "ast-007", "fundId": "fnd-001", "name": "Т-банк", "alias": null, "inn": "7706419645", "kpp": "770601001", "partyId": "pty-2007", "acquisitionYear": "2021-01-01", "ev": 320000000, "mcap": 315000000, "ownershipPercent": 100, "ownershipValue": 315000000, "gicsIndustry": { "code": "BANKS", "name": "Банки" } },
+      { "objectId": "ast-010", "fundId": "fnd-001", "name": "Яндекс (9,95%)", "alias": null, "inn": "7706419648", "kpp": "770601001", "partyId": "pty-2010", "acquisitionYear": "2021-01-01", "ev": 950000000, "mcap": 940000000, "ownershipPercent": 30, "ownershipValue": 282000000, "gicsIndustry": { "code": "INTERACTIVE_MEDIA", "name": "Интерактивные медиа и сервисы" } }
+    ]
+  },
+  "partial": {
+    "fund": { "objectId": "fnd-008", "name": "Это пример фонда не из ЕПК", "alias": "Это пример фонда не из ЕПК", "inn": null, "kpp": null, "partyId": null },
+    "assets": [
+      { "objectId": "ast-025", "fundId": "fnd-008", "name": "Пример актива не из ЕПК", "alias": null, "inn": null, "kpp": null, "partyId": null, "acquisitionYear": null, "ev": null, "mcap": null, "ownershipPercent": 100, "ownershipValue": null, "gicsIndustry": null },
+      { "objectId": "ast-026", "fundId": "fnd-008", "name": "Второй пример актива", "alias": null, "inn": null, "kpp": null, "partyId": null, "acquisitionYear": "2021-01-01", "ev": 12000000, "mcap": 11000000, "ownershipPercent": 50, "ownershipValue": 5500000, "gicsIndustry": { "code": "SOFTWARE", "name": "Программное обеспечение" } }
+    ]
+  },
+  "empty": {
+    "fund": { "objectId": "fnd-004", "name": "РФПИ", "alias": "РФПИ — госинвестиции", "inn": "7706559641", "kpp": "1157746316598", "partyId": "pty-1004" },
+    "assets": []
+  },
+  "error": { "message": "Не удалось загрузить активы фонда" },
+  "long": {
+    "fund": { "objectId": "fnd-009", "name": "Восток Инвестиции (ранее Baring Vostok Capital Partners)", "alias": "Восток Инвестиции — BVCP", "inn": "7706559645", "kpp": "1157746316598", "partyId": "pty-1009" },
+    "assets": [
+      { "objectId": "ast-101", "fundId": "fnd-009", "name": "Национальная иммунобиологическая компания государственной корпорации", "alias": "НацИмБио — вакцины и биотехнологии полного цикла", "inn": "7706559705", "kpp": "770601001", "partyId": "pty-2101", "acquisitionYear": "2019-12-31", "ev": 123456789012, "mcap": 98765432109, "ownershipPercent": 49.99, "ownershipValue": 49372839712, "gicsIndustry": { "code": "PHARMA", "name": "Фармацевтика, биотехнологии и науки о жизни" } },
+      { "objectId": "ast-102", "fundId": "fnd-009", "name": "Москва-Сити Башня Федерация", "alias": null, "inn": "7706559708", "kpp": "770601001", "partyId": null, "acquisitionYear": "2021-01-01", "ev": 530000000, "mcap": 510000000, "ownershipPercent": 60, "ownershipValue": 306000000, "gicsIndustry": { "code": "REAL_ESTATE", "name": "Недвижимость" } }
+    ]
+  }
+}

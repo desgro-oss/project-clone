@@ -22,12 +22,22 @@
       { key: 'name',    label: 'Контрагент',      w: 220, sort: 'none' },
       { key: 'amount',  label: 'Сумма, RUB',        w: 140, numbers: true, sort: 'none' },
       { key: 'status',  label: 'Статус',          w: 120, sort: 'none' },
-      { key: 'owner',   label: 'Ответственный',   w: 180, sort: 'none' },
+      /* скрыта по умолчанию — в рантайме это data-col-hidden на .th */
+      { key: 'owner',   label: 'Ответственный',   w: 180, sort: 'none', hidden: true },
       { key: 'actions', label: 'Действие', w: 92, fixed: true }
     ];
   }
-  var state = { columns: defaultColumns(), selected: {} };
+  /* переключатели раздела — в рантайме template[data-table-options]; что они
+     делают со строками, решает раздел, демо только хранит значение */
+  var OPTIONS = [{ key: 'unseen', label: 'Показывать новые непросмотренные записи', on: true }];
+  function defaultOptions() {
+    var out = {};
+    OPTIONS.forEach(function (o) { out[o.key] = o.on; });
+    return out;
+  }
+  var state = { columns: defaultColumns(), selected: {}, options: defaultOptions() };
   var columnsSnapshot = null; /* снимок колонок на момент открытия модалки настройки; для «Отменить»/Escape/клика по скриму */
+  var optionsSnapshot = null; /* то же для переключателей раздела */
 
   function movableCols() { return state.columns.filter(function (c) { return !c.fixed; }); }
 
@@ -335,6 +345,11 @@
       '</li>';
   }
 
+  function optionItem(o) {
+    var on = !!state.options[o.key];
+    return '<li class="col-opt"><label class="cb' + (on ? ' cb--selected' : '') + '"><input type="checkbox" class="cb__input" data-col-option="' + o.key + '"' + (on ? ' checked' : '') + '><span class="cb__box"><span class="cb__mark">' + (on ? CHECK : '') + '</span></span><span class="cb__content"><span class="cb__label">' + o.label + '</span></span></label></li>';
+  }
+
   function columnsModalHtml() {
     var items = state.columns.map(function (c, i) { return c.fixed ? '' : columnListItem(c, i); }).join('');
     return '<div class="modal-scrim" id="dt-columns-scrim">' +
@@ -344,13 +359,17 @@
           '<button type="button" class="ibtn ibtn--neutral ibtn--l" data-columns-cancel aria-label="Закрыть"><i data-icon="close"></i></button>' +
         '</header>' +
         '<div class="modal__body">' +
+          '<ul class="col-opts">' + OPTIONS.map(optionItem).join('') + '</ul>' +
+          '<hr class="dvd dvd--h">' +
           '<p class="col-desc" id="dt-columns-desc">Выберите столбцы для отображения</p>' +
           '<label class="cb" id="dt-cols-parent"><input type="checkbox" class="cb__input" data-cols-parent><span class="cb__box"><span class="cb__mark"></span></span><span class="cb__content"><span class="cb__label">Выбрать все</span></span></label>' +
           '<hr class="dvd dvd--h">' +
           '<ul class="col-list" id="dt-col-list">' + items + '</ul>' +
         '</div>' +
         '<footer class="modal__foot">' +
-          '<div class="modal__foot-left"></div>' +
+          '<div class="modal__foot-left">' +
+            '<button class="btn btn--transparent btn--m" data-columns-reset><span class="btn__label">Сбросить настройки</span></button>' +
+          '</div>' +
           '<div class="modal__foot-right">' +
             '<button class="btn btn--transparent btn--m" data-columns-cancel><span class="btn__label">Отменить</span></button>' +
             '<button class="btn btn--accent btn--m" data-columns-apply><span class="btn__label">Применить</span></button>' +
@@ -390,6 +409,7 @@
   function openColumnsModal() {
     closeColumnsModal();
     columnsSnapshot = state.columns.map(function (c) { return Object.assign({}, c); });
+    optionsSnapshot = Object.assign({}, state.options);
     var wrap = document.createElement('div');
     wrap.innerHTML = columnsModalHtml();
     document.body.appendChild(wrap.firstChild);
@@ -400,6 +420,7 @@
     scrim.addEventListener('click', function (e) {
       if (e.target.closest('[data-columns-cancel]')) cancelColumns();
       if (e.target.closest('[data-columns-apply]')) applyColumns();
+      if (e.target.closest('[data-columns-reset]')) resetColumns();
       var pin = e.target.closest('[data-col-pin]');
       if (pin) {
         togglePin(parseInt(pin.getAttribute('data-col-pin'), 10));
@@ -407,6 +428,14 @@
       }
     });
     scrim.addEventListener('change', function (e) {
+      var opt = e.target.closest('[data-col-option]');
+      if (opt) {
+        var on = e.target.checked, host = opt.closest('.cb');
+        state.options[opt.getAttribute('data-col-option')] = on;
+        host.classList.toggle('cb--selected', on);
+        host.querySelector('.cb__mark').innerHTML = on ? CHECK : '';
+        return;
+      }
       var vis = e.target.closest('[data-col-visible]');
       if (vis) { state.columns[parseInt(vis.getAttribute('data-col-visible'), 10)].hidden = !e.target.checked; refreshColumnsModal(); }
       var parent = e.target.closest('[data-cols-parent]');
@@ -467,6 +496,7 @@
   /* отмена: вернуть снимок колонок, перерисовать таблицу и закрыть модалку */
   function cancelColumns() {
     if (columnsSnapshot) state.columns = columnsSnapshot.map(function (c) { return Object.assign({}, c); });
+    if (optionsSnapshot) state.options = Object.assign({}, optionsSnapshot);
     render();
     closeColumnsModal();
   }
@@ -475,11 +505,20 @@
     render();
     closeColumnsModal();
   }
+  /* сброс — сразу, без «Применить»: колонки, сортировка и переключатели
+     возвращаются к виду по умолчанию (в рантайме ещё удаляется запись сессии) */
+  function resetColumns() {
+    state.columns = defaultColumns();
+    state.options = defaultOptions();
+    render();
+    closeColumnsModal();
+  }
   function escCloseColumns(e) { if (e.key === 'Escape') cancelColumns(); }
   function closeColumnsModal() {
     var scrim = document.getElementById('dt-columns-scrim');
     if (scrim) scrim.remove();
     columnsSnapshot = null;
+    optionsSnapshot = null;
     document.removeEventListener('keydown', escCloseColumns);
   }
 

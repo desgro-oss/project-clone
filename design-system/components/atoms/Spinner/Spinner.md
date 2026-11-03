@@ -33,7 +33,7 @@ status: curated
 - **Поведение** — вращение на `transform: rotate()`, `.8s linear infinite`; `prefers-reduced-motion` → `1.6s` (не отключается). Оверлей — `position:absolute; inset:0` поверх позиционированного родителя, фон — вуаль на `--bg-page` (82%), НЕ модальный `--modal-scrim`; z-index локальный, не часть глобальной шкалы.
 - **Состояния** — одно состояние (вращается/не смонтирован); нет Disabled/Hover.
 - **Доступность** — `role="status"` (не `progressbar` — нет значения); без подписи обязателен `aria-label` на кольце; оверлей — `role="status"` + `aria-live="polite"`.
-- **Типографика** — подпись `--type-body-s`; подпись оверлея `--type-body-s-strong`.
+- **Типографика** — подпись `--type-body-s-reg`; подпись оверлея `--type-body-s-strong-smb`.
 - **Цвета** — трек `--border-light` (Inverse: `--text-on-dark` 28%); индикатор — статусные токены (`--primary`, `--st-green/orange/red/lblue/system`, Inverse: `--text-on-dark`).
 - **Бэклог (Предложение, не реализовано)** — Skeleton (переиспользуемый примитив с шиммером), составной upload-индикатор с отменой/повтором. Круговой ProgressBar со значением — отдельная задача в бэклоге ProgressBar, не здесь.
 

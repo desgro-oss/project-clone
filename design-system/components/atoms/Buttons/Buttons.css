@@ -43,7 +43,7 @@
 
   /* type — overridden per size below */
   font: var(--type-button-m);
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   white-space: nowrap;
   text-decoration: none;
   cursor: pointer;

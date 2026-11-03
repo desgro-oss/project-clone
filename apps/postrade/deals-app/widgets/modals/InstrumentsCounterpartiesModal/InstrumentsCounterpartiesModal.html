@@ -26,7 +26,13 @@
      (60vh — не прыгает при смене вкладки), колонки разделены вертикальными
      Divider. У каждой колонки свой скролл с полосой ДС (.ds-scroll, Layout):
      бегунок стоит вплотную к разделителю, появляется при прокрутке и гаснет.
-     Заголовок H6 Strong стоит на месте: он вне прокручиваемой области. -->
+     Заголовок H6 Strong стоит на месте: он вне прокручиваемой области.
+
+     Вариант «Контрагент» (страница договора, инструмент): страница включает его
+     вызовом PostModalCounterparties.use({ variant: 'instrument', … }) — скрипт
+     ставит data-variant="instrument" на .lc-knrm. Разметка та же: заголовок
+     окна меняет скрипт, радио-отметку выбора рисует он же в карточке участника.
+     Без вызова окно — окно КНР. Подробно — шапка InstrumentsCounterpartiesModal.js. -->
 
 <div class="modal-scrim" id="knr-scrim" hidden>
 
@@ -58,7 +64,7 @@
       <div class="lc-knrm__cols" data-knr-panel>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Параметры поиска</h3>
+          <h3 class="ds-h6-strong-smb">Параметры поиска</h3>
           <form class="lc-knrm__form ds-scroll" data-knr-search="ul" novalidate>
             <div class="inp inp--m inp--fullwidth">
               <label class="ds-label" for="knr-ul-name"><span class="ds-label__text">Наименование</span></label>
@@ -87,7 +93,7 @@
         <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Найдено</h3>
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
           <div class="lc-knrm__drop ds-scroll" data-knr-drop="ul-found">
             <p class="lc-knrm__hint" data-knr-hint>Поиск осуществляется по любому из параметров</p>
           </div>
@@ -96,7 +102,7 @@
         <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Участники сделки</h3>
+          <h3 class="ds-h6-strong-smb">Участники сделки</h3>
           <div class="lc-knrm__drop ds-scroll" data-knr-drop="ul-members">
             <p class="lc-knrm__hint">Перенесите выбранных участников сделки сюда.
               Добавить можно только носителей риска или все группы и контрагентов, участвующих в сделке.</p>
@@ -112,7 +118,7 @@
       <div class="lc-knrm__cols" data-knr-panel hidden>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Параметры поиска</h3>
+          <h3 class="ds-h6-strong-smb">Параметры поиска</h3>
           <form class="lc-knrm__form ds-scroll" data-knr-search="fl" novalidate>
             <div class="inp inp--m inp--fullwidth">
               <label class="ds-label" for="knr-fl-ul"><span class="ds-label__text">Юридическое лицо</span></label>
@@ -152,7 +158,7 @@
         <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Физические лица</h3>
+          <h3 class="ds-h6-strong-smb">Физические лица</h3>
           <div class="lc-knrm__drop ds-scroll" data-knr-drop="fl-found">
             <p class="lc-knrm__hint" data-knr-hint>Поиск осуществляется по юридическим лицам, входящим в участники сделки</p>
           </div>
@@ -161,7 +167,7 @@
         <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Участники сделки</h3>
+          <h3 class="ds-h6-strong-smb">Участники сделки</h3>
           <!-- Юрлица здесь тоже видны, но с этой вкладки их не трогают: они
                рисуются недоступными (Disabled у Card). Зеркально на вкладке
                юрлиц недоступны физлица. Удаление юрлица не тянет за собой

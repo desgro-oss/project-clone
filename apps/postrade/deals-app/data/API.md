@@ -12,7 +12,8 @@
 страница ─▶ CounterpartiesStore (counterparties-store.js) ─┐
 страница ─▶ ProductTreeStore (product-tree-store.js) ──────┼▶ PostApi (post-api.js) ─▶ API
 страница ─▶ FinInstrumentsStore (fin-instruments-store.js) ┤
-страница ─▶ FinMetricsStore (fin-metrics-store.js) ────────┘
+страница ─▶ FinMetricsStore (fin-metrics-store.js) ────────┤
+страница ─▶ LoanAgreementStore (loan-agreement-store.js) ──┘
 ```
 
 - Страницы и компоненты зовут только стор.
@@ -22,7 +23,7 @@
 | Режим | Когда | Куда пишется |
 |---|---|---|
 | `server` | страница открыта по http(s), и `GET /api/post/participants` ответил 2xx | база сервера |
-| `local` | страница открыта двойным кликом (`file://`) или с сервера без этого API | `localStorage` браузера, ключи `ibp.post.participants`, `ibp.post.product-trees`, `ibp.post.fin-instruments` и `ibp.post.fin-metrics` |
+| `local` | страница открыта двойным кликом (`file://`) или с сервера без этого API | `localStorage` браузера, ключи `ibp.post.participants`, `ibp.post.product-trees`, `ibp.post.fin-instruments`, `ibp.post.fin-metrics` и `ibp.post.loan-agreements` |
 
 В режиме `local` правки видны только в этом браузере. Консоль сообщает об этом один раз.
 
@@ -62,7 +63,8 @@
 Если сделку не сохраняли, записи нет — стор показывает дерево из `mock-deal-trees.js`.
 Плоские поля реестра (`mainProductDid`, `productsDidNames`, `productsNames`, `balances`,
 `currencies`, `isTypeC`) стор вычисляет из дерева (`ProductTreeStore.summary`), поэтому
-отдельно не хранятся. Правки в прототипе — ответ человека 30.09.2026 (задача
+отдельно не хранятся; `balances` и `currencies` — из временных полей узлов `balance` и `currency`
+(по смыслу они принадлежат тайлам «Баланс и валюта» страниц инструментов и транша, перечень потребителей — вопрос 25 паспорта «Продукты сделки»). Правки в прототипе — ответ человека 30.09.2026 (задача
 `docs/tasks/RE0001-product-row-tree.md`, вопрос 15): в продукте дерево сохраняется.
 
 ## Карточки финансовых инструментов сделки
@@ -125,6 +127,41 @@
 e-mail, формирование файла (в Сигме — зашифрованного для списка получателей), ответ об успехе или
 ошибке. Сеть определяет бэкенд по логину; в прототипе — `?net=sigma` (по умолчанию Альфа), ошибка
 выгрузки — `?download=fail`. Файл не формируется — выгрузка имитируется.
+
+## Договор займа (НКЛ)
+
+Запись хранит разделы договора, его дополнительные соглашения (ДС) и процентные схемы ЕТС
+(typedef `LoanAgreementRsDto`, `mock-loan-agreements.js`). **Ключ — id узла договора в
+дереве продуктов**, а не номер сделки: в сделке бывает два договора:
+
+```json
+{ "agreement": { "instrumentId": "1027.d1.p1.i1",
+    "counterpartyId": "ul-10",
+    "contract": { "contractNumber": "1027-2024", "contractSignDate": "2024-04-22" },
+    "balanceCurrency": { "balanceCode": "VPE_CAPITAL", "currencyCode": "RUB", "totalLimitAmount": 123456789 },
+    "techInfo": { "gfoId": "1234567890", "gfoFundingCreditId": "1234567890-12-12" },
+    "additionalAgreements": [ { "id": "AA-1027-4", "seqNumber": 4, "signDate": "2025-10-01", … } ],
+    "transferSchemes": [ { "id": "TS-1027-5", "startDate": "2025-01-01", "endDate": "2027-12-31", "rateTypeCode": "FLOATING", … } ],
+    "trancheSchedules": { "1027.d1.p1.i1.t1": "2027-04-22" } },
+  "updated": "2026-10-26T12:00:00.000Z" }
+```
+
+| Поле | Что это |
+|---|---|
+| `counterpartyId` | контрагент договора — id базы контрагентов (`mock-counterparties.js`); один, `null` — не выбран. Выбранный контрагент становится участником сделки (не КНР); один контрагент может быть у нескольких инструментов и КНР сделки |
+| `contract`, `balanceCurrency`, `techInfo` | разделы тайлов страницы договора; `null` — раздел не заполнен («Заполнить») |
+| `additionalAgreements` | ДС договора. Номер на экране — `<seqNumber>-<номер договора>` («4-1234567890»), отдельно не хранится; `signDate` — дата подписания (она же дата создания ДС); номер решения один |
+| `transferSchemes` | процентные схемы ЕТС: период (обе даты обязательны), рабочих дней до применения БИ, тип ставки (`FIXED` — `fixedRatePercent`; `FLOATING` — `baseIndexCode` + `spreadPercent`), комментарий |
+| `trancheSchedules` | плановая дата погашения по id транша; договор берёт самую позднюю |
+| `updated` | время сохранения, ISO 8601; ставит сервер |
+
+Если договор не сохраняли, записи нет — стор показывает демо-запись из `mock-loan-agreements.js`,
+а без неё — пустую («не заполнено»). **Не хранится:** номер, название, транши и признак
+погашения договора — они в дереве продуктов; ставка схемы «на сегодня» (а если сегодняшней схемы
+нет — последней) и История ставок (одна строка на схему) — стор считает их из схем и истории БИ; История БИ (`MOCK_BASE_INDEX_HISTORY`) общая для всех
+договоров. Правила (непересекающиеся периоды схем, ставка = БИ + спред, лаг применения БИ в
+рабочих днях, правка по статусу сделки и погашению) — в шапке `loan-agreement-store.js`;
+настоящий бэкенд проверяет их сам (задача `docs/tasks/RE0041-nkl-loan-agreement.md`).
 
 ## Команда сделки
 
@@ -212,6 +249,10 @@ DealsStore.update(id, { desk: 'Недвижимость',   // запись: о�
 | `GET /api/post/fin-metrics/:dealId` | `200` — запись; `404` — расчёт сделки не сохраняли |
 | `PUT /api/post/fin-metrics/:dealId` | тело `{ calculation, fixations }` → `200` `{ ok: true, updated }` |
 | `DELETE /api/post/fin-metrics` | `204` — база расчётов метрик очищена (для показов) |
+| `GET /api/post/loan-agreements` | `200` — `{ "<id узла договора>": { agreement, updated }, … }`; только сохранённые договоры |
+| `GET /api/post/loan-agreements/:instrumentId` | `200` — запись; `404` — договор не сохраняли |
+| `PUT /api/post/loan-agreements/:instrumentId` | тело `{ agreement }` → `200` `{ ok: true, updated }` |
+| `DELETE /api/post/loan-agreements` | `204` — база договоров очищена (для показов) |
 
 **Проверки при записи** (`400` с `{ error }`):
 
@@ -222,7 +263,10 @@ DealsStore.update(id, { desk: 'Недвижимость',   // запись: о�
 - у карточки ФИ `id` уникален в сделке, `typeCode` и `reportingType` — из справочников
   `mock-fin-instruments.js`, `name` не пустой;
 - у расчёта метрик `calculation.dealId` совпадает с номером сделки из пути; `fixationId`
-  уникален в сделке, `modificationTypeCode` — из `INITIAL` · `NON_SUBSTANTIAL` · `SUBSTANTIAL`.
+  уникален в сделке, `modificationTypeCode` — из `INITIAL` · `NON_SUBSTANTIAL` · `SUBSTANTIAL`;
+- у договора займа `agreement.instrumentId` совпадает с id из пути; `id` ДС и схем уникальны в
+  договоре; у схемы заданы `startDate` и `endDate`, периоды схем не пересекаются, `endDate` не раньше `startDate`; у схемы `FIXED`
+  задан `fixedRatePercent`, у `FLOATING` — `baseIndexCode` и `spreadPercent`.
 
 Тело больше 64 КБ — `413`. Другие методы — `405`.
 

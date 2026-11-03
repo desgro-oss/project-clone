@@ -1,0 +1,27 @@
+/* Локальный компонент «Дополнительное соглашение» (карточка ДС).
+   Только внутренняя раскладка полей. Цвета, шрифты, отступы, радиусы — токены ДС и
+   классы Tile / ReadOnlyField / Chip; своих значений здесь нет. Свёртку, шеврон и
+   зазор стопки (.tile-stack) даёт ДС. Режим прав на вид не влияет: карандаш либо есть
+   в разметке, либо нет (AdditionalAgreementTile.js), стилем он не скрывается. */
+
+/* Перестроение — по СВОЕЙ ширине, а не по ширине окна: карточка стоит на двенадцати
+   колонках страницы и в узком окне витрины. */
+.lc-additional-agreement-tile { container-type: inline-size; }
+
+/* Пять колонок, как на макете: у «Типа изменения» и «Уровня одобрения» значения длиннее,
+   «Ключевые изменения» — самая широкая. Колонки сжимаемые (minmax(0,…)): длинное
+   значение усекается с тултипом, подпись переносится (ds-label--wrap). */
+.lc-additional-agreement-tile__grid {
+  grid-template-columns:
+    minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 2fr);
+}
+
+@container (max-width: 960px) {
+  .lc-additional-agreement-tile__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@container (max-width: 560px) {
+  .lc-additional-agreement-tile__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container (max-width: 320px) {
+  .lc-additional-agreement-tile__grid { grid-template-columns: minmax(0, 1fr); }
+}

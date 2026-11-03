@@ -38,10 +38,10 @@
   --inp-px: 12px;
   --inp-gap: 8px;
   --inp-icon: 20px;
-  --inp-font: var(--type-body-m);
+  --inp-font: var(--type-body-m-reg);
 }
 /* размер S (Table Edit) — прямыми свойствами на потомках (не через --inp-* в модификаторе) */
-.inp--s .inp__field { height: 32px; padding: 0 10px; gap: 6px; font: var(--type-body-s); }
+.inp--s .inp__field { height: 32px; padding: 0 10px; gap: 6px; font: var(--type-body-s-reg); }
 .inp--s.inp--multiline .inp__field { min-height: 32px; }
 .inp--s .inp__lead { width: 18px; height: 18px; }
 .inp--s .inp__act  { width: 18px; height: 18px; }
@@ -191,7 +191,7 @@ textarea.inp__control { resize: none; line-height: 20px; }
 .inp__counter {
   flex: none;
   margin-left: auto;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;

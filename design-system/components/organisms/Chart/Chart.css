@@ -20,28 +20,28 @@
 .chart-host[data-size="s"]{--chart-h:132px;--chart-gap:8px}
 .chart-host[data-size="l"]{--chart-h:320px;--chart-gap:16px}
 
-.chart{display:flex;flex-direction:column;gap:var(--chart-gap);min-width:0;font:var(--type-body-xs);color:var(--text-primary)}
+.chart{display:flex;flex-direction:column;gap:var(--chart-gap);min-width:0;font:var(--type-body-xs-reg);color:var(--text-primary)}
 .chart--stretch{width:100%}
 
 /* ---------- шапка ---------- */
 .chart__head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;min-width:0}
 .chart__titles{display:flex;flex-direction:column;gap:2px;min-width:0}
-.chart__title{font:var(--type-body-m-strong);color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chart__subtitle{font:var(--type-body-xs);color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chart__title{font:var(--type-body-m-strong-smb);color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chart__subtitle{font:var(--type-body-xs-reg);color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chart__toolbar{display:flex;align-items:center;gap:8px;flex:none}
-.chart-host[data-size="s"] .chart__title{font:var(--type-body-s-strong)}
-.chart-host[data-size="l"] .chart__title{font:var(--type-body-l-strong)}
+.chart-host[data-size="s"] .chart__title{font:var(--type-body-s-strong-smb)}
+.chart-host[data-size="l"] .chart__title{font:var(--type-body-l-strong-smb)}
 
 /* ---------- легенда ---------- */
 .chart__legend{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;min-width:0}
 .chart__legend--bottom{order:9}
-.chart__legend-item{display:inline-flex;flex:0 0 auto;align-items:center;gap:6px;min-height:20px;padding:2px 4px;border:0;border-radius:var(--radius-xs);background:none;cursor:pointer;font:var(--type-body-xs);color:var(--text-secondary);max-width:100%}
+.chart__legend-item{display:inline-flex;flex:0 0 auto;align-items:center;gap:6px;min-height:20px;padding:2px 4px;border:0;border-radius:var(--radius-xs);background:none;cursor:pointer;font:var(--type-body-xs-reg);color:var(--text-secondary);max-width:100%}
 .chart__legend-item:hover{background:var(--bg-table-default-hover);color:var(--text-primary)}
 .chart__legend-item:focus-visible{outline:2px solid var(--primary);outline-offset:1px}
 .chart__legend-item[aria-pressed="false"]{color:var(--text-inactive)}
 .chart__legend-item[aria-pressed="false"] .chart__marker{background:var(--disabled)}
 .chart__legend-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chart__legend-val{font:var(--type-body-xs);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.chart__legend-val{font:var(--type-body-xs-reg);color:var(--text-primary);font-variant-numeric:tabular-nums}
 .chart__marker{flex:none;width:10px;height:10px;border-radius:var(--radius-2xs);background:var(--chart-c,var(--primary))}
 .chart__marker--line{width:14px;height:3px;border-radius:var(--radius-full)}
 .chart__marker--dot{width:8px;height:8px;border-radius:var(--radius-circle)}
@@ -53,10 +53,10 @@
 .chart__grid line{stroke:var(--chart-grid);stroke-width:1;shape-rendering:crispEdges}
 .chart__grid line.chart__zero{stroke:var(--chart-axis)}
 .chart__axis line{stroke:var(--chart-axis);stroke-width:1;shape-rendering:crispEdges}
-.chart__axis text,.chart__tick{font:var(--type-body-xs);fill:var(--chart-tick-fg)}
-.chart-host[data-size="l"] .chart__axis text{font:var(--type-body-s)}
-.chart__axis-title{font:var(--type-body-xs);fill:var(--text-secondary)}
-.chart__vlabel{font:var(--type-body-xs);fill:var(--chart-label-fg);font-variant-numeric:tabular-nums}
+.chart__axis text,.chart__tick{font:var(--type-body-xs-reg);fill:var(--chart-tick-fg)}
+.chart-host[data-size="l"] .chart__axis text{font:var(--type-body-s-reg)}
+.chart__axis-title{font:var(--type-body-xs-reg);fill:var(--text-secondary)}
+.chart__vlabel{font:var(--type-body-xs-reg);fill:var(--chart-label-fg);font-variant-numeric:tabular-nums}
 
 /* серии */
 .chart__ser{transition:opacity .12s ease}
@@ -71,8 +71,8 @@
 .chart__dot.is-active{r:5}
 .chart__slice{stroke:var(--bg-tile);stroke-width:2}
 .chart__ref{stroke:var(--text-secondary);stroke-width:1;stroke-dasharray:4 4}
-.chart__ref-label{font:var(--type-body-xs);fill:var(--text-secondary)}
-.chart__gap-note{font:var(--type-body-xs);fill:var(--text-inactive)}
+.chart__ref-label{font:var(--type-body-xs-reg);fill:var(--text-secondary)}
+.chart__gap-note{font:var(--type-body-xs-reg);fill:var(--text-inactive)}
 .chart__hit{fill:transparent}
 .chart__band{fill:transparent}
 .chart__band.is-active{fill:var(--bg-table-default-hover)}
@@ -84,11 +84,12 @@
 /* тултип: контейнер — компонент Tooltip, строки — Chart. Слой — общий слой
    тултипов ДС (--tip-z из tooltip.css, максимальный z-index) */
 .chart__tip{position:absolute;z-index:var(--tip-z);pointer-events:none;max-width:280px}
-.chart__tip-title{display:block;font:var(--type-body-s-strong);margin-bottom:6px}
+.chart__tip-title{display:block;font:var(--type-body-s-strong-smb);margin-bottom:6px}
 .chart__tip-row{display:grid;grid-template-columns:10px minmax(0,1fr) auto;align-items:center;gap:8px;padding:1px 0}
 .chart__tip-row .chart__marker{width:10px;height:10px}
-.chart__tip-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:var(--type-body-s);opacity:.82}
-.chart__tip-val{font:var(--type-body-s-strong);font-variant-numeric:tabular-nums;text-align:right}
+/* имя серии в тултипе не усекается — переносится (решение человека 28.10.2026: в тултипе многоточия нет) */
+.chart__tip-name{min-width:0;white-space:normal;overflow-wrap:anywhere;font:var(--type-body-s-reg);opacity:.82}
+.chart__tip-val{font:var(--type-body-s-strong-smb);font-variant-numeric:tabular-nums;text-align:right}
 .chart__tip-total{margin-top:6px;padding-top:6px;border-top:1px solid color-mix(in srgb,var(--text-on-dark) 24%,transparent)}
 
 /* ---------- brush ---------- */
@@ -104,10 +105,10 @@
 
 /* ---------- служебные состояния ---------- */
 .chart__foot{display:flex;flex-direction:column;gap:8px}
-.chart__empty{display:flex;align-items:center;justify-content:center;height:var(--chart-h);border-radius:var(--radius-xs);background:var(--bg-page);font:var(--type-body-s);color:var(--text-inactive);text-align:center;padding:0 16px}
+.chart__empty{display:flex;align-items:center;justify-content:center;height:var(--chart-h);border-radius:var(--radius-xs);background:var(--bg-page);font:var(--type-body-s-reg);color:var(--text-inactive);text-align:center;padding:0 16px}
 .chart__calc{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:var(--chart-h);border-radius:var(--radius-xs);background:var(--bg-page);text-align:center;padding:0 16px}
-.chart__calc-title{font:var(--type-body-s-strong);color:var(--text-primary)}
-.chart__calc-sub{font:var(--type-body-xs);color:var(--text-secondary)}
+.chart__calc-title{font:var(--type-body-s-strong-smb);color:var(--text-primary)}
+.chart__calc-sub{font:var(--type-body-xs-reg);color:var(--text-secondary)}
 .chart__sk{display:flex;flex-direction:column;justify-content:flex-end;gap:8px;height:var(--chart-h)}
 .chart__sk-bars{display:flex;align-items:flex-end;gap:8px;height:100%}
 .chart__sk-bars .sk-block{flex:1 1 0;min-width:0}

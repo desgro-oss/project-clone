@@ -1,0 +1,44 @@
+<!-- Окно «Фиксация РСБУ» — связанный артефакт тайла «Процентные платежи» на странице транша
+     (RE0034, концепт v4). Две даты: дата фиксации — значения начисленных процентов фиксируются
+     с первой даты отчёта РСБУ по неё; дата корректировки — на неё лягут дельты зафиксированных
+     дат после «Пересчитать платежи». Даты по умолчанию и проверку ставит RsbuFixationModal.js
+     (PostModalRsbuFixation).
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать
+     в конце body, а не внутри тайла. Ошибка проверки — Alert вверху окна и красные поля. -->
+
+<div class="modal-scrim" id="rsbu-fix-scrim" hidden>
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="rsbu-fix-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rsbu-fix-title">Фиксация РСБУ</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" id="rsbu-fix-alert" hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text" id="rsbu-fix-alert-text"></p></div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <form class="lc-rsbu-fix-form" id="rsbu-fix-form" onsubmit="return false" novalidate>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="rsbu-fix-date"><span class="ds-label__text">Дата фиксации</span></label>
+          <div class="inp__field"><input class="inp__control" id="rsbu-fix-date" name="fixationDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="rsbu-fix-adjust"><span class="ds-label__text">Дата корректировки</span></label>
+          <div class="inp__field"><input class="inp__control" id="rsbu-fix-adjust" name="adjustmentDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
+        </div>
+      </form>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-rsbu-fix-submit><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

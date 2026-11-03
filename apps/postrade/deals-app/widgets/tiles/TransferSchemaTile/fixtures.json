@@ -1,0 +1,63 @@
+{
+  "_": "Демо-данные витрины. Виджет без data-state: состояния — режим прав (mode: edit | view) × тип ставки (фиксированная | плавающая) × комментарий (есть | нет | длинный). Объект — view для PostTileTransferSchema.render: запись схемы LoanAgreementStore.schemes() (TransferSchemeRsDto, даты ISO ГГГГ-ММ-ДД) и mode. data — правка, плавающая КС+2%, комментарий; fixed — правка, фиксированная 7,5%, без комментария (прочерк); view — просмотр, плавающая, комментарий; partial — просмотр, фиксированная 4%, без комментария (прочерк); long — самые длинные значения: правка, длинный комментарий, много рабочих дней (контрол «Длинные значения»). Состояний «Загрузка» и «Ошибка» у карточки нет (макета нет, паспорт, «Открытые вопросы»). Подпись БИ берётся из LOAN_BASE_INDEX_LABELS демо-данных. Значения выдуманные, правдоподобной длины (27.10.2026). Рисует их сценарий демо функциями самого компонента.",
+  "data": {
+    "mode": "edit",
+    "id": "TS-DEMO-1",
+    "startDate": "2021-01-01",
+    "endDate": "2021-12-31",
+    "baseIndexLagWorkDays": 2,
+    "comment": "Схема согласована с казначейством, применяется ко всем траншам договора.",
+    "rateTypeCode": "FLOATING",
+    "fixedRatePercent": null,
+    "baseIndexCode": "KEY_RATE",
+    "spreadPercent": 2
+  },
+  "fixed": {
+    "mode": "edit",
+    "id": "TS-DEMO-2",
+    "startDate": "2022-01-01",
+    "endDate": "2022-12-31",
+    "baseIndexLagWorkDays": 3,
+    "comment": null,
+    "rateTypeCode": "FIXED",
+    "fixedRatePercent": 7.5,
+    "baseIndexCode": null,
+    "spreadPercent": null
+  },
+  "view": {
+    "mode": "view",
+    "id": "TS-DEMO-3",
+    "startDate": "2023-01-01",
+    "endDate": "2023-12-31",
+    "baseIndexLagWorkDays": 2,
+    "comment": "Пересмотр спреда по решению коллегиального органа.",
+    "rateTypeCode": "FLOATING",
+    "fixedRatePercent": null,
+    "baseIndexCode": "KEY_RATE",
+    "spreadPercent": 3.5
+  },
+  "partial": {
+    "mode": "view",
+    "id": "TS-DEMO-4",
+    "startDate": "2024-01-01",
+    "endDate": "2024-12-31",
+    "baseIndexLagWorkDays": 0,
+    "comment": null,
+    "rateTypeCode": "FIXED",
+    "fixedRatePercent": 4,
+    "baseIndexCode": null,
+    "spreadPercent": null
+  },
+  "long": {
+    "mode": "edit",
+    "id": "TS-DEMO-5",
+    "startDate": "2025-01-01",
+    "endDate": "2027-12-31",
+    "baseIndexLagWorkDays": 10,
+    "comment": "Очень длинный текст комментария в одну строку Очень длинный текст комментария в одну строку Очень длинный текст комментария в одну строку Очень длинный текст комментария в одну строку Очень длинный текст комментария в одну строку",
+    "rateTypeCode": "FLOATING",
+    "fixedRatePercent": null,
+    "baseIndexCode": "KEY_RATE",
+    "spreadPercent": 12.75
+  }
+}

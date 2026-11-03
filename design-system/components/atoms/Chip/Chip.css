@@ -60,7 +60,7 @@
   --chip-gap: 6px;
   --chip-icon: 16px;
   --chip-radius: var(--radius-control-s);
-  --chip-font: var(--type-body-s);
+  --chip-font: var(--type-body-s-reg);
 
   /* tone tokens — system by default; overridden per tone */
   --chip-fill: var(--st-system-light);          /* Swamp_400 16% */
@@ -88,7 +88,7 @@
   background: var(--chip-fill);
   color: var(--chip-text);
   font: var(--chip-font);
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   white-space: nowrap;
   user-select: none;
   cursor: default;
@@ -189,10 +189,10 @@
    NB: size/tone/state values live directly on properties (not via local --*
    overrides in modifiers) so the DS compiler can register tokens cleanly.
    Descendant consumers (icon slots, spinner, avatar) get per-size rules. */
-.chip--l  { height: 40px; padding: 0 14px; gap: 8px; border-radius: var(--radius-control);   font: var(--type-body-m); }
-.chip--m  { height: 32px; padding: 0 12px; gap: 6px; border-radius: var(--radius-control);   font: var(--type-body-m); }
-.chip--s  { height: 24px; padding: 0 10px; gap: 6px; border-radius: var(--radius-control-s); font: var(--type-body-s); }
-.chip--xs { height: 20px; padding: 0 8px;  gap: 4px; border-radius: var(--radius-control-s); font: var(--type-body-xs); }
+.chip--l  { height: 40px; padding: 0 14px; gap: 8px; border-radius: var(--radius-control);   font: var(--type-body-m-reg); }
+.chip--m  { height: 32px; padding: 0 12px; gap: 6px; border-radius: var(--radius-control);   font: var(--type-body-m-reg); }
+.chip--s  { height: 24px; padding: 0 10px; gap: 6px; border-radius: var(--radius-control-s); font: var(--type-body-s-reg); }
+.chip--xs { height: 20px; padding: 0 8px;  gap: 4px; border-radius: var(--radius-control-s); font: var(--type-body-xs-reg); }
 
 /* per-size icon + spinner slot sizing (mirror --chip-icon) */
 .chip--l .chip__icon, .chip--l .chip__marker, .chip--l .chip__remove, .chip--l .chip__dropdown, .chip--l .chip__info, .chip--l .spin { width: 20px; height: 20px; }
@@ -395,7 +395,7 @@
 /* ---------- compact — подпись на ступень мельче --------------------------- *
    Та же высота, текст Body S (как у Button S: 32 px / 14 px). Для чипов выбора
    рядом с полями и кнопками. S и XS уже на нижней ступени — не действует. */
-.chip--compact.chip--l, .chip--compact.chip--m { font: var(--type-body-s); }
+.chip--compact.chip--l, .chip--compact.chip--m { font: var(--type-body-s-reg); }
 .chip--compact.chip--m :is(.chip__icon, .chip__marker, .chip__remove, .chip__dropdown, .chip__info, .spin) { width: 16px; height: 16px; }
 
 /* ---------- чип-кнопка: переключатель выбора ------------------------------ *
@@ -422,12 +422,12 @@ button.chip { margin: 0; -webkit-appearance: none; appearance: none; text-align:
   border-radius: var(--radius-control-s);
   background: var(--st-system-light);
   color: var(--text-secondary);
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   white-space: nowrap;
   transition: background-color .2s ease, color .2s ease;
 }
 .chip--rounded .chip__tag { border-radius: var(--radius-pill); }
-.chip--l .chip__tag { height: 28px; padding: 0 10px; font: var(--type-body-s); }
+.chip--l .chip__tag { height: 28px; padding: 0 10px; font: var(--type-body-s-reg); }
 .chip--m .chip__tag { height: 20px; padding: 0 8px; }
 .chip--s .chip__tag, .chip--xs .chip__tag { height: 16px; padding: 0 6px; }
 .chip--l:has(.chip__tag), .chip--m:has(.chip__tag) { padding-left: 5px; }

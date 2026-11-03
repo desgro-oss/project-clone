@@ -1,0 +1,916 @@
+{
+  "_": "Отчет KPI: reports — отчеты видов «Краткий» (KPI_SHORT) и «Подробный» (KPI_FULL), filter — один на оба вида; view — вид по умолчанию. «Данных нет» — у KPI_FULL нет групп. «Фильтр применен» — выбраны два ФИ, чип «Применено: 2»; у первого ФИ одна метрика «Фондируемый объем», которой нет в «Краткий», — его строк там не будет.",
+  "data": {
+    "reports": {
+      "KPI_SHORT": {
+        "reportCode": "KPI_SHORT",
+        "dates": [
+          "2024-03-31",
+          "2024-06-30",
+          "2024-09-30",
+          "2024-12-31"
+        ],
+        "groups": [
+          {
+            "financialInstrumentId": "FI-1",
+            "financialInstrumentName": "5-Кредит-1",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": 871.09,
+                  "2024-06-30": 13868.18,
+                  "2024-09-30": 26865.27,
+                  "2024-12-31": 39862.36
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 1918.38,
+                  "2024-06-30": 14915.47,
+                  "2024-09-30": 27912.56,
+                  "2024-12-31": -40909.65
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 2965.67,
+                  "2024-06-30": 15962.76,
+                  "2024-09-30": -28959.85,
+                  "2024-12-31": 41956.94
+                }
+              }
+            ]
+          },
+          {
+            "financialInstrumentId": "FI-2",
+            "financialInstrumentName": "1-ПУТ: Репо-4474",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": 1821.37,
+                  "2024-06-30": 14818.46,
+                  "2024-09-30": -27815.55,
+                  "2024-12-31": 40812.64
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 2868.66,
+                  "2024-06-30": -15865.75,
+                  "2024-09-30": 28862.84,
+                  "2024-12-31": 41859.93
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": -3915.95,
+                  "2024-06-30": 16913.04,
+                  "2024-09-30": 29910.13,
+                  "2024-12-31": 42907.22
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "KPI_FULL": {
+        "reportCode": "KPI_FULL",
+        "dates": [
+          "2024-03-31",
+          "2024-06-30",
+          "2024-09-30",
+          "2024-12-31"
+        ],
+        "groups": [
+          {
+            "financialInstrumentId": "FI-1",
+            "financialInstrumentName": "5-Кредит-1",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": 871.09,
+                  "2024-06-30": 13868.18,
+                  "2024-09-30": 26865.27,
+                  "2024-12-31": 39862.36
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDED_VOLUME",
+                "metricName": "KPI. ОПУ Фондируемый объем",
+                "values": {
+                  "2024-03-31": 1918.38,
+                  "2024-06-30": 14915.47,
+                  "2024-09-30": 27912.56,
+                  "2024-12-31": -40909.65
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 2965.67,
+                  "2024-06-30": 15962.76,
+                  "2024-09-30": -28959.85,
+                  "2024-12-31": 41956.94
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 0,
+                  "2024-06-30": 0,
+                  "2024-09-30": 0,
+                  "2024-12-31": 0
+                }
+              }
+            ]
+          },
+          {
+            "financialInstrumentId": "FI-2",
+            "financialInstrumentName": "1-ПУТ: Репо-4474",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": 1821.37,
+                  "2024-06-30": 14818.46,
+                  "2024-09-30": -27815.55,
+                  "2024-12-31": 40812.64
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDED_VOLUME",
+                "metricName": "KPI. ОПУ Фондируемый объем",
+                "values": {
+                  "2024-03-31": 2868.66,
+                  "2024-06-30": -15865.75,
+                  "2024-09-30": 28862.84,
+                  "2024-12-31": 41859.93
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": -3915.95,
+                  "2024-06-30": 16913.04,
+                  "2024-09-30": 29910.13,
+                  "2024-12-31": 42907.22
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 0,
+                  "2024-06-30": 0,
+                  "2024-09-30": 0,
+                  "2024-12-31": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "filter": {
+      "fiIds": [],
+      "metrics": {}
+    },
+    "view": "KPI_SHORT"
+  },
+  "partial": {
+    "reports": {
+      "KPI_SHORT": {
+        "reportCode": "KPI_SHORT",
+        "dates": [
+          "2024-03-31",
+          "2024-06-30",
+          "2024-09-30",
+          "2024-12-31"
+        ],
+        "groups": [
+          {
+            "financialInstrumentId": "FI-1",
+            "financialInstrumentName": "5-Кредит-1",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": 871.09,
+                  "2024-06-30": 13868.18,
+                  "2024-09-30": 26865.27,
+                  "2024-12-31": 39862.36
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 1918.38,
+                  "2024-06-30": 14915.47,
+                  "2024-09-30": 27912.56,
+                  "2024-12-31": -40909.65
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 2965.67,
+                  "2024-06-30": 15962.76,
+                  "2024-09-30": -28959.85,
+                  "2024-12-31": 41956.94
+                }
+              }
+            ]
+          },
+          {
+            "financialInstrumentId": "FI-2",
+            "financialInstrumentName": "1-ПУТ: Репо-4474",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": -27815.55,
+                  "2024-12-31": 40812.64
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": 28862.84,
+                  "2024-12-31": 41859.93
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": 29910.13,
+                  "2024-12-31": 42907.22
+                }
+              }
+            ]
+          },
+          {
+            "financialInstrumentId": "FI-3",
+            "financialInstrumentName": "3-Внутригрупповой кредит-17",
+            "currencyCode": "USD",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": 2454.89,
+                  "2024-06-30": 15451.98,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 3502.18,
+                  "2024-06-30": 16499.27,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 4549.47,
+                  "2024-06-30": 17546.56,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "KPI_FULL": {
+        "reportCode": "KPI_FULL",
+        "dates": [
+          "2024-03-31",
+          "2024-06-30",
+          "2024-09-30",
+          "2024-12-31"
+        ],
+        "groups": [
+          {
+            "financialInstrumentId": "FI-1",
+            "financialInstrumentName": "5-Кредит-1",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": 871.09,
+                  "2024-06-30": 13868.18,
+                  "2024-09-30": 26865.27,
+                  "2024-12-31": 39862.36
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDED_VOLUME",
+                "metricName": "KPI. ОПУ Фондируемый объем",
+                "values": {
+                  "2024-03-31": 1918.38,
+                  "2024-06-30": 14915.47,
+                  "2024-09-30": 27912.56,
+                  "2024-12-31": -40909.65
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 2965.67,
+                  "2024-06-30": 15962.76,
+                  "2024-09-30": -28959.85,
+                  "2024-12-31": 41956.94
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 0,
+                  "2024-06-30": 0,
+                  "2024-09-30": 0,
+                  "2024-12-31": 0
+                }
+              }
+            ]
+          },
+          {
+            "financialInstrumentId": "FI-2",
+            "financialInstrumentName": "1-ПУТ: Репо-4474",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": -27815.55,
+                  "2024-12-31": 40812.64
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDED_VOLUME",
+                "metricName": "KPI. ОПУ Фондируемый объем",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": 28862.84,
+                  "2024-12-31": 41859.93
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": 29910.13,
+                  "2024-12-31": 42907.22
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": 0,
+                  "2024-12-31": 0
+                }
+              }
+            ]
+          },
+          {
+            "financialInstrumentId": "FI-3",
+            "financialInstrumentName": "3-Внутригрупповой кредит-17",
+            "currencyCode": "USD",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": 2454.89,
+                  "2024-06-30": 15451.98,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDED_VOLUME",
+                "metricName": "KPI. ОПУ Фондируемый объем",
+                "values": {
+                  "2024-03-31": 3502.18,
+                  "2024-06-30": 16499.27,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 4549.47,
+                  "2024-06-30": 17546.56,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 0,
+                  "2024-06-30": 0,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "filter": {
+      "fiIds": [],
+      "metrics": {}
+    },
+    "view": "KPI_FULL"
+  },
+  "empty": {
+    "reports": {
+      "KPI_SHORT": {
+        "reportCode": "KPI_SHORT",
+        "dates": [],
+        "groups": []
+      },
+      "KPI_FULL": {
+        "reportCode": "KPI_FULL",
+        "dates": [],
+        "groups": []
+      }
+    },
+    "filter": {
+      "fiIds": [],
+      "metrics": {}
+    },
+    "view": "KPI_SHORT"
+  },
+  "filtered": {
+    "reports": {
+      "KPI_SHORT": {
+        "reportCode": "KPI_SHORT",
+        "dates": [
+          "2024-03-31",
+          "2024-06-30",
+          "2024-09-30",
+          "2024-12-31"
+        ],
+        "groups": [
+          {
+            "financialInstrumentId": "FI-1",
+            "financialInstrumentName": "5-Кредит-1",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": 871.09,
+                  "2024-06-30": 13868.18,
+                  "2024-09-30": 26865.27,
+                  "2024-12-31": 39862.36
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 1918.38,
+                  "2024-06-30": 14915.47,
+                  "2024-09-30": 27912.56,
+                  "2024-12-31": -40909.65
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 2965.67,
+                  "2024-06-30": 15962.76,
+                  "2024-09-30": -28959.85,
+                  "2024-12-31": 41956.94
+                }
+              }
+            ]
+          },
+          {
+            "financialInstrumentId": "FI-2",
+            "financialInstrumentName": "1-ПУТ: Репо-4474",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": -27815.55,
+                  "2024-12-31": 40812.64
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": 28862.84,
+                  "2024-12-31": 41859.93
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": 29910.13,
+                  "2024-12-31": 42907.22
+                }
+              }
+            ]
+          },
+          {
+            "financialInstrumentId": "FI-3",
+            "financialInstrumentName": "3-Внутригрупповой кредит-17",
+            "currencyCode": "USD",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": 2454.89,
+                  "2024-06-30": 15451.98,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 3502.18,
+                  "2024-06-30": 16499.27,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 4549.47,
+                  "2024-06-30": 17546.56,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "KPI_FULL": {
+        "reportCode": "KPI_FULL",
+        "dates": [
+          "2024-03-31",
+          "2024-06-30",
+          "2024-09-30",
+          "2024-12-31"
+        ],
+        "groups": [
+          {
+            "financialInstrumentId": "FI-1",
+            "financialInstrumentName": "5-Кредит-1",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": 871.09,
+                  "2024-06-30": 13868.18,
+                  "2024-09-30": 26865.27,
+                  "2024-12-31": 39862.36
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDED_VOLUME",
+                "metricName": "KPI. ОПУ Фондируемый объем",
+                "values": {
+                  "2024-03-31": 1918.38,
+                  "2024-06-30": 14915.47,
+                  "2024-09-30": 27912.56,
+                  "2024-12-31": -40909.65
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 2965.67,
+                  "2024-06-30": 15962.76,
+                  "2024-09-30": -28959.85,
+                  "2024-12-31": 41956.94
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 0,
+                  "2024-06-30": 0,
+                  "2024-09-30": 0,
+                  "2024-12-31": 0
+                }
+              }
+            ]
+          },
+          {
+            "financialInstrumentId": "FI-2",
+            "financialInstrumentName": "1-ПУТ: Репо-4474",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": -27815.55,
+                  "2024-12-31": 40812.64
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDED_VOLUME",
+                "metricName": "KPI. ОПУ Фондируемый объем",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": 28862.84,
+                  "2024-12-31": 41859.93
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": 29910.13,
+                  "2024-12-31": 42907.22
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": null,
+                  "2024-06-30": null,
+                  "2024-09-30": 0,
+                  "2024-12-31": 0
+                }
+              }
+            ]
+          },
+          {
+            "financialInstrumentId": "FI-3",
+            "financialInstrumentName": "3-Внутригрупповой кредит-17",
+            "currencyCode": "USD",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход",
+                "values": {
+                  "2024-03-31": 2454.89,
+                  "2024-06-30": 15451.98,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDED_VOLUME",
+                "metricName": "KPI. ОПУ Фондируемый объем",
+                "values": {
+                  "2024-03-31": 3502.18,
+                  "2024-06-30": 16499.27,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 4549.47,
+                  "2024-06-30": 17546.56,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС)",
+                "values": {
+                  "2024-03-31": 0,
+                  "2024-06-30": 0,
+                  "2024-09-30": null,
+                  "2024-12-31": null
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "filter": {
+      "fiIds": [
+        "FI-1",
+        "FI-2"
+      ],
+      "metrics": {
+        "FI-1": [
+          "KPI_PL_FUNDED_VOLUME"
+        ],
+        "FI-2": [
+          "KPI_PL_TOTAL_INCOME",
+          "KPI_PL_FUNDED_VOLUME"
+        ]
+      }
+    },
+    "view": "KPI_SHORT"
+  },
+  "error": {
+    "message": ""
+  },
+  "long": {
+    "reports": {
+      "KPI_SHORT": {
+        "reportCode": "KPI_SHORT",
+        "dates": [
+          "2024-03-31",
+          "2024-06-30",
+          "2024-09-30",
+          "2024-12-31"
+        ],
+        "groups": [
+          {
+            "financialInstrumentId": "FI-9",
+            "financialInstrumentName": "12345-Договор займа с отлагательным условием и переменной процентной ставкой (НКЛ), траншевая часть",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход — длинное уточнение наименования метрики для проверки усечения",
+                "values": {
+                  "2024-03-31": -123456789012.34,
+                  "2024-06-30": 13393.04,
+                  "2024-09-30": 26390.13,
+                  "2024-12-31": 39387.22
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС) — длинное уточнение наименования метрики для проверки усечения",
+                "values": {
+                  "2024-03-31": -123456789011.34,
+                  "2024-06-30": 14440.33,
+                  "2024-09-30": 27437.42,
+                  "2024-12-31": 40434.51
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС) — длинное уточнение наименования метрики для проверки усечения",
+                "values": {
+                  "2024-03-31": -123456789010.34,
+                  "2024-06-30": 15487.62,
+                  "2024-09-30": 28484.71,
+                  "2024-12-31": -41481.8
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "KPI_FULL": {
+        "reportCode": "KPI_FULL",
+        "dates": [
+          "2024-03-31",
+          "2024-06-30",
+          "2024-09-30",
+          "2024-12-31"
+        ],
+        "groups": [
+          {
+            "financialInstrumentId": "FI-9",
+            "financialInstrumentName": "12345-Договор займа с отлагательным условием и переменной процентной ставкой (НКЛ), траншевая часть",
+            "currencyCode": "RUB",
+            "rows": [
+              {
+                "metricCode": "KPI_PL_TOTAL_INCOME",
+                "metricName": "KPI. ОПУ Суммарный доход — длинное уточнение наименования метрики для проверки усечения",
+                "values": {
+                  "2024-03-31": -123456789012.34,
+                  "2024-06-30": 13393.04,
+                  "2024-09-30": 26390.13,
+                  "2024-12-31": 39387.22
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDED_VOLUME",
+                "metricName": "KPI. ОПУ Фондируемый объем — длинное уточнение наименования метрики для проверки усечения",
+                "values": {
+                  "2024-03-31": -123456789011.34,
+                  "2024-06-30": 14440.33,
+                  "2024-09-30": 27437.42,
+                  "2024-12-31": 40434.51
+                }
+              },
+              {
+                "metricCode": "KPI_PL_FUNDING_EXPENSE",
+                "metricName": "KPI. ОПУ Фондирование (Расход по ЕТС) — длинное уточнение наименования метрики для проверки усечения",
+                "values": {
+                  "2024-03-31": -123456789010.34,
+                  "2024-06-30": 15487.62,
+                  "2024-09-30": 28484.71,
+                  "2024-12-31": -41481.8
+                }
+              },
+              {
+                "metricCode": "KPI_PL_INCOME_MINUS_FUNDING",
+                "metricName": "KPI. ОПУ Суммарный доход - Фондирование (Расход по ЕТС) — длинное уточнение наименования метрики для проверки усечения",
+                "values": {
+                  "2024-03-31": -123456789009.34,
+                  "2024-06-30": 0,
+                  "2024-09-30": 0,
+                  "2024-12-31": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "filter": {
+      "fiIds": [],
+      "metrics": {}
+    },
+    "view": "KPI_FULL"
+  }
+}

@@ -55,21 +55,21 @@
 
   /* hero */
   .hero { border-bottom: 1px solid var(--border-light); padding-bottom: 46px; }
-  .hero .ver { font: var(--type-body-s); color: var(--text-inactive); margin:0 0 14px; }
+  .hero .ver { font: var(--type-body-s-reg); color: var(--text-inactive); margin:0 0 14px; }
   .eyebrow { font: var(--type-button-xs); letter-spacing:.14em; text-transform:uppercase; color: var(--primary); margin:0 0 18px; }
-  .hero h1 { font: var(--type-h1); margin:0 0 20px; color: var(--text-primary); }
+  .hero h1 { font: var(--type-h1-light); margin:0 0 20px; color: var(--text-primary); }
   @media (max-width:600px){ .hero h1{ font-size:42px; line-height:50px; } }
-  .hero p.lead { font: var(--type-body-xl); color: var(--text-secondary); max-width: 56ch; margin:0; text-wrap:pretty; }
+  .hero p.lead { font: var(--type-body-xl-reg); color: var(--text-secondary); max-width: 56ch; margin:0; text-wrap:pretty; }
   .hero .meta { display:flex; gap:28px; flex-wrap:wrap; margin-top:30px; }
   .hero .meta .m { }
   .hero .meta .m .k { font: var(--type-button-xs); letter-spacing:.06em; text-transform:uppercase; color: var(--text-inactive); margin:0 0 4px; }
-  .hero .meta .m .v { font: var(--type-body-m-strong); color: var(--text-secondary); }
+  .hero .meta .m .v { font: var(--type-body-m-strong-smb); color: var(--text-secondary); }
 
   /* section heading */
   .sec { margin-top: 72px; }
   .sec-head { display:flex; align-items:baseline; gap:14px; margin-bottom:24px; }
-  .sec-head h2 { font: var(--type-h4-strong); margin:0; color: var(--text-primary); }
-  .sec-head .n { font: var(--type-body-s); color: var(--text-inactive); }
+  .sec-head h2 { font: var(--type-h4-strong-smb); margin:0; color: var(--text-primary); }
+  .sec-head .n { font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* grid of cards */
   .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(340px,1fr)); gap:22px; }
@@ -82,12 +82,12 @@
 
   .card__preview { height: 172px; display:flex; align-items:center; justify-content:center; padding: 24px; border-bottom:1px solid var(--border-light); overflow:hidden; }
   .card__body { padding: 22px 24px 24px; display:flex; flex-direction:column; gap:8px; flex:1; }
-  .card__title { font: var(--type-h5-strong); color: var(--text-primary); margin:0; display:flex; align-items:center; gap:10px; }
-  .card__desc { font: var(--type-body-m); color: var(--text-secondary); margin:0; text-wrap:pretty; flex:1; }
+  .card__title { font: var(--type-h5-strong-smb); color: var(--text-primary); margin:0; display:flex; align-items:center; gap:10px; }
+  .card__desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0; text-wrap:pretty; flex:1; }
   .card__meta { display:flex; gap:10px; margin-top:6px; flex-wrap:wrap; }
   .tag { font: var(--type-button-xs); letter-spacing:.04em; color: var(--text-primary); background: var(--tertiary); padding:5px 10px; border-radius:999px; }
-  .tag.file { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; text-transform:none; letter-spacing:0; color: var(--text-secondary); background: var(--bg-table-default-focus); }
-  .card__go { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-m-strong); color: var(--primary); margin-top:10px; }
+  .tag.file { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; text-transform:none; letter-spacing: var(--type-ls); color: var(--text-secondary); background: var(--bg-table-default-focus); }
+  .card__go { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-m-strong-smb); color: var(--primary); margin-top:10px; }
   .card__go svg { width:18px; height:18px; transition: transform .15s ease; }
   .card:hover .card__go svg { transform: translateX(3px); }
 
@@ -121,10 +121,10 @@
 
   /* preview: input autocomplete (draft page — no dedicated component CSS yet) */
   .pv-ac { display:flex; flex-direction:column; gap:6px; }
-  .pv-ac__input { height:40px; display:flex; align-items:center; padding:0 14px; border:1px solid var(--border-primary); border-radius:var(--radius-field); font:var(--type-body-m); color:var(--text-primary); background:#fff; }
+  .pv-ac__input { height:40px; display:flex; align-items:center; padding:0 14px; border:1px solid var(--border-primary); border-radius:var(--radius-field); font:var(--type-body-m-reg); color:var(--text-primary); background:#fff; }
   .pv-ac__caret { margin-left:auto; color:var(--text-inactive); font-size:11px; }
   .pv-ac__list { background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-popup); overflow:hidden; }
-  .pv-ac__item { padding:9px 14px; font:var(--type-body-m); color:var(--text-primary); }
+  .pv-ac__item { padding:9px 14px; font:var(--type-body-m-reg); color:var(--text-primary); }
   .pv-ac__item b { color:var(--text-primary); }
   .pv-ac__item--active { background:var(--tertiary-light); }
 
@@ -133,7 +133,7 @@
   .stripe span { width:30px; height:30px; border-radius:7px; border:1px solid rgba(40,50,55,.10); }
 
   footer.foot { margin-top:90px; padding-top:26px; border-top:1px solid var(--border-light);
-    font: var(--type-body-s); color: var(--text-inactive); display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    font: var(--type-body-s-reg); color: var(--text-inactive); display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
 </style>
   <link rel="stylesheet" href="foundations/Illustrations/Illustrations.css">
 <link rel="stylesheet" href="components/molecules/DatePicker/DatePicker.css">
@@ -148,7 +148,7 @@
 <main class="page" data-screen-label="DS Home">
 
   <header class="hero">
-    <p class="ver">Версия 1.037 · обновлено 23.10.2026</p>
+    <p class="ver">Версия 1.042 · обновлено 02.11.2026</p>
     <p class="eyebrow">Дизайн-система · Investment Banking Platform</p>
     <h1>ДС IBP</h1>
     <p class="lead">Единый источник правды: токены типографики и цвета, на которых собраны все компоненты. Гарнитуры SB Sans, семантическая палитра, библиотека UI.</p>
@@ -663,8 +663,8 @@
           <div class="es es--m" style="padding:0; gap:12px; max-width:230px;">
             <span class="illu es__illu" data-illu="empty-folder" style="width:64px; height:64px;"></span>
             <div class="es__body" style="gap:4px; max-width:210px;">
-              <p class="es__title" style="font:var(--type-body-m-strong);">Нет сделок</p>
-              <p class="es__text" style="font:var(--type-body-s);">Попробуйте изменить условия поиска.</p>
+              <p class="es__title" style="font:var(--type-body-m-strong-smb);">Нет сделок</p>
+              <p class="es__text" style="font:var(--type-body-s-reg);">Попробуйте изменить условия поиска.</p>
             </div>
           </div>
         </div>
@@ -775,8 +775,8 @@
         <div class="card__preview">
           <div class="ntile" style="width:230px; min-height:96px; padding:16px; padding-right:84px; gap:6px; pointer-events:none;">
             <span class="illu ntile__illu" data-illu="deals" style="width:56px; height:56px; right:14px;"></span>
-            <h3 class="ntile__title" style="font:var(--type-h6-strong);">Сделки</h3>
-            <p class="ntile__desc" style="font:var(--type-body-xs);">Кредитные линии и договоры</p>
+            <h3 class="ntile__title" style="font:var(--type-h6-strong-smb);">Сделки</h3>
+            <p class="ntile__desc" style="font:var(--type-body-xs-reg);">Кредитные линии и договоры</p>
           </div>
         </div>
         <div class="card__body">
@@ -1213,7 +1213,7 @@
   <!-- PATTERNS -->
   <section class="sec" data-screen-label="Patterns">
     <div class="sec-head"><h2>Правила и паттерны</h2><span class="n">3 раздела</span></div>
-    <p style="font:var(--type-body-m);color:var(--text-secondary);margin:-12px 0 24px;max-width:760px">Правила, которые действуют поверх компонентов: как собираются локальные компоненты продукта, как они описываются и связываются между собой.</p>
+    <p style="font:var(--type-body-m-reg);color:var(--text-secondary);margin:-12px 0 24px;max-width:760px">Правила, которые действуют поверх компонентов: как собираются локальные компоненты продукта, как они описываются и связываются между собой.</p>
     <div class="grid">
       <a class="card" href="patterns/LocalComponents/LocalComponents.html">
         <div class="card__preview">
@@ -1263,7 +1263,7 @@
   <!-- RND -->
   <section class="sec" data-screen-label="RND">
     <div class="sec-head"><h2>RND</h2><span class="n">1 раздел</span></div>
-    <p style="font:var(--type-body-m);color:var(--text-secondary);margin:-12px 0 24px;max-width:760px">Рабочая память дизайн-системы: задачи на потом. Не часть поставляемой ДС — материал для решений по ней.</p>
+    <p style="font:var(--type-body-m-reg);color:var(--text-secondary);margin:-12px 0 24px;max-width:760px">Рабочая память дизайн-системы: задачи на потом. Не часть поставляемой ДС — материал для решений по ней.</p>
     <div class="grid">
       <a class="card" href="rnd/Backlog/Backlog.html">
         <div class="card__preview">
@@ -1341,7 +1341,7 @@
     host.innerHTML =
       '<a class="link link--accent link--m" href="#" tabindex="-1">Перейти к документу</a>' +
       '<a class="link link--accent link--m link--with-icon" href="#" tabindex="-1"><span >Открыть в реестре</span><span class="link__icon">'+ic('link-external')+'</span></a>' +
-      '<span style="font:var(--type-body-s); color:var(--text-inactive); display:flex; align-items:center; gap:6px;"><a class="link link--muted link--m" href="#" tabindex="-1">Сделки</a><span style="color:var(--text-inactive)">›</span><span style="color:var(--text-primary); font-weight:600;">Договор</span></span>';
+      '<span style="font:var(--type-body-s-reg); color:var(--text-inactive); display:flex; align-items:center; gap:6px;"><a class="link link--muted link--m" href="#" tabindex="-1">Сделки</a><span style="color:var(--text-inactive)">›</span><span style="color:var(--text-primary); font-weight:600;">Договор</span></span>';
     host.querySelectorAll('a').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
   })();
 
@@ -1407,13 +1407,13 @@
   }
   // divider preview
   document.getElementById('pvDvd').innerHTML =
-    '<span style="font:var(--type-body-m); color:var(--text-primary);">Раздел A</span>' +
+    '<span style="font:var(--type-body-m-reg); color:var(--text-primary);">Раздел A</span>' +
     '<div style="height:14px;"></div>' +
     '<hr class="dvd dvd--h">' +
     '<div class="dvd-text" style="margin:14px 0;"><span class="dvd-text__label">или</span></div>' +
     '<hr class="dvd dvd--h dvd--strong">' +
     '<div style="height:14px;"></div>' +
-    '<span style="font:var(--type-body-m); color:var(--text-primary);">Раздел B</span>';
+    '<span style="font:var(--type-body-m-reg); color:var(--text-primary);">Раздел B</span>';
 
   // splitter preview
   (function(){

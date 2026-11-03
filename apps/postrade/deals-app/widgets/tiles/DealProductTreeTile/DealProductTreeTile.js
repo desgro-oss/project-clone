@@ -95,9 +95,10 @@
 
   function titleHTML(node) {
     var text = esc(node.number + ' ' + node.name);
-    /* страница транша есть (Tranche.html): ссылка шлёт 'ptreeaction' OPEN, куда
-       идти — знает страница. Адрес страницы инструмента — не решено (29.09.2026) */
-    if (node.hasPage === true && node.kind === 'TRANCHE') {
+    /* страницы транша (Tranche.html) и договора займа (Instrument.html) есть:
+       ссылка шлёт 'ptreeaction' OPEN, куда идти — знает страница. Адрес страниц
+       остальных инструментов — не решено (29.09.2026) */
+    if (node.hasPage === true && (node.kind === 'TRANCHE' || (node.kind === 'INSTRUMENT' && node.code === 'LOAN_NCL'))) {
       return '<a class="prow__title prow__title--link" href="#"' + actAttrs('OPEN', node) + '>' + text + '</a>';
     }
     return node.hasPage === true

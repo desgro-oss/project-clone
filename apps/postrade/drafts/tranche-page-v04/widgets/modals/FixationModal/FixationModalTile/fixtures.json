@@ -1,0 +1,24 @@
+{
+  "_": "Демо-данные витрины карточки фиксации: по объекту на вид заполнения. Форма — как у ответов FinMetricsStore: fi, date, typeCode, comment — ввод; context — fixationContext; preliminary — результат предварительного расчёта (нет — расчёт не запускали). Значения выдуманные, но правдоподобной длины.",
+  "empty": {},
+  "data": {
+    "fi": "12345. Договор займа (НКЛ)", "date": "01.01.2021", "typeCode": "NON_SUBSTANTIAL", "comment": "Перенос даты платежа",
+    "context": { "grossCarryingBefore": 123456789, "etsRate": 15.45, "etsDelta": 6.43, "etsBefore": 9.02, "etsValues": null, "etsStatus": "OK" },
+    "preliminary": {
+      "ok": true, "grossCarryingBefore": 123456789,
+      "nonSubstantial": { "gcaAfter": 120000000, "day1Pnl": 123456789, "day1PnlShare": 15.45 },
+      "substantial": { "gcaAfter": 120000000, "eirAfter": 15.45, "eirDelta": 3 }
+    }
+  },
+  "partial": {
+    "fi": "12345. Договор займа (НКЛ)", "date": "01.01.2021", "typeCode": "", "comment": "",
+    "context": { "grossCarryingBefore": 123456789, "etsRate": 15.45, "etsDelta": 6.43, "etsBefore": 9.02, "etsValues": null, "etsStatus": "OK" }
+  },
+  "initial": { "fi": "12345. Договор займа (НКЛ)", "date": "", "typeCode": "INITIAL", "comment": "" },
+  "error": { "message": "Обязательное поле" },
+  "long": {
+    "fi": "1245. Договор о предоставлении возобновляемой кредитной линии с лимитом выдачи (НКЛ) в рублях", "date": "31.12.2031", "typeCode": "SUBSTANTIAL",
+    "comment": "Изменение графика погашения и процентной ставки по дополнительному соглашению к договору — длинный комментарий для проверки переноса и роста поля",
+    "context": { "grossCarryingBefore": 1234567890123, "etsRate": 15.45, "etsDelta": -16.43, "etsBefore": 31.88, "etsValues": null, "etsStatus": "OK" }
+  }
+}

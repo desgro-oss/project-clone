@@ -1,0 +1,48 @@
+<!-- Локальный компонент «Удалить фонд» (DeleteFundModal) — подтверждение удаления фонда
+     из меню фонда страницы «Фонды» (макет «Удаление фонда», 30.10.2026).
+     Вшивается в конец страницы меткой ds-include; страница связывает скриптом:
+     DeleteFundModal.open('deleteFundModal', { fund, onConfirm }).
+     Блок «Данные фонда» заполняет скрипт окна: аватар с инициалами, название и
+     «ИНН … · КПП …» — та же разметка ДС, что ячейка «Название фонда» FundsTable;
+     справа — число активов. Состояние данных — data-state на .modal: data · partial. -->
+<div class="modal-scrim" id="deleteFundModal" hidden>
+  <div class="modal modal--w5 lc-delete-fund-modal" role="dialog" aria-modal="true" aria-labelledby="dfm-title" data-state="data">
+    <header class="modal__head">
+      <h2 class="modal__title" id="dfm-title">Удалить фонд</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="ds-body-m-reg lc-delete-fund-modal__text">Все данные о фонде и его связях с активами будут удалены</p>
+
+      <section class="tile tile--inset" aria-labelledby="dfm-fund-title">
+        <header class="tile__header">
+          <div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" id="dfm-fund-title">Данные фонда</h3></div>
+          </div>
+        </header>
+        <div class="tile__body">
+          <div class="lc-delete-fund-modal__fund">
+            <div data-dfm-name>
+              <div class="tc" data-col="name"><span class="tc__row">
+                <span class="av av--rounded av--m" data-av-seed="fnd-001" aria-hidden="true"><span class="av__text">ИН</span></span>
+                <span class="tc__body"><span class="tc__row"><span class="tc__text tc__text--truncate">Интеррос</span></span>
+                <span class="tc__subtext">ИНН 7706419639 · КПП 1157746316598</span></span>
+              </span></div>
+            </div>
+            <div class="rof">
+              <span class="ds-label"><span class="ds-label__text">Активов</span></span>
+              <div class="rof__row"><span class="rof__value" data-dfm-count>16</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-dfm-confirm><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

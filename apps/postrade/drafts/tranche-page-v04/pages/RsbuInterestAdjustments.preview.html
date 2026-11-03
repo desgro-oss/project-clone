@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<!--
+  Двойным кликом открывают НЕ этот файл, а собранный RsbuInterestAdjustments.preview.html:
+  окно внесения корректировки стоит здесь меткой <ds-include>, а рантайм-инклуд ДС тянет
+  фрагмент через fetch, который по file:// не работает. Собрать: node .agents/tools/assemble.mjs
+-->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Корректировки процентов РСБУ — IBP</title>
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  .screen__content { gap: var(--space-12); }
+</style>
+<link rel="stylesheet" href="../widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.css">
+</head>
+<body>
+
+<div class="nav-layout">
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Текущий портфель ДИД</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Сделка</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Договор</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="Tranche.html">Транш</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Корректировки процентов РСБУ</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- #sec:head ── Шапка страницы -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Корректировки процентов РСБУ</h1></div>
+            <span class="phead__return">
+              <a class="btn btn--outline btn--xs" href="Tranche.html" id="rh-return">
+                <i data-icon="flip-backward"></i><span class="btn__label">В транш</span></a>
+            </span>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <button type="button" class="btn btn--accent btn--m" id="rh-add" disabled><i data-icon="add"></i><span class="btn__label">Внести корректировку</span></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Таблица корректировок: суммы шести видов процентов и их сумма (RE0034, концепт v4).
+           Таблица шире экрана — горизонтальная прокрутка Table. Сетка колонок — GRID в экранном скрипте. -->
+      <div class="dtable dtable--fill">
+        <div class="dtable__body">
+          <div class="tbl" data-table data-sort-rows id="rh-tbl">
+              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 72px 144px 144px 176px 176px 176px 176px 176px 176px 176px 280px 64px minmax(8px,1fr);">
+                <div class="th th--separator"></div>
+                <div class="th th--right" data-col="num"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="startDate"><span class="th__label">Исходная дата</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="startDate" aria-label="Сортировать: Исходная дата"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="endDate"><span class="th__label">Целевая дата</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="endDate" aria-label="Сортировать: Целевая дата"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="adjustmentAmount"><span class="th__label">Сумма корректировки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="currentInterest"><span class="th__label">Текущие начисленные проценты</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="currentInterestCap"><span class="th__label">Кап. текущие начисленные проценты</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="capitalizedInterest"><span class="th__label">Капитализированные начисленные проценты</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="capitalizedInterestCap"><span class="th__label">Кап. капитализированные начисленные проценты</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="deferredInterest"><span class="th__label">Отложенные начисленные проценты</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="deferredInterestCap"><span class="th__label">Кап. отложенные начисленные проценты</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="comment"><span class="th__label">Комментарий</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="actions"></div>
+                <div class="th th--separator"></div>
+              </div>
+          </div>
+        </div>
+        <!-- Пагинация (макет: «Показывать строк: 50»): колонтитул строит скрипт (DSPagination.footer) -->
+        <div class="dtable__footer" id="rh-footer" hidden></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── «Корректировка процентов»: окно ручной корректировки — виджет (правки строк в v4 нет) -->
+<!-- Связанный артефакт тайла «Корректировки процентов РСБУ»: окно ручной корректировки
+     (RE0034, концепт v4). Только добавление — правки строк нет.
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать
+     в конце body, а не внутри тайла.
+
+     Значения в разметке — пустая форма. Даты — обычные поля даты с календарём. Шесть сумм —
+     три ряда по две колонки: слева начисленные проценты, справа «Кап.» того же вида;
+     «Сумма корректировки» — только чтение на подложке Tile Inset, её считает
+     RsbuAdjustmentModal.js при вводе. Комментарий необязателен. Ошибка проверки — Alert
+     вверху окна и красные поля. -->
+
+<div class="modal-scrim" id="rsbu-adj-scrim" hidden data-widget="RsbuAdjustmentModal" data-widget-group="modals" data-widget-src="../widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.html">
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="rsbu-adj-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rsbu-adj-title">Корректировка процентов</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" id="rsbu-adj-alert" hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text" id="rsbu-adj-alert-text"></p></div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <form class="lc-rsbu-form" id="rsbu-adj-form" onsubmit="return false" novalidate>
+        <div class="lc-rsbu-form__row">
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-start"><span class="ds-label__text">Исходная дата</span></label>
+            <div class="inp__field"><input class="inp__control" id="rsbu-adj-start" name="startDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-end"><span class="ds-label__text">Целевая дата</span></label>
+            <div class="inp__field"><input class="inp__control" id="rsbu-adj-end" name="endDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
+          </div>
+        </div>
+        <div class="lc-rsbu-form__row">
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-p1"><span class="ds-label__text">Текущие начисленные проценты</span></label>
+            <div class="inp__field"><input class="inp__control" id="rsbu-adj-p1" name="currentInterest" inputmode="decimal" data-amount><span class="inp__postfix" data-rsbu-currency>RUB</span></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-p2"><span class="ds-label__text">Кап. текущие начисленные проценты</span></label>
+            <div class="inp__field"><input class="inp__control" id="rsbu-adj-p2" name="currentInterestCap" inputmode="decimal" data-amount><span class="inp__postfix" data-rsbu-currency>RUB</span></div>
+          </div>
+        </div>
+        <div class="lc-rsbu-form__row">
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-p3"><span class="ds-label__text">Капитализированные начисленные проценты</span></label>
+            <div class="inp__field"><input class="inp__control" id="rsbu-adj-p3" name="capitalizedInterest" inputmode="decimal" data-amount><span class="inp__postfix" data-rsbu-currency>RUB</span></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-p4"><span class="ds-label__text">Кап. капитализированные начисленные проценты</span></label>
+            <div class="inp__field"><input class="inp__control" id="rsbu-adj-p4" name="capitalizedInterestCap" inputmode="decimal" data-amount><span class="inp__postfix" data-rsbu-currency>RUB</span></div>
+          </div>
+        </div>
+        <div class="lc-rsbu-form__row">
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-p5"><span class="ds-label__text">Отложенные начисленные проценты</span></label>
+            <div class="inp__field"><input class="inp__control" id="rsbu-adj-p5" name="deferredInterest" inputmode="decimal" data-amount><span class="inp__postfix" data-rsbu-currency>RUB</span></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-p6"><span class="ds-label__text">Кап. отложенные начисленные проценты</span></label>
+            <div class="inp__field"><input class="inp__control" id="rsbu-adj-p6" name="deferredInterestCap" inputmode="decimal" data-amount><span class="inp__postfix" data-rsbu-currency>RUB</span></div>
+          </div>
+        </div>
+        <!-- Сумма корректировки — только чтение, на подложке Tile Inset (сумма шести полей) -->
+        <div class="tile tile--inset tile--headless">
+          <div class="tile__body">
+            <div class="rof">
+              <span class="ds-label"><span class="ds-label__text">Сумма корректировки</span></span>
+              <div class="rof__row"><span class="rof__value" data-rsbu-total>0,00</span><span class="rof__affix" data-rsbu-currency>RUB</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="inp inp--m inp--multiline">
+          <label class="ds-label ds-label--wrap" for="rsbu-adj-cmt"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field"><textarea class="inp__control" id="rsbu-adj-cmt" name="comment" rows="3"></textarea></div>
+        </div>
+      </form>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-rsbu-submit><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Подтверждение удаления корректировки -->
+<div class="modal-scrim" id="rh-delete-scrim" hidden>
+  <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="rh-delete-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rh-delete-title">Удалить корректировку</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body"><p id="rh-delete-text" style="margin:0;"></p></div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m btn--danger" id="rh-delete-confirm"><span class="btn__label">Удалить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
+<script src="../data/deals-store.js"></script>
+<script src="../data/post-api.js"></script>
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/mock-fin-instruments.js"></script>
+<script src="../data/mock-deal-trees.js"></script>
+<script src="../data/product-tree-store.js"></script>
+<script src="../data/fin-instruments-store.js"></script>
+<script src="../data/mock-financial-metrics.js"></script>
+<script src="../data/mock-fin-metrics-calc.js"></script>
+<script src="../data/fin-metrics-store.js"></script>
+<script src="../data/tranche-context.js"></script>
+<script src="../data/tranche-data.js"></script>
+<script src="../widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.js"></script>
+<script>
+/* Экранный скрипт: меню по каталогу ролей, таблица корректировок процентов РСБУ, окно ручной
+   корректировки и удаление. Форматирование — только при выводе: суммы «1 000 000,00» (можно со
+   знаком «-»), даты ДД.ММ.ГГГГ. Корректировки живут в FinMetricsStore (хранилище браузера, RE0034,
+   концепт v4): строки из дельт создаёт «Пересчитать платежи» на транше, их видят отчёт РСБУ и тайл
+   транша. Адрес ?rasAdj= задаёт состояние для панели прототипа. */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'current-portfolio';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../../index.html" aria-label="Хаб проектов"';
+  var NBSP = ' ';
+
+  function ic(name) { return '<i data-icon="' + name + '"></i>'; }
+
+  function itemHTML(it) {
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="#"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span></a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+      + '</div><div class="nav__list">'
+      + '<a class="nav__item" href="#"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    IBPHome.itemsFor(role).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>' + (window.IBPHome && window.IBPHome.footerHTML
+      ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">'
+        + '<a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">'
+        + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+        + '<span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span>'
+        + '<span class="nav__user-role">' + role + '</span></span></a>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>'
+        + '</div>');
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  }
+  /* ---------- формат ---------- */
+  function money(n) {
+    var p = Number(n).toFixed(2).split('.');
+    return p[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP) + ',' + p[1];
+  }
+  function date(iso) { var p = String(iso).split('-'); return p[2] + '.' + p[1] + '.' + p[0]; }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  /* ---------- данные ---------- */
+  var data = window.MOCK_RSBU_ADJUSTMENTS;
+  var store = window.FinMetricsStore;
+  var fiId = null;   // ФИ транша: его корректировки показаны
+  var rows = [];     // RsbuInterestAdjustmentRsDto[] ФИ транша (FinMetricsStore.rasAdjustments)
+  var PARTS = store.rasParts();
+  /* Состояние для панели прототипа: ?demo=delete — открыто подтверждение удаления последней строки.
+     Сами корректировки — ?rasAdj= (FinMetricsStore). */
+  function demoHas(name) { var m = /[?&]demo=([a-z,]+)/.exec(location.search); return !!m && m[1].split(',').indexOf(name) >= 0; }
+
+  function loadRows() { rows = fiId ? store.rasAdjustments(fiId) : []; }
+
+  var GRID = '8px 72px 144px 144px 176px 176px 176px 176px 176px 176px 176px 280px 64px minmax(8px,1fr)';
+  var tbl = document.getElementById('rh-tbl');
+
+  function cell(key, text, num, sortValue) {
+    return '<div class="tc' + (num ? ' tc--numbers' : '') + '" data-col="' + key + '"' + (sortValue != null ? ' data-sort-value="' + sortValue + '"' : '') + '>'
+      + '<span class="tc__row"><span class="tc__text tc__text--truncate">' + esc(text) + '</span></span></div>';
+  }
+  /* Строку можно только удалить: правки нет (решение человека 28.10.2026) */
+  var ROW_ACTIONS = '<div class="tc" data-col="actions"><span class="tc__controls">'
+    + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-delete aria-label="Удалить корректировку"><i data-icon="trash"></i></button>'
+    + '</span></div>';
+
+  function rowHTML(r, i) {
+    return '<div class="tbl__row" data-idx="' + i + '" style="grid-template-columns:' + GRID + ';"><div class="tc tc--separator"></div>'
+      + cell('num', String(i + 1), true)
+      + cell('startDate', date(r.startDate), false, r.startDate)
+      + cell('endDate', date(r.endDate), false, r.endDate)
+      + cell('adjustmentAmount', money(r.adjustmentAmount), true)
+      + PARTS.map(function (k) { return cell(k, money(r.parts[k] || 0), true); }).join('')
+      + cell('comment', r.comment || '—', false)
+      + ROW_ACTIONS + '<div class="tc tc--separator"></div></div>';
+  }
+
+  /* шапка — в разметке; перерисовываются только строки данных */
+  function render() {
+    tbl.querySelectorAll('.tbl__row:not(.tbl__row--head)').forEach(function (r) { r.remove(); });
+    tbl.insertAdjacentHTML('beforeend', rows.map(rowHTML).join(''));
+    if (window.dsIcons) window.dsIcons.apply(tbl);
+    if (window.DSTable) {
+      window.DSTable.wireAll(tbl.parentNode);
+      var api = window.DSTable.wire(tbl);
+      if (api && api.rowsChanged) api.rowsChanged();
+    }
+    applyView();
+  }
+
+  /* ---------- пагинация: корректировок могут быть сотни (ответ человека 28.10.2026) ----------
+     Строки страницы — по порядку в DOM (после сортировки он другой), остальные скрыты (hidden).
+     Колонтитул — DSPagination.footer, без левой сводки, как на макете; пока строк нет — скрыт. */
+  var footerHost = document.getElementById('rh-footer');
+  var view = { page: 1, pageSize: 50 };
+  function dataRows() { return Array.prototype.slice.call(tbl.querySelectorAll('.tbl__row:not(.tbl__row--head)')); }
+  function applyView() {
+    var all = dataRows();
+    var total = all.length;
+    footerHost.hidden = total === 0;
+    if (!total || !window.DSPagination) return;
+    var pages = window.DSPagination.totalPages(total, view.pageSize);
+    if (view.page > pages) view.page = pages;
+    var size = view.pageSize === 'all' ? total : view.pageSize;
+    var start = (view.page - 1) * size;
+    all.forEach(function (r, i) { r.hidden = i < start || i >= start + size; });
+    footerHost.innerHTML = '';
+    footerHost.appendChild(window.DSPagination.footer({
+      left: 'none',
+      pager: {
+        total: total, page: view.page, pageSize: view.pageSize,
+        onChange: function (p) { view.page = p; applyView(); },
+        onPageSizeChange: function (v) { view.pageSize = v; view.page = 1; applyView(); }
+      }
+    }));
+  }
+  tbl.addEventListener('sort', function () { view.page = 1; applyView(); });
+
+  /* ---------- уведомления: фоновый тост ДС, зелёный, уходит сам ---------- */
+  function toast(message) {
+    if (window.DSToast) window.DSToast.show({ message: message, kind: 'bar', tone: 'success' });
+  }
+
+  /* ---------- окно ручной корректировки: виджет RsbuAdjustmentModal ----------
+     Форму, итог, проверку и тексты ошибок ведёт окно; страница даёт ему валюту
+     и принимает проверенную запись. */
+  var modal = window.PostModalRsbuAdjustment.bind(document.getElementById('rsbu-adj-scrim'), {
+    options: function () { return { currencyCode: data.currencyCode }; },
+    save: function (rec) {
+      store.addRasAdjustment({ fiId: fiId, startDate: rec.startDate, endDate: rec.endDate, parts: rec.parts, comment: rec.comment });
+      toast('Корректировка добавлена');
+    }
+  });
+
+  document.getElementById('rh-add').addEventListener('click', function () { if (fiId) modal.open(); });
+
+  /* ---------- удаление с подтверждением ----------
+     Корректировка входит в каждый пересчёт метрик: без неё исходная дата после следующего
+     пересчёта покажет новый расчёт — об этом предупреждает окно (решение агента 29). */
+  var deleteIdx = -1;
+  function openDelete(idx) {
+    if (idx < 0) return;
+    deleteIdx = idx;
+    var r = rows[idx];
+    document.getElementById('rh-delete-text').textContent = 'Удалить корректировку с ' + date(r.startDate) + ' на ' + date(r.endDate)
+      + ' на сумму ' + money(r.adjustmentAmount) + ' ' + data.currencyCode + '? После пересчёта метрик значение на '
+      + date(r.startDate) + ' в отчёте РСБУ изменится. Действие нельзя отменить.';
+    if (window.DSModal) window.DSModal.open(document.getElementById('rh-delete-scrim'));
+  }
+  document.getElementById('rh-delete-confirm').addEventListener('click', function () {
+    var had = deleteIdx >= 0;
+    if (had) store.removeRasAdjustment(rows[deleteIdx].id);
+    deleteIdx = -1;
+    if (window.DSModal) window.DSModal.closeTop();
+    if (had) toast('Корректировка удалена');
+  });
+
+  /* индекс строки в rows — по data-idx (после сортировки порядок в DOM другой) */
+  function idxOfRow(row) { return row ? parseInt(row.getAttribute('data-idx'), 10) : -1; }
+  tbl.addEventListener('click', function (e) {
+    var d = e.target.closest('[data-delete]');
+    if (d) openDelete(idxOfRow(d.closest('.tbl__row')));
+  });
+
+  /* ---------- крошки и возврат: сделка, договор и транш из дерева продуктов ----------
+     Адрес ?id=<сделка>&tr=<транш> идёт обратно на транш и в крошки
+     (Tranche.html?id=<сделка>&tr=<транш>); названия — как на странице транша
+     (TrancheContext). Дерево читается после ProductTreeStore.ready. */
+  function fill() {
+    var ctx = window.TrancheContext.resolve(location.search);
+    if (!ctx) return;
+    var preview = /\.preview\.html$/.test(location.pathname);
+    var dealHref = (preview ? 'Deal.preview.html' : 'Deal.html') + ctx.dealQuery;
+    var tranche = (preview ? 'Tranche.preview.html' : 'Tranche.html') + ctx.trancheQuery;
+    window.TrancheContext.paintCrumbs(document.querySelector('[data-breadcrumbs]'), [
+      null,
+      { href: '#' },
+      { text: ctx.dealLabel, href: dealHref },
+      { text: ctx.parentLabel, href: dealHref },
+      { text: ctx.trancheLabel, href: tranche }
+    ]);
+    document.getElementById('rh-return').setAttribute('href', tranche);
+  }
+
+  /* таблица читает стор; он перерисовывает страницу сам при любом изменении корректировок */
+  function refresh() {
+    loadRows();
+    render();
+  }
+
+  /* сторы открываются на сделке транша после дерева (FinMetricsStore берёт ФИ из стора ФИ) */
+  function openStores(ctx) {
+    if (!ctx) return;
+    Promise.all([window.FinInstrumentsStore.ready, store.ready]).then(function () {
+      window.FinInstrumentsStore.use(ctx.openedId);
+      store.use(ctx.openedId);
+      fiId = store.fiOfTranche(ctx.tranche.id);
+      /* «Внести корректировку» доступна, только когда известен ФИ транша (уроки Л235, Л268) */
+      document.getElementById('rh-add').disabled = !fiId;
+      store.on('change', refresh);
+      refresh();
+      /* ?open=add — страница открыта кнопкой «Внести корректировку» с тайла: модалка поднята сразу */
+      if (/[?&]open=add/.test(location.search) && fiId) modal.open();
+      if (demoHas('delete') && rows.length) openDelete(rows.length - 1);
+    });
+  }
+
+  buildNav(); render();
+  window.ProductTreeStore.ready.then(function () { fill(); openStores(window.TrancheContext.resolve(location.search)); });
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

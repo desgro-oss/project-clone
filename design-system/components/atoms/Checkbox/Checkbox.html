@@ -24,7 +24,7 @@
 
   /* section */
 
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
 
   
   .row { display:flex; flex-wrap:wrap; align-items:flex-start; gap:40px; }
@@ -42,17 +42,17 @@
   .pg__stagebox { width:100%; max-width:420px; display:flex; align-items:center; justify-content:center; }
 
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
 
 
-  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+  .pg__code { margin-top:4px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* select control */
 
   /* ---------- states matrix ---------- */
   .matrix-wrap { overflow-x:auto; }
   .matrix { display:grid; grid-template-columns: 150px repeat(6, 1fr); gap:24px 18px; align-items:center; min-width:660px; }
-  .matrix .col-head { font: var(--type-body-s-strong); color: var(--text-secondary); text-align:center; }
+  .matrix .col-head { font: var(--type-body-s-strong-smb); color: var(--text-secondary); text-align:center; }
   .matrix .cell { display:flex; justify-content:center; }
 
   /* ---------- composition grid ---------- */
@@ -64,11 +64,11 @@
   @media (max-width:760px){ .anat { grid-template-columns:1fr; } }
   .anat__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:40px 44px; display:flex; justify-content:center; }
   .anat__diagram { position:relative; }
-  .anat__num { position:absolute; width:22px; height:22px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-xs); font-weight:600; display:flex; align-items:center; justify-content:center; transform:translate(-150%,-2px); }
+  .anat__num { position:absolute; width:22px; height:22px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-xs-reg); font-weight:600; display:flex; align-items:center; justify-content:center; transform:translate(-150%,-2px); }
   .anat__legend { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; counter-reset:a; }
-  .anat__legend li { display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m); color: var(--text-primary); }
-  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center; }
-  .anat__legend li .t .k { font: var(--type-body-m-strong); color: var(--text-primary); }
+  .anat__legend li { display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m-reg); color: var(--text-primary); }
+  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center; }
+  .anat__legend li .t .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
 
   /* ---------- group demo card ---------- */
 
@@ -76,16 +76,16 @@
   .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
   .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
-  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong-smb); padding:14px 20px 0; }
   .guide-card__body { padding:20px 20px 0; flex:1; }
-  .guide-card__cap { padding:16px 20px 20px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+  .guide-card__cap { padding:16px 20px 20px; font: var(--type-body-xs-reg); color: var(--text-inactive); text-wrap:pretty; }
 
   /* ---------- reference tables ---------- */
-  .ref-table th, .ref-table td { text-align:left; padding:16px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); vertical-align:middle; }
+  .ref-table th, .ref-table td { text-align:left; padding:16px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); vertical-align:middle; }
 
   @media (max-width:760px){ .color-ref { grid-template-columns:1fr; } }
   
-  .cref-group > h3 { font: var(--type-h5-strong); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
+  .cref-group > h3 { font: var(--type-h5-strong-smb); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
   .cref-row { display:grid; grid-template-columns: 36px 1fr auto; gap:14px; align-items:center; padding:9px 22px; }
   .cref-sw .cf { position:absolute; inset:0; }
 
@@ -94,7 +94,7 @@
   .size-spec__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:44px; display:flex; justify-content:center; align-items:center; }
 
   /* ---------- developer handoff ---------- */
-  .subhead { font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px; }
+  .subhead { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0 0 16px; }
   .subhead.mt { margin-top: 34px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
@@ -331,9 +331,9 @@
   <!-- TYPOGRAPHY -->
   <section class="section" data-screen-label="Typography">
     <h2>Типографика</h2>
-    <p class="desc">Название набирается гарнитурой <b>SB Sans Text</b> токеном <code class="tok">--type-body-m</code>, хелпер — <code class="tok">--type-body-xs</code>, заголовок группы — <code class="tok">--type-h6-strong</code>.</p>
+    <p class="desc">Название набирается гарнитурой <b>SB Sans Text</b> токеном <code class="tok">--type-body-m-reg</code>, хелпер — <code class="tok">--type-body-xs-reg</code>, заголовок группы — <code class="tok">--type-h6-strong-smb</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.17fr 1.13fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.17fr 1.13fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Название</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.17fr 1.13fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Хелпер</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.17fr 1.13fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок группы</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-h6-strong</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Display</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-h6-strong)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.17fr 1.13fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.17fr 1.13fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Название</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.17fr 1.13fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Хелпер</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.17fr 1.13fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок группы</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-h6-strong-smb</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Display</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-h6-strong-smb)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
     <table id="typo-table" style="display:none"><tbody></tbody></table>
   </section>
@@ -765,9 +765,9 @@ function setCbState(root, state){
 /* ---------- TYPOGRAPHY REFERENCE ---------- */
 (function(){
   const rows = [
-    ['Название',        'Получать уведомления', '--type-body-m',     'SB Sans Text', '16 / 20', 'cb__label'],
-    ['Хелпер',          'Не чаще раза в день',   '--type-body-xs',    'SB Sans Text', '12 / 16', 'ds-helper ds-helper--left'],
-    ['Заголовок группы','Название группы',       '--type-h6-strong',  'SB Sans Display','16 / 20', 'cb-group__title'],
+    ['Название',        'Получать уведомления', '--type-body-m-reg',     'SB Sans Text', '16 / 20', 'cb__label'],
+    ['Хелпер',          'Не чаще раза в день',   '--type-body-xs-reg',    'SB Sans Text', '12 / 16', 'ds-helper ds-helper--left'],
+    ['Заголовок группы','Название группы',       '--type-h6-strong-smb',  'SB Sans Display','16 / 20', 'cb-group__title'],
   ];
   const tb = document.querySelector('#typo-table tbody');
   tb.innerHTML = rows.map(([part,sample,tok,font,sl,cls])=>`
@@ -1132,7 +1132,7 @@ function makeCb(o) {
 
 /* ---------- content (label + helper) -------------------------------------- */
 .cb__content { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.cb__label  { font: var(--type-body-m);  color: var(--text-primary); }
+.cb__label  { font: var(--type-body-m-reg);  color: var(--text-primary); }
 /* Хелпер — общий компонент подкачки (не собственный класс), см. label-helper.css → .ds-helper */
 .cb--no-content .cb__content { display: none; }
 
@@ -1159,7 +1159,7 @@ function makeCb(o) {
    stretches to the full row height; alignment is always to the left edge. */
 .cb-group { display: flex; flex-direction: column; }
 .cb-group__title {
-  font: var(--type-h6-strong);
+  font: var(--type-h6-strong-smb);
   color: var(--text-primary);
   margin: 0 0 4px;
   display: inline-flex;
@@ -1172,7 +1172,7 @@ function makeCb(o) {
 
 /* group-level error message (Body XS, error color) */
 .cb-group__error {
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--error);
   margin: 6px 0 0;
   display: inline-flex;

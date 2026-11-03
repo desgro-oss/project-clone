@@ -7,7 +7,7 @@ window.ProtoPanelData = {
     "title": "Post \u2014 \u0414\u0418\u0414"
   },
   "sources": {
-    "flows": "74558f3d",
+    "flows": "6de9dc7e",
     "comments": "e533f5f9"
   },
   "flowsHeader": [
@@ -15,7 +15,7 @@ window.ProtoPanelData = {
     "# \u0424\u043e\u0440\u043c\u0430\u0442 \u2014 .agents/proto-panel/README.md, \u0440\u0430\u0437\u0434\u0435\u043b \u00abflows.yaml\u00bb.",
     "# \u041f\u043e\u0441\u043b\u0435 \u043f\u0440\u0430\u0432\u043a\u0438: node .agents/tools/proto-panel.mjs (\u043f\u0435\u0440\u0435\u0441\u043e\u0431\u0440\u0430\u0442\u044c \u0437\u0435\u0440\u043a\u0430\u043b\u043e)."
   ],
-  "lastState": 53,
+  "lastState": 74,
   "flows": [
     {
       "id": "main",
@@ -3018,6 +3018,441 @@ window.ProtoPanelData = {
                 "meta": false
               },
               "state": "visible",
+              "block": null,
+              "ms": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "loan-agreement",
+      "title": "\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u0437\u0430\u0439\u043c\u0430 (\u041d\u041a\u041b)",
+      "desc": "\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u0434\u043e\u0433\u043e\u0432\u043e\u0440\u0430 \u2014 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u044f \u0442\u0430\u0439\u043b\u043e\u0432, \u0440\u0435\u0436\u0438\u043c\u044b \u043f\u0440\u0430\u0432\u043a\u0438 \u0438 \u0442\u0440\u0430\u043d\u0448\u0438 (RE0041)",
+      "steps": [
+        {
+          "state": 54,
+          "id": "loan-full",
+          "title": "\u0417\u0430\u043f\u043e\u043b\u043d\u0435\u043d\u043e, \u043f\u0440\u0430\u0432\u043a\u0430 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0430",
+          "page": "Instrument.preview.html?id=1027",
+          "note": "\u0412\u0441\u0435 \u0442\u0430\u0439\u043b\u044b \u0437\u0430\u043f\u043e\u043b\u043d\u0435\u043d\u044b, \u0434\u0432\u0430 \u0442\u0440\u0430\u043d\u0448\u0430. \u22ee \u0448\u0430\u043f\u043a\u0438 \u2014 \u00ab\u041f\u043e\u0433\u0430\u0441\u0438\u0442\u044c\u00bb, \u00ab\u041f\u0435\u0440\u0435\u043d\u0435\u0441\u0442\u0438\u00bb; \u0443 \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0438 \u0442\u0440\u0430\u043d\u0448\u0430 \u2014 \u00ab\u041f\u043e\u0433\u0430\u0441\u0438\u0442\u044c\u00bb, \u00ab\u0423\u0434\u0430\u043b\u0438\u0442\u044c\u00bb.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 55,
+          "id": "loan-partial",
+          "title": "\u0417\u0430\u043f\u043e\u043b\u043d\u0435\u043d\u043e \u0447\u0430\u0441\u0442\u0438\u0447\u043d\u043e",
+          "page": "Instrument.preview.html?id=1028",
+          "note": "\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u0438 \u0431\u0430\u043b\u0430\u043d\u0441 \u0437\u0430\u043f\u043e\u043b\u043d\u0435\u043d\u044b, \u0415\u0422\u0421 \u0438 \u0442\u0435\u0445\u043d\u0438\u0447\u0435\u0441\u043a\u0430\u044f \u0438\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u044f \u2014 \u00ab\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u044c\u00bb. \u0415\u0422\u0421 \u2014 \u00ab\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u044c \u2192\u00bb.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 56,
+          "id": "loan-empty",
+          "title": "\u0414\u0430\u043d\u043d\u044b\u0445 \u043d\u0435\u0442",
+          "page": "Instrument.preview.html?id=1026",
+          "note": "\u0417\u0430\u043f\u0438\u0441\u0438 \u0434\u043e\u0433\u043e\u0432\u043e\u0440\u0430 \u043d\u0435\u0442 \u2014 \u0432 \u043a\u0430\u0436\u0434\u043e\u043c \u0442\u0430\u0439\u043b\u0435 \u00ab\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u044c\u00bb. \u0422\u0440\u0430\u043d\u0448\u0438 \u0435\u0441\u0442\u044c, \u043e\u043d\u0438 \u0438\u0437 \u0434\u0435\u0440\u0435\u0432\u0430 \u043f\u0440\u043e\u0434\u0443\u043a\u0442\u043e\u0432 \u0441\u0434\u0435\u043b\u043a\u0438.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 57,
+          "id": "loan-view-status",
+          "title": "\u041f\u0440\u043e\u0441\u043c\u043e\u0442\u0440 \u043f\u043e \u0441\u0442\u0430\u0442\u0443\u0441\u0443 \u0441\u0434\u0435\u043b\u043a\u0438",
+          "page": "Instrument.preview.html?id=1024",
+          "note": "\u0421\u0442\u0430\u0442\u0443\u0441 \u0441\u0434\u0435\u043b\u043a\u0438 \u043d\u0435 \u0434\u043e\u043f\u0443\u0441\u043a\u0430\u0435\u0442 \u043f\u0440\u0430\u0432\u043a\u0443 \u2014 \u043a\u0430\u0440\u0430\u043d\u0434\u0430\u0448\u0435\u0439 \u0438 \u00ab\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u044c\u00bb \u043d\u0435\u0442, \u043f\u0443\u043d\u043a\u0442\u044b \u043c\u0435\u043d\u044e \u22ee \u0432\u044b\u043a\u043b\u044e\u0447\u0435\u043d\u044b. \u0421\u0442\u0440\u0435\u043b\u043a\u0438 \u00ab\u2192\u00bb \u043e\u0441\u0442\u0430\u043b\u0438\u0441\u044c.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 58,
+          "id": "loan-view-empty",
+          "title": "\u041f\u0440\u043e\u0441\u043c\u043e\u0442\u0440, \u0434\u0430\u043d\u043d\u044b\u0445 \u043d\u0435\u0442",
+          "page": "Instrument.preview.html?id=1025",
+          "note": "\u0412 \u043a\u0430\u0436\u0434\u043e\u043c \u0442\u0430\u0439\u043b\u0435 \u00ab\u041d\u0435 \u0437\u0430\u043f\u043e\u043b\u043d\u0435\u043d\u043e\u00bb.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 59,
+          "id": "loan-repaid",
+          "title": "\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u043f\u043e\u0433\u0430\u0448\u0435\u043d",
+          "page": "Instrument.preview.html?id=1030",
+          "note": "\u041f\u043e\u0433\u0430\u0448\u0435\u043d\u043d\u044b\u0439 \u0434\u043e\u0433\u043e\u0432\u043e\u0440 \u2014 \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440; \u0432 \u043c\u0435\u043d\u044e \u22ee \u00ab\u041e\u0442\u043c\u0435\u043d\u0438\u0442\u044c \u043f\u043e\u0433\u0430\u0448\u0435\u043d\u0438\u0435\u00bb.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 60,
+          "id": "loan-add-tranche",
+          "title": "\u0414\u043e\u0431\u0430\u0432\u043b\u0435\u043d \u0442\u0440\u0430\u043d\u0448",
+          "page": "Instrument.preview.html?id=1027",
+          "note": "\u00ab+ \u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0442\u0440\u0430\u043d\u0448\u00bb \u0434\u043e\u0431\u0430\u0432\u043b\u044f\u0435\u0442 \u0442\u0440\u0430\u043d\u0448 \u0441\u0440\u0430\u0437\u0443, \u0431\u0435\u0437 \u043e\u043a\u043d\u0430; \u043e\u043d \u0436\u0435 \u043f\u043e\u044f\u0432\u043b\u044f\u0435\u0442\u0441\u044f \u0432 \u00ab\u041f\u0440\u043e\u0434\u0443\u043a\u0442\u0430\u0445 \u0441\u0434\u0435\u043b\u043a\u0438\u00bb.",
+          "recorded": null,
+          "issues": [],
+          "do": [
+            {
+              "verb": "click",
+              "target": "#tile-loan-tranches [data-lntr-act=\"ADD_TRANCHE\"]",
+              "text": null,
+              "index": 0,
+              "timeout": 4000,
+              "value": null,
+              "key": null,
+              "mods": {
+                "alt": false,
+                "shift": false,
+                "ctrl": false,
+                "meta": false
+              },
+              "state": null,
+              "block": null,
+              "ms": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "loan-agreements",
+      "title": "\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u0438 \u0434\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0435 \u0441\u043e\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u044f",
+      "desc": "\u0412\u043d\u0443\u0442\u0440\u0435\u043d\u043d\u044f\u044f \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u0434\u043e\u0433\u043e\u0432\u043e\u0440\u0430 \u0437\u0430\u0439\u043c\u0430 \u2014 \u0442\u0430\u0439\u043b \u00ab\u0414\u043e\u0433\u043e\u0432\u043e\u0440\u00bb, \u0441\u043f\u0438\u0441\u043e\u043a \u0414\u0421, \u0444\u0438\u043b\u044c\u0442\u0440 \u0438 \u043e\u043a\u043d\u0430 (RE0041)",
+      "steps": [
+        {
+          "state": 61,
+          "id": "ia-full",
+          "title": "\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u0437\u0430\u043f\u043e\u043b\u043d\u0435\u043d, \u0447\u0435\u0442\u044b\u0440\u0435 \u0414\u0421",
+          "page": "InitialAndAdditionalAgreements.preview.html?id=1027",
+          "note": "\u0422\u0430\u0439\u043b \u00ab\u0414\u043e\u0433\u043e\u0432\u043e\u0440\u00bb \u0441 \u043a\u0430\u0440\u0430\u043d\u0434\u0430\u0448\u043e\u043c, \u00ab\u0424\u0438\u043b\u044c\u0442\u0440\u00bb, \u0447\u0435\u0442\u044b\u0440\u0435 \u0441\u0432\u0451\u0440\u043d\u0443\u0442\u044b\u0435 \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0438 \u0414\u0421 \u0441 \u043a\u0430\u0440\u0430\u043d\u0434\u0430\u0448\u043e\u043c \u0438 \u0448\u0435\u0432\u0440\u043e\u043d\u043e\u043c; \u00ab+ \u041d\u043e\u0432\u043e\u0435 \u0441\u043e\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435\u00bb \u0432 \u0448\u0430\u043f\u043a\u0435.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 62,
+          "id": "ia-no-agreements",
+          "title": "\u0414\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0445 \u0441\u043e\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0439 \u043d\u0435\u0442",
+          "page": "InitialAndAdditionalAgreements.preview.html?id=1028",
+          "note": "\u041f\u0443\u0441\u0442\u043e\u0435 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 \u00ab\u0414\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0435 \u0441\u043e\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u044f \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u044e\u0442\u00bb \u0441 \u043a\u043d\u043e\u043f\u043a\u043e\u0439 \u00ab\u041d\u043e\u0432\u043e\u0435 \u0441\u043e\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435\u00bb; \u043a\u043d\u043e\u043f\u043a\u0438 \u00ab\u0424\u0438\u043b\u044c\u0442\u0440\u00bb \u043d\u0435\u0442.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 63,
+          "id": "ia-empty-contract",
+          "title": "\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u043d\u0435 \u0437\u0430\u043f\u043e\u043b\u043d\u0435\u043d",
+          "page": "InitialAndAdditionalAgreements.preview.html?id=1026",
+          "note": "\u0422\u0430\u0439\u043b \u00ab\u0414\u043e\u0433\u043e\u0432\u043e\u0440\u00bb \u043f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u0442 \u0442\u0435 \u0436\u0435 \u043f\u043e\u043b\u044f \u0441 \u00ab\u2014\u00bb; \u043a\u0430\u0440\u0430\u043d\u0434\u0430\u0448 \u043e\u0442\u043a\u0440\u044b\u0432\u0430\u0435\u0442 \u043e\u043a\u043d\u043e \u00ab\u0414\u043e\u0433\u043e\u0432\u043e\u0440\u00bb.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 64,
+          "id": "ia-view-status",
+          "title": "\u041f\u0440\u043e\u0441\u043c\u043e\u0442\u0440 \u043f\u043e \u0441\u0442\u0430\u0442\u0443\u0441\u0443 \u0441\u0434\u0435\u043b\u043a\u0438",
+          "page": "InitialAndAdditionalAgreements.preview.html?id=1024",
+          "note": "\u0421\u0442\u0430\u0442\u0443\u0441 \u0441\u0434\u0435\u043b\u043a\u0438 \u043d\u0435 \u0434\u043e\u043f\u0443\u0441\u043a\u0430\u0435\u0442 \u043f\u0440\u0430\u0432\u043a\u0443 \u2014 \u043a\u0430\u0440\u0430\u043d\u0434\u0430\u0448\u0435\u0439 \u043d\u0435\u0442, \u00ab+ \u041d\u043e\u0432\u043e\u0435 \u0441\u043e\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435\u00bb \u0432\u044b\u043a\u043b\u044e\u0447\u0435\u043d\u0430, \u0432 \u043f\u0443\u0441\u0442\u043e\u043c \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0438 \u043a\u043d\u043e\u043f\u043a\u0438 \u043d\u0435\u0442.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 65,
+          "id": "ia-repaid",
+          "title": "\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u043f\u043e\u0433\u0430\u0448\u0435\u043d",
+          "page": "InitialAndAdditionalAgreements.preview.html?id=1030",
+          "note": "\u041f\u043e\u0433\u0430\u0448\u0435\u043d\u043d\u044b\u0439 \u0434\u043e\u0433\u043e\u0432\u043e\u0440 \u2014 \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440; \u043e\u0434\u043d\u0430 \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0430 \u0414\u0421, \u0448\u0435\u0432\u0440\u043e\u043d \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442, \u043a\u0430\u0440\u0430\u043d\u0434\u0430\u0448\u0430 \u043d\u0435\u0442.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 66,
+          "id": "ia-expanded",
+          "title": "\u041a\u0430\u0440\u0442\u043e\u0447\u043a\u0430 \u0414\u0421 \u0440\u0430\u0441\u043a\u0440\u044b\u0442\u0430",
+          "page": "InitialAndAdditionalAgreements.preview.html?id=1027",
+          "note": "\u0428\u0435\u0432\u0440\u043e\u043d \u0440\u0430\u0441\u043a\u0440\u044b\u0432\u0430\u0435\u0442 \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0443 \u2014 \u0432 \u043d\u0435\u0439 \u00ab\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439\u00bb.",
+          "recorded": null,
+          "issues": [],
+          "do": [
+            {
+              "verb": "click",
+              "target": "#aa-list .lc-additional-agreement-tile .tile__toggle",
+              "text": null,
+              "index": 0,
+              "timeout": 4000,
+              "value": null,
+              "key": null,
+              "mods": {
+                "alt": false,
+                "shift": false,
+                "ctrl": false,
+                "meta": false
+              },
+              "state": null,
+              "block": null,
+              "ms": null
+            }
+          ]
+        },
+        {
+          "state": 67,
+          "id": "ia-new-agreement",
+          "title": "\u041e\u043a\u043d\u043e \u00ab\u0421\u043e\u0437\u0434\u0430\u043d\u0438\u0435 \u0434\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u043e\u0433\u043e \u0441\u043e\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u044f\u00bb",
+          "page": "InitialAndAdditionalAgreements.preview.html?id=1027",
+          "note": "\u00ab+ \u041d\u043e\u0432\u043e\u0435 \u0441\u043e\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435\u00bb \u043e\u0442\u043a\u0440\u044b\u0432\u0430\u0435\u0442 \u043e\u043a\u043d\u043e; \u043d\u043e\u043c\u0435\u0440 \u043f\u043e\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d \u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0438\u0439 \u043f\u043e \u043f\u043e\u0440\u044f\u0434\u043a\u0443.",
+          "recorded": null,
+          "issues": [],
+          "do": [
+            {
+              "verb": "click",
+              "target": "#ia-new-btn",
+              "text": null,
+              "index": 0,
+              "timeout": 4000,
+              "value": null,
+              "key": null,
+              "mods": {
+                "alt": false,
+                "shift": false,
+                "ctrl": false,
+                "meta": false
+              },
+              "state": null,
+              "block": null,
+              "ms": null
+            },
+            {
+              "verb": "waitFor",
+              "target": "#agreement-scrim",
+              "text": null,
+              "index": 0,
+              "timeout": 4000,
+              "value": null,
+              "key": null,
+              "mods": {
+                "alt": false,
+                "shift": false,
+                "ctrl": false,
+                "meta": false
+              },
+              "state": "visible",
+              "block": null,
+              "ms": null
+            }
+          ]
+        },
+        {
+          "state": 68,
+          "id": "ia-filter",
+          "title": "\u041e\u043a\u043d\u043e \u00ab\u0424\u0438\u043b\u044c\u0442\u0440\u00bb",
+          "page": "InitialAndAdditionalAgreements.preview.html?id=1027",
+          "note": "\u00ab\u0424\u0438\u043b\u044c\u0442\u0440\u00bb \u043e\u0442\u043a\u0440\u044b\u0432\u0430\u0435\u0442 \u043e\u043a\u043d\u043e \u0441 \u0440\u0430\u0437\u0434\u0435\u043b\u0430\u043c\u0438 \u00ab\u041e\u0441\u043d\u043e\u0432\u043d\u0430\u044f \u0438\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u044f\u00bb \u0438 \u00ab\u0420\u0435\u0448\u0435\u043d\u0438\u0435\u00bb.",
+          "recorded": null,
+          "issues": [],
+          "do": [
+            {
+              "verb": "click",
+              "target": "#ia-filter [data-ia-filter-open]",
+              "text": null,
+              "index": 0,
+              "timeout": 4000,
+              "value": null,
+              "key": null,
+              "mods": {
+                "alt": false,
+                "shift": false,
+                "ctrl": false,
+                "meta": false
+              },
+              "state": null,
+              "block": null,
+              "ms": null
+            },
+            {
+              "verb": "waitFor",
+              "target": "#agreements-filter-scrim",
+              "text": null,
+              "index": 0,
+              "timeout": 4000,
+              "value": null,
+              "key": null,
+              "mods": {
+                "alt": false,
+                "shift": false,
+                "ctrl": false,
+                "meta": false
+              },
+              "state": "visible",
+              "block": null,
+              "ms": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "transfer-schemas",
+      "title": "\u0415\u0434\u0438\u043d\u0430\u044f \u0442\u0440\u0430\u043d\u0441\u0444\u0435\u0440\u0442\u043d\u0430\u044f \u0441\u0442\u0430\u0432\u043a\u0430",
+      "desc": "\u0412\u043d\u0443\u0442\u0440\u0435\u043d\u043d\u044f\u044f \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u0434\u043e\u0433\u043e\u0432\u043e\u0440\u0430 \u0437\u0430\u0439\u043c\u0430 \u2014 \u043f\u0440\u043e\u0446\u0435\u043d\u0442\u043d\u044b\u0435 \u0441\u0445\u0435\u043c\u044b \u0415\u0422\u0421, \u043e\u043a\u043d\u043e \u0441\u0445\u0435\u043c\u044b, \u0438\u0441\u0442\u043e\u0440\u0438\u0438 \u0438 \u043f\u0443\u0441\u0442\u043e\u0435 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 (RE0041)",
+      "steps": [
+        {
+          "state": 69,
+          "id": "ets-full",
+          "title": "\u041f\u044f\u0442\u044c \u0441\u0445\u0435\u043c, \u043f\u0440\u0430\u0432\u043a\u0430",
+          "page": "TransferSchemas.preview.html?id=1027",
+          "note": "\u041a\u0430\u0440\u0442\u043e\u0447\u043a\u0438 \u0441\u0445\u0435\u043c \u043e\u0442 \u043d\u043e\u0432\u044b\u0445 \u043a \u0441\u0442\u0430\u0440\u044b\u043c \u2014 \u0444\u0438\u043a\u0441\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0435 \u0438 \u043f\u043b\u0430\u0432\u0430\u044e\u0449\u0438\u0435 (\u00ab\u041a\u0421+2%\u00bb), \u0434\u043b\u0438\u043d\u043d\u044b\u0439 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u043e\u0431\u0440\u0435\u0437\u0430\u043d; \u22ee \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0438 \u00ab\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c\u00bb \u0438 \u00ab\u0423\u0434\u0430\u043b\u0438\u0442\u044c\u00bb; \u00ab+ \u041d\u043e\u0432\u0430\u044f \u0441\u0445\u0435\u043c\u0430\u00bb \u0438 \u043c\u0435\u043d\u044e \u22ee \u0432 \u0448\u0430\u043f\u043a\u0435.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 70,
+          "id": "ets-empty",
+          "title": "\u0421\u0445\u0435\u043c \u043d\u0435\u0442",
+          "page": "TransferSchemas.preview.html?id=1028",
+          "note": "\u041f\u0443\u0441\u0442\u043e\u0435 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 \u00ab\u0417\u0434\u0435\u0441\u044c \u043f\u043e\u043a\u0430 \u043d\u0438\u0447\u0435\u0433\u043e \u043d\u0435\u0442\u00bb \u0441 \u0438\u043b\u043b\u044e\u0441\u0442\u0440\u0430\u0446\u0438\u0435\u0439 \u0438 \u043a\u043d\u043e\u043f\u043a\u043e\u0439 \u00ab\u041d\u043e\u0432\u0430\u044f \u0441\u0445\u0435\u043c\u0430\u00bb.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 71,
+          "id": "ets-view",
+          "title": "\u041f\u0440\u043e\u0441\u043c\u043e\u0442\u0440 \u043f\u043e \u0441\u0442\u0430\u0442\u0443\u0441\u0443 \u0441\u0434\u0435\u043b\u043a\u0438",
+          "page": "TransferSchemas.preview.html?id=1024",
+          "note": "\u0421\u0442\u0430\u0442\u0443\u0441 \u0441\u0434\u0435\u043b\u043a\u0438 \u043d\u0435 \u0434\u043e\u043f\u0443\u0441\u043a\u0430\u0435\u0442 \u043f\u0440\u0430\u0432\u043a\u0443 \u2014 \u22ee \u0443 \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0438 \u043d\u0435\u0442, \u00ab+ \u041d\u043e\u0432\u0430\u044f \u0441\u0445\u0435\u043c\u0430\u00bb \u0432\u044b\u043a\u043b\u044e\u0447\u0435\u043d\u0430; \u043c\u0435\u043d\u044e \u0448\u0430\u043f\u043a\u0438 \u0441 \u0438\u0441\u0442\u043e\u0440\u0438\u044f\u043c\u0438 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 72,
+          "id": "ets-repaid",
+          "title": "\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u043f\u043e\u0433\u0430\u0448\u0435\u043d",
+          "page": "TransferSchemas.preview.html?id=1030",
+          "note": "\u041f\u043e\u0433\u0430\u0448\u0435\u043d\u043d\u044b\u0439 \u0434\u043e\u0433\u043e\u0432\u043e\u0440 \u2014 \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440; \u043e\u0434\u043d\u0430 \u0441\u0445\u0435\u043c\u0430 \u0431\u0435\u0437 \u22ee.",
+          "recorded": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "state": 73,
+          "id": "ets-new-scheme",
+          "title": "\u041e\u043a\u043d\u043e \u00ab\u041f\u0440\u043e\u0446\u0435\u043d\u0442\u043d\u0430\u044f \u0441\u0445\u0435\u043c\u0430\u00bb",
+          "page": "TransferSchemas.preview.html?id=1027",
+          "note": "\u00ab+ \u041d\u043e\u0432\u0430\u044f \u0441\u0445\u0435\u043c\u0430\u00bb \u043e\u0442\u043a\u0440\u044b\u0432\u0430\u0435\u0442 \u043f\u0443\u0441\u0442\u043e\u0435 \u043e\u043a\u043d\u043e \u2014 \u0440\u0430\u0431\u043e\u0447\u0438\u0445 \u0434\u043d\u0435\u0439 0, \u0434\u0430\u0442\u044b, \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439, \u0442\u0438\u043f \u0441\u0442\u0430\u0432\u043a\u0438.",
+          "recorded": null,
+          "issues": [],
+          "do": [
+            {
+              "verb": "click",
+              "target": "#ets-new-btn",
+              "text": null,
+              "index": 0,
+              "timeout": 4000,
+              "value": null,
+              "key": null,
+              "mods": {
+                "alt": false,
+                "shift": false,
+                "ctrl": false,
+                "meta": false
+              },
+              "state": null,
+              "block": null,
+              "ms": null
+            },
+            {
+              "verb": "waitFor",
+              "target": "#tschema-scrim",
+              "text": null,
+              "index": 0,
+              "timeout": 4000,
+              "value": null,
+              "key": null,
+              "mods": {
+                "alt": false,
+                "shift": false,
+                "ctrl": false,
+                "meta": false
+              },
+              "state": "visible",
+              "block": null,
+              "ms": null
+            }
+          ]
+        },
+        {
+          "state": 74,
+          "id": "ets-scheme-errors",
+          "title": "\u041e\u0448\u0438\u0431\u043a\u0438 \u043e\u043a\u043d\u0430 \u0441\u0445\u0435\u043c\u044b",
+          "page": "TransferSchemas.preview.html?id=1027",
+          "note": "\u00ab\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c\u00bb \u0431\u0435\u0437 \u0434\u0430\u043d\u043d\u044b\u0445 \u2014 Alert \u0432\u0432\u0435\u0440\u0445\u0443 \u043e\u043a\u043d\u0430 \u0441\u043e \u0432\u0441\u0435\u043c\u0438 \u0441\u0440\u0430\u0431\u043e\u0442\u0430\u0432\u0448\u0438\u043c\u0438 \u043e\u0448\u0438\u0431\u043a\u0430\u043c\u0438 (\u0441\u0442\u0430\u0432\u043a\u0430, \u0434\u0430\u0442\u044b).",
+          "recorded": null,
+          "issues": [],
+          "do": [
+            {
+              "verb": "click",
+              "target": "#ets-new-btn",
+              "text": null,
+              "index": 0,
+              "timeout": 4000,
+              "value": null,
+              "key": null,
+              "mods": {
+                "alt": false,
+                "shift": false,
+                "ctrl": false,
+                "meta": false
+              },
+              "state": null,
+              "block": null,
+              "ms": null
+            },
+            {
+              "verb": "waitFor",
+              "target": "#tschema-scrim",
+              "text": null,
+              "index": 0,
+              "timeout": 4000,
+              "value": null,
+              "key": null,
+              "mods": {
+                "alt": false,
+                "shift": false,
+                "ctrl": false,
+                "meta": false
+              },
+              "state": "visible",
+              "block": null,
+              "ms": null
+            },
+            {
+              "verb": "click",
+              "target": "#tschema-scrim [data-tschema-save]",
+              "text": null,
+              "index": 0,
+              "timeout": 4000,
+              "value": null,
+              "key": null,
+              "mods": {
+                "alt": false,
+                "shift": false,
+                "ctrl": false,
+                "meta": false
+              },
+              "state": null,
               "block": null,
               "ms": null
             }

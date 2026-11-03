@@ -130,8 +130,8 @@
   border-radius: var(--radius-control);
   background: none;
   color: var(--text-primary);
-  font: var(--type-body-m);
-  letter-spacing: 0;
+  font: var(--type-body-m-reg);
+  letter-spacing: var(--type-ls);
   text-align: left;
   cursor: pointer;
   transition: background-color .12s ease;
@@ -155,7 +155,7 @@
   --tab-pad-x: 16px;
   --tab-gap: 8px;
   --tab-icon: 20px;
-  --tab-font: var(--type-body-m);
+  --tab-font: var(--type-body-m-reg);
   --tab-indicator-w: 2px;
   --tab-badge-min: 20px;
 
@@ -177,7 +177,7 @@
   background: var(--tab-fill);
   color: var(--tab-text);
   font: var(--tab-font);
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
@@ -269,10 +269,10 @@
    modifiers) so the DS compiler can register tokens cleanly. Slot dimensions
    (icon / badge) get per-size descendant rules; indicator width is 2px for
    both sizes = the root default, so no per-size indicator rule is needed. */
-.tab--m { height: 40px; padding: 0 16px; gap: 8px; font: var(--type-body-m); }
+.tab--m { height: 40px; padding: 0 16px; gap: 8px; font: var(--type-body-m-reg); }
 .tab--m .tab__icon  { width: 20px; height: 20px; }
 .tab--m .tab__badge { min-width: 20px; height: 20px; }
-.tab--s { height: 32px; padding: 0 12px; gap: 6px; font: var(--type-body-s); }
+.tab--s { height: 32px; padding: 0 12px; gap: 6px; font: var(--type-body-s-reg); }
 .tab--s .tab__icon  { width: 18px; height: 18px; }
 .tab--s .tab__badge { min-width: 16px; height: 16px; }
 

@@ -73,8 +73,8 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font: var(--type-body-m-strong);
-  letter-spacing: 0;
+  font: var(--type-body-m-strong-smb);
+  letter-spacing: var(--type-ls);
   color: var(--text-primary);
   text-align: left;
   white-space: nowrap;
@@ -99,7 +99,7 @@
 
 .doccard__meta {
   overflow: hidden;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-secondary);
   white-space: nowrap;
   text-overflow: ellipsis;

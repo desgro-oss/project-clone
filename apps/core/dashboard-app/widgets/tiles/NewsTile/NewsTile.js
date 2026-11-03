@@ -30,7 +30,7 @@
 
   function itemHTML(n, S) {
     var client = n.clientName
-      ? '<div class="lc-news__client"><i data-icon="bank" aria-hidden="true"></i><span class="lc-news__client-name" data-tooltip="' + esc(n.clientName) + '" data-tooltip-truncated="only">' + esc(n.clientName) + '</span></div>'
+      ? '<a class="link link--accent link--s link--with-icon lc-news__client" href="#" data-home-goto="clients" aria-label="Открыть реестр клиентов: ' + esc(n.clientName) + '"><span class="link__icon"><i data-icon="bank" aria-hidden="true"></i></span><span class="lc-news__client-name" data-tooltip="' + esc(n.clientName) + '" data-tooltip-truncated="only">' + esc(n.clientName) + '</span></a>'
       : '';
     return '<article class="lc-news__item" data-news-id="' + esc(n.newsId) + '">' +
       '<div class="lc-news__meta">' +
@@ -58,6 +58,7 @@
     var list = root.querySelector('.lc-news__list');
     if (window.DSTooltip) window.DSTooltip.hideAll();
     list.innerHTML = S.news(s.scope).slice(0, LIMIT).map(function (n) { return itemHTML(n, S); }).join('');
+    if (window.IBPHomeNavigation) window.IBPHomeNavigation.bind(list);
     root.querySelector('.lc-news__empty-text').textContent = EMPTY_TEXT[s.scope];
     if (window.dsIcons) window.dsIcons.apply(root);
     if (window.DSTooltip) window.DSTooltip.bindAll(list);

@@ -3,6 +3,6 @@
   "track": "product",
   "title": "AI Pitcher",
   "desc": "Origination: новый отчёт в чате, история запросов, подготовка материала",
-  "home": "pages/index.html",
+  "home": "pages/RequestThread.html",
   "icon": "ai-stars"
 }

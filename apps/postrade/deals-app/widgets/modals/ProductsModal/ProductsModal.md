@@ -88,7 +88,7 @@ Modal modal--w7 (1053px на 1920 — ширина макета), высота 6
 | IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | `ibtn--neutral ibtn--l`: `info-circle`, `arrow-left-right` |
 | Tooltip | ДС — `design-system/components/molecules/Tooltip/Tooltip.md` | `data-tooltip` на обеих кнопках строки |
 | Divider | ДС — `design-system/components/atoms/Divider/Divider.md` | `dvd--v` между колонками |
-| Typography | ДС — `design-system/foundations/Typography/Typography.md` | заголовки колонок `ds-h6-strong` (ответ человека 30.09.2026, 28) |
+| Typography | ДС — `design-system/foundations/Typography/Typography.md` | заголовки колонок `ds-h6-strong-smb` (ответ человека 30.09.2026, 28) |
 | Layout | ДС — `design-system/foundations/Layout/Layout.md` | `.ds-scroll` у списков |
 | Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Сохранить» — `btn--accent btn--m`, при сохранении `btn--loading` |
 | Skeleton | ДС — `design-system/components/atoms/Skeleton/Skeleton.md` | `.sk-line` в строках-заготовках |

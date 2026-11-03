@@ -27,7 +27,7 @@
   /* size tokens — overridden per size modifier */
   --bdg-size: 24px;
   --bdg-pad: 0 7px;
-  --bdg-font: var(--type-body-s);
+  --bdg-font: var(--type-body-s-reg);
 
   box-sizing: border-box;
   display: inline-flex;
@@ -39,7 +39,7 @@
   padding: var(--bdg-pad);
   border-radius: var(--radius-pill);
   font: var(--bdg-font);
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   user-select: none;
@@ -51,10 +51,10 @@
 
 /* ---------- sizes (counter) ----------------------------------------------- *
    Размеры — прямыми свойствами (не через --bdg-* в модификаторе). */
-.badge--m   { min-width: 32px; height: 32px; padding: 0 10px; font: var(--type-body-m); }
-.badge--s   { min-width: 24px; height: 24px; padding: 0 8px;  font: var(--type-body-s); }
-.badge--xs  { min-width: 20px; height: 20px; padding: 0 6px;  font: var(--type-body-s); }
-.badge--xxs { min-width: 16px; height: 16px; padding: 0 5px;  font: var(--type-body-xs); }
+.badge--m   { min-width: 32px; height: 32px; padding: 0 10px; font: var(--type-body-m-reg); }
+.badge--s   { min-width: 24px; height: 24px; padding: 0 8px;  font: var(--type-body-s-reg); }
+.badge--xs  { min-width: 20px; height: 20px; padding: 0 6px;  font: var(--type-body-s-reg); }
+.badge--xxs { min-width: 16px; height: 16px; padding: 0 5px;  font: var(--type-body-xs-reg); }
 
 /* ---------- type: dot ----------------------------------------------------- */
 .badge--dot {

@@ -29,7 +29,7 @@
 
   /** Страницы концепта: ключ → файл (имя фронтенда, сборка .preview.html). */
   var PAGES = {
-    home: 'HomePage.html',
+    home: '../../../host-app/pages/HomePage.html',
     binding: 'BindingActiveNewOpportunities.preview.html',
     possible: 'PossibleActiveNewOpportunities.preview.html',
     cib: 'OpportunityActiveSalesProjects.preview.html',
@@ -41,11 +41,11 @@
     bindingLeads: 'BindingAllLeadsPage.preview.html',
     possibleLeads: 'PossibleAllLeadsPage.preview.html',
     potential: 'PotentialPage.preview.html',
-    clients: 'MyClientsPage.preview.html',
-    client: 'ClientInfoPage.preview.html',
-    clientComments: 'ClientComments.preview.html',
+    clients: '../../../clients-app/pages/MyClientsPage.preview.html',
+    client: '../../../clients-app/pages/ClientInfoPage.preview.html',
+    clientComments: '../../../clients-app/pages/ClientComments.preview.html',
     meetings: 'MeetingsProtocolsPage.preview.html',
-    tasks: 'TasksPage.preview.html',
+    tasks: '../../../tasks-app/pages/TasksPage.preview.html',
     admin: 'AdminPage.preview.html',
     taskStates: 'TaskStatesPage.preview.html'
   };

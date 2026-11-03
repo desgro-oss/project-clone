@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<!-- События — страница EventsPage концепта ibp-redesign-v2 (решение
+     пользователя 27.10.2026, по аналогии со страницей «Новости»).
+     Переход с главной: «Все события...», стрелка карточки «События», клик по
+     событию. Крошки: Главная / События. Вкладки «Мои / Деск», чипы-фильтры
+     типов; слева — V2EventsListTile, справа — V2EventDetailsTile, Splitter ДС.
+     Источник: открывается собранной EventsPage.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>События — IBP Redesign v2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* раскладка: сплиттер на всю оставшуюся высоту .screen--app; каждая
+     панель — колонка, тайл в ней растягивается и прокручивает своё тело */
+  .events-filters { flex: none; }
+  .split-fill { flex: 1; min-height: 0; background: transparent; border: 0; border-radius: 0; } /* тайлы — карточки на фоне страницы, без рамки сплиттера (как MeetingsProtocolsPage, решение пользователя 20.10.2026) */
+  .split-fill > .splitpane__panel { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: transparent; }
+  /* узкая рабочая область: панели друг под другом — лента сверху, текст
+     снизу; сплиттер не нужен. Ширину панели «a» Splitter ДС пишет инлайном
+     (flex: 0 0 N%), поэтому перебивается с !important */
+  @container screen (max-width: 899px) {
+    .split-fill { flex-direction: column; gap: var(--space-12); }
+    .split-fill > .spl { display: none; }
+    .split-fill > .splitpane__a { flex: 0 0 40% !important; }
+    .split-fill > .splitpane__b { flex: 1 1 0 !important; }
+  }
+</style>
+<link rel="stylesheet" href="../widgets/tiles/V2EventsListTile/V2EventsListTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2EventDetailsTile/V2EventDetailsTile.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomeBoard.preview.html?mode=after">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">События</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="EventsPage">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row"><div class="phead__title-group"><h1 class="phead__title">События</h1></div></div>
+          <div class="phead__subtitle"><span class="phead__meta">Изменения в моих проектах и у моих клиентов</span></div>
+        </div>
+      </div>
+
+      <!-- #sec:content ── вкладки, фильтр типов, лента и событие -->
+      <div class="tabs tabs--horiz" data-tabs id="events-tabs" role="tablist" aria-label="Область событий">
+        <button type="button" class="tab tab--m tab--selected" role="tab" aria-selected="true" data-events-scope="my"><span class="tab__label">Мои</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-events-scope="desk"><span class="tab__label">Деск</span></button>
+      </div>
+
+      <!-- быстрый фильтр: чипы-переключатели типов (aria-pressed); строит скрипт по IBPR_EVENTS.types -->
+      <div class="chiplist events-filters" role="group" aria-label="Типы событий" id="events-filters"></div>
+
+      <div class="splitpane split-fill" id="events-split" data-off-grid="Панели Splitter: ширину задаёт сплиттер">
+        <div class="splitpane__panel splitpane__a">
+          <!-- Локальный компонент «Лента событий» — левая панель страницы EventsPage:
+     события вкладки и включённых типов от новых к старым, выбранное
+     подсвечено. Строки рисует V2EventsListTile.js (LcEventsListTile.render). -->
+<section class="tile tile--headless lc-v2-events-list-tile" aria-label="Список событий" id="events-list" data-state="data" data-mode="view" data-widget="V2EventsListTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/V2EventsListTile/V2EventsListTile.html">
+  <div class="tile__body lc-v2-events-list-tile__body ds-scroll">
+    <!-- строки: кнопка на событие; выбранное — aria-current="true" -->
+    <div class="entity-list" data-events-list></div>
+    <!-- данных нет: во вкладке нет событий включённых типов -->
+    <div class="es es--m" data-events-empty hidden>
+      <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+      <div class="es__body">
+        <p class="es__title">Событий нет</p>
+        <p class="es__text">Включите другие типы событий в фильтре выше.</p>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+        <div class="spl" role="separator" aria-orientation="vertical" aria-valuemin="30" aria-valuemax="65" aria-valuenow="42" aria-label="Изменить ширину панелей" tabindex="0">
+          <span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <div class="splitpane__panel splitpane__b">
+          <!-- Локальный компонент «Событие» — правая панель страницы EventsPage:
+     что случилось, когда и кто, что изменилось (поле, было, стало) и с чем
+     связано — ссылки на проект, сделку, клиента. Содержимое рисует
+     V2EventDetailsTile.js (LcEventDetailsTile.render). -->
+<section class="tile tile--headless lc-v2-event-details-tile" aria-labelledby="lc-event-title" id="events-details" data-state="data" data-mode="view" data-widget="V2EventDetailsTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/V2EventDetailsTile/V2EventDetailsTile.html">
+  <div class="tile__body lc-v2-event-details-tile__body ds-scroll">
+    <article class="lc-v2-event-details-tile__event" data-event-article>
+      <div class="lc-v2-event-details-tile__type" data-event-type></div>
+      <h2 class="lc-v2-event-details-tile__title" id="lc-event-title" data-event-title></h2>
+      <p class="lc-v2-event-details-tile__meta"><time data-event-date></time><span aria-hidden="true">·</span><span data-event-author></span></p>
+      <section class="lc-v2-event-details-tile__section" aria-labelledby="lc-event-change-title" data-event-change-section>
+        <h3 class="lc-v2-event-details-tile__section-title" id="lc-event-change-title">Что изменилось</h3>
+        <div class="lc-v2-event-details-tile__fields" data-event-change></div>
+      </section>
+      <section class="lc-v2-event-details-tile__section" aria-labelledby="lc-event-links-title">
+        <h3 class="lc-v2-event-details-tile__section-title" id="lc-event-links-title">Связано с</h3>
+        <ul class="lc-v2-event-details-tile__links" data-event-links></ul>
+      </section>
+    </article>
+    <!-- событие не выбрано: вкладка без событий включённых типов -->
+    <div class="es es--m" data-event-none hidden>
+      <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+      <div class="es__body">
+        <p class="es__title">Событие не выбрано</p>
+        <p class="es__text">Выберите событие в списке слева.</p>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/lead-stages.js"></script>
+<script src="../data/weekly-picks.js"></script>
+<script src="../data/leads-store.js"></script>
+<script src="../data/events.js"></script>
+<script src="../widgets/tiles/V2EventsListTile/V2EventsListTile.js"></script>
+<script src="../widgets/tiles/V2EventDetailsTile/V2EventDetailsTile.js"></script>
+<script>
+/* Экранный скрипт: вкладка (?scope=my|desk) и включённые типы (?types=,
+   через запятую; нет параметра — все) отбирают события, слева лента,
+   справа выбранное (?id=E-…); всё пишется в адрес без перезагрузки.
+   Наборы — как у карточки «События» главной: «Мои» — isMine, «Деск» — все. */
+(function () {
+  'use strict';
+  window.IBPR_NAV.mount({ active: 'home' });
+  var E = window.IBPR_EVENTS;
+
+  var params = new URLSearchParams(window.location.search);
+  var scope = params.get('scope') === 'desk' ? 'desk' : 'my';
+  var selectedId = params.get('id');
+  var on = {};
+  var typesParam = params.get('types');
+  E.types.forEach(function (t) { on[t.code] = typesParam === null || typesParam.split(',').indexOf(t.code) >= 0; });
+  var listHost = document.getElementById('events-list');
+  var detailsHost = document.getElementById('events-details');
+  var filters = document.getElementById('events-filters');
+
+  function items() {
+    return E.all().filter(function (e) { return (scope === 'desk' || e.isMine) && on[e.typeCode]; });
+  }
+  function writeUrl() {
+    var p = new URLSearchParams(window.location.search);
+    p.set('scope', scope);
+    var codes = E.types.filter(function (t) { return on[t.code]; }).map(function (t) { return t.code; });
+    if (codes.length === E.types.length) p.delete('types'); else p.set('types', codes.join(','));
+    if (selectedId) p.set('id', selectedId); else p.delete('id');
+    window.history.replaceState(null, '', window.location.pathname + '?' + p.toString());
+  }
+  function render() {
+    var list = items();
+    if (!list.some(function (e) { return e.eventId === selectedId; })) selectedId = list.length ? list[0].eventId : null;
+    window.LcEventsListTile.render(listHost, { items: list, selectedId: selectedId, onSelect: select });
+    window.LcEventDetailsTile.render(detailsHost, { item: list.filter(function (e) { return e.eventId === selectedId; })[0] || null });
+    writeUrl();
+    /* на следующем кадре: высота панели устанавливается после первой отрисовки */
+    requestAnimationFrame(function () {
+      var row = listHost.querySelector('[aria-current="true"]');
+      if (row) row.scrollIntoView({ block: 'nearest' });
+    });
+  }
+  function select(e) {
+    selectedId = e.eventId;
+    render();
+    var b = listHost.querySelector('[data-event-id="' + e.eventId + '"]');
+    if (b) b.focus();
+  }
+
+  /* чипы-переключатели типов: Chip ДС, множественный выбор — aria-pressed */
+  filters.innerHTML = E.types.map(function (t) {
+    return '<button type="button" class="chip chip--edit chip--m chip--compact chip--rounded chip--dashed" aria-pressed="' + on[t.code] + '" data-events-type="' + t.code + '">'
+      + '<span class="chip__icon chip__icon--toggle" aria-hidden="true"><i data-icon="add"></i><i data-icon="check"></i></span>'
+      + '<span class="chip__label">' + t.label + '</span></button>';
+  }).join('');
+  filters.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-events-type]');
+    if (!b) return;
+    var code = b.getAttribute('data-events-type');
+    on[code] = !on[code];
+    b.setAttribute('aria-pressed', String(on[code]));
+    render();
+  });
+
+  /* вкладки: выбранная по адресу, переключение — штатный рантайм Tab ДС */
+  var tabsEl = document.getElementById('events-tabs');
+  tabsEl.querySelectorAll('.tab').forEach(function (b) {
+    var sel = b.getAttribute('data-events-scope') === scope;
+    b.classList.toggle('tab--selected', sel);
+    b.setAttribute('aria-selected', sel ? 'true' : 'false');
+    b.setAttribute('tabindex', sel ? '0' : '-1');
+  });
+  if (window.DSTabs) window.DSTabs.tabs(tabsEl, { onChange: function (i, b) {
+    var next = b.getAttribute('data-events-scope');
+    if (next === scope) return;
+    scope = next;
+    render(); /* выбранное остаётся, если оно есть и в новой вкладке, иначе — первое */
+  } });
+
+  if (window.DSSplitter) window.DSSplitter.wire(document.getElementById('events-split').querySelector('.spl'), { min: 30, max: 65, initial: 42 });
+
+  render();
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

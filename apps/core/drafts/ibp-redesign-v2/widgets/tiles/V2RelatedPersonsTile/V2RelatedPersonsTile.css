@@ -10,4 +10,4 @@
 .lc-related-persons[data-state="loading"] .lc-related-persons__loading { display: flex; }
 .lc-related-persons[data-state="loading"] .lc-related-persons__content,
 .lc-related-persons[data-state="error"] .lc-related-persons__content { display: none; }
-.lc-related-persons__more { font: var(--type-body-s); color: var(--text-secondary); margin: 0; }
+.lc-related-persons__more { font: var(--type-body-s-reg); color: var(--text-secondary); margin: 0; }

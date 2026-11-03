@@ -1,0 +1,15 @@
+# Сценарии показа прототипа Клиенты — панель прототипа.
+# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
+# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
+version: 1
+lastState: 7
+flows:
+  - id: analyst-client
+    title: Клиент → Сделки
+    desc: Продолжение сценария «Неделя аналитика сегодня», перенесённое из IBP Redesign v1 вместе с карточкой клиента (RE0043)
+    steps:
+      - state: 7
+        id: client
+        title: Клиент → Сделки — четыре таблицы лидов
+        page: ClientInfoPage.preview.html?id=3000012345&tab=ClientInfoDealsPage
+        note: 'Вкладка «Сделки → Лиды»: лиды клиента разложены по четырём таблицам — то, что часть 2 заменяет единым разделом. Разделов открыто: 7.'

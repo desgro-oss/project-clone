@@ -108,7 +108,7 @@
 .dvd-text__label {
   flex: 0 1 auto;
   min-width: 0;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;

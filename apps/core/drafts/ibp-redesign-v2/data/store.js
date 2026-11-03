@@ -14,6 +14,7 @@
    Подключается после всех data/*.js. API (window.IBPR):
      registry(source, tab) · registryTotal(source, tab)
      opportunity(id) · product(productId) · clients() · client(id)
+     clientBase() · favoriteClients() · isFavoriteClient(id) · toggleFavoriteClient(id)
      potentials(kind) · potential(id) · meetings(scope) · meeting(id)
      tasks(scope) · task(id) · employees() · employee(id)
      takeToWork(id) · refuse(id, rq) · moveLeadToPipeline(leadId) · removeProduct(productId)
@@ -42,7 +43,8 @@
     return rows;
   }
 
-  uniqueRows(window.MOCK_CLIENTS, 'clients');
+  /* База клиентов банка — портфель аналитика и остальные клиенты («Поиск клиентов») */
+  var CLIENT_BASE = uniqueRows(window.MOCK_CLIENTS.concat(window.MOCK_BASE_CLIENTS || []), 'clients');
   uniqueRows(window.MOCK_EMPLOYEES, 'employees');
 
   var data = {
@@ -102,8 +104,26 @@
     }
     return null;
   }
+  /* clients() — портфель аналитика: с ним связаны сделки, лиды и встречи;
+     clientBase() — вся база клиентов банка, таблица «Поиск клиентов» */
   function clients() { return window.MOCK_CLIENTS; }
-  function client(id) { return clients().filter(function (c) { return c.id === id; })[0] || null; }
+  function clientBase() { return CLIENT_BASE; }
+  function client(id) { return CLIENT_BASE.filter(function (c) { return c.id === id; })[0] || null; }
+  /* «Мои клиенты» — клиенты базы, которых аналитик отметил избранными
+     (решение пользователя 26.10.2026). Стартовый набор — портфель; отметки
+     живут в стор-состоянии и переживают переходы между страницами. */
+  function favoriteIds() {
+    if (!data.favoriteClients) data.favoriteClients = clients().map(function (c) { return c.id; });
+    return data.favoriteClients;
+  }
+  function isFavoriteClient(id) { return favoriteIds().indexOf(id) >= 0; }
+  function favoriteClients() { return CLIENT_BASE.filter(function (c) { return isFavoriteClient(c.id); }); }
+  function toggleFavoriteClient(id) {
+    var ids = favoriteIds(), at = ids.indexOf(id);
+    if (at >= 0) ids.splice(at, 1); else ids.push(id);
+    save(); emit('clients', { favorite: id, on: at < 0 });
+    return at < 0;
+  }
   /* комментарии клиента: новые живут в стор-состоянии и переживают переходы
      между страницами (sessionStorage), исходный список — в clients.js */
   function clientComments(id) {
@@ -272,7 +292,11 @@
     opportunity: opportunity,
     product: product,
     clients: clients,
+    clientBase: clientBase,
     client: client,
+    favoriteClients: favoriteClients,
+    isFavoriteClient: isFavoriteClient,
+    toggleFavoriteClient: toggleFavoriteClient,
     clientComments: clientComments,
     addClientComment: addClientComment,
     holdings: window.MOCK_HOLDINGS,

@@ -64,7 +64,7 @@
 }
 .pbar__label {
   min-width: 0;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -72,7 +72,7 @@
 }
 .pbar__value {
   flex: none;
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }
@@ -128,7 +128,7 @@
   position: absolute;
   top: calc(-1 * (var(--pbar-h) + 16px));
   width: max-content;
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-primary);
   white-space: nowrap;
   pointer-events: none;

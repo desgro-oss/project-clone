@@ -1,0 +1,50 @@
+{
+  "_": "Демо-данные витрины: объект на состояние данных (ключи — значения data-state) и long — те же данные с самыми длинными значениями. Каждый объект — то, что страница отдаёт в PostTileLoanNrlTranches.render(tile, view): tranches — транши договора из дерева продуктов (dateISO — 'ГГГГ-ММ-ДД' или null, amount — число или null, repaid — транш погашен, canRemove — можно ли удалить, по умолчанию true), mode ставит страница. Значения выдуманные. Состояния ошибки у тайла нет; loading — заготовка в самой разметке, данных не требует.",
+
+  "data": {
+    "tranches": [
+      { "id": "1027.d1.p1.i1.t1", "number": "1.1.1.1.", "name": "Транш", "repaid": false, "dateISO": "2024-04-22", "amount": 800000, "currencyCode": "RUB" },
+      { "id": "1027.d1.p1.i1.t2", "number": "1.1.1.2.", "name": "Транш", "repaid": false, "dateISO": "2024-04-22", "amount": 800000, "currencyCode": "RUB" }
+    ]
+  },
+
+  "partial": {
+    "_": "У второго транша ещё нет даты подписания и суммы лимита: пара значений на месте, значение — «–».",
+    "tranches": [
+      { "id": "1027.d1.p1.i1.t1", "number": "1.1.1.1.", "name": "Транш", "repaid": false, "dateISO": "2024-04-22", "amount": 800000, "currencyCode": "RUB" },
+      { "id": "1027.d1.p1.i1.t2", "number": "1.1.1.2.", "name": "Транш", "repaid": false, "dateISO": null, "amount": null, "currencyCode": "RUB" }
+    ]
+  },
+
+  "repaid": {
+    "_": "Первый транш погашен: под названием строка «Дата фактического погашения» с зелёным чеком, в меню ⋮ вместо «Погасить» — «Отменить погашение», остаётся «Удалить» (ответ человека 27.10.2026).",
+    "tranches": [
+      { "id": "1027.d1.p1.i1.t1", "number": "1.1.1.1.", "name": "Транш", "repaid": true, "repaidAt": "2026-10-20", "dateISO": "2024-04-22", "amount": 800000, "currencyCode": "RUB" },
+      { "id": "1027.d1.p1.i1.t2", "number": "1.1.1.2.", "name": "Транш", "repaid": false, "dateISO": "2024-04-22", "amount": 800000, "currencyCode": "RUB" }
+    ]
+  },
+
+  "notRemovable": {
+    "_": "Второй транш прикреплён к финансовому инструменту (ФИ) и удалить его нельзя: canRemove — false, пункт «Удалить» выключен, событие не уходит. Поле необязательное, без него — true.",
+    "tranches": [
+      { "id": "1027.d1.p1.i1.t1", "number": "1.1.1.1.", "name": "Транш", "repaid": false, "canRemove": true, "dateISO": "2024-04-22", "amount": 800000, "currencyCode": "RUB" },
+      { "id": "1027.d1.p1.i1.t2", "number": "1.1.1.2.", "name": "Транш", "repaid": false, "canRemove": false, "dateISO": "2024-04-22", "amount": 800000, "currencyCode": "RUB" }
+    ]
+  },
+
+  "empty": {
+    "_": "Под договором нет траншей. С правом на правку — кнопка «Добавить транш», без права — строка «Не заполнено».",
+    "tranches": []
+  },
+
+  "long": {
+    "_": "Самые длинные значения: пять траншей, сумма на девять разрядов, длинное название.",
+    "tranches": [
+      { "id": "1027.d1.p1.i1.t1", "number": "1.1.1.1.", "name": "Транш на пополнение оборотных средств по кредитной линии", "repaid": false, "dateISO": "2024-04-22", "amount": 123456789012.34, "currencyCode": "RUB" },
+      { "id": "1027.d1.p1.i1.t2", "number": "1.1.1.2.", "name": "Транш", "repaid": false, "dateISO": "2024-04-22", "amount": 800000, "currencyCode": "RUB" },
+      { "id": "1027.d1.p1.i1.t3", "number": "1.1.1.3.", "name": "Транш", "repaid": false, "dateISO": "2024-05-06", "amount": 15000000.5, "currencyCode": "RUB" },
+      { "id": "1027.d1.p1.i1.t4", "number": "1.1.1.4.", "name": "Транш", "repaid": true, "repaidAt": "2026-10-20", "dateISO": "2024-06-17", "amount": 2500000, "currencyCode": "RUB" },
+      { "id": "1027.d1.p1.i1.t5", "number": "1.1.1.5.", "name": "Транш", "repaid": false, "dateISO": "2024-07-01", "amount": 0, "currencyCode": "RUB" }
+    ]
+  }
+}

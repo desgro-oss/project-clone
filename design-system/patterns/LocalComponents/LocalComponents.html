@@ -17,20 +17,20 @@
 <style>
 .page{max-width:1560px;margin:0 auto;padding:clamp(40px,7vw,96px) clamp(24px,4vw,56px) 140px}
 a{color:var(--link)}a:hover{color:var(--link-dark)}
-.section>p.desc{font:var(--type-body-m);color:var(--text-secondary);margin:0 0 28px;max-width:92ch;text-wrap:pretty}
+.section>p.desc{font:var(--type-body-m-reg);color:var(--text-secondary);margin:0 0 28px;max-width:92ch;text-wrap:pretty}
 .section h3+p.desc{margin-top:0}
-.claim{font:var(--type-body-l);color:var(--text-primary);margin:0 0 10px;max-width:92ch;text-wrap:pretty}
-ul.tight{margin:0 0 24px;padding-left:22px;font:var(--type-body-m);color:var(--text-primary);max-width:92ch}
+.claim{font:var(--type-body-l-reg);color:var(--text-primary);margin:0 0 10px;max-width:92ch;text-wrap:pretty}
+ul.tight{margin:0 0 24px;padding-left:22px;font:var(--type-body-m-reg);color:var(--text-primary);max-width:92ch}
 ul.tight li{margin:0 0 8px;text-wrap:pretty}
 ul.tight li b{font-weight:600}
-ol.tight{margin:0 0 24px;padding-left:22px;font:var(--type-body-m);color:var(--text-primary);max-width:92ch}
+ol.tight{margin:0 0 24px;padding-left:22px;font:var(--type-body-m-reg);color:var(--text-primary);max-width:92ch}
 ol.tight li{margin:0 0 8px;text-wrap:pretty}
 ol.tight li b{font-weight:600}
 .tree{font:13px/1.75 var(--font-screen),ui-monospace,monospace;color:var(--text-primary);background:var(--cgrey-50);border-radius:var(--radius-s);padding:20px 24px;margin:0 0 28px;white-space:pre;overflow-x:auto}
 .tree b{font-weight:700}
 .tree i{font-style:normal;color:var(--text-secondary)}
-.note{font:var(--type-body-m);color:var(--text-secondary);border-left:3px solid var(--cgrey-100);padding:2px 0 2px 16px;margin:0 0 28px;max-width:92ch;text-wrap:pretty}
-.out{font:var(--type-body-m);color:var(--text-primary);background:var(--cgrey-50);border-radius:var(--radius-s);padding:16px 20px;margin:0 0 24px;max-width:92ch}
+.note{font:var(--type-body-m-reg);color:var(--text-secondary);border-left:3px solid var(--cgrey-100);padding:2px 0 2px 16px;margin:0 0 28px;max-width:92ch;text-wrap:pretty}
+.out{font:var(--type-body-m-reg);color:var(--text-primary);background:var(--cgrey-50);border-radius:var(--radius-s);padding:16px 20px;margin:0 0 24px;max-width:92ch}
 .out b{font-weight:600}
 .tbl{margin:0 0 28px}
 </style>
@@ -42,7 +42,7 @@ ol.tight li b{font-weight:600}
   <header class="masthead">
     <p class="eyebrow">Правила и паттерны</p>
     <h1>Локальные компоненты</h1>
-    <p class="meta"><span>Версия: <b>2.001</b></span><span>Обновлено: <b>23.10.2026</b></span></p>
+    <p class="meta"><span>Версия: <b>2.001</b></span><span>Обновлено: <b>02.11.2026</b></span></p>
     <p class="lead">Локальный компонент знает предметную область: он собран из компонентов этой ДС, но фиксирует конкретный состав полей, порядок, термины и правила отображения одного продукта. Тайлы, таблицы, модальные окна, поповеры, контекстные меню — всё это локальные компоненты и живёт по правилам с этой страницы. Сами компоненты и их паспорта хранятся в проекте продукта; здесь — правила и шаблон, по которым их заводит любая команда.</p>
   </header>
 
@@ -783,6 +783,12 @@ ol.tight li b{font-weight:600}
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.6fr 8px;">
         <div class="tc tc--separator"></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Родственные страницы — под одним аккордеоном</b></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страницы, являющиеся частью одного целого, собираются в навигации под одним аккордеоном: тайл-владелец — первым пунктом «Обзор», его внутренние страницы — следом. Связь задаёт поле <i>artifactOf</i> в паспорте страницы-артефакта; аккордеоны строит генератор витрины (как устроено — <i>README</i> витрины проекта, в IBP — <i>apps/local-components/README.md</i>)</span></span></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.6fr 8px;">
+        <div class="tc tc--separator"></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Порядок внутри группы</b></span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">По алфавиту видимого названия — как в этой ДС. Порядок групп задаёт проект: переиспользуемые первыми, дальше предметные</span></span></div>
         <div class="tc tc--separator"></div>
@@ -795,6 +801,7 @@ ol.tight li b{font-weight:600}
       </div>
     </div>
     <div class="out"><b>Переиспользуемые — особая категория</b> (в IBP — «Общие»). В неё попадают компоненты, используемые более чем в одной предметной области. Перенос туда — отдельное решение с записью в журнале: у такого компонента появляется больше одного владельца, и любая правка затрагивает все его места сразу.</div>
+    <div class="out"><b>Внутренняя страница тайла — под его аккордеоном, впредь всегда.</b> Страницы, являющиеся частью одного целого, собираются под одним аккордеоном — так делать каждый раз, когда у тайла есть внутренняя страница с уникальными для неё виджетами. Примеры витрины IBP: аккордеон «Договор и дополнительные соглашения» — тайл и «Фильтр дополнительных соглашений»; аккордеон «ЕТС» — «ЕТС», «История изменения базового индекса», «История изменения ставок» и «Процентная схема ЕТС», у которой свой вложенный аккордеон с окном схемы.</div>
     <p class="note">Левая панель витрины собирается на компонентах этой ДС, а не вёрстается заново в каждом проекте.</p>
   </section>
 

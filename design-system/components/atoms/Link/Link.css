@@ -29,8 +29,8 @@
 }
 
 /* ---------- sizes (standalone links) -------------------------------------- */
-.link--m { font: var(--type-body-m); letter-spacing: 0; }
-.link--s { font: var(--type-body-s); letter-spacing: 0; }
+.link--m { font: var(--type-body-m-reg); letter-spacing: var(--type-ls); }
+.link--s { font: var(--type-body-s-reg); letter-spacing: var(--type-ls); }
 
 /* ---------- tones --------------------------------------------------------- *
    Тон = цвет напрямую (не через --link-fg* в модификаторе). Префикс

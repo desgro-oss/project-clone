@@ -39,7 +39,7 @@
   gap: 6px;
   min-width: 0;
   width: 100%;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-secondary);
 }
 /* выравнивание — всегда синхронизировано с Helper той же пары (см. правило
@@ -86,7 +86,7 @@
 /* ---------- Helper ---------- */
 .ds-helper {
   display: block;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
   text-wrap: pretty;
 }

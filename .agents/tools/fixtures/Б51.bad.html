@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!-- ФИКСТУРА сенсора layout-check. Это НЕ экран продукта и не открывается в
+     браузере: файл существует только как вход для проверки самого сторожа,
+     поэтому относительные пути до загрузчика ДС (apps/) не разрешаются.
+     `_base.ok.html` — эталон без дефектов: на нём ни одно правило не обязано
+     давать FAIL. Файл <ID>.bad.html отличается от базы ровно одним дефектом —
+     иначе проверка сторожа проверяет не то. У одного правила вариантов может
+     быть несколько: <ID>@<вариант>.bad.html — один и тот же дефект на разном
+     ВХОДЕ (статическая разметка и разметка из JS-шаблона). Идентификатор —
+     часть имени до «@»; разделитель не точка, её идентификаторы вида K2.1
+     уже содержат.
+     ДЕФЕКТ Б51: старые имена типографики — токен var(--type-body-m) в
+     собственном <style> и класс ds-body-s в разметке. Удалены в Typography
+     2.000 (RE0048): рампа живёт только в именах кита (--type-body-m-reg,
+     .ds-body-s-reg, …), ссылки на старые имена гарантированно битые —
+     значения нет, класса нет. Комментарий в счёт не идёт: находка только
+     от живого кода. Сторож обязан дать FAIL Б51 здесь и НЕ давать его на
+     эталоне — `lessons-cli verify --only Б51`. -->
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Фикстура — IBP</title>
+<script src="../../../ds-config.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary); background: var(--bg-page);
+  }
+  .fx-note { font: var(--type-body-m); color: var(--text-secondary); }
+</style>
+</head>
+<body>
+  <div class="nav-layout">
+    <aside class="nav nav--rail">
+      <div class="nav__list">
+        <a class="nav__item nav__item--selected"><i class="nav__ico" data-icon="folder"></i><span class="nav__label">Сделки</span></a>
+      </div>
+      <button class="ibtn ibtn--neutral ibtn--m nav__pin" type="button" aria-label="Закрепить панель"><i data-icon="pin"></i></button>
+      <div class="nav__footer"><span class="nav__user-text">Иванов И. И.</span></div>
+    </aside>
+
+    <div class="screen">
+      <nav class="crumbs"><a class="crumbs__item">Главная</a></nav>
+      <main class="screen__content">
+        <header class="phead">
+          <h1 class="phead__title">Реестр сделок</h1>
+        </header>
+        <p class="fx-note ds-body-s">Примечание к реестру.</p>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

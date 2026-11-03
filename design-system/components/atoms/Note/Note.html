@@ -19,29 +19,29 @@
 <link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
 <link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
 
   /* ---------- playground ---------- */
   .pg__stage { flex:1; min-height:0; width:100%; padding:48px 40px; display:flex; align-items:center; justify-content:center; background: var(--bg-page); }
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
-  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .pg__code { margin-top:4px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* ---------- demo layout ---------- */
   .cols2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media (max-width:680px){ .cols2{ grid-template-columns:1fr; } }
   .cols3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
   @media (max-width:820px){ .cols3{ grid-template-columns:1fr; } }
-  .demo-rowlabel { font: var(--type-body-xs); color: var(--text-inactive); margin:0 0 7px; }
+  .demo-rowlabel { font: var(--type-body-xs-reg); color: var(--text-inactive); margin:0 0 7px; }
   .demo-stack { display:flex; flex-direction:column; gap:12px; }
 
   /* ---------- do / don't ---------- */
   .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
   .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
-  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong-smb); padding:14px 20px 0; }
   .guide-card__body { padding:28px 20px; flex:1; display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; }
-  .guide-card__cap { padding:0 20px 18px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+  .guide-card__cap { padding:0 20px 18px; font: var(--type-body-xs-reg); color: var(--text-inactive); text-wrap:pretty; }
 
   /* ---------- Note demo ---------- */
   #use-form .note, #use-modal .note { margin-top:4px; }
@@ -193,7 +193,7 @@
         <div class="tbl__row" style="grid-template-columns:8px .6fr 1fr .6fr .6fr 1.4fr 8px;">
           <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text"><b>XS</b></span></span></div>
-          <div class="tc"><code class="tok">--type-body-xs</code></div>
+          <div class="tc"><code class="tok">--type-body-xs-reg</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">16</span></span></div>
           <div class="tc"><code class="tok">--space-4</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">плотные блоки, модальные окна</span></span></div>
@@ -202,7 +202,7 @@
         <div class="tbl__row" style="grid-template-columns:8px .6fr 1fr .6fr .6fr 1.4fr 8px;">
           <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text"><b>S</b> · по умолчанию</span></span></div>
-          <div class="tc"><code class="tok">--type-body-s</code></div>
+          <div class="tc"><code class="tok">--type-body-s-reg</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">18</span></span></div>
           <div class="tc"><code class="tok">--space-8</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">подвал формы, StepForm</span></span></div>
@@ -211,7 +211,7 @@
         <div class="tbl__row" style="grid-template-columns:8px .6fr 1fr .6fr .6fr 1.4fr 8px;">
           <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text"><b>M</b></span></span></div>
-          <div class="tc"><code class="tok">--type-body-m</code></div>
+          <div class="tc"><code class="tok">--type-body-m-reg</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">20</span></span></div>
           <div class="tc"><code class="tok">--space-8</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">пояснение в тексте Body M</span></span></div>
@@ -271,21 +271,21 @@
         <div class="tbl__row" style="grid-template-columns:8px .6fr 1.2fr 1fr 8px;">
           <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text"><b>XS</b></span></span></div>
-          <div class="tc"><code class="tok">--type-body-xs</code></div>
+          <div class="tc"><code class="tok">--type-body-xs-reg</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">12 / 16 px</span></span></div>
           <div class="tc tc--separator"></div>
         </div>
         <div class="tbl__row" style="grid-template-columns:8px .6fr 1.2fr 1fr 8px;">
           <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text"><b>S</b></span></span></div>
-          <div class="tc"><code class="tok">--type-body-s</code></div>
+          <div class="tc"><code class="tok">--type-body-s-reg</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">14 / 16 px</span></span></div>
           <div class="tc tc--separator"></div>
         </div>
         <div class="tbl__row" style="grid-template-columns:8px .6fr 1.2fr 1fr 8px;">
           <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text"><b>M</b></span></span></div>
-          <div class="tc"><code class="tok">--type-body-m</code></div>
+          <div class="tc"><code class="tok">--type-body-m-reg</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">16 / 20 px</span></span></div>
           <div class="tc tc--separator"></div>
         </div>
@@ -340,7 +340,7 @@
     <h2>Для разработчиков</h2>
     <p class="desc">Хендофф-пакет: точные размеры и поведение. Не привязан к стеку.</p>
 
-    <p class="subhead" style="font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px;">Точные размеры (redline)</p>
+    <p class="subhead" style="font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0 0 16px;">Точные размеры (redline)</p>
     <p class="desc tight">Значения измерены на живом экземпляре (<code class="tok">getComputedStyle</code>), источник — <code class="tok">components/atoms/Note/Note.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
@@ -534,15 +534,15 @@ function makeNote(content, size, accent, glyph) {
   gap: var(--space-8);
   min-width: 0;
   margin: 0;
-  font: var(--type-body-s);
-  letter-spacing: 0;
+  font: var(--type-body-s-reg);
+  letter-spacing: var(--type-ls);
   color: var(--text-secondary);
 }
 
 /* ---------- sizes --------------------------------------------------------- */
-.note--xs { --note-icon: 16px; gap: var(--space-4); font: var(--type-body-xs); }
-.note--s  { --note-icon: 18px; gap: var(--space-8); font: var(--type-body-s); }
-.note--m  { --note-icon: 20px; gap: var(--space-8); font: var(--type-body-m); }
+.note--xs { --note-icon: 16px; gap: var(--space-4); font: var(--type-body-xs-reg); }
+.note--s  { --note-icon: 18px; gap: var(--space-8); font: var(--type-body-s-reg); }
+.note--m  { --note-icon: 20px; gap: var(--space-8); font: var(--type-body-m-reg); }
 
 /* ---------- parts ---------------------------------------------------------
    Коробка иконки — высотой в строку текста (1lh от шрифта заметки): глиф

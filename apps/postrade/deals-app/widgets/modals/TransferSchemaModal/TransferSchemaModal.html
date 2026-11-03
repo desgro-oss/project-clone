@@ -1,0 +1,167 @@
+<!-- Окно «Процентная схема» страницы «Единая трансфертная ставка»: создание и правка
+     схемы и подтверждение удаления. Артефакт тайла-карточки схемы (TransferSchemaTile) и
+     шапки страницы: окно открывает страница PostModalTransferSchema.open({ id? }) —
+     «Новая схема» в шапке (без id) или «Изменить» в меню ⋮ карточки (с id); удаление —
+     пункт «Удалить» меню ⋮ карточки, страница зовёт PostModalTransferSchema.confirmRemove(id).
+     Фрагмент вшивается ассемблером отдельной меткой ds-include в конец страницы.
+
+     В файле два соседних скрима (как у окна ДС: ассемблер переносит атрибуты метки только
+     на первый корень):
+     1) tschema-scrim — окно «Процентная схема». Заголовок и при создании, и при правке один;
+        «Удалить» в подвале нет (макет «Новая процентная схема ЕТС»): удаление запускает
+        страница. Состояния макета — одно окно: пустое, фиксированная ставка, плавающая
+        ставка, ошибка; значения полей и показ полей ставки ставит TransferSchemaModal.js при
+        каждом открытии (примеры значений — в fixtures.json). В разметке — пустое состояние:
+        тип ставки не выбран, поля ставки скрыты атрибутом hidden;
+     2) tschema-delete-scrim — подтверждение удаления. Отдельный скрим-сосед (вложенный
+        скрим внутри основного унаследовал бы его hidden); как у транша и ДС: «Подтвердите
+        действие», «Отменить» и «Подтвердить» в тоне error.
+
+     Раскладка полей — сетка в двенадцать колонок: строка 1 — «Рабочих дней до применения
+     БИ», «Дата начала», «Дата окончания» поровну, по четыре колонки (решение человека
+     02.11.2026); «Комментарий» — на всю ширину; «Тип ставки» — шесть колонок, правее —
+     «Ставка» (фиксированная) или «Базовый индекс (БИ)» и «Спред» (плавающая, по три).
+     Ширина окна — modal--w5 (747 px): на одну ступень шире макета (решение человека
+     02.11.2026). Подпись «Рабочих дней до применения БИ» переносится на две строки
+     (ds-label--wrap), при фактическом усечении — тултип с полным текстом
+     (data-tooltip-truncated="only").
+
+     Отличие от макета (решение человека 26.10.2026, ответ 7): маска даты ДД.ММ.ГГГГ вместо
+     ММ.ДД.ГГГГ.
+
+     Списки «Тип ставки» и «Базовый индекс (БИ)» пусты в разметке: опции собирает скрипт из
+     справочников LOAN_RATE_TYPE_LABELS и LOAN_BASE_INDEX_LABELS. Крестик очистки в разметке
+     нет намеренно: он живёт по значению, его рисует рантайм поля. «Сохранить» без
+     data-modal-close: окно закрывает скрипт, когда проверка прошла. Клик по скриму не
+     закрывает окно с вводом. Алерт уровня окна (.modal__alert) скрыт, пока ошибок нет;
+     строки с текстами ошибок скрипт кладёт в [data-tschema-alert-list]. -->
+
+<div class="modal-scrim" id="tschema-scrim" hidden>
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="tschema-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="tschema-title">Процентная схема</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" data-tschema-alert hidden>
+      <div class="alert alert--error alert--m alert--flush" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body" data-tschema-alert-list></div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <div class="lc-transfer-schema-modal__grid">
+
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__third">
+          <label class="ds-label ds-label--wrap" for="tschema-lag"><span class="ds-label__text" data-tooltip="Рабочих дней до применения БИ" data-tooltip-truncated="only">Рабочих дней до применения БИ</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="tschema-lag" name="baseIndexLagWorkDays" inputmode="numeric" autocomplete="off" value="0">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__third">
+          <label class="ds-label" for="tschema-start-date"><span class="ds-label__text">Дата начала</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="tschema-start-date" name="startDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+              <span class="inp__acts">
+                <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__third">
+          <label class="ds-label" for="tschema-end-date"><span class="ds-label__text">Дата окончания</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="tschema-end-date" name="endDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+              <span class="inp__acts">
+                <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth inp--multiline lc-transfer-schema-modal__wide">
+          <label class="ds-label" for="tschema-comment"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field">
+            <textarea class="inp__control" id="tschema-comment" name="comment" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__type">
+          <label class="ds-label" for="tschema-rate-type"><span class="ds-label__text">Тип ставки</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="tschema-rate-type-list">
+              <input class="inp__control" id="tschema-rate-type" name="rateTypeCode" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="tschema-rate-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <!-- Фиксированная ставка: «Ставка». Плавающая: «Базовый индекс (БИ)» и «Спред».
+             Лишнее для выбранного типа скрыто атрибутом hidden, а не стилем. -->
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__rate" data-tschema-rate="FIXED" hidden>
+          <label class="ds-label" for="tschema-fixed-rate"><span class="ds-label__text">Ставка</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="tschema-fixed-rate" name="fixedRatePercent" inputmode="decimal" autocomplete="off">
+              <span class="inp__postfix">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__rate" data-tschema-rate="FLOATING" hidden>
+          <label class="ds-label" for="tschema-base-index"><span class="ds-label__text">Базовый индекс (БИ)</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="tschema-base-index-list">
+              <input class="inp__control" id="tschema-base-index" name="baseIndexCode" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="tschema-base-index-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__rate" data-tschema-rate="FLOATING" hidden>
+          <label class="ds-label" for="tschema-spread"><span class="ds-label__text">Спред</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="tschema-spread" name="spreadPercent" inputmode="decimal" autocomplete="off">
+              <span class="inp__postfix">%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-tschema-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<div class="modal-scrim modal-scrim--nested" id="tschema-delete-scrim" hidden>
+  <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="tschema-delete-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="tschema-delete-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="ds-body-m-reg">Удаление процентной схемы</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-tschema-confirm="cancel"><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--error btn--m" data-tschema-confirm="ok"><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

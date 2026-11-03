@@ -1,0 +1,42 @@
+{
+  "_": "Демо-данные витрины. Виджет без data-state: состояния — режим прав (mode: edit | view) × свёрнута / развёрнута (collapsed). data — полностью заполненная карточка, как на макете «Tile_AdditionalAgreement»; partial — заполнено только обязательное (пусто: тип изменения, ключевые изменения, комментарий, данные решения) — пустое показывается прочерком; long — самые длинные значения (контрол «Длинные значения»). Состояний «Загрузка» и «Ошибка» у карточки нет (макета нет, паспорт, «Открытые вопросы»). Номер ДС — готовая строка '<порядковый>-<номер договора>' (её даёт LoanAgreementStore.agreementNumber), даты — ISO. Коды справочников берутся из LOAN_*_LABELS демо-данных. Значения выдуманные, правдоподобной длины. Рисует их сценарий демо функциями самого компонента.",
+  "data": {
+    "mode": "edit",
+    "collapsed": true,
+    "id": "AA-4",
+    "number": "4-1234567890",
+    "signDate": "2023-10-01",
+    "changeTypeCode": "FINANCIAL_AND_NON_FINANCIAL",
+    "keyChangeCodes": ["PRINCIPAL_REPAYMENT_SCHEDULE"],
+    "decisionDate": "2022-01-01",
+    "decisionNumber": "1234567890",
+    "approvalLevelCode": "KPKI_GOSB",
+    "comment": "Изменён график погашения основного долга: платежи перенесены на конец квартала, срок договора не меняется. Решение коллегиального органа принято без замечаний; новая редакция графика приложена к соглашению."
+  },
+  "partial": {
+    "mode": "view",
+    "collapsed": false,
+    "id": "AA-5",
+    "number": "5-1234567890",
+    "signDate": "2024-02-15",
+    "changeTypeCode": null,
+    "keyChangeCodes": [],
+    "decisionDate": null,
+    "decisionNumber": null,
+    "approvalLevelCode": null,
+    "comment": null
+  },
+  "long": {
+    "mode": "edit",
+    "collapsed": false,
+    "id": "AA-6",
+    "number": "12-12345678901234567890",
+    "signDate": "2024-12-31",
+    "changeTypeCode": "FINANCIAL_AND_NON_FINANCIAL",
+    "keyChangeCodes": ["PRINCIPAL_REPAYMENT_SCHEDULE", "EARLY_REPAYMENT_TERMS", "OTHER"],
+    "decisionDate": "2024-12-30",
+    "decisionNumber": "КО-2024/12-1234567890-ДС",
+    "approvalLevelCode": "SIX_EYES_PPR",
+    "comment": "Изменён график погашения основного долга: платежи перенесены на конец квартала, срок договора не меняется. Решение коллегиального органа принято без замечаний; новая редакция графика приложена к соглашению. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+  }
+}

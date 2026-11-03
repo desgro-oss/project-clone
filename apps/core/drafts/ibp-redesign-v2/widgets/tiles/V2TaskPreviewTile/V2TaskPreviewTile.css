@@ -5,8 +5,8 @@
 .lc-task-preview__acts { display: flex; flex-wrap: wrap; gap: var(--space-8); }
 .lc-task-preview__acts[hidden] { display: none; }
 .lc-task-preview__sec { display: flex; flex-direction: column; gap: var(--space-12); min-width: 0; }
-.lc-task-preview__sec-title { font: var(--type-h6-strong); color: var(--text-primary); margin: 0; }
-.lc-task-preview__text { font: var(--type-body-m); color: var(--text-primary); margin: 0; }
+.lc-task-preview__sec-title { font: var(--type-h6-strong-smb); color: var(--text-primary); margin: 0; }
+.lc-task-preview__text { font: var(--type-body-m-reg); color: var(--text-primary); margin: 0; }
 
 .lc-task-preview__error,
 .lc-task-preview__loading { display: none; }

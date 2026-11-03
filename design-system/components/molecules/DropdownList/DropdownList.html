@@ -27,7 +27,7 @@
 
   /* section */
 
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:76ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:76ch; text-wrap:pretty; }
 
   
   .row { display:flex; flex-wrap:wrap; align-items:flex-start; gap:40px; }
@@ -37,7 +37,7 @@
   
 
   /* trigger field (Select / Autocomplete) */
-  .fld { display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 12px; border:1px solid var(--border-primary); border-radius: var(--radius-field); background: var(--bg-tile); color: var(--text-primary); font: var(--type-body-m); cursor:pointer; user-select:none; box-sizing:border-box; transition:border-color .12s ease, box-shadow .12s ease; }
+  .fld { display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 12px; border:1px solid var(--border-primary); border-radius: var(--radius-field); background: var(--bg-tile); color: var(--text-primary); font: var(--type-body-m-reg); cursor:pointer; user-select:none; box-sizing:border-box; transition:border-color .12s ease, box-shadow .12s ease; }
   .fld:hover { border-color: var(--border-dark); }
   .fld.is-open { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg-light); }
   .fld__lead { flex:none; width:20px; height:20px; color: var(--text-inactive); display:inline-flex; }
@@ -56,11 +56,11 @@
       repeating-conic-gradient(#f2f5f5 0% 25%, #fbfcfc 0% 50%) 0 / 22px 22px; }
 
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
 
-  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+  .pg__code { margin-top:4px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
-  .toggle { display:inline-flex; align-items:center; gap:11px; padding:9px 12px; border:1px solid var(--border-light); border-radius:9px; font: var(--type-body-m); color: var(--text-primary); cursor:pointer; user-select:none; background: var(--bg-tile); transition:.12s; }
+  .toggle { display:inline-flex; align-items:center; gap:11px; padding:9px 12px; border:1px solid var(--border-light); border-radius:9px; font: var(--type-body-m-reg); color: var(--text-primary); cursor:pointer; user-select:none; background: var(--bg-tile); transition:.12s; }
 
   /* ---------- usage ---------- */
   .use-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; }
@@ -72,23 +72,23 @@
   @media (max-width:760px){ .anat { grid-template-columns:1fr; } }
   .anat__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:44px; display:flex; justify-content:center; }
   .anat__legend { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; counter-reset:a; }
-  .anat__legend li { display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m); color: var(--text-primary); }
-  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center; }
-  .anat__legend li .t .k { font: var(--type-body-m-strong); color: var(--text-primary); }
+  .anat__legend li { display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m-reg); color: var(--text-primary); }
+  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center; }
+  .anat__legend li .t .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
 
   /* ---------- variants matrix ---------- */
   .vscroll { overflow-x:auto; }
   .vgrid { display:grid; grid-template-columns: 132px repeat(4, minmax(190px,1fr)); gap:16px 18px; align-items:center; min-width:820px; }
-  .vh-col { font: var(--type-body-s-strong); color: var(--text-secondary); }
-  .vh-row { font: var(--type-body-s-strong); color: var(--text-secondary); }
+  .vh-col { font: var(--type-body-s-strong-smb); color: var(--text-secondary); }
+  .vh-row { font: var(--type-body-s-strong-smb); color: var(--text-secondary); }
   .vcell { display:flex; }
   .vcell .ddl { border-color: var(--border-light); }
 
   /* ---------- sizes ---------- */
   .sizes { display:flex; flex-wrap:wrap; gap:28px 36px; }
   .size-cell { display:flex; flex-direction:column; gap:12px; align-items:flex-start; }
-  .size-cell .th { font: var(--type-body-s-strong); color: var(--text-secondary); }
-  .size-badge { font: var(--type-body-xs); color: var(--text-inactive); font-variant-numeric: tabular-nums; background: var(--bg-table-default-focus); padding:2px 9px; border-radius:999px; }
+  .size-cell .th { font: var(--type-body-s-strong-smb); color: var(--text-secondary); }
+  .size-badge { font: var(--type-body-xs-reg); color: var(--text-inactive); font-variant-numeric: tabular-nums; background: var(--bg-table-default-focus); padding:2px 9px; border-radius:999px; }
 
   /* ---------- states ---------- */
   .states { display:grid; grid-template-columns: repeat(3, 1fr); gap:30px 26px; }
@@ -100,12 +100,12 @@
   .sys { display:grid; grid-template-columns: repeat(2, 1fr); gap:30px 26px; }
   @media (max-width:760px){ .sys { grid-template-columns: 1fr; } }
   .sys-cell { display:flex; flex-direction:column; gap:12px; align-items:flex-start; }
-  .sys-cell .th { font: var(--type-body-s-strong); color: var(--text-secondary); }
-  .sys-cap { font: var(--type-body-xs); color: var(--text-inactive); margin:0; max-width:38ch; text-wrap:pretty; }
+  .sys-cell .th { font: var(--type-body-s-strong-smb); color: var(--text-secondary); }
+  .sys-cap { font: var(--type-body-xs-reg); color: var(--text-inactive); margin:0; max-width:38ch; text-wrap:pretty; }
 
   /* ---------- content ---------- */
   .stack { display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
-  .stack .th { font: var(--type-body-s-strong); color: var(--text-secondary); }
+  .stack .th { font: var(--type-body-s-strong-smb); color: var(--text-secondary); }
 
   /* ---------- positioning viewport ---------- */
   .vp { position:relative; height:360px; border:1px dashed var(--border-primary); border-radius:14px; overflow:hidden;
@@ -114,20 +114,20 @@
       repeating-conic-gradient(var(--cgrey-50) 0% 25%, var(--bg-tile) 0% 50%) 0 / 20px 20px; }
   .vp .fldwrap { cursor:grab; touch-action:none; }
   .vp .fldwrap:active { cursor:grabbing; }
-  .vp .hint-drag { position:absolute; left:14px; bottom:12px; font: var(--type-body-xs); color: var(--text-primary); pointer-events:none; }
+  .vp .hint-drag { position:absolute; left:14px; bottom:12px; font: var(--type-body-xs-reg); color: var(--text-primary); pointer-events:none; }
 
   /* ---------- reference tables ---------- */
-  .ref-table th, .ref-table td { text-align:left; padding:16px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); vertical-align:middle; }
+  .ref-table th, .ref-table td { text-align:left; padding:16px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); vertical-align:middle; }
   kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; color: var(--text-primary); background: var(--bg-table-default-focus); border:1px solid var(--border-primary); border-bottom-width:2px; border-radius:6px; padding:2px 8px; white-space:nowrap; }
 
   @media (max-width:760px){ .color-ref { grid-template-columns:1fr; } }
   
-  .cref-group > h3 { font: var(--type-h5-strong); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
+  .cref-group > h3 { font: var(--type-h5-strong-smb); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
   .cref-row { display:grid; grid-template-columns: 36px 1fr auto; gap:14px; align-items:center; padding:9px 22px; }
   .cref-sw .cf { position:absolute; inset:0; }
 
   /* ---------- developer handoff ---------- */
-  .subhead { font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px; }
+  .subhead { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0 0 16px; }
   .subhead.mt { margin-top: 34px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 
@@ -343,7 +343,7 @@
     <h2>Типографика</h2>
     <p class="desc">Подписи набираются гарнитурой <b>SB Sans Text</b>. Helper и заголовок группы — Body XS.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.31fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.31fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Подпись опции</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.31fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Подпись · выбранная</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m-strong</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m-strong)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.31fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Helper-текст</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.31fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок группы</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.31fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Системное сообщение</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m-strong</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m-strong)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.31fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.31fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Подпись опции</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.31fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Подпись · выбранная</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m-strong-smb</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m-strong-smb)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.31fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Helper-текст</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.31fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок группы</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.31fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Системное сообщение</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m-strong-smb</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m-strong-smb)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
     <table id="typo-table" style="display:none"><tbody></tbody></table>
   </section>
@@ -576,7 +576,7 @@
   border: 1px solid var(--border-light);
   border-radius: var(--ddl-radius);
   box-shadow: var(--ddl-shadow);
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   z-index: 40;
 }
 
@@ -597,7 +597,7 @@
   border: 0;
   background: transparent;
   color: var(--text-primary);
-  font: var(--type-body-m);                /* Body M — 16 / 20 */
+  font: var(--type-body-m-reg);                /* Body M — 16 / 20 */
   text-align: left;
   cursor: pointer;
   user-select: none;
@@ -676,7 +676,7 @@
   display: inline-flex;
   align-items: center;
   color: var(--text-inactive);
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   white-space: nowrap;
 }
 .ddl__item-check-single {
@@ -711,7 +711,7 @@
 .ddl__item[aria-selected="true"],
 .ddl__item--selected { background: var(--ddl-item-selected); }
 .ddl__item[aria-selected="true"] .ddl__item-label,
-.ddl__item--selected .ddl__item-label { color: var(--text-primary); font: var(--type-body-m-strong); }
+.ddl__item--selected .ddl__item-label { color: var(--text-primary); font: var(--type-body-m-strong-smb); }
 
 /* selected + hover / focus */
 .ddl__item[aria-selected="true"]:hover,
@@ -726,11 +726,11 @@
 .ddl__item--checkbox[aria-checked="true"] { background: transparent; }
 .ddl__item--checkbox[aria-checked="true"]:hover,
 .ddl__item--checkbox[aria-checked="true"].is-hover { background: var(--ddl-item-hover); }
-.ddl__item--checkbox[aria-checked="true"] .ddl__item-label { color: var(--text-primary); font: var(--type-body-m); }
+.ddl__item--checkbox[aria-checked="true"] .ddl__item-label { color: var(--text-primary); font: var(--type-body-m-reg); }
 
 /* ---------- «Выбрать всё» — первая строка множественного выбора ---------- */
 .ddl__item--all .ddl__item-label,
-.ddl__item--checkbox.ddl__item--all .ddl__item-label { font: var(--type-body-m-strong); }
+.ddl__item--checkbox.ddl__item--all .ddl__item-label { font: var(--type-body-m-strong-smb); }
 .ddl__item--all + .ddl__divider { margin-top: 0; }
 
 /* disabled */
@@ -768,7 +768,7 @@
   padding: 8px var(--ddl-item-px) 4px;
   background: var(--ddl-bg);
   color: var(--text-inactive);
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   text-transform: uppercase;
   letter-spacing: .04em;
   user-select: none;
@@ -793,7 +793,7 @@
   min-height: var(--ddl-item-h);
   padding: 14px var(--ddl-item-px);
   color: var(--text-primary);
-  font: var(--type-body-m-strong);
+  font: var(--type-body-m-strong-smb);
   text-wrap: pretty;
 }
 .ddl__state-icon {
@@ -812,13 +812,13 @@
 .ddl__state-text { min-width: 0; }
 .ddl__state-sub {
   display: block;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
   margin-top: 2px;
 }
 
 /* loading */
-.ddl__state--loading { color: var(--text-inactive); font: var(--type-body-m); }
+.ddl__state--loading { color: var(--text-inactive); font: var(--type-body-m-reg); }
 .ddl__state--loading .ddl__state-icon { color: var(--text-inactive); }
 /* empty */
 .ddl__state--empty .ddl__state-icon { color: var(--text-secondary); }

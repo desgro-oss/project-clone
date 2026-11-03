@@ -68,14 +68,14 @@
     var sl = window.TASK_STATUS_LABELS || {};
     var links = [];
     if (t.dealNumber) links.push('<span class="lc-tasks__link"><i data-icon="link" aria-hidden="true"></i>Сделка ' + esc(t.dealNumber) + '</span>');
-    if (t.clientName) links.push('<span class="lc-tasks__link"><i data-icon="bank" aria-hidden="true"></i>' + esc(t.clientName) + '</span>');
+    if (t.clientName) links.push('<a class="link link--accent link--s link--with-icon lc-tasks__link" href="#" data-home-goto="clients" aria-label="Открыть реестр клиентов: ' + esc(t.clientName) + '"><span class="link__icon"><i data-icon="bank" aria-hidden="true"></i></span>' + esc(t.clientName) + '</a>');
     var linksHTML = links.length
       ? '<div class="entity__subs entity__subs--single"><span class="entity__subs-list lc-tasks__links">' + links.join('') + '</span></div>'
       : '';
     return '<div class="entity lc-tasks__row" data-task-id="' + esc(t.taskId) + '">' +
       '<div class="entity__main">' +
         '<div class="entity__titles">' +
-          '<p class="entity__header"><span class="badge badge--dot badge--' + PRIORITY_DOT[t.priorityCode] + '" aria-hidden="true"></span><span class="lc-tasks__priority">' + esc(pl[t.priorityCode] || '') + '</span>' +
+          '<p class="entity__header"><span class="badge badge--dot badge--' + PRIORITY_DOT[t.priorityCode] + '" aria-hidden="true"></span>' + esc(pl[t.priorityCode] || '') +
             '<span class="lc-tasks__meta-sep" aria-hidden="true">·</span>' +
             '<span class="lc-tasks__meta-date"><i data-icon="calendar" aria-hidden="true"></i>' + esc(S.fmt.date(t.dueDate)) + '</span></p>' +
           '<div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-tooltip="' + esc(t.title) + '" data-tooltip-truncated="only">' + esc(t.title) + '</span></div>' +
@@ -105,6 +105,7 @@
     var all = S.tasks(s.scope);
     var shown = s.hideDone ? all.filter(function (t) { return t.statusCode !== 'DONE'; }) : all;
     list.innerHTML = shown.slice(0, LIMIT).map(function (t) { return rowHTML(t, S, s.scope); }).join('');
+    if (window.IBPHomeNavigation) window.IBPHomeNavigation.bind(list);
     root.querySelector('.lc-tasks__empty-text').textContent = EMPTY_TEXT[s.scope];
     /* «Скрыть выполненные» убрало всё: строка причины объясняет пустой список */
     var none = root.querySelector('.lc-tasks__none');
@@ -178,7 +179,6 @@
       if (act === 'take') changeStatus(root, s.menuTask, 'IN_PROGRESS');
       if (act === 'return') changeStatus(root, s.menuTask, 'NEW');
       if (act === 'done') changeStatus(root, s.menuTask, 'DONE');
-      if (act === 'open') document.dispatchEvent(new CustomEvent('home:goto', { detail: { section: 'tasks' } }));
     });
 
     /* Пункт «Скрыть выполненные»: меню живёт в плавающем слое, вне корня

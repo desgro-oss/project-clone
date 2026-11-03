@@ -1,0 +1,28 @@
+{
+  "_": "Демо-данные витрины: объект на состояние данных (ключи — значения data-state: data, empty) и long — те же данные с самыми длинными значениями. Объект — поле rate для PostTileTransferRate.render: форма LoanAgreementStore.currentRate(). Режим (edit | view) задаёт контрол витрины, в данных его нет. Значения выдуманные (26.10.2026).",
+
+  "data": {
+    "_": "Плавающая ставка: итоговая 15% = КС 10% + спред 5%; в тайле «15% КС +5%».",
+    "rate": { "kind": "FLOATING", "percent": 15, "baseIndexCode": "KEY_RATE", "spreadPercent": 5, "isCurrent": true }
+  },
+
+  "fixed": {
+    "_": "Фиксированная ставка: только значение в процентах, постфикса нет.",
+    "rate": { "kind": "FIXED", "percent": 5, "baseIndexCode": null, "spreadPercent": null, "isCurrent": true }
+  },
+
+  "notCurrent": {
+    "_": "Схемы на сегодня нет, показана последняя (isCurrent = false). Вид не отличается от «data» — что показывать в этом случае, не решено (26.10.2026).",
+    "rate": { "kind": "FLOATING", "percent": 21.5, "baseIndexCode": "KEY_RATE", "spreadPercent": 3.5, "isCurrent": false }
+  },
+
+  "empty": {
+    "_": "Схем ЕТС у договора нет. С правом на правку — кнопка «Заполнить →», без права — строка «Не заполнено».",
+    "rate": null
+  },
+
+  "long": {
+    "_": "Самые длинные значения: итоговая ставка с двумя знаками, спред с двумя знаками и знаком.",
+    "rate": { "kind": "FLOATING", "percent": 118.75, "baseIndexCode": "KEY_RATE", "spreadPercent": 100.25, "isCurrent": true }
+  }
+}

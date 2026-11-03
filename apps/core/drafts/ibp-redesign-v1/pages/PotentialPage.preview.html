@@ -24,9 +24,9 @@
 <link rel="stylesheet" href="../widgets/tiles/OpportunityClientTile/OpportunityClientTile.css">
 <link rel="stylesheet" href="../widgets/tiles/GeneralInformationTile/GeneralInformationTile.css">
 <link rel="stylesheet" href="../widgets/tiles/ProductsTile/ProductsTile.css">
-<link rel="stylesheet" href="../widgets/tiles/CommentsTile/CommentsTile.css">
+<link rel="stylesheet" href="../../../clients-app/widgets/tiles/CommentsTile/CommentsTile.css">
 <link rel="stylesheet" href="../widgets/tiles/MeetingsProtocolsTile/MeetingsProtocolsTile.css">
-<link rel="stylesheet" href="../widgets/tiles/DesksTile/DesksTile.css">
+<link rel="stylesheet" href="../../../clients-app/widgets/tiles/DesksTile/DesksTile.css">
 <link rel="stylesheet" href="../widgets/tiles/OpportunityTeamMembersTile/OpportunityTeamMembersTile.css">
 <link rel="stylesheet" href="../widgets/tiles/OpportunityConnectionsTile/OpportunityConnectionsTile.css">
 </head>
@@ -51,7 +51,7 @@
 
   <div class="screen">
     <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
-      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="../../../host-app/pages/HomePage.html">Главная</a></li>
       <li class="crumbs__item"><a class="link link--muted" href="LeadsPage.preview.html">Лиды: Лиды</a></li>
       <li class="crumbs__item crumbs__item--current">
         <span class="crumbs__current" aria-current="page">Лид</span>
@@ -224,7 +224,7 @@
      сделки (§4.3) и страницы лида (§4.6). Вшивается меткой ds-include;
      страница заполняет скриптом LcCommentsTile.render(host, {comments}).
      Статическое содержимое — демо-состояние (комментарий сделки 166092). -->
-<section id="tile-comments" data-state="data" data-mode="view" class="tile lc-comments col-4 colw-6" data-widget="CommentsTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/CommentsTile/CommentsTile.html">
+<section id="tile-comments" data-state="data" data-mode="view" class="tile lc-comments col-4 colw-6" data-widget="CommentsTile" data-widget-group="tiles" data-widget-src="../../../clients-app/widgets/tiles/CommentsTile/CommentsTile.html">
   <header class="tile__header">
     <div class="tile__header-main">
       <div class="tile__title-row"><h3 class="tile__title">Комментарии к стадии</h3></div>
@@ -284,7 +284,7 @@
      (§4.3), лида (§4.6) и клиента (§4.8). Вшивается меткой ds-include;
      страница заполняет скриптом LcDesksTile.render(host, {desks, note}).
      Статическое содержимое — демо-состояние сделки 166092. -->
-<section id="tile-desks" data-state="data" data-mode="view" class="tile lc-desks col-4 colw-12" data-widget="DesksTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/DesksTile/DesksTile.html">
+<section id="tile-desks" data-state="data" data-mode="view" class="tile lc-desks col-4 colw-12" data-widget="DesksTile" data-widget-group="tiles" data-widget-src="../../../clients-app/widgets/tiles/DesksTile/DesksTile.html">
   <header class="tile__header">
     <div class="tile__header-main">
       <div class="tile__title-row"><h3 class="tile__title">Дески</h3></div>
@@ -438,9 +438,9 @@
 <script src="../widgets/tiles/GeneralInformationTile/GeneralInformationTile.js"></script>
 <script src="../widgets/tiles/OpportunityProductTile/OpportunityProductTile.js"></script>
 <script src="../widgets/tiles/ProductsTile/ProductsTile.js"></script>
-<script src="../widgets/tiles/CommentsTile/CommentsTile.js"></script>
+<script src="../../../clients-app/widgets/tiles/CommentsTile/CommentsTile.js"></script>
 <script src="../widgets/tiles/MeetingsProtocolsTile/MeetingsProtocolsTile.js"></script>
-<script src="../widgets/tiles/DesksTile/DesksTile.js"></script>
+<script src="../../../clients-app/widgets/tiles/DesksTile/DesksTile.js"></script>
 <script src="../widgets/tiles/OpportunityTeamMembersTile/OpportunityTeamMembersTile.js"></script>
 <script src="../widgets/tiles/OpportunityConnectionsTile/OpportunityConnectionsTile.js"></script>
 <script>

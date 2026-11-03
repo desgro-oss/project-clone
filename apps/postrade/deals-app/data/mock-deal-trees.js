@@ -10,6 +10,12 @@
    isTypeC) посчитаны из этого дерева формулой ProductTreeStore.summary и
    заморожены там — в проде их считает бэкенд.
 
+   Баланс и валюта узлов (balance, currency) — временные: по ответу человека
+   26.10.2026 (RE0041, вопрос 24) они принадлежат тайлам «Баланс и валюта»
+   страниц инструментов и транша, а не дереву. Пока их читают реестр портфеля,
+   карточка ФИ и суммы в строках дерева; перевод на тайлы — вместе со страницами инструментов и транша; перечень потребителей — вопрос 25
+   паспорта «Продукты сделки» (widgets/tiles/DealProductTreeTile/DealProductTreeTile.md).
+
    Сделки под стадии макета тайла «Продукты сделки» (29.09.2026):
    – 1035 (Черновик) и 1042 (Активная) — нет данных: правка и просмотр;
    – 1044 (Черновик) — добавлены два продукта ДИД, значения не заполнены;
@@ -81,9 +87,9 @@
  * @property {string} id
  * @property {InstrumentTypeCode} code       тип из INSTRUMENT_TYPE_CATALOG
  * @property {string} name
- * @property {string|null} currency          код валюты
- * @property {string|null} balance           баланс, на котором учтён инструмент
- * @property {boolean} isTypeC                  признак «Требуется переоценка»
+ * @property {string|null} currency          код валюты — ВРЕМЕННО: по смыслу принадлежит тайлу «Баланс и валюта» страницы инструмента (вопрос 25 паспорта дерева)
+ * @property {string|null} balance           баланс, на котором учтён инструмент — ВРЕМЕННО, то же
+ * @property {boolean} isTypeC                 признак «Требуется переоценка»
  * @property {string|null} signedAt          дата подписания договора
  * @property {number|null} amount            стоимость покупки (акции, дебиторская
  *           задолженность) или цена исполнения (пут и колл РЕПО)
@@ -101,7 +107,7 @@
  * @typedef {Object} DealTrancheRsDto
  * @property {string} id
  * @property {string} name
- * @property {string|null} currency
+ * @property {string|null} currency          ВРЕМЕННО: по смыслу принадлежит тайлу «Баланс и валюта» страницы транша (вопрос 25 паспорта дерева)
  * @property {string|null} signedAt          дата подписания
  * @property {number|null} amount            сумма лимита
  * @property {string[]} fiIds                карточки ФИ, к которым прикреплён транш,

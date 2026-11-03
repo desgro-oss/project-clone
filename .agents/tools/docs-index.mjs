@@ -37,7 +37,9 @@ const OPEN = '<!-- @docs-index -->';
 const CLOSE = '<!-- /@docs-index -->';
 const IGNORE_DIR_NAMES = new Set(['node_modules', '.git']);
 // Корневые refs/ в main стали локальными материалами; refs/ приложений входят.
-const IGNORE_LOCAL = ['tmp', 'refs', '.zcodeignore', '.obsidian', ('cla' + 'ude').toUpperCase() + '.md'];
+// .zcode/ — локальные данные сессий ZCode (журналы, планы), в .gitignore (RE0046);
+// в каталоге документации им делать нечего: ссылка вела бы на файл вне репозитория.
+const IGNORE_LOCAL = ['tmp', 'refs', '.zcodeignore', '.zcode', '.obsidian', ('cla' + 'ude').toUpperCase() + '.md'];
 const slash = (p) => p.split(path.sep).join('/');
 const under = (rel, base) => Boolean(base) && (rel === base || rel.startsWith(base + '/'));
 const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;

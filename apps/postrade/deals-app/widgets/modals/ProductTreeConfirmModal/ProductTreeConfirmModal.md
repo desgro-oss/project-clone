@@ -73,7 +73,7 @@ Modal modal--w3 (442px — ширина макета подтверждения)
 | Modal | ДС — `design-system/components/organisms/Modal/Modal.md` | `modal-scrim--nested`, `modal--w3`, `role="alertdialog"` |
 | IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | крестик `ibtn--neutral ibtn--l` |
 | Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Отменить» `btn--transparent btn--m`; «Подтвердить» `btn--accent btn--m`, у удаления + `btn--error` |
-| Typography | ДС — `design-system/foundations/Typography/Typography.md` | текст — `--type-body-m`, `--text-secondary` (ответ человека 30.09.2026, 28) |
+| Typography | ДС — `design-system/foundations/Typography/Typography.md` | текст — `--type-body-m-reg`, `--text-secondary` (ответ человека 30.09.2026, 28) |
 
 ## Поля (Fields)
 

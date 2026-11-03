@@ -7,8 +7,7 @@
 .lc-repay-order__list { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--space-16); }
 
 /* Номер приоритета — серый квадрат слева от названия (макет «Section 1») */
-.lc-repay-order__num { font: var(--type-body-s); color: var(--text-secondary); }
-.lc-repay-order .entity__label { font: var(--type-body-m); }
+.lc-repay-order__num { font: var(--type-body-s-reg); color: var(--text-secondary); }
 
 /* Только просмотр — карандаша нет */
 .lc-repay-order[data-mode="view"] .lc-repay-order__edit { display: none; }

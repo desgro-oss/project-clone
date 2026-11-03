@@ -116,7 +116,7 @@
 .tile__title {
   margin: 0;
   min-width: 0;
-  font: var(--type-h5-strong);
+  font: var(--type-h5-strong-smb);
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -138,7 +138,7 @@
   align-items: center;
   justify-content: center;
   height: 1lh;
-  font: var(--type-h5-strong);
+  font: var(--type-h5-strong-smb);
   color: var(--secondary);
 }
 .tile__title-icon > :is(svg,[data-icon]){ width: var(--tile-title-icon); height: var(--tile-title-icon); display: block; flex: none; }
@@ -178,7 +178,7 @@
   gap: 6px;
   min-width: 0;
   margin: 0;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-secondary);
 }
 .tile__subtitle-icon {
@@ -347,7 +347,7 @@
    у .tile__title, здесь меняется только ступень шрифта. */
 .tile--card .tile__title,
 .tile--card .tile__title-icon {
-  font: var(--type-h6-strong);
+  font: var(--type-h6-strong-smb);
 }
 /* Зазор Title↔Subtitle↔Chiplist у Card — 4 (у плашки 8): заголовок на
    ступень ниже, и 8px отрывали сабхедер от своего заголовка. */
@@ -447,7 +447,7 @@
 }
 .tile--inset .tile__title,
 .tile--inset .tile__title-icon {
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
 }
 .tile--inset .tile__title-icon {
   --tile-title-icon: 18px;

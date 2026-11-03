@@ -133,10 +133,10 @@
     var tb = document.querySelector('#typo-table tbody');
     if (!tb) return;
     [
-      ['Заголовок (месяц/год)', 'Октябрь 2025', '--type-body-s-strong'],
-      ['Дни недели', 'Пн Вт Ср', '--type-body-xs'],
-      ['Число дня', '15', '--type-body-s'],
-      ['Ячейка месяца / года', 'Окт · 2025', '--type-body-s']
+      ['Заголовок (месяц/год)', 'Октябрь 2025', '--type-body-s-strong-smb'],
+      ['Дни недели', 'Пн Вт Ср', '--type-body-xs-reg'],
+      ['Число дня', '15', '--type-body-s-reg'],
+      ['Ячейка месяца / года', 'Окт · 2025', '--type-body-s-reg']
     ].forEach(function (r) {
       var tr = document.createElement('tr');
       var f = getComputedStyle(document.documentElement).getPropertyValue(r[2]).trim();

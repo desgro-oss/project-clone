@@ -31,7 +31,7 @@ widgets: [tables/MeetingsProtocolsList, tiles/MeetingsProtocolsDetails, modals/C
 
 | Уровень крошек | Текст | Ссылка |
 |---|---|---|
-| 1 | Главная | `HomePage.html` |
+| 1 | Главная | `../../../host-app/pages/HomePage.html` |
 | 2 (текущий) | Встречи: <вкладка> | — |
 
 ## 3. Пары во фронтенде
@@ -81,9 +81,9 @@ Page (Layout, nav--rail, screen--app)
 | Entity | ДС — `design-system/components/organisms/Entity/Entity.md` |
 | Avatar | ДС — `design-system/components/atoms/Avatar/Avatar.md` |
 | Checkbox | ДС — `design-system/components/atoms/Checkbox/Checkbox.md` |
-| `MeetingsProtocolsList` | виджет концепта — `../widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.md` |
-| `MeetingsProtocolsDetails` | виджет концепта — `../widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.md` |
-| `ChangeTaskStatusModal` | виджет концепта — `../widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.md` |
+| `MeetingsProtocolsList` | виджет концепта — `../../../clients-app/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.md` |
+| `MeetingsProtocolsDetails` | виджет концепта — `../../../clients-app/widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.md` |
+| `ChangeTaskStatusModal` | виджет концепта — `../../../tasks-app/widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.md` |
 
 Параметры виджета на странице — атрибуты метки `<ds-include>`: `class` (место в сетке), `id`, `state`, `mode`.
 

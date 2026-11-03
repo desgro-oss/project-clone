@@ -28,8 +28,8 @@
    data-tooltip-flip="no", data-tooltip-boundary (CSS-селектор границы),
    data-tooltip-delay (мс, 400), data-tooltip-truncated="only" — показывать
    только при усечении текста цели (scrollWidth > clientWidth).
-     data-tooltip-multiline="yes" — переносить длинный текст по --tip-max
-     вместо усечения самого тултипа.
+     data-tooltip-multiline="yes" — с 2.013 не нужен: тултип переносит длинный
+     текст по --tip-max всегда и не усекается; атрибут оставлен для совместимости.
 
    Поведение по спеке: 12 позиций, авто-flip стороны и выравнивания, стрелка
    доводится до центра цели, задержка 400 мс по hover и мгновенно по focus,

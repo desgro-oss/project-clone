@@ -47,13 +47,6 @@ flows:
         note: 'L-44: «Переместить в Pipeline» (Р7) создаёт сделку в Pipeline; лид уходит из реестра. Разделов открыто: 6.'
         do:
           - click: '#nav .nav__item[href="LeadsPage.preview.html"]'
-      - state: 7
-        id: client
-        title: Клиент → Сделки — четыре таблицы лидов
-        page: ClientInfoPage.preview.html?id=3000012345&tab=ClientInfoDealsPage
-        note: 'Вкладка «Сделки → Лиды»: лиды клиента разложены по четырём таблицам — то, что часть 2 заменяет единым разделом. Разделов открыто: 7.'
-        do:
-          - click: '#nav .nav__item[href="MyClientsPage.preview.html"]'
 
   - id: meeting-born-lead
     title: Встреча родила лид

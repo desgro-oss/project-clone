@@ -31,7 +31,7 @@ widgets: [tables/LeadsTable]
 
 | Уровень крошек | Текст | Ссылка |
 |---|---|---|
-| 1 | Главная | `HomePage.html` |
+| 1 | Главная | `../../../host-app/pages/HomePage.html` |
 | 2 (текущий) | Возможные лиды | — |
 
 ## 3. Пары во фронтенде
@@ -74,7 +74,7 @@ Page (Layout, nav--rail, screen--app)
 | Link | ДС — `design-system/components/atoms/Link/Link.md` |
 | Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` |
 | Toast | ДС — `design-system/components/molecules/Toast/Toast.md` |
-| `LeadsTable` | виджет концепта — `../widgets/tables/LeadsTable/LeadsTable.md` |
+| `LeadsTable` | виджет концепта — `../../../clients-app/widgets/tables/LeadsTable/LeadsTable.md` |
 
 Параметры виджета на странице — атрибуты метки `<ds-include>`: `class` (место в сетке), `id`, `state`, `mode`.
 

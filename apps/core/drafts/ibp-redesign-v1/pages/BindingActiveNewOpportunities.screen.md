@@ -31,7 +31,7 @@ widgets: [tables/BindingOpportunitiesTable, modals/TakeOpportunityToWorkModal, m
 
 | Уровень крошек | Текст | Ссылка |
 |---|---|---|
-| 1 | Главная | `HomePage.html` |
+| 1 | Главная | `../../../host-app/pages/HomePage.html` |
 | 2 (текущий) | Обязательные сделки: <вкладка> | — |
 
 ## 3. Пары во фронтенде
@@ -81,7 +81,7 @@ Page (Layout, nav--rail, screen--app)
 | Modal | ДС — `design-system/components/organisms/Modal/Modal.md` |
 | Toast | ДС — `design-system/components/molecules/Toast/Toast.md` |
 | SnackBar | ДС — `design-system/components/organisms/SnackBar/SnackBar.md` |
-| `BindingOpportunitiesTable` | виджет концепта — `../widgets/tables/BindingOpportunitiesTable/BindingOpportunitiesTable.md` |
+| `BindingOpportunitiesTable` | виджет концепта — `../../../clients-app/widgets/tables/BindingOpportunitiesTable/BindingOpportunitiesTable.md` |
 | `TakeOpportunityToWorkModal` | виджет концепта — `../widgets/modals/TakeOpportunityToWorkModal/TakeOpportunityToWorkModal.md` |
 | `RefuseFromOpportunityModal` | виджет концепта — `../widgets/modals/RefuseFromOpportunityModal/RefuseFromOpportunityModal.md` |
 

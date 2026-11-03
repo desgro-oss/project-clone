@@ -52,7 +52,7 @@
     var open = isOpen(id);
     return '<section class="pp-ds" data-pp-sec="' + id + '">'
       + '<div class="pp-ds__head"><button type="button" class="pp-ds__toggle" data-pp-fold="' + id + '" aria-expanded="' + open + '">'
-      + '<span class="pp-ds__chev" aria-hidden="true"><i data-icon="chevron-down"></i></span><span class="ds-body-s-strong">' + esc(title) + '</span></button>'
+      + '<span class="pp-ds__chev" aria-hidden="true"><i data-icon="chevron-down"></i></span><span class="ds-body-s-strong-smb">' + esc(title) + '</span></button>'
       + (open && acts ? '<span class="pp-ds__acts">' + (typeof acts === 'function' ? acts() : acts) + '</span>' : '') + '</div>'
       + (open ? '<div class="pp-ds__body">' + (typeof body === 'function' ? body() : body) + '</div>' : '')
       + '</section>';
@@ -64,7 +64,7 @@
         return '<button type="button" class="segctrl__item" role="radio" aria-checked="' + !!i.on + '" tabindex="' + (i.on ? 0 : -1) + '" ' + i.attr + '><span class="segctrl__label">' + esc(i.text) + '</span></button>';
       }).join('') + '</div>';
   }
-  function note(text, warn) { return '<p class="ds-body-xs pp-note ' + (warn ? 'pp-warn' : 'pp-muted') + '">' + esc(text) + '</p>'; }
+  function note(text, warn) { return '<p class="ds-body-xs-reg pp-note ' + (warn ? 'pp-warn' : 'pp-muted') + '">' + esc(text) + '</p>'; }
 
   /* ---------------- подсветка кода ---------------- */
 
@@ -103,7 +103,7 @@
   /* ---------------- кто элемент ---------------- */
 
   function tags(list, cls) {
-    return list.length ? '<div class="pp-tags">' + list.map(function (x) { return '<span class="pp-tag ds-body-xs' + (cls ? ' ' + cls : '') + '">' + esc(x) + '</span>'; }).join('') + '</div>' : '';
+    return list.length ? '<div class="pp-tags">' + list.map(function (x) { return '<span class="pp-tag ds-body-xs-reg' + (cls ? ' ' + cls : '') + '">' + esc(x) + '</span>'; }).join('') + '</div>' : '';
   }
 
   /** Адреса паспорта и витрины виджета по пути метки сборщика: паспорт — рядом с разметкой, витрина — в apps/local-components. */
@@ -122,12 +122,12 @@
 
   function crumbsHtml(el) {
     var crumbs = M.crumbs(el), cut = Math.max(0, crumbs.length - 6);
-    return '<nav class="pp-crumbs" aria-label="' + esc(t('insp.crumbs')) + '">' + (cut ? '<span class="ds-body-xs pp-muted">…</span><span class="ds-body-xs pp-muted" aria-hidden="true">›</span>' : '')
+    return '<nav class="pp-crumbs" aria-label="' + esc(t('insp.crumbs')) + '">' + (cut ? '<span class="ds-body-xs-reg pp-muted">…</span><span class="ds-body-xs-reg pp-muted" aria-hidden="true">›</span>' : '')
       + crumbs.slice(cut).map(function (c, i, all) {
         var last = i === all.length - 1;
-        return last ? '<span class="ds-body-xs pp-crumb pp-crumb--current" aria-current="true">' + esc(c.name) + '</span>'
+        return last ? '<span class="ds-body-xs-reg pp-crumb pp-crumb--current" aria-current="true">' + esc(c.name) + '</span>'
           : '<a href="#" role="button" class="link link--muted link--s pp-crumb" data-pp-dev="crumb:' + (cut + i) + '">' + esc(c.name) + '</a>';
-      }).join('<span class="ds-body-xs pp-muted" aria-hidden="true">›</span>') + '</nav>';
+      }).join('<span class="ds-body-xs-reg pp-muted" aria-hidden="true">›</span>') + '</nav>';
   }
 
   function identity(el, d) {
@@ -150,9 +150,9 @@
       + iconBtn('go:next', 'arrow-right', t('insp.next') + ' (→)', { disabled: !M.nav(el, 'next') })
       + iconBtn('clear', 'close', t('insp.clear') + ' (Esc)') + '</div>';
     return '<div class="pp-did">'
-      + '<div class="pp-did__top"><div class="pp-did__name"><p class="ds-body-m-strong pp-subtitle">' + esc(d.title) + '</p>'
-      + '<p class="ds-body-xs pp-muted pp-note">' + esc(kindOf(id) + (id.widget && id.widget.group ? ' · ' + id.widget.group : '')) + '</p></div>' + nav + '</div>'
-      + lines.map(function (x) { return '<p class="ds-body-xs pp-muted pp-note">' + esc(x) + '</p>'; }).join('')
+      + '<div class="pp-did__top"><div class="pp-did__name"><p class="ds-body-m-strong-smb pp-subtitle">' + esc(d.title) + '</p>'
+      + '<p class="ds-body-xs-reg pp-muted pp-note">' + esc(kindOf(id) + (id.widget && id.widget.group ? ' · ' + id.widget.group : '')) + '</p></div>' + nav + '</div>'
+      + lines.map(function (x) { return '<p class="ds-body-xs-reg pp-muted pp-note">' + esc(x) + '</p>'; }).join('')
       + (id.ds && id.ds.mods.length ? tags(id.ds.mods, '') : '')
       + (id.states.length ? tags(id.states, 'pp-tag--state') : '')
       + (links ? '<div class="pp-row pp-links">' + links + '</div>' : '')
@@ -168,7 +168,7 @@
     function tip(r) { return r && r.token ? (r.exact ? '' : '≈ ') + r.token + ' · ' + r.value : ''; }
     /** Число-кнопка: css — объявление для копии (пусто — число не копируется), title — подсказка. */
     function num(cls, text, css, title, zero) {
-      var cls2 = 'pp-bm__n ' + cls + (zero ? ' pp-muted' : '') + ' ds-body-xs';
+      var cls2 = 'pp-bm__n ' + cls + (zero ? ' pp-muted' : '') + ' ds-body-xs-reg';
       if (!css) return '<span class="' + cls2 + '">' + esc(text) + '</span>';
       copies.push(css);
       return '<button type="button" class="' + cls2 + '" data-pp-copy="' + (copies.length - 1) + '" title="' + esc(title || t('dev.copyRow')) + '">' + esc(text) + '</button>';
@@ -191,14 +191,14 @@
       return num('pp-bm__r pp-bm__r--' + c, M.fmt(v), v || r.token ? 'border-' + CNAMES[c] + '-radius: ' + (r.token ? 'var(' + r.token + ', ' + M.fmt(v) + 'px)' : M.fmt(v) + 'px') + ';' : '', tip(r), !v);
     });
     var vars = CORNERS.map(function (c, i) { return '--r-' + c + ':' + M.fmt(M.num(b.r[i].value || b.r[i].raw)) + 'px'; }).join(';');
-    var core = '<div class="pp-bm__c ds-body-xs">' + esc(M.fmt(b.w) + ' × ' + M.fmt(b.h)) + '</div>';
-    var padding = '<div class="pp-bm__p"><span class="pp-bm__cap pp-bm__cap--p ds-body-xs">' + esc(t('box.padding')) + pd[0] + '</span>'
+    var core = '<div class="pp-bm__c ds-body-xs-reg">' + esc(M.fmt(b.w) + ' × ' + M.fmt(b.h)) + '</div>';
+    var padding = '<div class="pp-bm__p"><span class="pp-bm__cap pp-bm__cap--p ds-body-xs-reg">' + esc(t('box.padding')) + pd[0] + '</span>'
       + pd[3] + core + pd[1] + pd[2] + '</div>';
-    var border = '<div class="pp-bm__b" style="' + vars + '"><span class="pp-bm__cap pp-bm__cap--b ds-body-xs">' + esc(t('box.border')) + bd[0] + '</span>'
+    var border = '<div class="pp-bm__b" style="' + vars + '"><span class="pp-bm__cap pp-bm__cap--b ds-body-xs-reg">' + esc(t('box.border')) + bd[0] + '</span>'
       + rad.join('') + bd[3] + padding + bd[1] + bd[2] + '</div>';
     return '<div class="pp-bm" role="group" aria-label="' + esc(t('box.title')) + '">'
       + '<div class="pp-bm__fr">' + mg[0] + mg[3] + border + mg[1] + mg[2] + '</div>'
-      + '<p class="ds-body-xs pp-muted pp-bm__s">' + esc(b.sizing) + '</p></div>';
+      + '<p class="ds-body-xs-reg pp-muted pp-bm__s">' + esc(b.sizing) + '</p></div>';
   }
 
   /* ---------------- свойства: код или список ---------------- */
@@ -217,9 +217,9 @@
     r.parts.forEach(function (p) { if (p.also && p.also.length) also.push(t('tok.also') + ' ' + p.also.join(', ')); });
     var sw = r.swatch ? '<span class="pp-sw" style="--pp-sw:' + esc(r.swatch) + '" aria-hidden="true"></span>' : '';
     return (live ? '<button type="button" class="pp-prop" data-pp-copy="' + (copies.length - 1) + '" title="' + esc(t('dev.copyRow')) + '">' : '<div class="pp-prop pp-prop--static">')
-      + '<span class="pp-prop__k ds-body-s pp-muted">' + esc(r.k) + '</span>'
-      + '<span class="pp-prop__v ds-body-s">' + sw + r.parts.map(partHtml).join('')
-      + (also.length ? '<span class="pp-also ds-body-xs pp-muted">' + esc(also.filter(function (x, i) { return also.indexOf(x) === i; }).join(' · ')) + '</span>' : '')
+      + '<span class="pp-prop__k ds-body-s-reg pp-muted">' + esc(r.k) + '</span>'
+      + '<span class="pp-prop__v ds-body-s-reg">' + sw + r.parts.map(partHtml).join('')
+      + (also.length ? '<span class="pp-also ds-body-xs-reg pp-muted">' + esc(also.filter(function (x, i) { return also.indexOf(x) === i; }).join(' · ')) + '</span>' : '')
       + '</span>' + (live ? '</button>' : '</div>');
   }
 
@@ -240,9 +240,9 @@
   function propBlock(title, rows) {
     if (!rows.length) return '';
     var css = P.blockCss(rows);
-    var head = '<div class="pp-sub"><span class="ds-body-xs pp-muted">' + esc(title) + '</span>' + (css ? copyLink(css) : '') + '</div>';
+    var head = '<div class="pp-sub"><span class="ds-body-xs-reg pp-muted">' + esc(title) + '</span>' + (css ? copyLink(css) : '') + '</div>';
     if (view() === 'list') return '<div class="pp-blk">' + head + '<div class="pp-props">' + rows.map(propRow).join('') + '</div></div>';
-    return '<div class="pp-blk">' + head + '<div class="pp-codebox ds-body-xs">' + rows.map(codeLine).join('') + '</div></div>';
+    return '<div class="pp-blk">' + head + '<div class="pp-codebox ds-body-xs-reg">' + rows.map(codeLine).join('') + '</div></div>';
   }
 
   function viewSwitch() {
@@ -262,10 +262,10 @@
     return '<div class="pp-colors">' + rows.map(function (r) {
       var p = r.parts[0] || { text: '', token: '' };
       var sw = '<span class="pp-sw pp-sw--round" style="--pp-sw:' + esc(r.swatch) + '" aria-hidden="true"></span>';
-      var tok = '<span class="pp-color__tok ds-body-s' + (p.token && !p.exact ? ' pp-tok--guess' : '') + '">' + esc(p.token ? (p.exact ? '' : '≈ ') + p.token : t('tok.none')) + '</span>';
-      return '<div class="pp-color"><span class="ds-body-xs pp-muted">' + esc(r.k) + '</span><div class="pp-color__row">'
+      var tok = '<span class="pp-color__tok ds-body-s-reg' + (p.token && !p.exact ? ' pp-tok--guess' : '') + '">' + esc(p.token ? (p.exact ? '' : '≈ ') + p.token : t('tok.none')) + '</span>';
+      return '<div class="pp-color"><span class="ds-body-xs-reg pp-muted">' + esc(r.k) + '</span><div class="pp-color__row">'
         + (p.token ? copyBtn(p.token, 'pp-color__btn--tok', t('dev.copyToken'), sw + tok) : '<span class="pp-color__btn pp-color__btn--tok">' + sw + tok + '</span>')
-        + copyBtn(p.text, 'pp-color__btn--hex', t('dev.copyColor'), '<span class="pp-color__hex ds-body-s pp-muted">' + esc(p.text) + '</span>') + '</div></div>';
+        + copyBtn(p.text, 'pp-color__btn--hex', t('dev.copyColor'), '<span class="pp-color__hex ds-body-s-reg pp-muted">' + esc(p.text) + '</span>') + '</div></div>';
     }).join('') + '</div>';
   }
 
@@ -321,7 +321,7 @@
   function htmlBody(el) {
     var c = P.code(el);
     var shown = c.html.length > 3000 ? c.html.slice(0, 3000) : c.html;
-    return '<pre class="pp-codebox pp-codebox--pre pp-codeview ds-body-xs">' + hlHtml(shown) + (shown.length < c.html.length ? '\n…' : '') + '</pre>'
+    return '<pre class="pp-codebox pp-codebox--pre pp-codeview ds-body-xs-reg">' + hlHtml(shown) + (shown.length < c.html.length ? '\n…' : '') + '</pre>'
       + (shown.length < c.html.length ? note(t('code.more')) : '');
   }
 
@@ -330,7 +330,7 @@
     return location.href.split('#')[0] + '#ppdev=' + encodeURIComponent(M.selector(el));
   }
   function selectorBody(el) {
-    return '<p class="pp-codebox pp-codebox--pre ds-body-xs pp-selector">' + esc(M.selector(el)) + '</p>'
+    return '<p class="pp-codebox pp-codebox--pre ds-body-xs-reg pp-selector">' + esc(M.selector(el)) + '</p>'
       + '<div class="pp-row">' + copyLink(elementLink(el), t('dev.linkCopy')) + '</div>' + note(t('dev.linkHelp'));
   }
 
@@ -391,8 +391,8 @@
     var meta = (m.kind === 'icon' ? t('media.icon') + (m.color ? ' · ' + m.color : '') : t('media.illu')) + (m.n > 1 ? ' · ×' + m.n : '');
     return '<button type="button" class="pp-media__card" data-pp-dl="' + i + '" title="' + esc(t('media.dl', { name: mediaFile(m) })) + '">'
       + '<span class="pp-media__pic">' + pic + '</span>'
-      + '<span class="pp-media__name ds-body-xs">' + esc(m.name) + '</span>'
-      + '<span class="pp-media__meta ds-body-xs pp-muted">' + esc(meta) + '</span>'
+      + '<span class="pp-media__name ds-body-xs-reg">' + esc(m.name) + '</span>'
+      + '<span class="pp-media__meta ds-body-xs-reg pp-muted">' + esc(meta) + '</span>'
       + '<span class="pp-media__dl" aria-hidden="true"><i data-icon="download"></i></span></button>';
   }
   function mediaBody() {
@@ -427,7 +427,7 @@
 
   function selection() {
     var el = I.selected();
-    if (!el) return '<section class="pp-ds pp-ds--empty"><p class="ds-body-s pp-muted pp-note">' + esc(t('insp.hint')) + '</p></section>';
+    if (!el) return '<section class="pp-ds pp-ds--empty"><p class="ds-body-s-reg pp-muted pp-note">' + esc(t('insp.hint')) + '</p></section>';
     var d = P.build(el);
     var isGuess = [d.layout, d.style, d.colors, d.type].some(function (rows) { return rows.some(guessed); });
     var tokNotes = (d.readable ? '' : note(t('tok.closed'))) + (isGuess ? note(t('tok.guess')) : '');
@@ -437,8 +437,8 @@
       + section('css', t('dev.sec.css'), viewSwitch(), function () { return propBlock(t('css.layout'), d.layout) + propBlock(t('css.style'), d.style) + tokNotes; })
       + section('html', t('css.code'), function () { return copyLink(P.code(el).html); }, function () { return htmlBody(el); })
       + (d.colors.length ? section('colors', t('css.colors'), '', function () { return colorsBody(d.colors); }) : '')
-      + (d.type.length ? section('type', t('css.type'), function () { return P.blockCss(d.type) ? copyLink(P.blockCss(d.type)) : ''; }, function () { return view() === 'list' ? '<div class="pp-props">' + d.type.map(propRow).join('') + '</div>' : '<div class="pp-codebox ds-body-xs">' + d.type.map(codeLine).join('') + '</div>'; }) : '')
-      + (media.length ? section('media', t('dev.sec.media'), '<span class="ds-body-xs pp-muted">' + media.length + '</span>', mediaBody) : '')
+      + (d.type.length ? section('type', t('css.type'), function () { return P.blockCss(d.type) ? copyLink(P.blockCss(d.type)) : ''; }, function () { return view() === 'list' ? '<div class="pp-props">' + d.type.map(propRow).join('') + '</div>' : '<div class="pp-codebox ds-body-xs-reg">' + d.type.map(codeLine).join('') + '</div>'; }) : '')
+      + (media.length ? section('media', t('dev.sec.media'), '<span class="ds-body-xs-reg pp-muted">' + media.length + '</span>', mediaBody) : '')
       + (stateList(el, d) ? section('states', t('st.title'), '', function () { return statesBody(el, d, stateList(el, d)); }) : '')
       + section('a11y', t('a11y.title'), '', function () { return a11yBody(el); })
       + section('selector', t('dev.sec.link'), function () { return copyLink(M.selector(el)); }, function () { return selectorBody(el); });

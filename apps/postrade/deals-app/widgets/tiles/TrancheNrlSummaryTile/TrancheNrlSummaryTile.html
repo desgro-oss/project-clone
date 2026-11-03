@@ -1,0 +1,64 @@
+<!-- Локальный компонент «Сводка НКЛ» (TrancheNrlSummaryTile) — фрагмент страницы.
+     Хедлесс-тайл раздела «НКЛ» страницы транша: параметры РОДИТЕЛЬСКОГО договора
+     займа ([[НКЛ]]), не транша (решение человека 02.11.2026).
+     Один фрагмент — три варианта; какой виден, держит data-variant на корне
+     и CSS компонента (TrancheNrlSummaryTile.css):
+       counterparty — «Контрагент»: наименование ↔ риск-метрика RiskMetric
+                      (образец — вариант instrument у CounterpartiesTile);
+       balance      — «Баланс и валюта»: Баланс, Валюта;
+       limit        — «Общая сумма лимита»: сумма + аффикс валюты.
+     Вариант ставит страница скриптом (PostTileTrancheNrlSummary.render /
+     setVariant): сборщик переносит с метки ds-include только id, class,
+     state, mode — как у CounterpartiesTile (PostTileKNR.setVariant).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include
+     на экране. Здесь только разметка: место в ряду и ширину тайлов (по 360px,
+     вне 12 колонок) задаёт страница — обёртка .tr-sum на Tranche.html.
+     Состояние у компонента одно — «данные есть» (решение человека 02.11.2026):
+     loading/empty/error не делаются, правил по data-state у CSS нет.
+     Значения ниже — пример с макета. На странице их заменяет
+     TrancheNrlSummaryTile.js (PostTileTrancheNrlSummary.render) данными
+     родительской НКЛ (LoanAgreementStore); пустое значение — прочерк «—» на
+     своём месте, поле с места не уходит. -->
+<section class="tile tile--headless lc-tranche-nrl-summary-tile" data-variant="counterparty">
+  <div class="tile__body">
+
+    <!-- Вариант «Контрагент»: пара «наименование ↔ риск-метрика». Длинное
+         наименование усекается многоточием, тултип полного текста ставит
+         рантайм ReadOnlyField (DSTooltip.truncated). Чип без зоны (outline) —
+         рейтинг не рассчитан; контрагента у договора нет — чипа нет вовсе
+         (ставит render). -->
+    <div class="tile__grid lc-tranche-nrl-summary-tile__grid lc-tranche-nrl-summary-tile__grid--counterparty">
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Контрагент</span></span>
+        <div class="rof__row">
+          <span class="rof__value rof__value--clamp-1" data-trnrl="name">СамолётИнвестХолдинг Inc</span>
+          <span class="lc-tranche-nrl-summary-tile__metric" data-trnrl="metric"><span data-riskmetric data-risk="26" data-zone="green"
+                data-rating-date="24.10.2025" data-zone-date="24.10.2025"
+                data-segment="Крупный бизнес" data-profile="Непроектный"></span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Вариант «Баланс и валюта»: два поля в две колонки. Баланс — подпись
+         кода из window.LOAN_BALANCE_LABELS (нет подписи — сам код), ставит render. -->
+    <div class="tile__grid lc-tranche-nrl-summary-tile__grid lc-tranche-nrl-summary-tile__grid--balance">
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Баланс</span></span>
+        <div class="rof__row"><span class="rof__value" data-trnrl="balanceCode">SBIL</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Валюта</span></span>
+        <div class="rof__row"><span class="rof__value" data-trnrl="currencyCode">RUB</span></div>
+      </div>
+    </div>
+
+    <!-- Вариант «Общая сумма лимита»: сумма + аффикс валюты -->
+    <div class="tile__grid lc-tranche-nrl-summary-tile__grid lc-tranche-nrl-summary-tile__grid--limit">
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Общая сумма лимита</span></span>
+        <div class="rof__row"><span class="rof__value" data-trnrl="totalLimitAmount">123&nbsp;456&nbsp;789,00</span><span class="rof__affix" data-trnrl="currencyCode">RUB</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>

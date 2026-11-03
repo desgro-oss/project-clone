@@ -519,10 +519,10 @@
       ['Хэдер карточки', cs('.kbcard > .tile__header', 'padding'), 'Card: 16 / 16 / 8'],
       ['Контент карточки', cs('.kbcard > .tile__body', 'padding'), 'Card: 8 / 16 / 20'],
       ['Радиус карточки', cs('.kbcard', 'borderRadius'), '<code class="tok">--radius-m</code>'],
-      ['Заголовок карточки', cs('.kbcard .tile__title', 'font'), '<code class="tok">--type-h6-strong</code>'],
-      ['Значение поля', cs('.kbcard__fvalue', 'font'), '<code class="tok">--type-body-s</code>'],
-      ['Подпись поля', cs('.kbcard__flabel', 'font'), '<code class="tok">--type-body-xs</code>'],
-      ['Имя колонки', cs('.kbcol__name', 'font'), '<code class="tok">--type-body-s-strong</code>']
+      ['Заголовок карточки', cs('.kbcard .tile__title', 'font'), '<code class="tok">--type-h6-strong-smb</code>'],
+      ['Значение поля', cs('.kbcard__fvalue', 'font'), '<code class="tok">--type-body-s-reg</code>'],
+      ['Подпись поля', cs('.kbcard__flabel', 'font'), '<code class="tok">--type-body-xs-reg</code>'],
+      ['Имя колонки', cs('.kbcol__name', 'font'), '<code class="tok">--type-body-s-strong-smb</code>']
     ];
     dsTbl(host, ['Свойство', 'Значение', 'Токен / описание'], rows, ['1.6fr', '1.6fr', '1.6fr']);
   }

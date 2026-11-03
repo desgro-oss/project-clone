@@ -47,7 +47,7 @@
   --sub-h: 32px;
   --sub-px: var(--space-12);
   --sub-gap: var(--space-6);
-  --sub-font: var(--type-body-s);
+  --sub-font: var(--type-body-s-reg);
   --sub-radius: var(--radius-control);
 
   box-sizing: border-box;
@@ -78,15 +78,15 @@
    класса.                                                                    */
 .subtabs--m {
   --sub-h: 40px; --sub-px: var(--space-16); --sub-gap: var(--space-8);
-  --sub-font: var(--type-body-m); --sub-radius: var(--radius-control);
+  --sub-font: var(--type-body-m-reg); --sub-radius: var(--radius-control);
 }
 .subtabs--s {
   --sub-h: 32px; --sub-px: var(--space-12); --sub-gap: var(--space-6);
-  --sub-font: var(--type-body-s); --sub-radius: var(--radius-control);
+  --sub-font: var(--type-body-s-reg); --sub-radius: var(--radius-control);
 }
 .subtabs--xs {
   --sub-h: 24px; --sub-px: var(--space-8); --sub-gap: var(--space-4);
-  --sub-font: var(--type-body-xs); --sub-radius: var(--radius-control-s);
+  --sub-font: var(--type-body-xs-reg); --sub-radius: var(--radius-control-s);
 }
 
 /* ---------- сегмент -------------------------------------------------------- */
@@ -103,7 +103,7 @@
   background: transparent;
   color: var(--text-secondary);
   font: var(--sub-font);
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   white-space: nowrap;
   cursor: pointer;
   user-select: none;

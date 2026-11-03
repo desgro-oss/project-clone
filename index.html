@@ -120,6 +120,7 @@
   /* раздел записи — второй сегмент пути apps/<раздел>/…; у карты экранов и витрины
      локальных компонентов — третий (apps/screen-map/<раздел>, apps/local-components/<раздел>) */
   function sectionOf(p) {
+    if (p.section) return p.section;   // главная роли лежит в core/host-app, а строка — в разделе роли
     var seg = folderOf(p).split('/');
     return (seg[1] === 'screen-map' || seg[1] === 'local-components') ? (seg[2] || '') : (seg[1] || '');
   }
@@ -263,7 +264,8 @@
   }
   function projectsOf(team) {
     var kits = itemsOf('ds').filter(function (p) { return isKit(p) && sectionOf(p) === team; });
-    return kits.concat(itemsOf('projects').filter(function (p) { return sectionOf(p) === team; }));
+    /* витрина раздела — последней строкой: сначала главная роли и приложения (решение человека 29.10.2026) */
+    return itemsOf('projects').filter(function (p) { return sectionOf(p) === team; }).concat(kits);
   }
   /* концепты команды: записи с одним concept — одна группа; запись без concept — своя группа */
   function conceptGroupsOf(team) {

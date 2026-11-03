@@ -31,7 +31,7 @@ status: curated
 - **Поведение** — усечение названия + тултип; наведение — рамка и тень (0,15 / 0,2 с); меню «Скачать» — ContextMenu.
 - **Состояния** — карточка: Default · Hover (рамка `--border-primary` + `--shadow-card-hover`); название: Hover (`--primary-dark` + подчёркивание) · Focus (обводка 2px `--primary`). Витрина — `.is-hover`, `.is-focus`.
 - **Доступность** — название — `<button>` (открывает просмотр), порядок Tab: название → «Просмотр» → «Скачать»; иконка `aria-hidden`; кнопка меню — `aria-haspopup="menu"` + `aria-expanded`.
-- **Типографика** — название `--type-body-m-strong`, параметры `--type-body-xs`.
+- **Типографика** — название `--type-body-m-strong-smb`, параметры `--type-body-xs-reg`.
 - **Цвета** — фон `--bg-tile`, рамка `--border-light` / наведение `--border-primary`, тень `--shadow-card-hover`, плашка `--primary-bg` + глиф `--primary`, название `--text-primary` / наведение `--primary-dark`, параметры `--text-secondary`.
 
 ## Для разработчиков (выжимка)

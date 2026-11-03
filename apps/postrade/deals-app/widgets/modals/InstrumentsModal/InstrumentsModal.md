@@ -84,7 +84,7 @@ Modal modal--w7 (как окно «Продукты»), высота 60vh
 | IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | `ibtn--neutral ibtn--l`: `info-circle`, `arrow-left-right` |
 | Tooltip | ДС — `design-system/components/molecules/Tooltip/Tooltip.md` | `data-tooltip` на обеих кнопках строки |
 | Divider | ДС — `design-system/components/atoms/Divider/Divider.md` | `dvd--v` между колонками |
-| Typography | ДС — `design-system/foundations/Typography/Typography.md` | заголовки колонок `ds-h6-strong` |
+| Typography | ДС — `design-system/foundations/Typography/Typography.md` | заголовки колонок `ds-h6-strong-smb` |
 | Layout | ДС — `design-system/foundations/Layout/Layout.md` | `.ds-scroll` у списков |
 | Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Сохранить» `btn--accent btn--m` (`btn--loading` при сохранении) |
 | Skeleton | ДС — `design-system/components/atoms/Skeleton/Skeleton.md` | `.sk-line` в строках-заготовках |

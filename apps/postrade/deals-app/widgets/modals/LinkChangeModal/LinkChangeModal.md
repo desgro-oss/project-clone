@@ -78,7 +78,7 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 | Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Сохранить» `btn--accent btn--m`, при сохранении `btn--loading` |
 | Spinner | ДС — `design-system/components/atoms/Spinner/Spinner.md` | `spin--current` внутри кнопки при сохранении |
 | IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | крестик шапки `ibtn--neutral ibtn--l` |
-| Typography | ДС — `design-system/foundations/Typography/Typography.md` | подзаголовок — `ds-h6-strong`; строки карточки — `--type-body-s`, `--text-secondary` |
+| Typography | ДС — `design-system/foundations/Typography/Typography.md` | подзаголовок — `ds-h6-strong-smb`; строки карточки — `--type-body-s-reg`, `--text-secondary` |
 
 ## Поля (Fields)
 

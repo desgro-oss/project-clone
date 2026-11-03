@@ -90,7 +90,7 @@
 
   var data = window.ScreenMaps && window.ScreenMaps.postrade;
   if (!window.ProtoPanelMap || !data) {
-    host.innerHTML = '<p class="ds-body-s pp-map__empty">Карта не загрузилась: нет map-data.js или рантайма панели прототипа.</p>';
+    host.innerHTML = '<p class="ds-body-s-reg pp-map__empty">Карта не загрузилась: нет map-data.js или рантайма панели прототипа.</p>';
     return;
   }
   var map = window.ProtoPanelMap.render(host, data, {

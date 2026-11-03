@@ -1,0 +1,56 @@
+<!-- Связанный артефакт тайла «Валюта транша»: окно ручной правки.
+     Фрагмент вшивается сборщиком отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Два поля: «Валюта» — список (InputAutocomplete + DropdownList, значение
+     только из списка) и «Сумма лимита» — поле суммы. Постфикса с валютой у
+     суммы НЕТ (решение человека 02.11.2026: «только сама сумма»), хотя у окна
+     «Баланс и валюта» страницы НКЛ он есть. Обычно валюта транша совпадает с
+     валютой НКЛ, но не всегда — поле заполняется вручную.
+
+     Значения в разметке — пример. Окно заполняет и сохраняет
+     TrancheLoanLimitsModal.js (PostModalTrancheLoanLimits): на открытии читает
+     текущие значения через get(), «Сохранить» отдаёт их в save() и закрывает
+     окно. Крестик и Esc закрывают без сохранения; клик мимо окна не закрывает —
+     защиту включает сам Modal.js, потому что в окне поля ввода.
+
+     Ширина modal--w3 — три колонки (решение человека 02.11.2026). Своего CSS
+     у окна нет: раскладка — компоненты ДС. -->
+<div class="modal-scrim" id="tl-scrim" hidden>
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="tl-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="tl-title">Валюта транша</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tl-currency"><span class="ds-label__text">Валюта</span></label>
+        <div class="inp__box">
+          <div class="inp__field" data-ddl="tl-currency-list">
+            <input class="inp__control" id="tl-currency" name="currencyCode" autocomplete="off" value="RUB">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+        </div>
+        <div id="tl-currency-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <!-- Сумма: число с разрядами и запятой. Постфикса валюты нет по решению
+           человека 02.11.2026 — валюту видно в поле выше. -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tl-limit"><span class="ds-label__text">Сумма лимита</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="tl-limit" name="totalLimitAmount" inputmode="decimal" autocomplete="off" value="1&nbsp;000&nbsp;000,00">
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-tl-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

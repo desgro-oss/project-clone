@@ -53,13 +53,13 @@
   .msg           { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
   .msg--user     { align-items: flex-end; }
   .msg__bubble   { display: flex; flex-direction: column; gap: var(--space-8); max-width: min(80%, 640px); padding: var(--space-10) var(--space-16); color: var(--text-primary); background: color-mix(in srgb, var(--primary) 9%, var(--bg-tile)); border-radius: var(--radius-3xl) var(--radius-3xl) var(--radius-s) var(--radius-3xl); }
-  .msg__bubble .ds-body-m { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .msg__time     { font: var(--type-body-xs); color: var(--text-inactive); }
+  .msg__bubble .ds-body-m-reg { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg__time     { font: var(--type-body-xs-reg); color: var(--text-inactive); }
   .msg--user > .msg__time { padding-right: var(--space-4); }
   .msg__meta     { display: flex; align-items: center; gap: var(--space-6); }
   .msg__ico      { display: flex; flex: none; width: 16px; height: 16px; color: var(--primary); }
   .msg__ico > [data-icon] { width: 100%; height: 100%; }
-  .msg__name     { font: var(--type-body-s-strong); color: var(--text-primary); }
+  .msg__name     { font: var(--type-body-s-strong-smb); color: var(--text-primary); }
   .msg__meta > .msg__time::before { content: "·"; margin-right: var(--space-6); }
   /* Бейдж А-риска в сообщении — тон чипов из шапки (st-dpurple-light / st-dpurple).
      Чип цели — якорь: сообщение подсвечено мягкой рамкой того же тона. */
@@ -81,13 +81,13 @@
      углы поворачиваемого квадрата расширяли прокручиваемую область нити,
      полоса прокрутки мигала и весь чат дёргался по горизонтали.
      В прототипе клик по строке завершает подготовку. */
-  .think         { display: inline-flex; align-items: center; gap: var(--space-10); align-self: flex-start; padding: var(--space-4) var(--space-8) var(--space-4) 0; font: var(--type-body-m); color: var(--text-secondary); text-align: left; cursor: pointer; background: none; border: 0; border-radius: var(--radius-m); }
+  .think         { display: inline-flex; align-items: center; gap: var(--space-10); align-self: flex-start; padding: var(--space-4) var(--space-8) var(--space-4) 0; font: var(--type-body-m-reg); color: var(--text-secondary); text-align: left; cursor: pointer; background: none; border: 0; border-radius: var(--radius-m); }
   .think:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   .think__loader { flex: none; display: block; width: 16px; height: 16px; contain: strict; }
   .think__loader::before { content: ""; display: block; box-sizing: border-box; width: 100%; height: 100%; border: 2px solid color-mix(in srgb, var(--primary) 20%, transparent); border-top-color: var(--primary); border-radius: var(--radius-full); animation: thinkSpin .9s linear infinite; }
   .think__text   { color: transparent; background: linear-gradient(90deg, var(--text-secondary) 0%, var(--text-secondary) 40%, var(--text-inactive) 50%, var(--text-secondary) 60%, var(--text-secondary) 100%); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; animation: thinkShimmer 3.2s ease-in-out infinite; transition: opacity .3s ease; }
   .think__text.is-out { opacity: 0; }
-  .think__time   { font: var(--type-body-xs); color: var(--text-inactive); font-variant-numeric: tabular-nums; }
+  .think__time   { font: var(--type-body-xs-reg); color: var(--text-inactive); font-variant-numeric: tabular-nums; }
   @keyframes thinkSpin { to { transform: rotate(360deg); } }
   @keyframes thinkShimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
 
@@ -99,12 +99,12 @@
   .doc__ico      { flex: none; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-m); color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, var(--bg-tile)); }
   .doc__ico > [data-icon] { width: 22px; height: 22px; }
   .doc__main     { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-  .doc__title    { display: flex; align-items: center; gap: var(--space-6); max-width: 100%; min-width: 0; padding: 0; font: var(--type-body-m-strong); color: var(--text-primary); text-align: left; cursor: pointer; background: none; border: 0; }
+  .doc__title    { display: flex; align-items: center; gap: var(--space-6); max-width: 100%; min-width: 0; padding: 0; font: var(--type-body-m-strong-smb); color: var(--text-primary); text-align: left; cursor: pointer; background: none; border: 0; }
   .doc__label    { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
   .doc__risk-dot { flex: none; display: inline-block; width: 6px; height: 6px; border-radius: var(--radius-circle); background: var(--st-dpurple); }
   .doc__title:hover { color: var(--primary-dark); text-decoration: underline; text-underline-offset: 3px; }
   .doc__title:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: var(--radius-2xs); }
-  .doc__meta     { overflow: hidden; font: var(--type-body-xs); color: var(--text-secondary); white-space: nowrap; text-overflow: ellipsis; }
+  .doc__meta     { overflow: hidden; font: var(--type-body-xs-reg); color: var(--text-secondary); white-space: nowrap; text-overflow: ellipsis; }
   .doc__acts     { flex: none; display: flex; align-items: center; gap: var(--space-8); }
 
   /* ── Ошибка подготовки в нити ────────────────────────────────────────────
@@ -116,11 +116,11 @@
   .err__ico      { flex: none; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-full); color: var(--error); background: var(--error-bg); }
   .err__ico > [data-icon] { width: 20px; height: 20px; }
   .err__titles   { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-  .err__title    { margin: 0; font: var(--type-body-m-strong); color: var(--text-primary); }
-  .err__text     { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+  .err__title    { margin: 0; font: var(--type-body-m-strong-smb); color: var(--text-primary); }
+  .err__text     { margin: 0; font: var(--type-body-m-reg); color: var(--text-secondary); }
   .err__fix      { margin-left: calc(36px + var(--space-12)); padding: var(--space-12) var(--space-16); background: var(--bg-page); border-radius: var(--radius-m); }
-  .err__cap      { margin: 0 0 var(--space-6); font: var(--type-body-s-strong); color: var(--text-primary); }
-  .err__list     { display: flex; flex-direction: column; gap: var(--space-4); margin: 0; padding-left: var(--space-20); font: var(--type-body-s); color: var(--text-primary); }
+  .err__cap      { margin: 0 0 var(--space-6); font: var(--type-body-s-strong-smb); color: var(--text-primary); }
+  .err__list     { display: flex; flex-direction: column; gap: var(--space-4); margin: 0; padding-left: var(--space-20); font: var(--type-body-s-reg); color: var(--text-primary); }
   .err__list li::marker { color: var(--primary); }
   .err__acts     { display: flex; flex-wrap: wrap; gap: var(--space-8); margin-left: calc(36px + var(--space-12)); }
   .err.is-resolved .err__acts { display: none; }
@@ -201,7 +201,7 @@
     margin: 0;
     padding: var(--space-4) 0;
     border: 0;
-    font: var(--type-body-m);
+    font: var(--type-body-m-reg);
     letter-spacing: normal;
     white-space: pre-wrap;
     overflow-wrap: break-word;
@@ -239,7 +239,7 @@
   .cmp__tgl[aria-expanded="true"] .cmp__tgl-ico > [data-icon="ai-stars"] { opacity: 0; transform: rotate(90deg) scale(.5); }
   .cmp__tgl[aria-expanded="true"] .cmp__tgl-ico > [data-icon="close"] { opacity: 1; transform: none; }
 
-  .cmp__hint     { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4) var(--space-16); font: var(--type-body-xs); color: var(--text-secondary); }
+  .cmp__hint     { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4) var(--space-16); font: var(--type-body-xs-reg); color: var(--text-secondary); }
   .cmp__hint kbd { display: inline-block; min-width: 18px; padding: 0 var(--space-4); font: inherit; text-align: center; color: var(--text-secondary); background: var(--bg-tile); border: 1px solid var(--border-light); border-bottom-width: 2px; border-radius: var(--radius-s); }
 
   /* ── Контекст из материала ────────────────────────────────────────────────
@@ -254,8 +254,8 @@
   .cmp-quote[hidden] { display: none; }
   @keyframes quoteIn { from { opacity: 0; transform: translateY(-4px); } }
   .cmp-quote__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
-  .cmp-quote__src { font: var(--type-body-xs); color: var(--text-secondary); }
-  .cmp-quote__text { margin: 0; font: var(--type-body-s); color: var(--text-primary); }
+  .cmp-quote__src { font: var(--type-body-xs-reg); color: var(--text-secondary); }
+  .cmp-quote__text { margin: 0; font: var(--type-body-s-reg); color: var(--text-primary); }
   .cmp.is-ctx-new { animation: ctxPulse .9s ease; }
   @keyframes ctxPulse { 30% { box-shadow: 0 0 0 4px var(--cmp-ring), var(--cmp-shadow); } }
 
@@ -284,14 +284,14 @@
 
   .bld__head     { display: flex; align-items: flex-start; gap: var(--space-12); }
   .bld__titles   { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-  .bld__title    { margin: 0; font: var(--type-body-m-strong); color: var(--text-primary); }
-  .bld__sub      { margin: 0; font: var(--type-body-s); color: var(--text-secondary); }
+  .bld__title    { margin: 0; font: var(--type-body-m-strong-smb); color: var(--text-primary); }
+  .bld__sub      { margin: 0; font: var(--type-body-s-reg); color: var(--text-secondary); }
 
 
   /* Секция конструктора: номер шага и подпись слева, контролы справа */
   .bsec          { display: grid; grid-template-columns: 184px minmax(0, 1fr); gap: var(--space-8) var(--space-16); align-items: start; padding-top: var(--space-12); border-top: 1px dashed var(--border-light); }
-  .bsec__label   { display: flex; align-items: center; gap: var(--space-8); min-height: var(--space-40); font: var(--type-body-s-strong); color: var(--text-primary); }
-  .bsec__num     { flex: none; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: var(--radius-full); font: var(--type-body-xs); font-weight: 600; color: var(--primary-dark); background: color-mix(in srgb, var(--primary) 10%, transparent); transition: background-color .25s ease, color .25s ease; }
+  .bsec__label   { display: flex; align-items: center; gap: var(--space-8); min-height: var(--space-40); font: var(--type-body-s-strong-smb); color: var(--text-primary); }
+  .bsec__num     { flex: none; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: var(--radius-full); font: var(--type-body-xs-reg); font-weight: 600; color: var(--primary-dark); background: color-mix(in srgb, var(--primary) 10%, transparent); transition: background-color .25s ease, color .25s ease; }
   .bsec__num > [data-icon] { display: none; width: 14px; height: 14px; }
   .bsec.is-done .bsec__num { background: var(--primary); color: var(--text-on-dark); }
   .bsec.is-done .bsec__n { display: none; }
@@ -299,7 +299,7 @@
   @keyframes bldPop { from { opacity: 0; transform: scale(.3) rotate(-30deg); } }
   .bsec__ctl     { display: flex; flex-direction: column; gap: var(--space-8); min-width: 0; }
   .bsec__titles  { display: flex; flex-direction: column; min-width: 0; }
-  .bsec__hint    { font: var(--type-body-xs); color: var(--text-secondary); }
+  .bsec__hint    { font: var(--type-body-xs-reg); color: var(--text-secondary); }
 
   /* Поиск объекта */
   .bfind         { display: flex; align-items: center; gap: var(--space-8); height: var(--space-40); padding: 0 var(--space-12); border: 1px solid var(--border-light); border-radius: var(--radius-m); background: var(--bg-page); transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease; }
@@ -308,18 +308,18 @@
   .bfind__ico    { flex: none; display: flex; width: 18px; height: 18px; color: var(--text-secondary); transition: color .15s ease; }
   .bfind__ico > [data-icon] { width: 100%; height: 100%; }
   .bfind:focus-within .bfind__ico { color: var(--primary); }
-  .bfind__control { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; font: var(--type-body-m); color: var(--text-primary); }
+  .bfind__control { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; font: var(--type-body-m-reg); color: var(--text-primary); }
   .bfind__control::placeholder { color: var(--text-inactive); opacity: 1; }
   .bfind__control::-webkit-search-cancel-button { display: none; }
 
   /* Варианты объекта — пилюли с типом */
   .bopts         { display: flex; flex-wrap: wrap; gap: var(--space-8); }
   .bopts:empty   { display: none; }
-  .bopt          { display: inline-flex; align-items: center; gap: var(--space-8); max-width: 100%; min-height: 32px; padding: var(--space-4) var(--space-12) var(--space-4) var(--space-4); font: var(--type-body-s); color: var(--text-primary); cursor: pointer; background: var(--bg-tile); border: 1px solid var(--border-light); border-radius: var(--radius-full); transition: border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease; }
+  .bopt          { display: inline-flex; align-items: center; gap: var(--space-8); max-width: 100%; min-height: 32px; padding: var(--space-4) var(--space-12) var(--space-4) var(--space-4); font: var(--type-body-s-reg); color: var(--text-primary); cursor: pointer; background: var(--bg-tile); border: 1px solid var(--border-light); border-radius: var(--radius-full); transition: border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease; }
   .bopt:hover    { border-color: var(--primary-light); background: color-mix(in srgb, var(--primary) 4%, var(--bg-tile)); }
   .bopt:active   { transform: scale(.97); }
   .bopt:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-  .bopt__tag     { flex: none; padding: var(--space-2) var(--space-8); border-radius: var(--radius-full); font: var(--type-body-xs); color: var(--text-secondary); background: var(--bg-page); transition: background-color .2s ease, color .2s ease; }
+  .bopt__tag     { flex: none; padding: var(--space-2) var(--space-8); border-radius: var(--radius-full); font: var(--type-body-xs-reg); color: var(--text-secondary); background: var(--bg-page); transition: background-color .2s ease, color .2s ease; }
   .bopt__label   { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .bopt__check   { display: inline-flex; flex: none; width: 0; height: 16px; opacity: 0; overflow: hidden; transition: width .25s var(--cmp-ease), opacity .2s ease; }
   .bopt__check > [data-icon] { flex: none; width: 16px; height: 16px; }
@@ -330,7 +330,7 @@
   .bopt--custom > [data-icon] { flex: none; width: 16px; height: 16px; }
 
   /* Типовой фокус — переключаемые чипы: «+» превращается в галочку */
-  .bchip         { display: inline-flex; align-items: center; gap: var(--space-6); min-height: 32px; padding: var(--space-4) var(--space-12) var(--space-4) var(--space-8); font: var(--type-body-s); color: var(--text-primary); cursor: pointer; background: transparent; border: 1px dashed var(--border-primary); border-radius: var(--radius-full); transition: border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease; }
+  .bchip         { display: inline-flex; align-items: center; gap: var(--space-6); min-height: 32px; padding: var(--space-4) var(--space-12) var(--space-4) var(--space-8); font: var(--type-body-s-reg); color: var(--text-primary); cursor: pointer; background: transparent; border: 1px dashed var(--border-primary); border-radius: var(--radius-full); transition: border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease; }
   .bchip:hover   { border-style: solid; border-color: var(--primary); background: color-mix(in srgb, var(--primary) 4%, transparent); }
   .bchip:active  { transform: scale(.97); }
   .bchip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
@@ -343,7 +343,7 @@
 
   /* Направление — чипы с радиокнопкой: один выбор, повторный клик снимает */
   .bradios       { display: flex; flex-wrap: wrap; gap: var(--space-8); }
-  .bradio        { display: inline-flex; align-items: center; gap: var(--space-8); min-height: 32px; padding: var(--space-4) var(--space-12) var(--space-4) var(--space-8); font: var(--type-body-s); color: var(--text-primary); cursor: pointer; background: var(--bg-tile); border: 1px solid var(--border-light); border-radius: var(--radius-full); transition: border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease; }
+  .bradio        { display: inline-flex; align-items: center; gap: var(--space-8); min-height: 32px; padding: var(--space-4) var(--space-12) var(--space-4) var(--space-8); font: var(--type-body-s-reg); color: var(--text-primary); cursor: pointer; background: var(--bg-tile); border: 1px solid var(--border-light); border-radius: var(--radius-full); transition: border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease; }
   .bradio:hover  { border-color: var(--primary-light); background: color-mix(in srgb, var(--primary) 4%, var(--bg-tile)); }
   .bradio:active { transform: scale(.97); }
   .bradio:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
@@ -354,7 +354,7 @@
   .bradio[aria-checked="true"] .bradio__dot::after { transform: scale(1); }
 
   /* Низ конструктора: срок подготовки */
-  .bld__foot     { display: flex; align-items: center; gap: var(--space-8); padding-top: var(--space-12); border-top: 1px dashed var(--border-light); font: var(--type-body-s); color: var(--text-secondary); }
+  .bld__foot     { display: flex; align-items: center; gap: var(--space-8); padding-top: var(--space-12); border-top: 1px dashed var(--border-light); font: var(--type-body-s-reg); color: var(--text-secondary); }
   .bld__foot-ico { flex: none; display: flex; width: 18px; height: 18px; color: var(--primary); }
   .bld__foot-ico > [data-icon] { width: 100%; height: 100%; }
 
@@ -420,7 +420,7 @@
   .pv__ico       { flex: none; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-m); color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, var(--bg-tile)); }
   .pv__ico > [data-icon] { width: 20px; height: 20px; }
   .pv__titles    { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-  .pv__title     { margin: 0; overflow: hidden; font: var(--type-body-m-strong); color: var(--text-primary); white-space: nowrap; text-overflow: ellipsis; }
+  .pv__title     { margin: 0; overflow: hidden; font: var(--type-body-m-strong-smb); color: var(--text-primary); white-space: nowrap; text-overflow: ellipsis; }
   /* Выбор документа в шапке просмотра: триггер — Buttons Transparent с
      шевроном, список — DropdownList (подпись + дата helper-строкой, ведущая
      иконка, точка А-риска в правой части). Своё — только выравнивание
@@ -651,8 +651,8 @@
       <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
     </header>
     <div class="modal__body">
-      <p class="ds-body-m">Запрос, все его версии материала и приложенные файлы уйдут в корзину.</p>
-      <p class="ds-body-s">Восстановить запрос можно в течение 30 дней — из раздела «История и материалы».</p>
+      <p class="ds-body-m-reg">Запрос, все его версии материала и приложенные файлы уйдут в корзину.</p>
+      <p class="ds-body-s-reg">Восстановить запрос можно в течение 30 дней — из раздела «История и материалы».</p>
     </div>
     <footer class="modal__foot">
       <div class="modal__foot-right">
@@ -869,10 +869,10 @@
   }
 
   /* ── Текстовые блоки ──────────────────────────────────────────────────── */
-  function text(t) { return '<div class="thr__text"><p class="ds-body-m">' + t + '</p></div>'; }
+  function text(t) { return '<div class="thr__text"><p class="ds-body-m-reg">' + t + '</p></div>'; }
 
   function sources(list) {
-    return '<div class="thr__row"><span class="ds-body-xs">Источники:</span><div class="chiplist chiplist--s">' +
+    return '<div class="thr__row"><span class="ds-body-xs-reg">Источники:</span><div class="chiplist chiplist--s">' +
       list.map(function (s) { return '<span class="chip chip--s"><span class="chip__label">' + esc(s) + '</span></span>'; }).join('') +
       '</div></div>';
   }
@@ -1023,7 +1023,7 @@
     paint(); syncControls();
     setBuilder(false);
 
-    var body = '<p class="ds-body-m">' + esc(q) + '</p>';
+    var body = '<p class="ds-body-m-reg">' + esc(q) + '</p>';
     if (S.files.length) {
       body += '<div class="chiplist chiplist--s">' + S.files.map(function (f) {
         return '<span class="chip chip--s"><span class="chip__icon"><i data-icon="file-basic"></i></span><span class="chip__label">' + esc(f) + '</span></span>';
@@ -1049,7 +1049,7 @@
     }
 
     if (reportish && !S.hasMaterial) {
-      var i1 = push('agent', text('<span class="ds-body-m">Уточняю параметры…</span>'));
+      var i1 = push('agent', text('<span class="ds-body-m-reg">Уточняю параметры…</span>'));
       setTimeout(function () {
         replace(i1, text('Для материала нужен объект анализа. Откройте конструктор и выберите компанию, группу или рынок — запрос соберётся сам, а текст останется редактируемым.') +
           '<div class="thr__row"><button class="btn btn--outline btn--s" data-act="builder"><i data-icon="ai-stars"></i><span class="btn__label">Открыть конструктор</span></button></div>');
@@ -1062,7 +1062,7 @@
       return;
     }
 
-    var i2 = push('agent', text('<span class="ds-body-m">Ищу данные…</span>'));
+    var i2 = push('agent', text('<span class="ds-body-m-reg">Ищу данные…</span>'));
     setTimeout(function () {
       typeAnswer(i2, ANSWER, sources(['Отчётность МСФО 2025', 'Раскрытие эмитента', 'Данные Банка', 'Отраслевой обзор 2026']) + answerActions(i2));
     }, 700);
@@ -1854,7 +1854,7 @@
   function seedError() {
     S.errorRequest = objFrag(byId(OBJECTS, 'fert')) + ' ' + byId(FOCUS, 'bench').text + ' ' + byId(DIRECTIONS, 'full').text;
     S.msgs = [
-      { role: 'user', time: '08.09.2026, 10:20', html: '<p class="ds-body-m">' + esc(S.errorRequest) + '</p>' },
+      { role: 'user', time: '08.09.2026, 10:20', html: '<p class="ds-body-m-reg">' + esc(S.errorRequest) + '</p>' },
       { role: 'agent', time: '08.09.2026, 10:20', html: text('Принял, готовлю материал по рынку «Минеральные удобрения, СЗФО». Это займёт до 30 минут.') },
       { role: 'agent', time: '08.09.2026, 10:52', html: errorCard() }
     ];
@@ -1871,7 +1871,7 @@
     var d = DIALOGS[h.id];
     if (d) {
       S.msgs = [
-        { role: 'user', time: d.time, html: '<p class="ds-body-m">' + esc(d.q) + '</p>' },
+        { role: 'user', time: d.time, html: '<p class="ds-body-m-reg">' + esc(d.q) + '</p>' },
         { role: 'agent', time: d.time, html: text(esc(d.a)) + sources(d.src) + answerActions(1) }
       ];
       render();
@@ -1879,7 +1879,7 @@
     }
     S.msgs = [
       { role: 'user', time: '11.09.2026, 14:02', html:
-        '<div class="thr__text"><p class="ds-body-m">Запрос из конструктора: ' + esc(OBJECT) + ', детальный материал, направление «Прямые инвестиции». Собственник рассматривает частичный выход. Интересует применимость мезонина, оценка через мультипликаторы peers и график погашений валютного долга до 2028 года.</p></div>' +
+        '<div class="thr__text"><p class="ds-body-m-reg">Запрос из конструктора: ' + esc(OBJECT) + ', детальный материал, направление «Прямые инвестиции». Собственник рассматривает частичный выход. Интересует применимость мезонина, оценка через мультипликаторы peers и график погашений валютного долга до 2028 года.</p></div>' +
         '<div class="chiplist chiplist--s">' +
         '<span class="chip chip--s"><span class="chip__icon"><i data-icon="file-basic"></i></span><span class="chip__label">Отчётность_МСФО_2025.pdf</span></span>' +
         '<span class="chip chip--s"><span class="chip__icon"><i data-icon="file-basic"></i></span><span class="chip__label">Teaser_group.pptx</span></span>' +
@@ -1995,7 +1995,7 @@
 
   if (params.get('run')) {
     S.openId = 1;
-    push('user', '<p class="ds-body-m">Запрос из конструктора: ' + esc(OBJECT) + ' · детальный материал · направление «Прямые инвестиции».</p>');
+    push('user', '<p class="ds-body-m-reg">Запрос из конструктора: ' + esc(OBJECT) + ' · детальный материал · направление «Прямые инвестиции».</p>');
     startRun('Принял. Параметры зафиксированы, файлы переданы на извлечение.');
   } else if (params.get('id')) {
     var opened = HIST.filter(function (h) { return String(h.id) === params.get('id'); })[0];

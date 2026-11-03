@@ -548,92 +548,8 @@
       "isMine": false
     }
   ],
-  "news": [
-    {
-      "newsId": "N-301",
-      "publishedAt": "2026-10-08",
-      "sourceName": "Деловой вестник",
-      "title": "ГК «Волга Тех» запускает вторую очередь логистического комплекса",
-      "summary": "Группа рассчитывает завершить строительство до конца 2027 года и увеличить складские мощности на 40%.",
-      "clientName": "ГК «Волга Тех»",
-      "isMyClient": true,
-      "isFavorite": true,
-      "url": "#"
-    },
-    {
-      "newsId": "N-302",
-      "publishedAt": "2026-10-07",
-      "sourceName": "Финансовая лента",
-      "title": "АО «Урал-Инвест» готовит рефинансирование кредитного портфеля",
-      "summary": "Компания ведёт переговоры с несколькими банками и планирует удлинить сроки заимствований.",
-      "clientName": "АО «Урал-Инвест»",
-      "isMyClient": true,
-      "url": "#"
-    },
-    {
-      "newsId": "N-303",
-      "publishedAt": "2026-10-05",
-      "sourceName": "Отраслевое обозрение",
-      "title": "ПАО «Трубная группа» показала рост отгрузок по итогам III квартала",
-      "summary": "Рост обеспечен спросом на продукцию для энергетических проектов и экспортными поставками.",
-      "clientName": "ПАО «Трубная группа»",
-      "isMyClient": true,
-      "isFavorite": true,
-      "url": "#"
-    },
-    {
-      "newsId": "N-304",
-      "publishedAt": "2026-10-02",
-      "sourceName": "Рынки сегодня",
-      "title": "ООО «ДомСтрой Сибирь» вышло на новый региональный рынок",
-      "summary": "Застройщик приобрёл участок под жилой квартал и начинает проектирование первой очереди.",
-      "clientName": "ООО «ДомСтрой Сибирь»",
-      "isMyClient": true,
-      "url": "#"
-    },
-    {
-      "newsId": "N-305",
-      "publishedAt": "2026-09-30",
-      "sourceName": "Финансовая лента",
-      "title": "ООО «Сима-Опт» расширяет сеть распределительных центров",
-      "summary": "Компания откроет два новых склада в Поволжье и рассчитывает сократить сроки доставки в регионы.",
-      "clientName": "ООО «Сима-Опт»",
-      "isMyClient": true,
-      "url": "#"
-    },
-    {
-      "newsId": "N-401",
-      "publishedAt": "2026-10-08",
-      "sourceName": "Финансовая лента",
-      "title": "ПАО «СибМеталл» утвердило программу модернизации производства",
-      "summary": "Программа рассчитана на три года и включает обновление прокатного стана и энергетического хозяйства.",
-      "clientName": "ПАО «СибМеталл»",
-      "isMyClient": false,
-      "isFavorite": true,
-      "url": "#"
-    },
-    {
-      "newsId": "N-402",
-      "publishedAt": "2026-10-06",
-      "sourceName": "Деловой вестник",
-      "title": "АО «Платформа» сменило финансового директора",
-      "summary": "Новый финансовый директор ранее отвечал за корпоративные финансы в отраслевом холдинге.",
-      "clientName": "АО «Платформа»",
-      "isMyClient": false,
-      "url": "#"
-    },
-    {
-      "newsId": "N-403",
-      "publishedAt": "2026-10-03",
-      "sourceName": "Рынки сегодня",
-      "title": "ГК «Эталон-Сити» объявила о стратегическом партнёрстве",
-      "summary": "Партнёры создадут совместное предприятие для девелопмента коммерческой недвижимости.",
-      "clientName": "ГК «Эталон-Сити»",
-      "isMyClient": false,
-      "isFavorite": true,
-      "url": "#"
-    }
-  ],
+  /* новости — общий набор data/news.js (тот же на странице «Новости») */
+  "news": window.MOCK_NEWS || [],
   "meetingStatusLabels": {
     "SCHEDULED": "Запланирована",
     "NEEDS_ATTENTION": "Требует внимания",
@@ -658,12 +574,30 @@
   var DAY_LABELS = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
   var MEETINGS_URL = 'MeetingsProtocolsPage.preview.html';
   var TASKS_URL = 'TasksPage.preview.html';
+  var LEADS_PICKS_URL = 'LeadsNew.preview.html?tab=picks&mode=after';
+  /* страница «Новости»: вкладка — область карточки новостей, id — выбранная
+     новость (решение пользователя 27.10.2026) */
+  var NEWS_SCOPES = { MY: 'my', DESK: 'desk', FAV: 'fav' };
+  function newsHref(scope, id) { return 'NewsPage.preview.html?scope=' + NEWS_SCOPES[scope] + (id ? '&id=' + encodeURIComponent(id) : ''); }
+  /* «События» (решение пользователя 27.10.2026): лента событий по моим
+     проектам и клиентам — data/events.js; страница «События» — EventsPage */
+  var EVENT_SCOPES = { MY: 'my', DESK: 'desk' };
+  /* выключенные в карточке типы переходят на страницу (?types=включённые) */
+  function eventsHref(scope, id) {
+    var E = window.IBPR_EVENTS;
+    var on = E ? E.types.filter(function (t) { return !eventTypesOff[t.code]; }).map(function (t) { return t.code; }) : [];
+    var types = E && on.length !== E.types.length ? '&types=' + on.join(',') : '';
+    return 'EventsPage.preview.html?scope=' + EVENT_SCOPES[scope] + types + (id ? '&id=' + encodeURIComponent(id) : '');
+  }
   var root = null;
   var profileRoot = null;
+  var copyQueue = Promise.resolve();
   var meetingScope = 'MY';
   var taskScope = 'MY';
   var newsScope = 'MY';
-  var allNews = false;
+  var eventScope = 'MY';
+  var eventTypesOff = {};
+  var eventSelectedId = null;
   var sequence = 0;
 
   function esc(value) {
@@ -683,6 +617,16 @@
   function chip(label, tone) {
     return '<span class="chip chip--s chip--rounded chip--' + tone + '"><span class="chip__label">' + esc(label) + '</span></span>';
   }
+  /* склонение после числа: 1 идея, 2 идеи, 5 идей, 11 идей, 21 идея */
+  function plural(n, one, few, many) {
+    var d = n % 10, h = n % 100;
+    if (d === 1 && h !== 11) return one;
+    return d >= 2 && d <= 4 && (h < 12 || h > 14) ? few : many;
+  }
+  /* строка «требует внимания» в карточке задач: точка статуса и текст, переносится, а не обрезается */
+  function alertLine(text) {
+    return '<span class="hd-kpi__alert"><span class="hd-status-dot hd-status-dot--warning" aria-hidden="true"></span><span>' + esc(text) + '</span></span>';
+  }
   function smallMeta(name, text) {
     return '<span class="hd-meta">' + icon(name) + '<span>' + esc(text) + '</span></span>';
   }
@@ -700,24 +644,53 @@
       .sort(function (a, b) { return b.publishedAt.localeCompare(a.publishedAt); });
   }
 
-  function segment(label, group, options, selected) {
-    return '<div class="segctrl segctrl--s segctrl--fullwidth hd-scope" role="radiogroup" aria-label="' + label + '" data-hd-segment="' + group + '">' +
+  /* compact — по ширине подписей, иначе во всю ширину карточки */
+  function segment(label, group, options, selected, compact) {
+    return '<div class="segctrl segctrl--s' + (compact ? '' : ' segctrl--fullwidth') + ' hd-scope" role="radiogroup" aria-label="' + label + '" data-hd-segment="' + group + '">' +
       '<div class="segctrl__thumb"></div>' + options.map(function (o) {
         return '<button type="button" class="segctrl__item" role="radio" aria-label="' + esc(o[1]) + '" title="' + esc(o[1]) + '" aria-checked="' + (o[0] === selected) + '" tabindex="' + (o[0] === selected ? '0' : '-1') + '" data-hd-value="' + o[0] + '"><span class="segctrl__label">' + o[1] + '</span></button>';
       }).join('') + '</div>';
+  }
+
+  // DSCopy не сообщает об отказе execCommand: проверяем его результат локально,
+  // восстанавливая метод после каждой последовательной попытки копирования.
+  async function copyProfileValue(value) {
+    if (!window.DSCopy || typeof window.DSCopy.write !== 'function') throw new Error('Копирование недоступно');
+    var hadOwnCommand = Object.prototype.hasOwnProperty.call(document, 'execCommand');
+    var originalCommand = document.execCommand;
+    var fallbackFailed = false;
+    document.execCommand = function () {
+      var result;
+      try {
+        result = typeof originalCommand === 'function' && originalCommand.apply(this, arguments);
+      } catch (error) {
+        if (arguments[0] === 'copy') fallbackFailed = true;
+        throw error;
+      }
+      if (arguments[0] === 'copy' && result !== true) fallbackFailed = true;
+      return result;
+    };
+    try {
+      await window.DSCopy.write(value);
+      if (fallbackFailed) throw new Error('Копирование не выполнено');
+    } finally {
+      if (hadOwnCommand) document.execCommand = originalCommand;
+      else delete document.execCommand;
+    }
   }
 
   function renderProfile() {
     var p = data.profile;
     var fullName = p.firstName + ' ' + p.middleName + ' ' + p.lastName;
     profileRoot.innerHTML = '<section class="hd-profile" aria-label="Профиль сотрудника">' +
-      '<div class="hd-profile__identity"><span class="av av--circular av--xl hd-profile__avatar"><img class="av__img" src="' + esc(p.photoUrl) + '" alt="' + esc(fullName) + '"></span>' +
-      '<div class="hd-profile__main"><p class="hd-profile__overline"><time datetime="' + TODAY + '" data-hd-demo-date>Демо · 9 октября 2026</time></p><h2 class="hd-profile__name">' + esc(fullName) + '</h2>' +
+      '<div class="hd-profile__identity"><span class="hd-profile__avatar-frame" tabindex="0" role="img" aria-label="Фото ' + esc(fullName) + '"><span class="av av--circular av--xl hd-profile__avatar" aria-hidden="true"><img class="av__img" src="' + esc(p.photoUrl) + '" alt=""></span><span class="hd-profile__avatar-edit" aria-hidden="true">' + icon('edit') + '</span></span>' +
+      '<div class="hd-profile__main"><h2 class="hd-profile__name"><button type="button" class="hd-profile__name-button" data-modal="hd-profile-details" data-tooltip="Открыть профиль пользователя">' + esc(fullName) + '</button></h2>' +
       '<div class="hd-profile__role"><span>' + esc(p.positionName) + '</span><span class="hd-profile__dot" aria-hidden="true">·</span>' +
       // Дески — readonly-чипы Chip S (решение пользователя 20.10.2026).
       '<div class="chiplist hd-profile__desks" role="list" aria-label="Дески">' + p.deskNames.map(function (d) { return '<span class="chip chip--s chip--fit" role="listitem"><span class="chip__label">' + esc(d) + '</span></span>'; }).join('') + '</div></div>' +
-      '<div class="hd-profile__contacts"><button type="button" class="hd-profile__contact-copy" data-hd-copy-phone aria-label="Скопировать телефон" data-tooltip="Скопировать телефон">' + icon('phone') + '<span>' + esc(p.phone) + '</span></button>' +
-      '<a href="mailto:' + esc(p.email) + '">' + icon('mail') + '<span>' + esc(p.email) + '</span></a><span class="hd-profile__account"><button type="button" class="ibtn ibtn--neutral ibtn--s" data-modal="hd-profile-details" aria-label="Открыть профиль" data-tooltip="Открыть профиль">' + icon('user-circle') + '</button><span class="hd-profile__employee-number" aria-label="Табельный номер ' + esc(p.employeeNumber) + '">' + esc(p.employeeNumber) + '</span></span></div></div></div>' +
+      '<div class="hd-profile__contacts">' + [['phone', 'phone', 'телефон'], ['email', 'mail', 'почту'], ['employeeNumber', 'user-circle', 'табельный ID']].map(function (contact) {
+        return '<span class="hd-profile__contact"><span class="hd-profile__contact-icon" aria-hidden="true">' + icon(contact[1]) + '</span><button type="button" class="hd-profile__contact-copy" data-hd-copy="' + contact[0] + '" aria-label="Скопировать ' + contact[2] + ' ' + esc(p[contact[0]]) + '" data-tooltip="Скопировать">' + esc(p[contact[0]]) + '</button></span>';
+      }).join('') + '</div></div></div>' +
       '<div class="hd-profile__actions"><button type="button" class="btn btn--outline btn--m" data-modal="hd-meeting-create">' + icon('calendar-plus') + '<span class="btn__label">Новая встреча</span></button>' +
       '<button type="button" class="btn btn--outline btn--m" data-modal="hd-task-create">' + icon('tasks') + '<span class="btn__label">Новая задача</span></button>' +
       // «Новый проект» — единственная акцентная; модалку создания ведёт leads-ui (data-lead-action="create").
@@ -726,14 +699,15 @@
     img.addEventListener('error', function () {
       img.parentElement.innerHTML = '<span class="av__text">' + esc(p.firstName[0] + p.lastName[0]) + '</span>';
     }, { once: true });
-    profileRoot.querySelector('[data-hd-copy-phone]').addEventListener('click', function (event) {
-      var button = event.currentTarget;
-      if (!window.DSCopy) return;
-      window.DSCopy.write(p.phone).then(function () {
-        window.DSCopy.flash(button, 'Телефон ' + p.phone + ' скопирован');
-        if (window.DSSnack) window.DSSnack.show({ tone: 'success', title: 'Телефон скопирован', text: p.phone });
-      }).catch(function () {
-        if (window.DSSnack) window.DSSnack.show({ tone: 'info', title: 'Телефон для копирования', text: p.phone });
+    profileRoot.querySelectorAll('[data-hd-copy]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        copyQueue = copyQueue.then(function () {
+          return copyProfileValue(p[button.dataset.hdCopy]);
+        }).then(function () {
+          if (window.DSToast) window.DSToast.show({ message: 'Скопировано' });
+        }, function () {
+          if (window.DSToast) window.DSToast.show({ message: 'Не удалось скопировать', tone: 'error' });
+        });
       });
     });
     applyIcons(profileRoot);
@@ -757,6 +731,24 @@
     return '<div class="hd-task-bar" role="img" aria-label="В работе: ' + progress + ', выполнено: ' + done + ', остальные: ' + rest + '">' +
       '<span class="hd-task-bar__progress" style="flex:' + progress + '"></span><span class="hd-task-bar__done" style="flex:' + done + '"></span><span class="hd-task-bar__rest" style="flex:' + rest + '"></span></div>';
   }
+  /* «Новые рекомендации от AI»: счётчик — лиды подборки в Рассмотрении (вкладка
+     «Рекомендации от AI» раздела «Лиды»), список — три лучшие идеи по приоритету
+     клиента (решения пользователя 26.10.2026: приоритет заменил AI score).
+     Карточка целиком ведёт в раздел рекомендаций; строки списка неинтерактивны. */
+  var PRIORITY_RANK = { MAX: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
+  function priorityRank(l) { return PRIORITY_RANK[(l.client || {}).priorityCode] || 0; }
+  function aiPicks() {
+    var leads = window.LEADS ? window.LEADS.all() : [];
+    var picks = leads.filter(function (l) { return l.picked && l.stage === 'REVIEW'; })
+      .sort(function (a, b) { return priorityRank(b) - priorityRank(a); });
+    return '<a class="hd-kpi hd-kpi--ai" href="' + LEADS_PICKS_URL + '" aria-labelledby="hd-ai-title">' +
+      '<span class="hd-kpi__top"><span id="hd-ai-title">Новые рекомендации от AI</span><span class="hd-kpi__icon hd-kpi__icon--ai">' + icon('ai-stars') + '</span></span>' +
+      '<div class="hd-kpi__middle hd-kpi__middle--summary"><strong class="hd-kpi__value">' + picks.length + '</strong><span class="hd-kpi__context">' + plural(picks.length, 'идея ждёт', 'идеи ждут', 'идей ждут') + '<br>решения</span></div>' +
+      '<ol class="hd-ai-list" aria-label="Лучшие идеи по приоритету клиента">' + picks.slice(0, 3).map(function (l) {
+        return '<li class="hd-ai-item"><span class="hd-ai-item__idea">' + esc(l.idea || l.id) + '</span>' +
+          '<span class="hd-ai-item__client">' + esc(l.clientName) + '</span></li>';
+      }).join('') + '</ol></a>';
+  }
   function kpis() {
     var meetings = scopedMeetings('MY');
     var tasks = scopedTasks('MY');
@@ -769,9 +761,12 @@
     return '<div class="hd-kpis" aria-label="Моя работа в цифрах">' +
       '<a class="hd-kpi hd-kpi--lavender" href="' + MEETINGS_URL + '"><span class="hd-kpi__top"><span>Встречи сегодня</span><span class="hd-kpi__icon">' + icon('calendar') + '</span></span>' +
       '<div class="hd-kpi__middle"><strong class="hd-kpi__value">' + meetingsToday + '</strong>' + weekChart(meetings) + '</div><span class="hd-kpi__caption">' + meetingsWeek + ' встреч в ближайшие 7 дней</span></a>' +
-      '<a class="hd-kpi hd-kpi--mint" href="' + TASKS_URL + '"><span class="hd-kpi__top"><span>Активные задачи</span><span class="hd-kpi__icon">' + icon('tasks') + '</span></span><div class="hd-kpi__middle"><strong class="hd-kpi__value">' + active.length + '</strong><span class="hd-kpi__context">из ' + tasks.length + '<br>моих задач</span></div>' + taskBar(tasks) + '<span class="hd-kpi__caption">' + tasks.filter(function (t) { return t.statusCode === 'IN_PROGRESS'; }).length + ' в работе · ' + tasks.filter(function (t) { return t.statusCode === 'DONE'; }).length + ' выполнена</span></a>' +
-      '<a class="hd-kpi" href="' + TASKS_URL + '"><span class="hd-kpi__top"><span>Требуют внимания</span><span class="hd-kpi__icon hd-kpi__icon--warning">' + icon('clock-timer') + '</span></span><div class="hd-kpi__middle"><strong class="hd-kpi__value">' + overdueTasks.length + '</strong>' + chip('Срок истёк', 'orange') + '</div><span class="hd-kpi__caption">' + correction + ' задача требует корректировки</span></a>' +
-      '<a class="hd-kpi" href="#hd-news"><span class="hd-kpi__top"><span>Новости моих клиентов</span><span class="hd-kpi__icon">' + icon('file-basic') + '</span></span><div class="hd-kpi__middle"><strong class="hd-kpi__value">' + news.length + '</strong><span class="hd-kpi__newsmark" aria-hidden="true">' + icon('building-02') + icon('bar-chart') + icon('factory-01') + '</span></div><span class="hd-kpi__caption">Последняя публикация — ' + dateLabel(news[0].publishedAt) + '</span></a></div>';
+      /* «Активные задачи» и «Требуют внимания» — одна карточка (решение пользователя 26.10.2026) */
+      '<a class="hd-kpi hd-kpi--mint" href="' + TASKS_URL + '"><span class="hd-kpi__top"><span>Активные задачи</span><span class="hd-kpi__icon">' + icon('tasks') + '</span></span><div class="hd-kpi__middle hd-kpi__middle--summary"><strong class="hd-kpi__value">' + active.length + '</strong><span class="hd-kpi__context">из ' + tasks.length + '<br>моих задач</span></div>' + taskBar(tasks) +
+      '<span class="hd-kpi__attention" aria-label="Требуют внимания">' + alertLine(overdueTasks.length + ' — срок истёк') + alertLine(correction + ' — на корректировке') + '</span>' +
+      '<span class="hd-kpi__caption">' + tasks.filter(function (t) { return t.statusCode === 'IN_PROGRESS'; }).length + ' в работе · ' + tasks.filter(function (t) { return t.statusCode === 'DONE'; }).length + ' выполнена</span></a>' +
+      aiPicks() +
+      '<a class="hd-kpi" href="' + newsHref('MY') + '"><span class="hd-kpi__top"><span>Новости моих клиентов</span><span class="hd-kpi__icon">' + icon('file-basic') + '</span></span><div class="hd-kpi__middle"><strong class="hd-kpi__value">' + news.length + '</strong><span class="hd-kpi__newsmark" aria-hidden="true">' + icon('building-02') + icon('bar-chart') + icon('factory-01') + '</span></div><span class="hd-kpi__caption">Последняя публикация — ' + dateLabel(news[0].publishedAt) + '</span></a></div>';
   }
 
   function cardHeader(title, subtitle, href, label) {
@@ -806,16 +801,56 @@
   }
   function newsContent() {
     var news = scopedNews();
-    return '<div class="hd-news-list">' + news.slice(0, allNews ? news.length : 3).map(function (n, index) {
-      return '<article class="hd-news-item' + (index === 0 ? ' hd-news-item--featured' : '') + '"><div class="hd-news-item__meta"><span>' + esc(n.sourceName) + '</span><time datetime="' + n.publishedAt + '">' + dateLabel(n.publishedAt) + '</time></div><h3>' + esc(n.title) + '</h3><p>' + esc(n.summary) + '</p><div class="hd-news-item__client">' + icon('building-02') + '<span>' + esc(n.clientName) + '</span>' + (n.isFavorite ? '<span class="hd-news-item__favorite" aria-label="Избранный клиент">' + icon('star-filled') + '</span>' : '') + '</div></article>';
-    }).join('') + '</div>' + (news.length > 3 ? '<footer class="hd-card__footer"><button type="button" class="hd-text-link" data-hd-news-more aria-expanded="' + allNews + '">' + (allNews ? 'Свернуть новости...' : 'Все новости...') + '</button></footer>' : '');
+    /* по 5 новостей в каждой области (решение пользователя 27.10.2026) */
+    return '<div class="hd-news-list">' + news.slice(0, 5).map(function (n, index) {
+      return '<a class="hd-news-item' + (index === 0 ? ' hd-news-item--featured' : '') + '" href="' + newsHref(newsScope, n.newsId) + '"><div class="hd-news-item__meta"><span>' + esc(n.sourceName) + '</span><time datetime="' + n.publishedAt + '">' + dateLabel(n.publishedAt) + '</time></div><h3>' + esc(n.title) + '</h3><p>' + esc(n.summary) + '</p><div class="hd-news-item__client">' + icon('building-02') + '<span>' + esc(n.clientName) + '</span>' + (n.isFavorite ? '<span class="hd-news-item__favorite" aria-label="Избранный клиент">' + icon('star-filled') + '</span>' : '') + '</div></a>';
+    }).join('') + '</div><footer class="hd-card__footer"><a class="hd-text-link" href="' + newsHref(newsScope) + '" data-hd-news-link>Все новости...</a></footer>';
   }
-
+  /* События: 10 последних по области и включённым типам; чипы типов —
+     переключатели (aria-pressed), выключенный тип скрывает свои события */
+  function scopedEvents() {
+    var E = window.IBPR_EVENTS;
+    if (!E) return [];
+    return E.all().filter(function (e) { return (eventScope === 'DESK' || e.isMine) && !eventTypesOff[e.typeCode]; });
+  }
+  function eventFilters() {
+    var E = window.IBPR_EVENTS;
+    return '<div class="chiplist hd-events__filters" role="group" aria-label="Типы событий">' + (E ? E.types : []).map(function (t) {
+      return '<button type="button" class="chip chip--edit chip--m chip--compact chip--rounded chip--dashed" aria-pressed="' + !eventTypesOff[t.code] + '" data-hd-event-type="' + t.code + '"><span class="chip__icon chip__icon--toggle" aria-hidden="true">' + icon('add') + icon('check') + '</span><span class="chip__label">' + esc(t.label) + '</span></button>';
+    }).join('') + '</div>';
+  }
+  /* Разметка обоих виджетов вшита assemble в template страницы: один источник
+     подробностей для главной и EventsPage, без загрузки по file://. */
+  function mountEventsWidgets() {
+    ['list', 'details'].forEach(function (part) {
+      var template = document.getElementById('hd-events-' + part + '-template');
+      var host = root.querySelector('[data-hd-event-' + part + ']');
+      if (template && host) host.appendChild(template.content.cloneNode(true));
+    });
+    renderEvents();
+  }
+  function renderEvents() {
+    var list = scopedEvents().slice(0, 10);
+    if (!list.some(function (e) { return e.eventId === eventSelectedId; })) eventSelectedId = list.length ? list[0].eventId : null;
+    var listHost = root.querySelector('[data-hd-event-list] .lc-v2-events-list-tile');
+    var detailsHost = root.querySelector('[data-hd-event-details] .lc-v2-event-details-tile');
+    if (!listHost || !detailsHost) return;
+    window.LcEventsListTile.render(listHost, { embedded: true, items: list, selectedId: eventSelectedId, onSelect: function (e) {
+      eventSelectedId = e.eventId;
+      renderEvents();
+      var row = listHost.querySelector('[data-event-id="' + e.eventId + '"]');
+      if (row) row.focus();
+    } });
+    window.LcEventDetailsTile.render(detailsHost, { embedded: true, item: list.filter(function (e) { return e.eventId === eventSelectedId; })[0] || null });
+    syncEventsLinks();
+  }
+  function syncEventsLinks() {
+    root.querySelectorAll('[data-hd-events-link]').forEach(function (a) { a.href = eventsHref(eventScope, eventSelectedId); });
+  }
+  /* стрелка в шапке карточки ведёт на вкладку текущей области */
   function syncNewsHeader() {
-    var button = root.querySelector('[data-hd-news-header]');
-    if (!button) return;
-    button.setAttribute('aria-expanded', String(allNews));
-    button.setAttribute('aria-label', allNews ? 'Свернуть новости' : 'Показать все новости');
+    var link = root.querySelector('[data-hd-news-header]');
+    if (link) link.href = newsHref(newsScope);
   }
 
   function bindSegments() {
@@ -827,13 +862,15 @@
           meetingScope = value;
           root.querySelector('[data-hd-meeting-list]').innerHTML = meetingsContent();
           applyIcons(root.querySelector('[data-hd-meeting-list]'));
+        } else if (host.getAttribute('data-hd-segment') === 'events') {
+          eventScope = value;
+          renderEvents();
         } else if (host.getAttribute('data-hd-segment') === 'tasks') {
           taskScope = value;
           root.querySelector('[data-hd-task-list]').innerHTML = tasksContent();
           applyIcons(root.querySelector('[data-hd-task-list]'));
         } else {
           newsScope = value;
-          allNews = false;
           root.querySelector('[data-hd-news-list]').innerHTML = newsContent();
           applyIcons(root.querySelector('[data-hd-news-list]'));
           syncNewsHeader();
@@ -841,12 +878,19 @@
       } });
     });
   }
+  function eventsCard() {
+    return '<section class="hd-card hd-events" id="hd-events" aria-labelledby="hd-events-title"><header class="hd-card__header"><div><h2 class="hd-card__title" id="hd-events-title">События</h2><p class="hd-card__subtitle">Что изменилось в моих проектах и у моих клиентов</p></div><a class="ibtn ibtn--neutral ibtn--m" href="' + eventsHref(eventScope) + '" data-hd-events-link aria-label="Открыть все события">' + icon('arrow-up-right') + '</a></header>' +
+      segment('Область событий', 'events', [['MY', 'Мои'], ['DESK', 'Деск']], eventScope) + eventFilters() +
+      '<div class="hd-events__panels"><div class="hd-events__panel" data-hd-event-list aria-live="polite"></div><div class="dvd dvd--v hd-events__divider-v" role="separator" aria-orientation="vertical"></div><hr class="dvd dvd--h hd-events__divider-h"><div class="hd-events__panel" data-hd-event-details aria-live="polite"></div></div>' +
+      '<footer class="hd-card__footer"><a class="hd-text-link" href="' + eventsHref(eventScope) + '" data-hd-events-link>Все события...</a></footer></section>';
+  }
   function renderDashboard() {
     root.innerHTML = '<div class="hd-dashboard">' +
       '<div class="hd-announcement" role="status" data-hd-announcement hidden></div>' + kpis() +
-      '<div class="hd-workspace"><section class="hd-card hd-meetings" aria-labelledby="hd-meetings-title">' + cardHeader('<span id="hd-meetings-title">Встречи</span>', 'Клиентские диалоги и ближайшие планы', MEETINGS_URL, 'Открыть все встречи') + segment('Область встреч', 'meetings', [['MY', 'Мои встречи'], ['DESK', 'Встречи моего деска']], meetingScope) + '<div data-hd-meeting-list aria-live="polite">' + meetingsContent() + '</div><footer class="hd-card__footer"><a class="hd-text-link" href="' + MEETINGS_URL + '">Все встречи...</a></footer></section>' +
-      '<section class="hd-card hd-tasks" aria-labelledby="hd-tasks-title">' + cardHeader('<span id="hd-tasks-title">Задачи</span>', 'Сначала то, что требует внимания', TASKS_URL, 'Открыть все задачи') + segment('Область задач', 'tasks', [['MY', 'Мои задачи'], ['DESK', 'Моего деска']], taskScope) + '<div data-hd-task-list aria-live="polite">' + tasksContent() + '</div><footer class="hd-card__footer"><a class="hd-text-link" href="' + TASKS_URL + '">Все задачи...</a></footer></section>' +
-      '<section class="hd-card hd-news" id="hd-news" aria-labelledby="hd-news-title"><header class="hd-card__header"><div><h2 class="hd-card__title" id="hd-news-title">Новости клиентов</h2><p class="hd-card__subtitle">Контекст для следующего разговора</p></div><button type="button" class="ibtn ibtn--neutral ibtn--m" data-hd-news-more data-hd-news-header aria-expanded="false" aria-label="Показать все новости">' + icon('arrow-up-right') + '</button></header>' + segment('Клиенты в новостях', 'news', [['MY', 'Мои'], ['DESK', 'Деск'], ['FAV', 'Избранные']], newsScope) + '<div data-hd-news-list aria-live="polite">' + newsContent() + '</div></section></div></div>';
+      '<div class="hd-workspace"><section class="hd-card hd-meetings" aria-labelledby="hd-meetings-title">' + cardHeader('<span id="hd-meetings-title">Встречи</span>', 'Клиентские диалоги и ближайшие планы', MEETINGS_URL, 'Открыть все встречи') + segment('Область встреч', 'meetings', [['MY', 'Мои'], ['DESK', 'Деск']], meetingScope) + '<div data-hd-meeting-list aria-live="polite">' + meetingsContent() + '</div><footer class="hd-card__footer"><a class="hd-text-link" href="' + MEETINGS_URL + '">Все встречи...</a></footer></section>' +
+      '<section class="hd-card hd-tasks" aria-labelledby="hd-tasks-title">' + cardHeader('<span id="hd-tasks-title">Задачи</span>', 'Сначала то, что требует внимания', TASKS_URL, 'Открыть все задачи') + segment('Область задач', 'tasks', [['MY', 'Мои'], ['DESK', 'Деск']], taskScope) + '<div data-hd-task-list aria-live="polite">' + tasksContent() + '</div><footer class="hd-card__footer"><a class="hd-text-link" href="' + TASKS_URL + '">Все задачи...</a></footer></section>' +
+      '<section class="hd-card hd-news" id="hd-news" aria-labelledby="hd-news-title"><header class="hd-card__header"><div><h2 class="hd-card__title" id="hd-news-title">Новости</h2><p class="hd-card__subtitle">Контекст для следующего разговора</p></div><a class="ibtn ibtn--neutral ibtn--m" href="' + newsHref(newsScope) + '" data-hd-news-header aria-label="Открыть все новости">' + icon('arrow-up-right') + '</a></header>' + segment('Клиенты в новостях', 'news', [['MY', 'Мои'], ['DESK', 'Деск'], ['FAV', 'Избранные']], newsScope) + '<div data-hd-news-list aria-live="polite">' + newsContent() + '</div></section>' + eventsCard() + '</div></div>';
+    mountEventsWidgets();
     bindSegments();
     applyIcons(root);
     syncNewsHeader();
@@ -923,6 +967,15 @@
     });
     applyIcons(container);
   }
+  /* Показатели пересчитываются, когда меняются лиды: «Взять в работу» или
+     «Не беру» по рекомендации (раздел «Лиды», страница лида) убирает идею из
+     карточки AI. */
+  function refreshKpis() {
+    var block = root && root.querySelector('.hd-kpis');
+    if (!block) return;
+    block.outerHTML = kpis();
+    applyIcons(root.querySelector('.hd-kpis'));
+  }
   function finishCreate(message) {
     window.DSModal.closeTop();
     renderDashboard();
@@ -939,20 +992,20 @@
     mountModals();
     renderProfile();
     renderDashboard();
-    if (!root.__hdBound) {
-      root.__hdBound = true;
+    if (!root.__hdEventsBound) {
+      root.__hdEventsBound = true;
       root.addEventListener('click', function (event) {
-        if (event.target.closest('[data-hd-news-more]')) {
-          var fromHeader = !!event.target.closest('[data-hd-news-header]');
-          allNews = !allNews;
-          var target = root.querySelector('[data-hd-news-list]');
-          target.innerHTML = newsContent();
-          applyIcons(target);
-          syncNewsHeader();
-          var focusTarget = fromHeader ? root.querySelector('[data-hd-news-header]') : target.querySelector('[data-hd-news-more]');
-          if (focusTarget) focusTarget.focus();
-        }
+        var chipEl = event.target.closest('[data-hd-event-type]');
+        if (!chipEl) return;
+        var code = chipEl.getAttribute('data-hd-event-type');
+        eventTypesOff[code] = !eventTypesOff[code];
+        chipEl.setAttribute('aria-pressed', String(!eventTypesOff[code]));
+        renderEvents();
       });
+    }
+    if (window.LEADS && window.LEADS.on && !root.__hdLeadsBound) {
+      root.__hdLeadsBound = true;
+      window.LEADS.on(refreshKpis);
     }
     if (window.DSModal) window.DSModal.bindAll(profileRoot);
   }

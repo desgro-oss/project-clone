@@ -26,7 +26,7 @@
 
   /* section */
 
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:76ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:76ch; text-wrap:pretty; }
 
   /* ---------- playground ---------- */
   @media (max-width:860px){ }
@@ -36,19 +36,19 @@
   .pg__stage.ctx-dark { background: var(--cgrey-800); }
 
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
 
   .readout { display:flex; flex-direction:column; gap:6px; padding-top:4px; border-top:1px solid var(--border-light); }
   .readout .r { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
-  .readout .r .k { font: var(--type-body-s); color: var(--text-inactive); }
-  .readout .r .v { font: var(--type-body-m-strong); color: var(--text-primary); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; text-align:right; word-break:break-all; }
+  .readout .r .k { font: var(--type-body-s-reg); color: var(--text-inactive); }
+  .readout .r .v { font: var(--type-body-m-strong-smb); color: var(--text-primary); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; text-align:right; word-break:break-all; }
   .readout .r .v.tokv { color: var(--primary); }
 
   .stagebox {
     width:180px; height:104px; border-radius: var(--radius-card);
     background: var(--bg-tile);
     display:flex; align-items:center; justify-content:center;
-    color: var(--text-secondary); font: var(--type-body-s-strong);
+    color: var(--text-secondary); font: var(--type-body-s-strong-smb);
     transition: box-shadow .15s ease, background-color .15s ease;
   }
 
@@ -65,7 +65,7 @@
   .tbl .tc code { font-size:12.5px; color: var(--text-secondary); }
   .tbl .tc--token code { color: var(--primary); }
   .tbl .tc__subtext { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .pill { display:inline-flex; align-items:center; font: var(--type-body-xs); font-weight:600; padding:3px 9px; border-radius:999px; }
+  .pill { display:inline-flex; align-items:center; font: var(--type-body-xs-reg); font-weight:600; padding:3px 9px; border-radius:999px; }
   .pill.warn { color: var(--warning-dark); background: var(--warning-bg); }
   .pill.ok { color: var(--success-dark); background: var(--success-bg); }
   .pill.off { color: var(--text-inactive); background: var(--cgrey-100); }
@@ -73,8 +73,8 @@
   /* ---------- guidelines ---------- */
   .guides { display:grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap:18px; }
   .guide { background: var(--bg-tile); border:1px solid var(--border-light); border-radius: var(--radius-2xl); padding:24px 26px; }
-  .guide h3 { font: var(--type-h6-strong); color: var(--text-primary); margin:0 0 8px; display:flex; align-items:center; gap:9px; }
-  .guide p { font: var(--type-body-s); color: var(--text-secondary); margin:0; text-wrap:pretty; }
+  .guide h3 { font: var(--type-h6-strong-smb); color: var(--text-primary); margin:0 0 8px; display:flex; align-items:center; gap:9px; }
+  .guide p { font: var(--type-body-s-reg); color: var(--text-secondary); margin:0; text-wrap:pretty; }
   .guide .ic { width:22px; height:22px; flex:none; color: var(--primary); }
   .guide.dont .ic { color: var(--error); }
 

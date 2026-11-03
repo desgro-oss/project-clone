@@ -16,6 +16,18 @@
 по обратной связи пользователя. Подборка доступна в разделе «Лиды».
 Хедеры новых таблиц используют общий рендер `IBPR_TABLE.headCell`, как Pipeline.
 
+Поиск клиентов (решение пользователя 26.10.2026): третья вкладка главной
+(`HomeBoard.preview.html?home=clients`) и последняя вкладка раздела «Клиенты»
+(`MyClientsPage.preview.html?tab=search`) — вся база клиентов банка, 250
+клиентов на пяти страницах, поиск — фильтром. Обе — один виджет
+`V2MyClientsTable`, поэтому колонки синхронны: новая колонка добавляется в
+виджет. «Мои клиенты» — клиенты базы, отмеченные «в избранное». Колонка
+«Приоритет» (наш рейтинг клиента: Максимальный, Высокий, Средний, Низкий;
+заменил AI score) задаёт порядок по умолчанию; на «Поиске клиентов» сразу
+стоит предфильтр «Максимальный + Высокий», его можно снять в фильтре.
+«Поиск клиентов» шире других вкладок — атрибуты БТ «Поиск клиентов».
+Сортировка колонки упорядочивает все страницы.
+
 Канбан: пять рабочих колонок и два исхода; сворачивание через меню колонки.
 Открытые колонки делят всю доступную ширину; раскрытие исхода сужает их,
 свёртка расширяет. Свёрнутые колонки сохраняют штатную ширину ДС.
@@ -25,6 +37,10 @@
 Повторные встречи — внутри «Встреча проведена»; старая стадия мигрирует
 с сохранением лидов, истории и встреч, в том числе при отмене действия.
 
+Вкладки реестра Лиды (решение пользователя 26.10.2026): «Рекомендации
+от AI» · «Мои проекты» (тот же набор, что доска «Мои проекты» на главной:
+общее правило `myProject` в `data/leads-ui.js`) · «Проекты моего деска» ·
+«Все проекты» · «Архив».
 Реестр Лиды — headless Table с внешним тулбаром как Portfolio: фильтр слева,
 SegmentControl источников справа, подписи и иконки Таблица / По холдингам и настройки.
 Холдинги раскрываются штатным Table; настройки колонок переживают фильтр.
@@ -43,8 +59,9 @@ LeadActionsModal, TransferToPipelineModal, LeadPathWidget.
 Сохранение — `ibp-redesign-v2-state`, предпочтение пути — отдельный ключ v2.
 Сброс в меню очищает только v2. Сравнение «Было / стало» — в меню и панели.
 Проверка: `node apps/core/drafts/ibp-redesign-v2/refs/lead-workflow-check.mjs`.
-КФЮЛ и потенциалы РД не включены до уточнения объёма; скоринга и
-автоматического продвижения по внешним событиям нет.
+КФЮЛ и потенциалы РД не включены до уточнения объёма; скоринга лидов и
+автоматического продвижения по внешним событиям нет. Приоритет клиентов —
+демонстрационные значения: как он считается, не решено (26.10.2026).
 
 Контекстные страницы собраны строго на ДС. Для новых экранов MS0015
 предложения расширения ДС перечислены отдельно в каждом концепте.
@@ -81,13 +98,15 @@ LeadActionsModal, TransferToPipelineModal, LeadPathWidget.
 | `BindingAllLeadsPage.html` | Обязательные лиды (Р4) | BindingLeadsPage |
 | `PossibleAllLeadsPage.html` | Возможные лиды (Р4) | PossibleLeadsPage |
 | `PotentialPage.html` | Лид (во фронтенде — «потенциал») | PotentialPage |
-| `MyClientsPage.html` | Клиенты: таблица, дерево, пустое состояние | `core/clients-app` MyClients |
+| `MyClientsPage.html` | Клиенты: мои клиенты, поиск по базе, дерево, пустое состояние | `core/clients-app` MyClients |
 | `ClientInfoPage.html` | Клиент: 9 вкладок | ClientInfo (+ ClientInfoDealsPage, ClientInfoFinancials, ClientInfoGoalsPage) |
 | `ClientComments.html` | Комментарии клиента | пары нет |
 | `MeetingsProtocolsPage.html` | Встречи: реестр и предпросмотр (Splitter) | `ib/ma-opportunities-app` MeetingsProtocols |
 | `TasksPage.html` | Задачи: реестр и предпросмотр (Splitter) | `core/tasks-app` TasksPage |
 | `AdminPage.html` | Администрирование | `core/host-app` AdminPage |
 | `TaskStatesPage.html` | Справочник «Статусы задач» (Splitter) | `core/settings-app` TaskStatesPage |
+| `EventsPage.html` | События по моим проектам и клиентам: «Мои / Деск», чипы типов, лента и подробности события (Splitter); с главной — карточка «События» (27.10.2026) | пары нет |
+| `NewsPage.html` | Новости клиентов: 3 вкладки, лента и текст новости (Splitter); с главной — «Все новости...», стрелка, новость карточки, карточка-счётчик (27.10.2026) | пары нет |
 
 Спека страницы — `<Имя>.screen.md` рядом. Переходы: меню и плитки ведут на
 реестры, строка реестра — на страницу объекта (`Opportunity`, `PotentialPage`,
@@ -100,7 +119,7 @@ LeadActionsModal, TransferToPipelineModal, LeadPathWidget.
 | Группа | Виджеты |
 |---|---|
 | `tables/` | реестры сделок `V2BindingOpportunitiesTable`, `V2PossibleOpportunitiesTable`, `V2OpportunitySalesProjectsTable`, `V2SalesCampaignsTable`, `V2OpportunitiesPipelineTable`; `V2LeadsTable`; `V2MyClientsTable`, `V2MyClientsHierarchicalTree`; `V2MeetingsProtocolsList`; `V2TasksTable`, `V2TaskHistoryTable`; `V2MaPipelineTable`, `V2DcmEcmPipelineTable`; `V2FinancialsTable`; `V2SimpleSettingsTable` |
-| `tiles/` | сделка и лид: `V2OpportunityClientTile`, `V2GeneralInformationTile`, `V2StateInformationTile`, `V2DescriptionTile`, `V2TimingTile`, `V2CommentsTile`, `V2FinancialMetricsTile`, `V2ProductsTile`, `V2OpportunityProductTile`, `V2DesksTile`, `V2OpportunityTeamMembersTile`, `V2OpportunityConnectionsTile`, `V2TasksTile`, `V2MeetingsProtocolsTile`, `V2CallReportsTile`, `V2ProductClientTiles`; клиент: `V2IndustryInfoTile`, `V2RequisitesInfoTile`, `V2DocumentsInfoTile`, `V2TeamInfoTile`, `V2RelatedPersonsTile`, `V2ClientNewsTile`, `V2ClientTimingsTile`, `V2GigaInfoTile`, `V2GoalsPopoverBadge`, `V2FinancialsChart`, `V2StratDialogueCard`, `V2GoalArchiveSection`, `V2ClientCreditsList`; предпросмотры `V2MeetingsProtocolsDetails`, `V2TaskPreviewTile`; администрирование `V2LinkNavigationTile`, `V2SimpleSettingsTile` |
+| `tiles/` | сделка и лид: `V2OpportunityClientTile`, `V2GeneralInformationTile`, `V2StateInformationTile`, `V2DescriptionTile`, `V2TimingTile`, `V2CommentsTile`, `V2FinancialMetricsTile`, `V2ProductsTile`, `V2OpportunityProductTile`, `V2DesksTile`, `V2OpportunityTeamMembersTile`, `V2OpportunityConnectionsTile`, `V2TasksTile`, `V2MeetingsProtocolsTile`, `V2CallReportsTile`, `V2ProductClientTiles`; клиент: `V2IndustryInfoTile`, `V2RequisitesInfoTile`, `V2DocumentsInfoTile`, `V2TeamInfoTile`, `V2RelatedPersonsTile`, `V2ClientNewsTile`, `V2ClientTimingsTile`, `V2GigaInfoTile`, `V2GoalsPopoverBadge`, `V2FinancialsChart`, `V2StratDialogueCard`, `V2GoalArchiveSection`, `V2ClientCreditsList`; предпросмотры `V2MeetingsProtocolsDetails`, `V2TaskPreviewTile`; администрирование `V2LinkNavigationTile`, `V2SimpleSettingsTile`; новости `V2NewsListTile`, `V2NewsArticleTile`; события `V2EventsListTile`, `V2EventDetailsTile` |
 | `modals/` | `V2TakeOpportunityToWorkModal`, `V2RefuseFromOpportunityModal`, `V2ChangeTaskStatusModal` |
 
 Таблицы рисует общий рендер `data/registry-table.js` (пары нет, правило имён 8):

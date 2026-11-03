@@ -28,6 +28,8 @@
               пользователя в футере на хаб;
      icon   — имя глифа из design-system/foundations/Icons/Icons.md;
      shelf  — необязательное, только у приложений: 'actual' | 'archive' — полка в разделе концептов;
+     section — необязательное: раздел строки, когда страница лежит в другом разделе (главная роли —
+              project.json → roleHomes: первой строкой колонки проектов раздела, href с ?role=);
      concept, version — необязательные, только вместе, только у приложений: название концепта
               и подпись версии; записи с одним concept — одна плитка-аккордеон на хабе.
 
@@ -91,11 +93,31 @@ window.IBPHub = [
     icon: 'layout-grid-01'
   },
   {
+    id: 'home-pre-analyst',
+    group: 'projects',
+    title: 'Главная — Аналитик ДИД',
+    desc: 'Главная роли «Аналитик ДИД»: Origination, Pipeline, портфель, отчёты, клиенты и задачи',
+    href: 'apps/core/host-app/pages/HomePage.html?role=analyst',
+    root: 'apps/core/host-app',
+    icon: 'main-page',
+    section: 'pretrade'
+  },
+  {
+    id: 'home-ib',
+    group: 'projects',
+    title: 'Главная — Руководитель IB',
+    desc: 'Главная роли «Руководитель IB»: разделы IB, AI Pitcher и разделы других команд',
+    href: 'apps/core/host-app/pages/HomePage.html?role=director_ib',
+    root: 'apps/core/host-app',
+    icon: 'main-page',
+    section: 'ib'
+  },
+  {
     id: 'banker-app',
     group: 'projects',
     title: 'AI Pitcher',
     desc: 'Origination: новый отчёт в чате, история запросов, подготовка материала',
-    href: 'apps/ib/banker-app/pages/index.html',
+    href: 'apps/ib/banker-app/pages/RequestThread.html',
     root: 'apps/ib/banker-app',
     icon: 'ai-stars'
   },
@@ -103,16 +125,25 @@ window.IBPHub = [
     id: 'screen-map-ib',
     group: 'projects',
     title: 'Карта IB',
-    desc: 'Все страницы AI Pitcher в один клик: от главной до нити запроса',
+    desc: 'Все страницы IB в один клик: от главной до нити запроса AI Pitcher',
     href: 'apps/screen-map/ib/index.html',
     root: 'apps/screen-map/ib',
     icon: 'tree-view'
   },
   {
+    id: 'clients-app',
+    group: 'projects',
+    title: 'Клиенты',
+    desc: 'Клиенты: реестр, дерево холдингов, карточка клиента и комментарии',
+    href: 'apps/core/clients-app/pages/MyClientsPage.preview.html',
+    root: 'apps/core/clients-app',
+    icon: 'factory-01'
+  },
+  {
     id: 'dashboard-app',
     group: 'projects',
-    title: 'Дашборд Аналитика',
-    desc: 'Редизайн главной: профиль, встречи, задачи и новости по клиентам',
+    title: 'Главная - Аналитик (Дашборд)',
+    desc: 'Главная Аналитика в Core: профиль, встречи, задачи, новости и переходы в клиенты и задачи',
     href: 'apps/core/dashboard-app/pages/HomePage.preview.html',
     root: 'apps/core/dashboard-app',
     icon: 'layout-grid-01'
@@ -134,6 +165,24 @@ window.IBPHub = [
     href: 'apps/screen-map/postrade/index.html',
     root: 'apps/screen-map/postrade',
     icon: 'tree-view'
+  },
+  {
+    id: 'funds-app',
+    group: 'projects',
+    title: 'Фонды',
+    desc: 'Origination: список фондов, активы фонда, настройка таблицы',
+    href: 'apps/ib/funds-app/pages/FundsPipeline.preview.html',
+    root: 'apps/ib/funds-app',
+    icon: 'funds'
+  },
+  {
+    id: 'tasks-app',
+    group: 'projects',
+    title: 'Задачи',
+    desc: 'Задачи аналитика и его деска: реестр, предпросмотр и смена статуса',
+    href: 'apps/core/tasks-app/pages/TasksPage.preview.html',
+    root: 'apps/core/tasks-app',
+    icon: 'tasks'
   },
   {
     id: 'ai-bankster-prototype-v01',
@@ -302,9 +351,21 @@ window.IBPHub = [
     href: 'apps/postrade/drafts/tranche-page-v03/pages/Deal.preview.html',
     root: 'apps/postrade/drafts/tranche-page-v03',
     icon: 'folder',
-    shelf: 'actual',
+    shelf: 'archive',
     concept: 'Корректировки РСБУ',
     version: 'v3'
+  },
+  {
+    id: 'tranche-page-v04',
+    group: 'concepts',
+    title: 'Post — Корректировки РСБУ v4',
+    desc: 'Транш: фиксация РСБУ на тайле процентных платежей, корректировки из дельт после пересчёта платежей, отметка в отчёте РСБУ (RE0034)',
+    href: 'apps/postrade/drafts/tranche-page-v04/pages/Deal.preview.html',
+    root: 'apps/postrade/drafts/tranche-page-v04',
+    icon: 'folder',
+    shelf: 'actual',
+    concept: 'Корректировки РСБУ',
+    version: 'v4'
   },
   {
     id: 'kb-glossary',
@@ -332,9 +393,9 @@ window.IBPHubSpecs = [
     id: 'EarlyInterestPaymentsV3',
     title: 'Досрочное погашение процентов',
     module: 'postrade/drafts/early-interest-v03',
-    version: '1.001',
+    version: '1.002',
     stage: 'Концепт v3',
-    date: '23.10.2026',
+    date: '28.10.2026',
     href: 'apps/postrade/drafts/dev-specs/pages/Spec.html?spec=EarlyInterestPaymentsV3',
     root: 'apps/postrade/drafts/dev-specs'
   },

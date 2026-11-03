@@ -1,0 +1,7 @@
+/* Окно «Корректировка процентов» — связанный артефакт тайла RsbuInterestAdjustmentsTile.
+   Только раскладка формы: ряды по две колонки (даты, шесть сумм), итог и комментарий —
+   во всю ширину. Хелперов под полями нет (ошибки — Alert окна), поэтому зазор между рядами
+   задаёт форма. Цвета, шрифты и отступы тела окна даёт Modal, подложку итога — Tile Inset;
+   здесь токены ДС. */
+.lc-rsbu-form { display: flex; flex-direction: column; gap: var(--space-16); }
+.lc-rsbu-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); }

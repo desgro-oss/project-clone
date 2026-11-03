@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фильтр дополнительных соглашений — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Фильтр дополнительных соглашений">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Окно «Фильтр» списка дополнительных соглашений (ДС) — связанный артефакт кнопки
+     «Фильтр» (TableFilter) на внутренней странице «Договор и дополнительные соглашения».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include: скрим лежит в конце
+     body страницы (якорь #sec:modals), а не внутри тайла. Кнопка «Фильтр» и чип
+     «Применено: N» живут на странице, не в окне.
+
+     Структура — штатная модалка фильтра ДС (образец — FinancialMetricsFilterModal):
+     .modal--w6.tfm, тело .modal__body--flush > .tfm__body = вертикальные табы-разделы
+     .tfm__nav + .tfm__panel с двумя разделами .tfm__sec подряд (табы — якорные ссылки,
+     панель прокручивается). Раздел «Основная информация»: номер соглашения, дата
+     подписания (InputDateRange), тип изменения (одиночный выбор: InputAutocomplete +
+     DropdownList), ключевые изменения (мультивыбор с чипами). Раздел «Решение»: номер
+     решения, дата решения (InputDateRange), уровень одобрения (мультивыбор с чипами).
+     Бейдж таба — число заполненных полей раздела, при нуле скрыт атрибутом hidden;
+     диапазон дат считается за одно поле. Макет подписывает дату «Дата соглашения»;
+     в окне «Дата подписания» (ответ человека 27.10.2026).
+
+     Списки опций и чипы пустые: скрипт (AdditionalAgreementsFilterModal.js) строит их из
+     глобалов LOAN_CHANGE_TYPE_LABELS, LOAN_KEY_CHANGE_LABELS, LOAN_APPROVAL_LEVEL_LABELS
+     и заполняет поля текущим фильтром при каждом открытии. Значений полей в разметке нет:
+     эталон — пустое окно (состояния — fixtures.json).
+
+     Подвал: «Очистить фильтр» (сбрасывает поля окна, окно остаётся открытым; выключена,
+     пока очищать нечего) и «Сохранить» (проверяет даты, закрывает окно и отдаёт фильтр
+     событием agreementsfilter). Ни одна не несёт data-modal-close: закрытие и результат
+     ведёт скрипт. Крестик и Esc закрывают без сохранения.
+
+     Даты: на каждой половине диапазона префикс «От»/«До» (правило InputDateRange: префикс
+     всегда есть; на макете его нет). Поле в .inp__box — якорь тултипа ошибки формата даты
+     (правило InputText: текст ошибки только в тултипе на фокусе). Крестика очистки в
+     разметке нет намеренно: его рисует рантайм по значению. -->
+
+<div id="agreements-filter-scrim" hidden class="modal-scrim modal-scrim--inline" data-widget="AdditionalAgreementsFilterModal" data-widget-group="modals" data-widget-src="../../../postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.html">
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="aaf-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="aaf-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="aaf-sec-main"><span class="tab__label">Основная информация</span><span class="tab__badge" data-aaf-badge="main" hidden>0</span></button>
+          <button type="button" class="tab tab--m tab--vert" data-target="aaf-sec-decision"><span class="tab__label">Решение</span><span class="tab__badge" data-aaf-badge="decision" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel">
+
+          <section class="tfm__sec" id="aaf-sec-main" aria-labelledby="aaf-sec-main-t">
+            <p class="tfm__sec-title" id="aaf-sec-main-t">Основная информация</p>
+            <div class="tfm__grid">
+
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="aaf-number"><span class="ds-label__text">Номер соглашения</span></label>
+                <div class="inp__field">
+                  <input class="inp__control" id="aaf-number" name="number" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Дата подписания</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">От</span>
+                        <input class="inp__control" id="aaf-sign-from" name="signFrom" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата подписания, от">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">До</span>
+                        <input class="inp__control" id="aaf-sign-to" name="signTo" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата подписания, до">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="aaf-change-type"><span class="ds-label__text">Тип изменения</span></label>
+                <div class="inp__field" data-ddl="aaf-change-type-list">
+                  <input class="inp__control" id="aaf-change-type" name="changeTypeCode" autocomplete="off" placeholder="Выберите тип изменения">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="aaf-change-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+              </div>
+
+              <div class="inp inp--m tfm__span-2" data-aaf-multi="keyChangeCodes">
+                <label class="ds-label" for="aaf-key-changes"><span class="ds-label__text">Ключевые изменения</span></label>
+                <div class="inp__field" data-ddl="aaf-key-changes-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="aaf-key-changes" autocomplete="off" placeholder="Выберите ключевые изменения">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="aaf-key-changes-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+
+            </div>
+          </section>
+
+          <section class="tfm__sec" id="aaf-sec-decision" aria-labelledby="aaf-sec-decision-t">
+            <p class="tfm__sec-title" id="aaf-sec-decision-t">Решение</p>
+            <div class="tfm__grid">
+
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="aaf-decision-number"><span class="ds-label__text">Номер решения</span></label>
+                <div class="inp__field">
+                  <input class="inp__control" id="aaf-decision-number" name="decisionNumber" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Дата решения</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">От</span>
+                        <input class="inp__control" id="aaf-decision-from" name="decisionFrom" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата решения, от">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">До</span>
+                        <input class="inp__control" id="aaf-decision-to" name="decisionTo" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата решения, до">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="inp inp--m tfm__span-2" data-aaf-multi="approvalLevelCodes">
+                <label class="ds-label" for="aaf-approval"><span class="ds-label__text">Уровень одобрения</span></label>
+                <div class="inp__field" data-ddl="aaf-approval-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="aaf-approval" autocomplete="off" placeholder="Выберите уровни одобрения">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="aaf-approval-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-aaf-clear disabled><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-aaf-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>02.11.2026</b></span><span>Категория: <b>Общие</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
+  <h1>Фильтр дополнительных соглашений</h1>
+  <p class="lead">Отобрать дополнительные соглашения в списке страницы «Договор и дополнительные соглашения» по реквизитам ДС и сведениям о решении</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal">apps/postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">new</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница «Договор и дополнительные соглашения» — раздел «Дополнительные соглашения», кнопка «Фильтр»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/InitialAndAdditionalAgreements.preview.html">apps/postrade/deals-app/pages/InitialAndAdditionalAgreements.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="InitialAndAdditionalAgreementsTile.doc.html">Договор и дополнительные соглашения (InitialAndAdditionalAgreementsTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопка «Фильтр» раздела «Дополнительные соглашения» страницы «Договор и дополнительные соглашения»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Текущий фильтр приходит аргументом open(currentFilter); стор окно не читает и в него не пишет. Справочники — глобалы LOAN_CHANGE_TYPE_LABELS, LOAN_KEY_CHANGE_LABELS, LOAN_APPROVAL_LEVEL_LABELS (data/mock-loan-agreements.js)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет дизайнера 26.10.2026 «Фильтр доп соглашений»<br>задача RE0041 (ответы человека 26.10.2026 — вопросы 5, 7, 12, 25, 28)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 02.11.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.001</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Артефакт кнопки «Фильтр» (<a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B4%D1%81">ДС</a>-списка страницы «Договор и дополнительные соглашения»). Не компонент: сам по себе не существует и в плоском списке витрины его нет. Заголовок окна — «Фильтр». Кнопка «Фильтр» (TableFilter) и чип «Применено: N» стоят на странице, в окне их нет.</p>
+<p class="desc">Окно — штатная модалка фильтра ДС: слева вертикальное меню разделов «Основная информация» и «Решение» со счётчиками заполненных полей, справа оба раздела подряд (клик по пункту меню доводит до раздела). В разделе «Основная информация» — номер соглашения, дата подписания (диапазон), тип изменения, ключевые изменения; в разделе «Решение» — номер решения, дата решения (диапазон), уровень одобрения.</p>
+<p class="desc">Окно не читает стор. Страница при каждом открытии отдаёт текущий применённый фильтр (<code class="tok">open(currentFilter)</code>), окно заполняется им; «Сохранить» проверяет формат дат, закрывает окно и отдаёт новый фильтр событием <code class="tok">agreementsfilter</code> на <code class="tok">document</code>. Стор фильтрует список по этому фильтру (формат — аргумент <code class="tok">LoanAgreementStore.agreements()</code>), а число заполненных полей страница показывает чипом «Применено: N».</p>
+<p class="desc">«Очистить фильтр» очищает только поля окна: окно остаётся открытым, счётчики обнуляются, фильтр не применяется — он меняется только по «Сохранить». Так же устроено окно фильтра <code class="tok">FinancialMetricsFilterModal</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Бизнес-смысл">
+<h2>Бизнес-смысл</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зачем существует</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Найти нужное <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B4%D1%81">ДС</a> в списке договора займа (<a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%BD%D0%BA%D0%BB">НКЛ</a>), когда соглашений много: по номеру, дате подписания, типу изменения, ключевым изменениям и по сведениям о решении <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%BA%D0%BE">КО</a>. Какими запросами пользуются на практике — не решено (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто заполняет и когда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тот, кто смотрит страницу «Договор и дополнительные соглашения»; вручную. Права на фильтр отдельно не называлось — не решено (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто пользуется результатом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Список карточек ДС на той же странице: показывает только подходящие. Другие потребители — не решено (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бизнес-правила</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фильтр не меняет данные ДС и ничего не пишет в стор. Дата ДС в окне называется «Дата подписания» (на макете «Дата соглашения»), ответ человека 26.10.2026, вопрос 25. Проверяется только формат дат (ответ 28). Полные списки типов изменения, ключевых изменений и уровней одобрения неизвестны (ответ 12)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Источники: <code class="tok">docs/tasks/RE0041-nkl-loan-agreement.md</code> (ответы человека 26.10.2026: вопросы 5, 7, 12, 25, 28), <code class="tok">apps/knowledge-base/glossary/terms/ДС.md</code>, <code class="tok">apps/knowledge-base/glossary/terms/НКЛ.md</code>; макет дизайнера 26.10.2026 «Фильтр доп соглашений»</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Modal w6 + TableFilter (заголовок «Фильтр», IconButton L «Закрыть» в шапке)
+└── тело без отступов: сетка [меню 232px | панель, прокручивается]
+    ├── меню — Tab M вертикальный, якорные ссылки
+    │   ├── «Основная информация» + бейдж (число заполненных полей раздела, при 0 скрыт)
+    │   └── «Решение» + бейдж
+    └── панель
+        ├── раздел «Основная информация» (сетка полей, каждое поле на всю ширину)
+        │   ├── «Номер соглашения» — InputText M
+        │   ├── «Дата подписания» — InputDateRange («От» — «До»)
+        │   ├── «Тип изменения» — InputAutocomplete M, одиночный выбор
+        │   └── «Ключевые изменения» — InputAutocomplete M, мультивыбор, чипы в поле
+        └── раздел «Решение»
+            ├── «Номер решения» — InputText M
+            ├── «Дата решения» — InputDateRange («От» — «До»)
+            └── «Уровень одобрения» — InputAutocomplete M, мультивыбор, чипы в поле
+Подвал: Button transparent M «Очистить фильтр» + Button accent M «Сохранить», справа</code></pre>
+<p class="desc">Порядок полей — как на макете. Ширина <code class="tok">modal--w6</code> и меню 232px — штатная модалка фильтра ДС.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w6 tfm</code>, шапка с крестиком, подвал справа</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">TableFilter (модалка <code class="tok">.tfm</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">tfm__body</code> / <code class="tok">tfm__nav</code> / <code class="tok">tfm__panel</code> / <code class="tok">tfm__sec</code> / <code class="tok">tfm__grid</code>, поля <code class="tok">tfm__span-2</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tab</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">tab--m tab--vert</code>, бейдж <code class="tok">tab__badge</code>, якорные ссылки на разделы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">inp--m</code>, крестик очистки рисует рантайм по значению</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputDateRange</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">inp-range--date</code>, два поля с префиксами «От»/«До», маска <code class="tok">ДД.ММ.ГГГГ</code>, календарь; поле в <code class="tok">inp__box</code> — якорь тултипа ошибки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAutocomplete + DropdownList</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Тип изменения» — одиночный выбор (текстовые опции); «Ключевые изменения», «Уровень одобрения» — мультивыбор с чипами в поле, список с чекбоксами и «Выбрать всё»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Chip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">chip--edit chip--s</code> — выбранные значения в поле</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tooltip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тип <code class="tok">error</code> на поле даты: текст ошибки показывается на фокусе</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">transparent M «Очистить фильтр», accent M «Сохранить»</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/components/organisms/TableFilter/TableFilter.html">TableFilter</a> · <a class="inl" href="../../../../design-system/components/molecules/Tab/Tab.html">Tab</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputText/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputDateRange/InputDateRange.html">InputDateRange</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/components/molecules/DropdownList/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/components/atoms/Chip/Chip.html">Chip</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.css">AdditionalAgreementsFilterModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.html">AdditionalAgreementsFilterModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.js">AdditionalAgreementsFilterModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.md">AdditionalAgreementsFilterModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ключ фильтра</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Номер соглашения</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">номер ДС, подстрока</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">number</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">LoanAgreementStore.agreementNumber(a)</code> — «порядковый-номер договора» (ответ 13/26)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет (ответ 28)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дата подписания, от</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">начало диапазона даты подписания ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата <code class="tok">ДД.ММ.ГГГГ</code> (в фильтре — ISO)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">signFrom</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">signDate</code> ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет; заполненная должна быть существующей датой</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дата подписания, до</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">конец диапазона</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">signTo</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">signDate</code> ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тип изменения</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тип изменения ДС, один</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">код (<code class="tok">ChangeTypeCode</code>), в поле — подпись</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">changeTypeCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">LOAN_CHANGE_TYPE_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ключевые изменения</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ключевые изменения ДС, несколько; ДС подходит, если у него есть хотя бы одно из выбранных</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">коды (<code class="tok">KeyChangeCode</code>)[], в поле — чипы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">keyChangeCodes</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">LOAN_KEY_CHANGE_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Номер решения</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">номер решения <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%BA%D0%BE">КО</a>, подстрока</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">decisionNumber</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">decisionNumber</code> ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дата решения, от</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">начало диапазона даты решения</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата <code class="tok">ДД.ММ.ГГГГ</code> (в фильтре — ISO)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">decisionFrom</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">decisionDate</code> ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет; заполненная должна быть существующей датой</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дата решения, до</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">конец диапазона</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">decisionTo</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">decisionDate</code> ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Уровень одобрения</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">уровни одобрения, несколько</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">коды (<code class="tok">ApprovalLevelCode</code>)[], в поле — чипы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">approvalLevelCodes</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">LOAN_APPROVAL_LEVEL_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Порядок строк — порядок отображения. Формат фильтра — <code class="tok">{ number, signFrom, signTo, changeTypeCode, keyChangeCodes[], decisionNumber, decisionFrom, decisionTo, approvalLevelCodes[] }</code> (аргумент <code class="tok">LoanAgreementStore.agreements()</code>): даты — ISO, у пустого поля ключа нет, пустой фильтр — <code class="tok">{}</code>. Счётчики разделов считают заполненные поля: «Основная информация» — <code class="tok">number</code>, диапазон подписания, <code class="tok">changeTypeCode</code>, <code class="tok">keyChangeCodes</code>; «Решение» — <code class="tok">decisionNumber</code>, диапазон решения, <code class="tok">approvalLevelCodes</code>. Диапазон дат — одно поле, если заполнена хотя бы одна граница. Всего полей — семь (<code class="tok">count</code> в событии — не больше семи; девять на кадре макета — демо-значение, не требование). Пересчёт — на вводе.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Любая роль, видящая страницу</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо: фильтр ничего не правит</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Окно не зависит от режима прав и от статуса сделки: фильтрация — просмотр. Отдельных прав на фильтр не называлось — не решено (27.10.2026).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">данные уже в сторе, окно сети не использует</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля заполнены (макет): у заполненных — крестик очистки, чипы в мультивыборах, счётчики разделов, «Очистить фильтр» доступна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заполнен один раздел или часть полей: счётчик раздела без заполненных скрыт</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля пустые, счётчики скрыты, «Очистить фильтр» выключена; у дат — маска <code class="tok">ДД.ММ.ГГГГ</code> и календарь</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата не прошла проверку формата: красное поле, текст «Введите дату в формате ДД.ММ.ГГГГ» в тултипе на фокусе; окно остаётся открытым, фокус на первом неверном поле. Состояние «Ошибка загрузки» не нужно: сети нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно ничего не правит</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно ничего не правит</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.9fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.9fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Очистить фильтр» выключена</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в окне нечего очищать (все поля пустые)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопка <code class="tok">disabled</code>, как у окна фильтра финансовых метрик</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.9fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Список опций пуст по запросу</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в мультивыборе набран текст, которому не соответствует ни одна опция</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка «Ничего не найдено»</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет. Пустой фильтр (<code class="tok">{}</code>) допустим: он показывает все ДС.</li><li>Обязательные поля внутри: нет (ответ человека 26.10.2026, вопрос 28: проверяется только формат дат).</li><li>Что показывает, когда обязательное не заполнено: не применимо.</li><li>Что отдаёт наружу (признак для экрана или формы): событие <code class="tok">agreementsfilter</code> с <code class="tok">detail { filter, count }</code>.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значение в текстовом поле прокручивается внутри поля, ограничения длины нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">много выбранных значений в мультивыборе — чипы переносят поле на следующий ряд по правилу InputAutocomplete; при переполнении поля — чип-счётчик «+N» с тултипом скрытых значений (рантайм ДС)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно <code class="tok">modal--w6</code> фиксированной ширины шкалы ДС; панель с полями прокручивается внутри окна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Открытие (<code class="tok">open(currentFilter)</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля заполняются текущим фильтром, счётчики пересчитываются; несохранённый ввод прошлого открытия сбрасывается. Окно открыто не через <code class="tok">open()</code> (например, триггером <code class="tok">data-modal</code>) — заполняется последним фильтром, который окно получило или сохранило, либо <code class="tok">opts.get()</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по разделу в меню</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">панель прокручивается до раздела, пункт помечается текущим (рантайм ДС)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ввод в поле, выбор в списке, снятие чипа, крестик очистки поля</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">счётчик раздела и доступность «Очистить фильтр» пересчитываются</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правка поля даты при показанной ошибке</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ошибка пересчитывается и снимается, когда ввод стал верным</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Очистить фильтр»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">все поля окна очищаются, счётчики обнуляются, кнопка выключается; окно остаётся открытым, фокус на «Номер соглашения»; фильтр страницы не меняется до «Сохранить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">четыре даты проверяются: пусто — можно, иначе существующая дата <code class="tok">ДД.ММ.ГГГГ</code>; неверная — ошибка у поля, окно открыто, фокус на первом неверном поле, события нет. Иначе окно закрывается и на <code class="tok">document</code> уходит <code class="tok">agreementsfilter</code> с <code class="tok">detail { filter, count }</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик, Esc</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">закрытие без сохранения, события нет; изменения в окне пропадают</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по скриму</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не закрывает: в окне есть поля ввода (защита включается сама)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Событие <code class="tok">agreementsfilter</code></h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле <code class="tok">detail</code></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">filter</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">объект</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фильтр в формате аргумента <code class="tok">LoanAgreementStore.agreements()</code>; даты ISO; пустое поле — ключа нет; пустой фильтр — <code class="tok">{}</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">count</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число заполненных полей фильтра (диапазон — одно поле), для чипа «Применено: N» на странице</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Событие уходит и при пустом фильтре (<code class="tok">filter: {}</code>, <code class="tok">count: 0</code>): страница сбрасывает фильтр и убирает чип.</p>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<p class="desc">Не применимо: окно ничего не открывает.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Справочники значений: типы изменения, ключевые изменения, уровни одобрения (коды и подписи). Фильтрация списка ДС по полям из таблицы «Поля» — на стороне списка. Имена методов и хуков API не придумываются: их выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,1.5fr) minmax(0,1.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,1.5fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-loan-agreements.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.LOAN_CHANGE_TYPE_LABELS</code>, <code class="tok">window.LOAN_KEY_CHANGE_LABELS</code>, <code class="tok">window.LOAN_APPROVAL_LEVEL_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">Record&lt;код, подпись&gt;</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Source: invented (26.10.2026) — значения со скринов (вопрос 12)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,1.5fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текущий фильтр окна: пустой, заполненный, частичный, с неверной датой</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Source: invented (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Нет глобалов (витрина) — у окна запасные словари с теми же значениями (<code class="tok">AdditionalAgreementsFilterModal.js</code>, <code class="tok">FALLBACK</code>). Значения выдуманные; повторять их в тексте виджета не нужно.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code> скрима</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">agreements-filter-scrim</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по нему страница открывает окно (<code class="tok">PostModalAdditionalAgreementsFilter.open</code>)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Окно вшивается отдельной меткой <code class="tok">ds-include</code> в конец страницы, не внутри тайла. Глобал <code class="tok">PostModalAdditionalAgreementsFilter</code>:</p>
+<ul class="bullets"><li><code class="tok">bind(scrim?, opts?) → api</code> — привязка; на загрузке страницы окно <code class="tok">agreements-filter-scrim</code> привязывается само. <code class="tok">opts.get()</code> — откуда брать фильтр, если окно открыто не через <code class="tok">open()</code>. <code class="tok">api</code>: <code class="tok">fill(filter?)</code>, <code class="tok">read() → { filter, count } | null</code>, <code class="tok">validate()</code>, <code class="tok">clear()</code>, <code class="tok">count()</code>.</li><li><code class="tok">open(currentFilter?)</code> — заполнить окно текущим фильтром и открыть (<code class="tok">DSModal.open</code>).</li><li>Событие <code class="tok">agreementsfilter</code> на <code class="tok">document</code> — результат «Сохранить» (таблица выше).</li></ul>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">new — пары во фронтенде нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Справочники, поля, счётчики, проверка дат, сборка фильтра</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">…/AdditionalAgreementsFilterModal.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Своего CSS у окна нет: раскладка — штатная модалка фильтра ДС.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,1.6fr) minmax(0,2.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,1.6fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: подпись поля «Дата соглашения»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Дата подписания»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата ДС называется «Дата подписания» везде (ответ человека 26.10.2026, вопрос 25)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,1.6fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: поля диапазонов без префиксов «От»/«До»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">префиксы есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правило InputDateRange: префикс всегда присутствует</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,1.6fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: диапазон дат — два отдельных поля под одной подписью</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">один компонент InputDateRange с общей подписью</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">штатный компонент ДС для диапазона; вид совпадает</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,1.6fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: «Сохранить» в подвале; в модалке фильтра ДС кнопка называется «Применить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить», как на макете</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение дизайнера: подпись макета; «Сохранить пресет» окно не предлагает</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,1.6fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputDateRange: ошибка диапазона «конец не раньше начала»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не проверяется</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">человек назвал проверку только формата дат (ответ 28)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li><b>Справочники</b> «Тип изменения», «Ключевые изменения», «Уровень одобрения» неполные: в окне только значения со скринов (ответ человека 26.10.2026, вопрос 12) — не решено (27.10.2026), какие значения есть на самом деле. Окно строит опции из глобалов при привязке; когда справочник изменится — изменится только <code class="tok">data/mock-loan-agreements.js</code>.</li><li><b>Состояний «Загрузка» и «Ошибка загрузки»</b> нет: у окна нет сети, на макете их нет. Не решено (27.10.2026), нужны ли они, когда справочники придут от бэкенда.</li><li><b>Сохранение фильтра между открытиями страницы</b> не решено (27.10.2026): окно и страница держат фильтр в памяти, после перезагрузки страницы он пустой; пресетов (сохранённых фильтров) на макете нет, хотя «Сохранить» в подвале наводит на мысль о них. Что именно сохраняет кнопка «Сохранить» — применение фильтра или запись пресета — допущение (27.10.2026): применение, как «Применить» у окон фильтров ДС.</li><li><b>Диапазон дат «конец не раньше начала»</b> не проверяется (ответ 28) — не решено (27.10.2026), нужна ли проверка. Если начало позже конца, список просто окажется пустым.</li><li><b>Номер соглашения</b> ищется подстрокой по полному номеру «порядковый-номер договора» (допущение, 27.10.2026, по <code class="tok">LoanAgreementStore.agreements</code>); как человек ищет на самом деле — по порядковому номеру или по всему номеру — не решено.</li><li><b>Подсказки полей</b> («Выберите тип изменения», «Выберите ключевые изменения», «Выберите уровни одобрения») на макете не видны (кадр с заполненными полями) — тексты прототипа, не из макета (27.10.2026). Поле «Номер соглашения» и «Номер решения» без подсказки.</li><li><b>«Очистить фильтр» выключена при пустом окне</b> — допущение (27.10.2026) по окну фильтра финансовых метрик; на макете кнопка нарисована доступной при заполненном окне, пустое окно не показано.</li></ol>
+<p class="desc">Проверено: 27.10.2026</p>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/InitialAndAdditionalAgreements.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-loan-agreements.js"></script>
+<script src="../../../postrade/deals-app/data/loan-agreement-store.js"></script>
+<script src="../../../postrade/deals-app/data/tranche-context.js"></script>
+<script src="../../../postrade/deals-app/data/instrument-context.js"></script>
+<script src="../../../postrade/deals-app/data/loan-contract-fields.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/ContractTile/ContractTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/AdditionalAgreementTile/AdditionalAgreementTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/AdditionalAgreementModal/AdditionalAgreementModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"AdditionalAgreementsFilterModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":null,"scenario":false,"fixtures":{"_":"Демо-данные витрины окна «Фильтр» списка дополнительных соглашений: объект на состояние (ключи — виды заполнения окна). В каждом filter — текущий применённый фильтр в формате аргумента LoanAgreementStore.agreements(): number, signFrom, signTo, changeTypeCode, keyChangeCodes[], decisionNumber, decisionFrom, decisionTo, approvalLevelCodes[]; даты — ISO, пустое поле — ключа нет. empty — пустой фильтр {} (окно пустое, счётчики скрыты, «Очистить фильтр» выключена), data — заполнены все поля (макет: на кадре счётчик 9 — демо-значение), partial — заполнен один раздел, invalidDate — в filter стоит не-ISO дата «31.02.2021»: окно показывает её как есть, «Сохранить» отклоняет её ошибкой формата даты (окно остаётся открытым). Окно заполняется тем же способом, что при открытии на странице: PostModalAdditionalAgreementsFilter.bind(scrim).fill(filter). Значения выдуманные.","empty":{"filter":{}},"data":{"filter":{"number":"4-1234567890","signFrom":"2021-01-01","signTo":"2021-12-31","changeTypeCode":"FINANCIAL_AND_NON_FINANCIAL","keyChangeCodes":["PRINCIPAL_REPAYMENT_SCHEDULE","EARLY_REPAYMENT_TERMS","OTHER"],"decisionNumber":"R-2021-17","decisionFrom":"2021-01-01","decisionTo":"2021-12-31","approvalLevelCodes":["FOUR_EYES","KPKI_TB","KPA_TB"]}},"partial":{"filter":{"signFrom":"2022-01-01","changeTypeCode":"FINANCIAL","approvalLevelCodes":["SIX_EYES_PPR"]}},"invalidDate":{"filter":{"number":"4-1234567890","signFrom":"31.02.2021"}}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Окно «Фильтр» списка дополнительных соглашений (ДС) — связанный артефакт кнопки
+     «Фильтр» (TableFilter) на внутренней странице «Договор и дополнительные соглашения».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include: скрим лежит в конце
+     body страницы (якорь #sec:modals), а не внутри тайла. Кнопка «Фильтр» и чип
+     «Применено: N» живут на странице, не в окне.
+
+     Структура — штатная модалка фильтра ДС (образец — FinancialMetricsFilterModal):
+     .modal--w6.tfm, тело .modal__body--flush > .tfm__body = вертикальные табы-разделы
+     .tfm__nav + .tfm__panel с двумя разделами .tfm__sec подряд (табы — якорные ссылки,
+     панель прокручивается). Раздел «Основная информация»: номер соглашения, дата
+     подписания (InputDateRange), тип изменения (одиночный выбор: InputAutocomplete +
+     DropdownList), ключевые изменения (мультивыбор с чипами). Раздел «Решение»: номер
+     решения, дата решения (InputDateRange), уровень одобрения (мультивыбор с чипами).
+     Бейдж таба — число заполненных полей раздела, при нуле скрыт атрибутом hidden;
+     диапазон дат считается за одно поле. Макет подписывает дату «Дата соглашения»;
+     в окне «Дата подписания» (ответ человека 27.10.2026).
+
+     Списки опций и чипы пустые: скрипт (AdditionalAgreementsFilterModal.js) строит их из
+     глобалов LOAN_CHANGE_TYPE_LABELS, LOAN_KEY_CHANGE_LABELS, LOAN_APPROVAL_LEVEL_LABELS
+     и заполняет поля текущим фильтром при каждом открытии. Значений полей в разметке нет:
+     эталон — пустое окно (состояния — fixtures.json).
+
+     Подвал: «Очистить фильтр» (сбрасывает поля окна, окно остаётся открытым; выключена,
+     пока очищать нечего) и «Сохранить» (проверяет даты, закрывает окно и отдаёт фильтр
+     событием agreementsfilter). Ни одна не несёт data-modal-close: закрытие и результат
+     ведёт скрипт. Крестик и Esc закрывают без сохранения.
+
+     Даты: на каждой половине диапазона префикс «От»/«До» (правило InputDateRange: префикс
+     всегда есть; на макете его нет). Поле в .inp__box — якорь тултипа ошибки формата даты
+     (правило InputText: текст ошибки только в тултипе на фокусе). Крестика очистки в
+     разметке нет намеренно: его рисует рантайм по значению. -->
+
+<div class="modal-scrim" id="agreements-filter-scrim" hidden>
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="aaf-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="aaf-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="aaf-sec-main"><span class="tab__label">Основная информация</span><span class="tab__badge" data-aaf-badge="main" hidden>0</span></button>
+          <button type="button" class="tab tab--m tab--vert" data-target="aaf-sec-decision"><span class="tab__label">Решение</span><span class="tab__badge" data-aaf-badge="decision" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel">
+
+          <section class="tfm__sec" id="aaf-sec-main" aria-labelledby="aaf-sec-main-t">
+            <p class="tfm__sec-title" id="aaf-sec-main-t">Основная информация</p>
+            <div class="tfm__grid">
+
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="aaf-number"><span class="ds-label__text">Номер соглашения</span></label>
+                <div class="inp__field">
+                  <input class="inp__control" id="aaf-number" name="number" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Дата подписания</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">От</span>
+                        <input class="inp__control" id="aaf-sign-from" name="signFrom" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата подписания, от">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">До</span>
+                        <input class="inp__control" id="aaf-sign-to" name="signTo" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата подписания, до">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="aaf-change-type"><span class="ds-label__text">Тип изменения</span></label>
+                <div class="inp__field" data-ddl="aaf-change-type-list">
+                  <input class="inp__control" id="aaf-change-type" name="changeTypeCode" autocomplete="off" placeholder="Выберите тип изменения">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="aaf-change-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+              </div>
+
+              <div class="inp inp--m tfm__span-2" data-aaf-multi="keyChangeCodes">
+                <label class="ds-label" for="aaf-key-changes"><span class="ds-label__text">Ключевые изменения</span></label>
+                <div class="inp__field" data-ddl="aaf-key-changes-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="aaf-key-changes" autocomplete="off" placeholder="Выберите ключевые изменения">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="aaf-key-changes-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+
+            </div>
+          </section>
+
+          <section class="tfm__sec" id="aaf-sec-decision" aria-labelledby="aaf-sec-decision-t">
+            <p class="tfm__sec-title" id="aaf-sec-decision-t">Решение</p>
+            <div class="tfm__grid">
+
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="aaf-decision-number"><span class="ds-label__text">Номер решения</span></label>
+                <div class="inp__field">
+                  <input class="inp__control" id="aaf-decision-number" name="decisionNumber" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Дата решения</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">От</span>
+                        <input class="inp__control" id="aaf-decision-from" name="decisionFrom" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата решения, от">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">До</span>
+                        <input class="inp__control" id="aaf-decision-to" name="decisionTo" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата решения, до">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="inp inp--m tfm__span-2" data-aaf-multi="approvalLevelCodes">
+                <label class="ds-label" for="aaf-approval"><span class="ds-label__text">Уровень одобрения</span></label>
+                <div class="inp__field" data-ddl="aaf-approval-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="aaf-approval" autocomplete="off" placeholder="Выберите уровни одобрения">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="aaf-approval-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-aaf-clear disabled><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-aaf-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Окно «Фильтр» списка дополнительных соглашений (AdditionalAgreementsFilterModal).
+   Своего CSS у окна нет: оно целиком собрано из штатной модалки фильтра ДС
+   (.modal--w6.tfm, TableFilter), полей InputText, InputDateRange, InputAutocomplete
+   с чипами, раскладку и отступы дают они сами. Файл оставлен пустым намеренно —
+   ассемблер подключает CSS виджета по соседству с разметкой, а правило сюда попадёт,
+   только если у окна появится раскладка, которой нет в ДС. */
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   AdditionalAgreementsFilterModal.js — окно «Фильтр» списка дополнительных соглашений (ДС).
+
+   Окно — компонент без стора: текущий применённый фильтр ему отдаёт страница при
+   каждом открытии (open(currentFilter)); результат окно отдаёт событием
+   agreementsfilter на document. Что делает скрипт сверх рантаймов ДС (в них этого
+   нет — это модель данных):
+     1. Справочники. Опции «Тип изменения», «Ключевые изменения» и «Уровень
+        одобрения» строятся при привязке из глобалов LOAN_CHANGE_TYPE_LABELS,
+        LOAN_KEY_CHANGE_LABELS, LOAN_APPROVAL_LEVEL_LABELS (data/mock-loan-agreements.js).
+        Нет глобала (витрина) — запасной словарь ниже, он повторяет значения со
+        скринов (справочники неполные: паспорт, «Открытые вопросы»).
+     2. Поля. «Тип изменения» — одиночный выбор (InputAutocomplete + DropdownList):
+        значение — код, в поле — подпись; набранный текст, не совпавший с опцией,
+        при уходе с поля откатывается к выбранному, крестик снимает значение.
+        «Ключевые изменения» и «Уровень одобрения» — мультивыбор с чипами в поле:
+        список с чекбоксами и «Выбрать всё» ведёт DSDropdownList, а чипы, фильтрацию
+        по набранному тексту (с подсветкой) и состояние выбора держит этот файл.
+     3. Счётчики на табах разделов — число заполненных полей раздела, пересчёт на
+        вводе; при нуле бейдж скрыт. Диапазон дат — одно поле, если заполнена хотя
+        бы одна граница. «Основная информация»: number, signFrom/signTo,
+        changeTypeCode, keyChangeCodes. «Решение»: decisionNumber,
+        decisionFrom/decisionTo, approvalLevelCodes.
+     4. «Очистить фильтр» только очищает поля окна (счётчики обнуляются), окно
+        остаётся открытым, фильтр не применяется; кнопка выключена, пока очищать
+        нечего. Применяется фильтр по «Сохранить» — как в окне фильтра
+        FinancialMetricsFilterModal.
+     5. «Сохранить»: проверяет формат четырёх дат (пусто — можно; иначе существующая
+        дата ДД.ММ.ГГГГ), собирает фильтр, закрывает окно и шлёт на document событие
+        agreementsfilter с detail { filter, count }. Ошибка — по правилу InputText:
+        красное поле, текст в тултипе на фокусе, окно остаётся открытым. Проверка
+        «конец не раньше начала» не делается (RE0041, ответ 28: проверяется только
+        формат дат). Крестик и Esc закрывают без сохранения и без события.
+
+   Формат фильтра = аргумент LoanAgreementStore.agreements():
+     { number, signFrom, signTo, changeTypeCode, keyChangeCodes[], decisionNumber,
+       decisionFrom, decisionTo, approvalLevelCodes[] }
+   Даты — ISO (в окне ДД.ММ.ГГГГ); незаполненное поле — ключа в объекте нет, пустой
+   фильтр — {}.
+
+   API: window.PostModalAdditionalAgreementsFilter
+     bind(scrim?, opts?) → api
+       scrim — по умолчанию #agreements-filter-scrim; повторный bind того же скрима
+               возвращает прежний api. На загрузке страницы окно привязывается само.
+       opts  — необязательно: { get() → filter } — откуда брать фильтр, если окно
+               открыли не через open() (например, триггером data-modal); по
+               умолчанию — последний фильтр, что окно получило в open() или сохранило
+       api.fill(filter?)  — заполнить окно фильтром (пусто — очистить)
+       api.read()         → { filter, count } | null — что сейчас в окне; null, если
+                            дата не прошла проверку (ошибки на полях показаны)
+       api.validate()     → boolean — проверить формат дат
+       api.clear()        — очистить поля окна (без закрытия)
+       api.count()        → число заполненных полей
+     open(currentFilter?) → слой окна (DSModal.open) | null
+       currentFilter — текущий применённый фильтр (формат выше); окно заполняется
+                       им при каждом открытии; несохранённый ввод прошлого открытия
+                       сбрасывается
+     Событие на document: agreementsfilter, detail { filter, count } — count: число
+       заполненных полей фильтра (для чипа «Применено: N» на странице)
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var SCRIM_ID = 'agreements-filter-scrim';
+  var FORMAT = 'Введите дату в формате ДД.ММ.ГГГГ';
+  var DATE = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+  var ISO = /^(\d{4})-(\d{2})-(\d{2})/;
+  var NO_RESULTS = 'Ничего не найдено';
+
+  /* Запасные словари — только если страница не подключила data/mock-loan-agreements.js
+     (витрина). Значения — со скринов, полные справочники неизвестны. */
+  var FALLBACK = {
+    LOAN_CHANGE_TYPE_LABELS: {
+      FINANCIAL: 'Финансовое',
+      NON_FINANCIAL: 'Нефинансовое',
+      FINANCIAL_AND_NON_FINANCIAL: 'Финансовое и нефинансовое'
+    },
+    LOAN_KEY_CHANGE_LABELS: {
+      PRINCIPAL_REPAYMENT_SCHEDULE: 'График погашения основного долга',
+      EARLY_REPAYMENT_TERMS: 'Условия досрочного погашения',
+      OTHER: 'Прочее'
+    },
+    LOAN_APPROVAL_LEVEL_LABELS: {
+      FOUR_EYES: '4 глаза',
+      KPKI_TB: 'КПКИ ТБ',
+      KPA_TB: 'КПА ТБ',
+      KPKI_GOSB: 'КПКИ ГОСБ',
+      SIX_EYES_PPR: '6 глаз ППР'
+    }
+  };
+
+  /* поле формы -> раздел для счётчика */
+  var SECTIONS = {
+    main: ['number', 'sign', 'changeTypeCode', 'keyChangeCodes'],
+    decision: ['decisionNumber', 'decision', 'approvalLevelCodes']
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function norm(s) { return String(s == null ? '' : s).trim().toLowerCase(); }
+  function has(v) { return v !== null && v !== undefined && v !== ''; }
+  function applyIcons(el) { if (window.dsIcons) window.dsIcons.apply(el); }
+  function syncInput(inp) { if (window.DSInput && inp) window.DSInput.sync(inp); }
+  function isInline(scrim) { return scrim.classList.contains('modal-scrim--inline'); }
+
+  function labels(name) {
+    var map = window[name];
+    return map && typeof map === 'object' ? map : FALLBACK[name];
+  }
+  function options(name) {
+    var map = labels(name);
+    return Object.keys(map).map(function (code) { return { value: code, label: map[code] }; });
+  }
+
+  /* 'ДД.ММ.ГГГГ' → ISO; не дата (в том числе 31.02) — null */
+  function toIso(s) {
+    var m = DATE.exec(String(s == null ? '' : s).trim());
+    if (!m) return null;
+    var d = +m[1], mo = +m[2], y = +m[3];
+    var dt = new Date(y, mo - 1, d);
+    if (dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) return null;
+    return m[3] + '-' + m[2] + '-' + m[1];
+  }
+
+  /* ISO → 'ДД.ММ.ГГГГ'; иное остаётся как есть */
+  function fromIso(v) {
+    var s = String(v == null ? '' : v).trim();
+    var m = ISO.exec(s);
+    return m ? m[3] + '.' + m[2] + '.' + m[1] : s;
+  }
+
+  function codes(v) {
+    var out = [];
+    (Array.isArray(v) ? v : []).forEach(function (c) {
+      var s = String(c);
+      if (s && out.indexOf(s) < 0) out.push(s);
+    });
+    return out;
+  }
+
+  /* ---------- поле мультивыбора (чипы в поле) ---------- */
+
+  function rowHTML(opt, on, query) {
+    var label = opt.label;
+    var at = query ? norm(label).indexOf(query) : -1;
+    var text = at < 0
+      ? esc(label)
+      : esc(label.slice(0, at)) + '<span class="ddl__match">' + esc(label.slice(at, at + query.length)) + '</span>' + esc(label.slice(at + query.length));
+    return '<button type="button" class="ddl__item ddl__item--checkbox" role="option" aria-checked="' + (on ? 'true' : 'false') + '" data-value="' + esc(opt.value) + '">'
+      + '<span class="ddl__item-check"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span></span>'
+      + '<span class="ddl__item-body"><span class="ddl__item-label">' + text + '</span></span></button>';
+  }
+
+  function allRowHTML(state) {
+    return '<button type="button" class="ddl__item ddl__item--checkbox ddl__item--all" role="option" aria-checked="' + state + '">'
+      + '<span class="ddl__item-check"><span class="cb__box"><span class="cb__mark"><i data-icon="' + (state === 'mixed' ? 'minus' : 'check') + '"></i></span></span></span>'
+      + '<span class="ddl__item-body"><span class="ddl__item-label">Выбрать всё</span></span></button>';
+  }
+
+  function chipEl(value, label) {
+    var chip = document.createElement('span');
+    chip.className = 'chip chip--edit chip--s';
+    chip.tabIndex = 0;
+    chip.setAttribute('data-value', value);
+    chip.innerHTML = '<span class="chip__label">' + esc(label) + '</span>'
+      + '<span class="chip__remove" role="button" aria-label="Удалить ' + esc(label) + '"><i data-icon="close"></i></span>';
+    return chip;
+  }
+
+  /* Мультивыбор поверх разметки root (.inp с .inp__chips). Выбор живёт в массиве
+     selected (коды), не в поле. cfg: { options() → [{ value, label }], placeholder,
+     changed() } */
+  function makeMulti(root, cfg) {
+    var field = root.querySelector('.inp__field');
+    var chips = root.querySelector('.inp__chips');
+    var input = root.querySelector('.inp__control');
+    var list = root.querySelector('.ddl');
+    var selected = [];
+
+    function labelOf(value) {
+      var opts = cfg.options();
+      for (var i = 0; i < opts.length; i++) if (opts[i].value === value) return opts[i].label;
+      return value;
+    }
+
+    function listHTML() {
+      var query = norm(input.value);
+      var shown = cfg.options().filter(function (o) { return !query || norm(o.label).indexOf(query) >= 0; });
+      if (!shown.length) return '<div class="ddl__state ddl__state--empty">' + NO_RESULTS + '</div>';
+      var on = shown.filter(function (o) { return selected.indexOf(o.value) >= 0; }).length;
+      var state = on === shown.length ? 'true' : (on ? 'mixed' : 'false');
+      return allRowHTML(state) + '<hr class="ddl__divider">'
+        + shown.map(function (o) { return rowHTML(o, selected.indexOf(o.value) >= 0, query); }).join('');
+    }
+
+    function renderList() {
+      list.innerHTML = listHTML();
+      applyIcons(list);
+    }
+
+    function renderChips() {
+      chips.innerHTML = '';
+      selected.forEach(function (v) { chips.appendChild(chipEl(v, labelOf(v))); });
+      applyIcons(chips);
+      input.placeholder = selected.length ? '' : cfg.placeholder;
+      syncInput(root);
+    }
+
+    function render() { renderChips(); renderList(); }
+
+    function toggle(value, on) {
+      var at = selected.indexOf(value);
+      if (on && at < 0) selected.push(value);
+      else if (!on && at >= 0) selected.splice(at, 1);
+    }
+
+    /* Набранный текст — запрос к списку, а не значение: с поля он уходит, когда
+       фокус ушёл и из поля, и из списка. */
+    function dropQuery() {
+      if (!input.value) return;
+      input.value = '';
+      renderList();
+      syncInput(root);
+    }
+
+    function openList() {
+      var api = field.__dsDdl;
+      if (!api) return;
+      if (api.isOpen()) api.place(); else api.open();
+    }
+
+    function remove(value) {
+      toggle(value, false);
+      render();
+      cfg.changed();
+      input.focus();
+    }
+
+    if (window.DSDropdownList) window.DSDropdownList.bind(field, { list: list });
+
+    list.addEventListener('click', function (e) {
+      var item = e.target.closest ? e.target.closest('.ddl__item--checkbox') : null;
+      if (!item || item.getAttribute('aria-disabled') === 'true') return;
+      var on = item.getAttribute('aria-checked') === 'true';
+      if (item.classList.contains('ddl__item--all')) {
+        Array.prototype.forEach.call(
+          list.querySelectorAll('.ddl__item--checkbox:not(.ddl__item--all)'),
+          function (r) { toggle(r.getAttribute('data-value'), on); }
+        );
+      } else {
+        toggle(item.getAttribute('data-value'), on);
+      }
+      renderChips();
+      cfg.changed();
+    });
+
+    /* Чип: крестик и Backspace/Delete на сфокусированном чипе. Событие гасится:
+       рантайм чипа иначе снял бы узел сам, а выбор остался бы в массиве. */
+    chips.addEventListener('click', function (e) {
+      var rm = e.target.closest ? e.target.closest('.chip__remove') : null;
+      if (!rm) return;
+      var chip = rm.closest('.chip');
+      if (!chip) return;
+      e.stopPropagation();
+      remove(chip.getAttribute('data-value'));
+    });
+    chips.addEventListener('keydown', function (e) {
+      if (e.key !== 'Backspace' && e.key !== 'Delete') return;
+      var chip = e.target.closest ? e.target.closest('.chip') : null;
+      if (!chip || chip !== e.target) return;
+      e.preventDefault();
+      e.stopPropagation();
+      remove(chip.getAttribute('data-value'));
+    });
+
+    input.addEventListener('input', function () {
+      renderList();
+      if (input.value) openList();
+      else if (field.__dsDdl && field.__dsDdl.isOpen()) field.__dsDdl.place();
+    });
+    /* Backspace в пустом поле снимает последнее значение (правило InputAutocomplete). */
+    input.addEventListener('keydown', function (e) {
+      if (e.key !== 'Backspace' || input.value || !selected.length) return;
+      e.preventDefault();
+      remove(selected[selected.length - 1]);
+    });
+
+    /* Крестик очистки поля (рантайм ДС уже стёр текст и чипы) снимает весь выбор. */
+    root.addEventListener('ds-input:clear', function () {
+      selected = [];
+      input.value = '';
+      render();
+      cfg.changed();
+    });
+
+    function leave() {
+      setTimeout(function () {
+        var active = document.activeElement;
+        if (active && (root.contains(active) || list.contains(active))) return;
+        dropQuery();
+      }, 0);
+    }
+    root.addEventListener('focusout', leave);
+    list.addEventListener('focusout', leave);
+
+    render();
+    return {
+      get: function () { return selected.slice(); },
+      set: function (values) { selected = codes(values); input.value = ''; render(); },
+      focus: function () { input.focus(); },
+      refresh: render
+    };
+  }
+
+  /* ---------- поле одиночного выбора ---------- */
+
+  function optionHTML(o, selected) {
+    return '<button type="button" class="ddl__item" role="option" aria-selected="' + (selected ? 'true' : 'false')
+      + '" data-code="' + esc(o.value) + '"><span class="ddl__item-body"><span class="ddl__item-label">'
+      + esc(o.label) + '</span></span></button>';
+  }
+
+  /* InputAutocomplete + DropdownList: значение — код, в поле — подпись. Код, которого
+     нет в справочнике, показывается как есть. */
+  function makeSelect(root, cfg) {
+    var field = root.querySelector('.inp__field');
+    var control = root.querySelector('.inp__control');
+    var list = root.querySelector('.ddl');
+    var cur = null;
+
+    function labelOf(code) {
+      var o = cfg.options().filter(function (x) { return x.value === code; })[0];
+      return o ? o.label : (has(code) ? String(code) : '');
+    }
+    function paint() {
+      list.innerHTML = cfg.options().map(function (o) { return optionHTML(o, o.value === cur); }).join('');
+    }
+    function set(code, silent) {
+      cur = has(code) ? String(code) : null;
+      control.value = labelOf(cur);
+      paint();
+      syncInput(root);
+      if (!silent) cfg.changed();
+    }
+    /* Набранный руками текст: совпал с опцией — выбор; пусто — значение снято;
+       иначе — откат к выбранному. */
+    function commitTyped() {
+      var s = norm(control.value);
+      if (!s) { if (cur) set(null); return; }
+      var hit = cfg.options().filter(function (o) { return norm(o.label) === s; })[0];
+      if (hit) { if (hit.value !== cur) set(hit.value); else set(cur, true); return; }
+      set(cur, true);
+    }
+
+    paint();
+    /* Привязку списка рантайм ДС делает сам по data-ddl (открытие, клавиатура, закрытие
+       после выбора); если он успел раньше скрипта, свой onSelect уже не принять, поэтому
+       выбор ловится собственным слушателем на списке, после обработчика ДС. */
+    if (window.DSDropdownList) window.DSDropdownList.bind(field, { list: list });
+    list.addEventListener('click', function (e) {
+      var it = e.target.closest ? e.target.closest('.ddl__item[data-code]') : null;
+      if (!it || it.getAttribute('aria-disabled') === 'true') return;
+      set(it.getAttribute('data-code'));
+    });
+    control.addEventListener('change', commitTyped);
+    root.addEventListener('ds-input:clear', function () { set(null); });
+
+    return {
+      get: function () { return cur; },
+      set: function (code) { set(code, true); },
+      focus: function () { control.focus(); },
+      refresh: paint
+    };
+  }
+
+  /* ---------- ошибка поля даты (правило InputText) ---------- */
+
+  /* Тултип строится через DSTooltip и монтируется в .inp__box поля. bind() навешивает
+     показ на наведение и фокус навсегда, поэтому, пока ошибки нет, показ гасится сразу
+     за ним (как в окне «Договор»). */
+  function makeDateField(control) {
+    var inp = control.closest('.inp');
+    var box = control.closest('.inp__box');
+    var error = '';
+    var tipApi = null;
+
+    function ensureTip() {
+      if (tipApi || !window.DSTooltip || !box) return tipApi;
+      var o = { type: 'error', placement: 'bottom', align: 'start', multiline: true };
+      var tip = window.DSTooltip.make('', o);
+      box.appendChild(tip);
+      o.tip = tip;
+      tipApi = window.DSTooltip.bind(control, o);
+      ['mouseenter', 'focus'].forEach(function (ev) {
+        control.addEventListener(ev, function () { if (!error && tipApi) tipApi.hide(true); });
+      });
+      return tipApi;
+    }
+
+    function setError(msg) {
+      error = msg;
+      inp.classList.add('inp--error');
+      control.setAttribute('aria-invalid', 'true');
+      var api = ensureTip();
+      if (!api) return;
+      api.tip.firstChild.textContent = msg;
+      if (document.activeElement === control) api.show(true);
+    }
+
+    function clearError() {
+      error = '';
+      inp.classList.remove('inp--error');
+      control.removeAttribute('aria-invalid');
+      if (tipApi) tipApi.hide(true);
+    }
+
+    function validate() {
+      var v = control.value.trim();
+      if (v && toIso(v) == null) { setError(FORMAT); return false; }
+      clearError();
+      return true;
+    }
+
+    /* новая ошибка появляется только по «Сохранить»; при правке уже показанная
+       пересчитывается и снимается, когда ввод стал верным */
+    control.addEventListener('input', function () { if (error) validate(); });
+
+    return { control: control, validate: validate, clearError: clearError };
+  }
+
+  /* ---------- привязка ---------- */
+
+  function bind(scrim, opts) {
+    scrim = scrim || document.getElementById(SCRIM_ID);
+    if (!scrim) return null;
+    if (scrim.__aafModal) return scrim.__aafModal;
+    opts = opts || {};
+
+    function q(sel) { return scrim.querySelector(sel); }
+    var num = q('input[name="number"]');
+    var decNum = q('input[name="decisionNumber"]');
+    var typeRoot = q('input[name="changeTypeCode"]');
+    var keyRoot = q('[data-aaf-multi="keyChangeCodes"]');
+    var apprRoot = q('[data-aaf-multi="approvalLevelCodes"]');
+    var clearBtn = q('[data-aaf-clear]');
+    var saveBtn = q('[data-aaf-save]');
+    var badges = { main: q('[data-aaf-badge="main"]'), decision: q('[data-aaf-badge="decision"]') };
+    var dateInputs = {};
+    ['signFrom', 'signTo', 'decisionFrom', 'decisionTo'].forEach(function (n) {
+      var c = q('input[name="' + n + '"]');
+      if (c) dateInputs[n] = makeDateField(c);
+    });
+    if (!num || !decNum || !typeRoot || !keyRoot || !apprRoot || !clearBtn || !saveBtn
+        || !dateInputs.signFrom || !dateInputs.signTo || !dateInputs.decisionFrom || !dateInputs.decisionTo) return null;
+
+    var lastFilter = {};
+
+    function current() {
+      return opts.get ? (opts.get() || {}) : lastFilter;
+    }
+
+    var changeType = makeSelect(typeRoot.closest('.inp'), {
+      options: function () { return options('LOAN_CHANGE_TYPE_LABELS'); },
+      changed: refresh
+    });
+    var keyChanges = makeMulti(keyRoot, {
+      options: function () { return options('LOAN_KEY_CHANGE_LABELS'); },
+      placeholder: keyRoot.querySelector('.inp__control').getAttribute('placeholder') || '',
+      changed: refresh
+    });
+    var approval = makeMulti(apprRoot, {
+      options: function () { return options('LOAN_APPROVAL_LEVEL_LABELS'); },
+      placeholder: apprRoot.querySelector('.inp__control').getAttribute('placeholder') || '',
+      changed: refresh
+    });
+
+    function filled(el) { return el.value.trim() !== ''; }
+
+    /* заполнено ли поле фильтра: диапазон дат — одно поле */
+    function sectionCount(name) {
+      var f = {
+        number: filled(num),
+        sign: filled(dateInputs.signFrom.control) || filled(dateInputs.signTo.control),
+        changeTypeCode: !!changeType.get(),
+        keyChangeCodes: keyChanges.get().length > 0,
+        decisionNumber: filled(decNum),
+        decision: filled(dateInputs.decisionFrom.control) || filled(dateInputs.decisionTo.control),
+        approvalLevelCodes: approval.get().length > 0
+      };
+      return SECTIONS[name].filter(function (k) { return f[k]; }).length;
+    }
+
+    function count() { return sectionCount('main') + sectionCount('decision'); }
+
+    /* бейджи разделов и «Очистить фильтр» — по текущему содержимому окна */
+    function refresh() {
+      Object.keys(badges).forEach(function (name) {
+        var n = sectionCount(name);
+        if (!badges[name]) return;
+        badges[name].textContent = String(n);
+        badges[name].hidden = n === 0;
+      });
+      clearBtn.disabled = count() === 0;
+    }
+
+    function closeLists() { if (window.DSDropdownList) window.DSDropdownList.closeAll(); }
+
+    function setText(el, value) {
+      el.value = value;
+      syncInput(el.closest('.inp'));
+    }
+
+    function clearErrors() {
+      Object.keys(dateInputs).forEach(function (n) { dateInputs[n].clearError(); });
+    }
+
+    function validate() {
+      var ok = true;
+      var first = null;
+      ['signFrom', 'signTo', 'decisionFrom', 'decisionTo'].forEach(function (n) {
+        if (!dateInputs[n].validate()) { ok = false; if (!first) first = dateInputs[n].control; }
+      });
+      if (first) first.focus();
+      return ok;
+    }
+
+    /* Фильтр → поля окна. Пустой или чужой формат — пустые поля. */
+    function fill(filter) {
+      var f = filter && typeof filter === 'object' ? filter : {};
+      closeLists();
+      setText(num, has(f.number) ? String(f.number) : '');
+      setText(dateInputs.signFrom.control, fromIso(f.signFrom));
+      setText(dateInputs.signTo.control, fromIso(f.signTo));
+      changeType.set(f.changeTypeCode);
+      keyChanges.set(f.keyChangeCodes);
+      setText(decNum, has(f.decisionNumber) ? String(f.decisionNumber) : '');
+      setText(dateInputs.decisionFrom.control, fromIso(f.decisionFrom));
+      setText(dateInputs.decisionTo.control, fromIso(f.decisionTo));
+      approval.set(f.approvalLevelCodes);
+      clearErrors();
+      refresh();
+    }
+
+    /* Поля окна → фильтр: пустое поле — ключа нет. Даты здесь уже проверены. */
+    function collect() {
+      var f = {};
+      function text(key, el) { var v = el.value.trim(); if (v) f[key] = v; }
+      function date(key, el) { var v = el.value.trim(); if (v) f[key] = toIso(v); }
+      text('number', num);
+      date('signFrom', dateInputs.signFrom.control);
+      date('signTo', dateInputs.signTo.control);
+      if (changeType.get()) f.changeTypeCode = changeType.get();
+      if (keyChanges.get().length) f.keyChangeCodes = keyChanges.get();
+      text('decisionNumber', decNum);
+      date('decisionFrom', dateInputs.decisionFrom.control);
+      date('decisionTo', dateInputs.decisionTo.control);
+      if (approval.get().length) f.approvalLevelCodes = approval.get();
+      return f;
+    }
+
+    function read() {
+      if (!validate()) return null;
+      return { filter: collect(), count: count() };
+    }
+
+    /* «Очистить фильтр»: поля окна пустые, окно открыто, фильтр не применён. Кнопка
+       только что выключилась — фокус уходит на первое поле. */
+    function clear() {
+      fill({});
+      num.focus();
+    }
+
+    function save() {
+      var res = read();
+      if (!res) return;
+      lastFilter = JSON.parse(JSON.stringify(res.filter));
+      if (!isInline(scrim) && window.DSModal) window.DSModal.closeTop(true);
+      document.dispatchEvent(new CustomEvent('agreementsfilter', { detail: res }));
+    }
+
+    /* ── События ───────────────────────────────────────────────────── */
+    clearBtn.addEventListener('click', clear);
+    saveBtn.addEventListener('click', save);
+    [num, decNum, dateInputs.signFrom.control, dateInputs.signTo.control,
+      dateInputs.decisionFrom.control, dateInputs.decisionTo.control].forEach(function (el) {
+      el.addEventListener('input', refresh);
+      el.addEventListener('change', refresh);
+      /* крестик очистки и выбор в календаре сообщают через ds-input:clear / input */
+      var inp = el.closest('.inp');
+      if (inp) inp.addEventListener('ds-input:clear', refresh);
+    });
+
+    /* Окно открылось (не только через open()) — поля заново: за время, пока оно было
+       закрыто, фильтр мог смениться, а несохранённый ввод прошлого открытия не нужен. */
+    var wasOpen = !scrim.hidden;
+    new MutationObserver(function () {
+      var open = !scrim.hidden;
+      if (open === wasOpen) return;
+      wasOpen = open;
+      if (open) fill(current());
+      else { closeLists(); clearErrors(); }
+    }).observe(scrim, { attributes: true, attributeFilter: ['hidden'] });
+
+    var api = {
+      fill: fill,
+      read: read,
+      validate: validate,
+      clear: clear,
+      count: count,
+      setCurrent: function (filter) { lastFilter = filter && typeof filter === 'object' ? JSON.parse(JSON.stringify(filter)) : {}; }
+    };
+    scrim.__aafModal = api;
+    fill(current());
+    return api;
+  }
+
+  function open(currentFilter) {
+    var scrim = document.getElementById(SCRIM_ID);
+    if (!scrim) return null;
+    var api = bind(scrim);
+    if (!api) return null;
+    api.setCurrent(currentFilter);
+    api.fill(currentFilter);
+    return window.DSModal ? window.DSModal.open(scrim) : null;
+  }
+
+  window.PostModalAdditionalAgreementsFilter = { bind: bind, open: open };
+
+  /* Окно стоит на странице в конце body: привязываем, как только скрим есть, —
+     без вызова со страницы. */
+  function bindAuto() { bind(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindAuto);
+  else bindAuto();
+})();
+</script>
+</body>
+</html>

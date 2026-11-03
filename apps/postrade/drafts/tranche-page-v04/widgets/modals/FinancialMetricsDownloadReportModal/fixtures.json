@@ -1,0 +1,20 @@
+{
+  "_": "Демо-данные витрины окна «Выгрузка отчета». Окно рисует вид само (PostDealDownloadReportModal.preview): encrypted — вариант с шифрованием (сеть Сигма), recipients — строки таблицы получателей в форме ReportEmployeeRsDto. data — с шифрованием, три получателя; empty — с шифрованием, таблица пуста, «Выгрузить» выключена; partial — без шифрования (сеть Альфа / Омега), получателей нет; long — самые длинные ФИО и должности. Значения выдуманные.",
+  "data": {
+    "encrypted": true,
+    "recipients": [
+      { "employeeId": "E-201", "fullName": "Иванов Михаил Александрович", "positionName": "Аналитик", "externalEmail": "IvanovMA@sberbank.ru", "internalEmail": "IvanovMA@omega.sberbank.ru" },
+      { "employeeId": "E-202", "fullName": "Петрова Анна Викторовна", "positionName": "Ведущий аналитик", "externalEmail": "PetrovaAV@sberbank.ru", "internalEmail": "PetrovaAV@omega.sberbank.ru" },
+      { "employeeId": "mail:petrovaa@omega.sberbank.ru", "fullName": "", "positionName": "", "externalEmail": "", "internalEmail": "PetrovAA@omega.sberbank.ru" }
+    ]
+  },
+  "partial": { "encrypted": false, "recipients": [] },
+  "empty": { "encrypted": true, "recipients": [] },
+  "error": {},
+  "long": {
+    "encrypted": true,
+    "recipients": [
+      { "employeeId": "E-299", "fullName": "Константинопольский-Ржевский Владимир Владимирович-Оглы", "positionName": "Заместитель руководителя направления по сопровождению сделок", "externalEmail": "KonstantinopolskiyRzhevskiyVV@sberbank.ru", "internalEmail": "KonstantinopolskiyRzhevskiyVV@omega.sberbank.ru" }
+    ]
+  }
+}

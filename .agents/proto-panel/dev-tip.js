@@ -50,7 +50,7 @@
     }).join(' ');
   }
   function row(k, html) {
-    return '<div class="pp-tip__row"><span class="ds-body-xs pp-muted">' + esc(k) + '</span><span class="ds-body-xs pp-tip__val">' + html + '</span></div>';
+    return '<div class="pp-tip__row"><span class="ds-body-xs-reg pp-muted">' + esc(k) + '</span><span class="ds-body-xs-reg pp-tip__val">' + html + '</span></div>';
   }
 
   function rowsHtml(el) {
@@ -84,10 +84,10 @@
   /** Карточка целиком; у закреплённой — кнопки в шапке и ссылка «Open in panel». */
   function cardHtml(el, pinned, perm) {
     var cls = M.classes(el).slice(0, MAX_CLASSES);
-    return '<div class="pp-tip__head"' + (pinned ? ' title="' + esc(t('tip.drag')) + '"' : '') + '>' + kindIcon(el) + '<span class="ds-body-s-strong pp-tip__name">' + esc(M.describe(el)) + '</span>'
+    return '<div class="pp-tip__head"' + (pinned ? ' title="' + esc(t('tip.drag')) + '"' : '') + '>' + kindIcon(el) + '<span class="ds-body-s-strong-smb pp-tip__name">' + esc(M.describe(el)) + '</span>'
       + (pinned ? '<span class="pp-tip__acts">' + btn('pin', perm ? 'pin-filled' : 'pin', perm ? t('tip.unpin') : t('tip.pin')) + btn('close', 'close', t('tip.close')) + '</span>' : '') + '</div>'
       + (cls.length ? '<div class="pp-tip__cls">' + cls.map(function (c) {
-        return pinned ? '<button type="button" class="pp-tip__cl ds-body-xs" data-pp-tip="cls:' + esc(c) + '" title="' + esc(t('tip.same')) + '">.' + esc(c) + '</button>' : '<span class="pp-tip__cl ds-body-xs">.' + esc(c) + '</span>';
+        return pinned ? '<button type="button" class="pp-tip__cl ds-body-xs-reg" data-pp-tip="cls:' + esc(c) + '" title="' + esc(t('tip.same')) + '">.' + esc(c) + '</button>' : '<span class="pp-tip__cl ds-body-xs-reg">.' + esc(c) + '</span>';
       }).join('') + '</div>' : '')
       + '<div class="pp-tip__rows">' + rowsHtml(el) + '</div>'
       + (pinned && !PP._lite ? '<div class="pp-tip__foot"><a href="#" role="button" class="link link--accent link--s" data-pp-tip="open">' + esc(t('tip.open')) + '</a></div>' : '');

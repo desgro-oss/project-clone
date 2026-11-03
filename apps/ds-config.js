@@ -20,6 +20,14 @@ var DS_PATH = "../design-system/";
     if (th === 'ibp-dark') th = 'ibp-neo-dark';
     if (th && th !== 'legacy' && th !== 'ibp-legacy') document.documentElement.setAttribute('data-theme', th);
   } catch (e) { /* хранилище недоступно, ?theme= нет — legacy */ }
+  /* Типографская тема (RE0048): ?typography= или сохранённый выбор.
+     «base», пусто и отсутствие — без атрибута, базовая типографика. */
+  try {
+    var ty = /[?&]typography=([^&#]*)/.exec(window.location.search || '');
+    var tv = (ty ? decodeURIComponent(ty[1]) : window.localStorage.getItem('ds.typography') || '').toLowerCase();
+    if (tv === 'neo') document.documentElement.setAttribute('data-typography', 'neo');
+    else document.documentElement.removeAttribute('data-typography');
+  } catch (e) { /* хранилище недоступно, ?typography= нет — базовая */ }
   /* Фон стартовой страницы (Illustrations): под тёмной темой — тёмный
      вариант; ставится после темы и обновляется на её смену (RE0011). */
   var applyBg = function () {

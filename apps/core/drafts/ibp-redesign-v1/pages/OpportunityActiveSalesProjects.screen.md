@@ -31,7 +31,7 @@ widgets: [tables/OpportunitySalesProjectsTable, modals/TakeOpportunityToWorkModa
 
 | Уровень крошек | Текст | Ссылка |
 |---|---|---|
-| 1 | Главная | `HomePage.html` |
+| 1 | Главная | `../../../host-app/pages/HomePage.html` |
 | 2 (текущий) | Проекты продаж: <вкладка> | — |
 
 ## 3. Пары во фронтенде

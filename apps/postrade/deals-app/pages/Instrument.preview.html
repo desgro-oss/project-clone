@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Договор займа (НКЛ) — IBP</title>
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  /* Секции страницы: заголовок на фоне страницы, не в тайле (как на странице транша) */
+  .in-sec { display: flex; flex-direction: column; gap: var(--space-8); }
+  .in-sec__title { margin: 0; font: var(--type-body-m-reg); color: var(--text-secondary); }
+
+  /* Минимальная высота тайла — как на странице сделки и транша */
+  .screen__content .tile { min-height: 200px; }
+
+  @container screen (max-width: 1240px) {
+    .grid12 > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+</style>
+<link rel="stylesheet" href="../widgets/tiles/CounterpartiesTile/CounterpartiesTile.css">
+<link rel="stylesheet" href="../widgets/tiles/BalanceAndCurrencyTile/BalanceAndCurrencyTile.css">
+<link rel="stylesheet" href="../widgets/tiles/InitialAndAdditionalAgreementsTile/InitialAndAdditionalAgreementsTile.css">
+<link rel="stylesheet" href="../widgets/tiles/TransferRateTile/TransferRateTile.css">
+<link rel="stylesheet" href="../widgets/tiles/LoanExternalDataTile/LoanExternalDataTile.css">
+<link rel="stylesheet" href="../widgets/tiles/LoanNrlTranchesTile/LoanNrlTranchesTile.css">
+<link rel="stylesheet" href="../widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.css">
+<link rel="stylesheet" href="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.css">
+<link rel="stylesheet" href="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.css">
+<link rel="stylesheet" href="../widgets/modals/RepaymentModal/RepaymentModal.css">
+<link rel="stylesheet" href="../widgets/modals/InstrumentTransferModal/InstrumentTransferModal.css">
+<link rel="stylesheet" href="../widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.css">
+</head>
+<body>
+
+<div class="nav-layout">
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="MainPage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="Portfolio.html">Текущий портфель ДИД</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Сделка</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page" id="in-crumb">Договор займа</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- #sec:head ── Шапка страницы: меню ⋮ «Погасить» / «Перенести» -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title" id="in-title">Договор займа</h1></div>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <span class="menu-anchor">
+            <button type="button" class="btn btn--outline btn--m btn--icon-only" aria-label="Ещё действия" aria-haspopup="menu" aria-expanded="false" data-menu="in-head-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+            <div id="in-head-menu" class="menu menu--floating" role="menu" hidden></div>
+          </span>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Общая информация -->
+      <section class="in-sec">
+        <h2 class="in-sec__title">Общая информация</h2>
+        <div class="grid12">
+          <!-- Локальный компонент «Контрагенты» (CounterpartiesTile) — фрагмент страницы.
+     Заголовок зависит от страницы: на сделке — «КНР», на обеспечении —
+     «Залогодатель» / «Поручитель» / «Гарант», на инструменте — «Контрагент».
+     Собран вариант сделки, поэтому заголовок по умолчанию — «КНР».
+     Вариант «Контрагент» (страница договора) включает страница вызовом
+     PostTileKNR.renderInstrument(tile, запись | null) или render(tile, list,
+     { variant: 'instrument' }): скрипт ставит data-variant="instrument" на
+     .lc-knr и заголовок «Контрагент», строка одна, без «и ещё N». Разметка и
+     CSS те же. Без вызова тайл — «КНР».
+     Классы lc-knr, id tile-knr и глобал PostTileKNR — исторические.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-state — состояние данных: loading | data | partial | empty | error | updating
+     data-mode  — режим прав:       edit | view. Ставит страница: статус сделки,
+                  не допускающий правку, даёт view при любой роли
+     Разметка держит ВСЕ состояния сразу, показывает нужное CounterpartiesTile.css по этим
+     двум атрибутам — так устроен шаблон ДС (templates/local-component/Component.css).
+     Строки КНР ниже — пример с макета. На странице сделки их заменяет
+     CounterpartiesTile.js (PostTileKNR.render) данными сделки, пока они грузятся, тайл
+     стоит в loading. Окно КНР открывается с data-modal-guarded: в нём
+     черновик, и клик мимо окна не должен его сбросить. -->
+<section id="tile-counterparty" data-state="loading" data-mode="edit" class="tile lc-knr col-3 colw-6" data-widget="CounterpartiesTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/CounterpartiesTile/CounterpartiesTile.html">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">КНР</h3></div>
+    </div>
+    <!-- Действия шапки: в edit — правка, в view — просмотр того же окна.
+         В состоянии «не заполнено» не рисуется ни одно (см. CounterpartiesTile.css). -->
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-knr__act lc-knr__act--edit"
+              aria-label="Редактировать" data-modal="knr-scrim" data-modal-guarded><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-knr__act lc-knr__act--view"
+              aria-label="Развернуть" data-modal="knr-scrim" data-modal-guarded><i data-icon="maximize"></i></button>
+    </div>
+  </header>
+
+  <!-- Ошибка: полноширинный Alert между шапкой и контентом. Радиус гасит сам
+       слот .tile__alert, свой --flush здесь не нужен. -->
+  <div class="tile__alert lc-knr__error">
+    <div class="alert alert--error alert--m" data-alert-tone="error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body">
+        <p class="alert__title">Название ошибки</p>
+        <p class="alert__text">Описание ошибки</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile__body">
+
+    <!-- Заполнено: две колонки. Показываем не больше двух КНР, остальные —
+         строкой «и ещё N КНР» с тултипом-списком.
+         Строка — отдельный блок, а не ячейки общей сетки: на своей узкой
+         ширине строка складывается в одну колонку, и в плоской сетке лейбл
+         второй колонки уехал бы вперёд данных. -->
+    <!-- Лейблы колонок — обе подписи в две строки с переносом по смыслу
+         (<br class="lc-knr__br">); в одну строку обе сразу — только когда
+         тайл шире 406px (CounterpartiesTile.css). Наименование — до двух строк: клэмп
+         держит обёртка .lc-knr__name, сама ссылка остаётся Link из ДС. -->
+    <div class="lc-knr__list">
+      <div class="lc-knr__head">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Наименование <br class="lc-knr__br">контрагента</span></span>
+        <span class="ds-label ds-label--wrap ds-label--right"><span class="ds-label__text">Рейтинг и зона <br class="lc-knr__br">проблемности</span></span>
+      </div>
+
+      <div class="lc-knr__row">
+        <span class="lc-knr__name"><a class="link link--accent link--s" href="#">КГ Самолёт</a></span>
+        <span data-riskmetric data-risk="26" data-zone="red"
+              data-rating-date="24.10.2025" data-zone-date="24.10.2025"
+              data-segment="Крупный бизнес" data-profile="Непроектный"></span>
+      </div>
+
+      <div class="lc-knr__row">
+        <span class="lc-knr__name"><a class="link link--accent link--s" href="#">СамолётИнвестХолдинг Inc</a></span>
+        <span data-riskmetric data-risk="26" data-zone="green"
+              data-rating-date="24.10.2025" data-zone-date="24.10.2025"
+              data-segment="Крупный бизнес" data-profile="Непроектный"></span>
+      </div>
+
+      <!-- Счётчик скрытых: тултип обязан быть multiline, иначе рантайм режет
+           список в одну строку на 280px (components/molecules/Tooltip/Tooltip.md). -->
+      <span class="lc-knr__more" tabindex="0"
+            data-tooltip="ООО «ЮгСтрой», АО «Самолёт-Девелопмент»"
+            data-tooltip-multiline="yes">и ещё 2 КНР</span>
+    </div>
+
+    <!-- Загрузка: каркас уже на месте — лейблы колонок видны, строки стоят в
+         габаритах будущего содержимого, чтобы раскладка не прыгнула после
+         ответа. Чип метрики — блок в габаритах chip--s (24px). -->
+    <div class="lc-knr__loading" aria-busy="true">
+      <div class="lc-knr__head">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Наименование <br class="lc-knr__br">контрагента</span></span>
+        <span class="ds-label ds-label--wrap ds-label--right"><span class="ds-label__text">Рейтинг и зона <br class="lc-knr__br">проблемности</span></span>
+      </div>
+      <div class="lc-knr__row">
+        <span class="sk-line" style="--sk-w:80%" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-w:52px;--sk-h:24px" aria-hidden="true"></span>
+      </div>
+      <div class="lc-knr__row">
+        <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-w:52px;--sk-h:24px" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Не заполнено, право на заполнение есть -->
+    <div class="lc-knr__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="knr-scrim" data-modal-guarded>
+        <span class="btn__label">Заполнить</span>
+      </button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действия нет -->
+    <p class="lc-knr__empty">Не заполнено</p>
+
+  </div>
+</section>
+          <!-- Локальный компонент «Баланс и валюта» — фрагмент страницы договора займа (НКЛ).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-state — состояние данных: loading | data | partial | empty
+     data-mode  — режим прав:       edit | view. Ставит страница: роль, статус сделки
+                  или погашенный договор дают view
+     Разметка держит ВСЕ состояния сразу, показывает нужное BalanceAndCurrencyTile.css
+     по этим двум атрибутам — так же, как тайл «Сроки сделки».
+     Значения ниже — пример с макета. На странице их заменяет BalanceAndCurrencyTile.js
+     (PostTileBalanceAndCurrency.render) разделом balanceCurrency записи договора.
+     Окно правки — BalanceAndCurrencyModal, скрим bal-scrim; лежит в конце страницы
+     отдельной меткой. Событий loanaction у тайла нет: карандаш и «Заполнить» открывают
+     окно рантаймом ДС по data-modal.
+     В просмотре кнопки с data-modal (карандаш и «Заполнить») выключает разметкой —
+     disabled — render из JS; CSS их только прячет. -->
+<section id="tile-balance-currency" data-state="loading" data-mode="edit" class="tile lc-balance-currency col-3 colw-6" data-widget="BalanceAndCurrencyTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/BalanceAndCurrencyTile/BalanceAndCurrencyTile.html">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Баланс и валюта</h3></div>
+    </div>
+    <!-- Действие шапки показывается только в edit и только когда значения есть
+         (data, partial); пустой тайл заполняют кнопкой в теле. В просмотре кнопка
+         disabled (ставит BalanceAndCurrencyTile.js), CSS её прячет. -->
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать" data-modal="bal-scrim"><i data-icon="edit"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- Значения: «Баланс» и «Валюта» в две колонки, «Общая сумма лимита» — на всю
+         ширину ниже. Порядок постоянный; пустое значение — прочерк, поле с места не
+         уходит. Лейбл переносится до двух строк, если колонка уже подписи. -->
+    <div class="tile__grid lc-balance-currency__grid">
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Баланс</span></span>
+        <div class="rof__row"><span class="rof__value" data-bal-field="balanceCode">SBIL</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Валюта</span></span>
+        <div class="rof__row"><span class="rof__value" data-bal-field="currencyCode">RUB</span></div>
+      </div>
+      <div class="rof tile__grid-full">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Общая сумма лимита</span></span>
+        <div class="rof__row"><span class="rof__value" data-bal-field="totalLimitAmount">123&nbsp;456&nbsp;789,00</span></div>
+      </div>
+    </div>
+
+    <!-- Загрузка: каркас в той же сетке — подпись и значение каждого поля в
+         габаритах строк (подпись 16px, значение 20px), чтобы раскладка не прыгнула
+         после ответа. -->
+    <div class="tile__grid lc-balance-currency__grid lc-balance-currency__loading" aria-busy="true">
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:48%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:56px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:48%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:40px" aria-hidden="true"></span>
+      </div>
+      <div class="rof tile__grid-full">
+        <span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:112px" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Не заполнено, право на правку есть -->
+    <div class="lc-balance-currency__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="bal-scrim">
+        <span class="btn__label">Заполнить</span>
+      </button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действия нет -->
+    <p class="lc-balance-currency__empty">Не заполнено</p>
+
+  </div>
+</section>
+          <!-- Локальный компонент «Договор и дополнительные соглашения» — тайл страницы договора.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-variant — тип продукта: loan-ncl (НКЛ) | deprecated | tranche | shares |
+                    options-repo | corporate-agreement | collaterals | pjsc-guarantee |
+                    pjsc-ncl (НКЛ с баланса ПАО). Состав полей по типу — в
+                    data/loan-contract-fields.js (LOAN_CONTRACT_TILE_VARIANTS, LOAN_CONTRACT_FIELDS); разметка полей
+                    одна на все типы.
+     data-state   — состояние данных: loading | data | empty. Договор не заполнен —
+                    empty, заполнен — data (пустое поле договора в data — прочерк).
+                    Состояния «Ошибка» у тайла нет: на макете его нет
+     data-mode    — режим прав: edit | view. Ставит страница: роль, статус сделки и
+                    погашение договора, не допускающие правку, дают view
+     Разметка держит ВСЕ состояния сразу, показывает нужное
+     InitialAndAdditionalAgreementsTile.css по этим трём атрибутам.
+     Поля в разметке ниже — пример типа «НКЛ» с ДС. На странице их заменяет
+     InitialAndAdditionalAgreementsTile.js (PostTileInitialAndAdditionalAgreements.render):
+     поля типа, значения договора, плановая дата погашения (из траншей, не вводится),
+     номер и дата последнего ДС.
+     Действия, уходящие со страницы, тайл шлёт событием loanaction на себя
+     (detail.action): DOCS — «Документы по сделке», OPEN_CONTRACT — стрелка «→»
+     в шапке (внутренняя страница «Договор и дополнительные соглашения»).
+     «Заполнить» открывает окно «Договор» (contract-scrim) по data-modal; окно лежит
+     в конце body страницы и вшивается отдельной меткой ds-include. Окно с data-modal-guarded:
+     в нём ввод, клик мимо окна не должен его сбросить. -->
+<section data-variant="loan-ncl" id="tile-contract" data-state="loading" data-mode="edit" class="tile lc-initial-and-additional-agreements-tile col-6 colw-12" data-widget="InitialAndAdditionalAgreementsTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/InitialAndAdditionalAgreementsTile/InitialAndAdditionalAgreementsTile.html">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Договор и дополнительные соглашения</h3></div>
+    </div>
+    <!-- Стрелка «→» — только при заполненном договоре и в обоих режимах (на макете
+         в просмотре её нет — ошибка макета, решение человека 26.10.2026). Карандаша в шапке
+         нет: пустой тайл заполняют кнопкой в теле -->
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Открыть договор и дополнительные соглашения" data-lc-action="OPEN_CONTRACT"><i data-icon="arrow-right"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- Данные есть: поля типа и, если есть ДС, поля последнего ДС; под ними —
+         «Документы по сделке». Порядок полей постоянный, пустое значение — прочерк. -->
+    <div class="tile__rows lc-initial-and-additional-agreements-tile__content">
+      <div class="tile__grid lc-initial-and-additional-agreements-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер договора</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractNumber">1234567890</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата подписания</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractSignDate">12.09.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Плановая дата погашения</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="plannedRepaymentDate">12.09.2022</span></div>
+        </div>
+        <div class="rof lc-initial-and-additional-agreements-tile__agreement-first">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер последнего ДС</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="lastAgreementNumber">3-1234567890</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата подписания ДС</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="lastAgreementSignDate">12.09.2022</span></div>
+        </div>
+      </div>
+      <button type="button" class="btn btn--outline btn--s" data-lc-action="DOCS">
+        <i data-icon="attach"></i><span class="btn__label">Документы по сделке</span>
+      </button>
+    </div>
+
+    <!-- Загрузка: каркас в той же сетке — подпись и значение каждого поля в габаритах
+         строк (подпись 16px, значение 20px), чтобы раскладка не прыгнула после ответа -->
+    <div class="tile__grid lc-initial-and-additional-agreements-tile__grid lc-initial-and-additional-agreements-tile__loading" aria-busy="true">
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:80px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:80px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:80%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:80px" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Не заполнено, право на правку есть: «Заполнить» и «Документы по сделке» -->
+    <div class="tile__rows lc-initial-and-additional-agreements-tile__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="contract-scrim" data-modal-guarded>
+        <span class="btn__label">Заполнить</span>
+      </button>
+      <button type="button" class="btn btn--outline btn--s" data-lc-action="DOCS">
+        <i data-icon="attach"></i><span class="btn__label">Документы по сделке</span>
+      </button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действий нет (в том числе
+         «Документы по сделке»). В просмотре кнопки блока выше ещё и disabled —
+         ставит PostTileInitialAndAdditionalAgreements.render, не только CSS -->
+    <p class="lc-initial-and-additional-agreements-tile__empty">Не заполнено</p>
+
+  </div>
+</section>
+          <!-- Локальный компонент «ЕТС» — тайл страницы договора займа (НКЛ).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-state — состояние данных: loading | data | empty. Состояния «Ошибка» у тайла нет
+                  (не решено, 26.10.2026 — паспорт, «Состояния»)
+     data-mode  — режим прав:       edit | view. Ставит страница: роль, статус сделки и
+                  погашение договора дают view
+     Разметка держит ВСЕ состояния сразу, показывает нужное TransferRateTile.css по этим двум
+     атрибутам — так же, как тайл «Сроки сделки».
+     Ставка ниже — пример. На странице её заменяет TransferRateTile.js
+     (PostTileTransferRate.render) ставкой LoanAgreementStore.currentRate(); пока данные
+     грузятся, тайл стоит в loading.
+     Окна у тайла нет: стрелка в шапке и «Заполнить →» ведут на страницу ЕТС — тайл шлёт
+     событие loanaction { action: 'OPEN_ETS' }, переход делает страница. Стрелка есть в любом
+     режиме и состоянии (решение человека 26.10.2026, ответы 1 и 29). -->
+<section id="tile-transfer-rate" data-state="loading" data-mode="edit" class="tile lc-transfer-rate-tile col-3 colw-6" data-widget="TransferRateTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/TransferRateTile/TransferRateTile.html">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">ЕТС</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть страницу ЕТС" data-loan-act="OPEN_ETS"><i data-icon="arrow-right"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- Ставка схемы на сегодня: подпись по типу ставки, значение — итоговая ставка.
+         У плавающей справа от значения — постфикс «КС +5%» (ReadOnlyField, rof__affix):
+         подпись базового индекса и спред. У фиксированной постфикса нет. -->
+    <div class="tile__grid lc-transfer-rate-tile__grid">
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Плавающая ставка</span></span>
+        <div class="rof__row">
+          <span class="rof__value" data-ets-field="percent">15%</span>
+          <span class="rof__affix" data-ets-field="affix">КС +5%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Загрузка: каркас в той же сетке — подпись и значение в габаритах строк
+         (подпись 16px, значение 20px), чтобы раскладка не прыгнула после ответа. -->
+    <div class="tile__grid lc-transfer-rate-tile__grid lc-transfer-rate-tile__loading" aria-busy="true">
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:80px" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Не заполнено, право на правку есть: кнопка со стрелкой ведёт на страницу ЕТС -->
+    <div class="lc-transfer-rate-tile__fill">
+      <button type="button" class="btn btn--accent btn--s" data-loan-act="OPEN_ETS">
+        <span class="btn__label">Заполнить</span><i data-icon="arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действия нет -->
+    <p class="lc-transfer-rate-tile__empty">Не заполнено</p>
+
+  </div>
+</section>
+          <!-- Локальный компонент «Техническая информация» — тайл страницы договора займа (НКЛ).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-state — состояние данных: loading | data | partial | empty. Состояния «Ошибка» у тайла
+                  нет (не решено, 26.10.2026 — паспорт, «Состояния»)
+     data-mode  — режим прав:       edit | view. Ставит страница: роль, статус сделки и
+                  погашение договора дают view
+     Разметка держит ВСЕ состояния сразу, показывает нужное LoanExternalDataTile.css по этим
+     двум атрибутам — так же, как тайл «Сроки сделки».
+     Значения ниже — пример. На странице их заменяет LoanExternalDataTile.js
+     (PostTileLoanExternalData.render) записью LoanAgreementStore.get().techInfo; пока она
+     грузится, тайл стоит в loading.
+     Окно правки — LoanExternalDataModal (скрим tech-scrim): в нём ввод, поэтому триггеры с
+     data-modal-guarded — клик мимо окна его не закрывает. Потребитель (nkl | tranche) ставит
+     страница через render/setConsumer; состав полей — владелец правила, список CONSUMERS
+     здесь, в LoanExternalDataTile.js. -->
+<section id="tile-loan-external-data" data-state="loading" data-mode="edit" class="tile lc-loan-external-data-tile col-3 colw-6" data-widget="LoanExternalDataTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/LoanExternalDataTile/LoanExternalDataTile.html">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Техническая информация</h3></div>
+    </div>
+    <!-- Действие шапки — только в edit и только когда значения есть (data, partial).
+         В просмотре его нет вовсе, пустой тайл заполняют кнопкой в теле. -->
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать" data-modal="tech-scrim" data-modal-guarded><i data-icon="edit"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- Два поля друг под другом, порядок постоянный. Пустое значение — прочерк,
+         поле с места не уходит. Лейбл переносится до двух строк, если колонка уже подписи. -->
+    <div class="tile__grid lc-loan-external-data-tile__grid">
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">ГФО ID</span></span>
+        <div class="rof__row"><span class="rof__value" data-tech-field="gfoId">1234567890</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">ГФО ID фондирующего кредита</span></span>
+        <div class="rof__row"><span class="rof__value" data-tech-field="gfoFundingCreditId">1234567890-12-12</span></div>
+      </div>
+    </div>
+
+    <!-- Загрузка: каркас в той же сетке — подпись и значение каждого поля в габаритах
+         строк (подпись 16px, значение 20px), чтобы раскладка не прыгнула после ответа. -->
+    <div class="tile__grid lc-loan-external-data-tile__grid lc-loan-external-data-tile__loading" aria-busy="true">
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:32%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:120px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:160px" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Не заполнено, право на правку есть -->
+    <div class="lc-loan-external-data-tile__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="tech-scrim" data-modal-guarded>
+        <span class="btn__label">Заполнить</span>
+      </button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действия нет -->
+    <p class="lc-loan-external-data-tile__empty">Не заполнено</p>
+
+  </div>
+</section>
+        </div>
+      </section>
+
+      <!-- Транши -->
+      <section class="in-sec">
+        <h2 class="in-sec__title">Транши</h2>
+        <div class="grid12">
+          <!-- Локальный компонент «Транши» (LoanNrlTranchesTile) — фрагмент страницы договора займа (НКЛ).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран (6 колонок из 12);
+     заголовок раздела «Транши» над тайлом рисует страница, не тайл.
+     data-state — состояние данных: loading | data | partial | empty
+                  Состояния «Ошибка» у тайла нет: дерево продуктов, откуда берутся транши,
+                  грузится вместе со страницей и своей ошибки не имеет
+     data-mode  — режим прав:       edit | view. Ставит страница: роль, статус сделки
+                  или погашенный договор, не допускающие правку, дают view
+     Разметка держит ВСЕ состояния сразу, показывает нужное LoanNrlTranchesTile.css по этим
+     двум атрибутам — так же, как тайлы «Сроки сделки» и «КНР».
+     Образец — состояние edit. Режим view рисует только PostTileLoanNrlTranches.render: строки
+     без слота действий (меню ⋮ не в разметке), слот шапки hidden, кнопки добавления disabled;
+     стилем view в образце не имитируется.
+     Строки траншей ниже — пример с макета. На странице их заменяет LoanNrlTranchesTile.js
+     (PostTileLoanNrlTranches.render) траншами договора из дерева продуктов; пока дерево
+     грузится, тайл стоит в loading. Окон правки у тайла нет: «Добавить транш» добавляет сразу,
+     «Погасить» и «Удалить» открывают окна дерева продуктов — всё это делает страница по событию
+     loanaction (ADD_TRANCHE, OPEN_TRANCHE, REPAY_TRANCHE, DELETE_TRANCHE). -->
+<section id="tile-loan-tranches" data-state="loading" data-mode="edit" class="tile lc-loan-nrl-tranches-tile col-6 colw-12" data-widget="LoanNrlTranchesTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/LoanNrlTranchesTile/LoanNrlTranchesTile.html">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Транши</h3></div>
+    </div>
+    <!-- Действие шапки — только в edit и только когда транши есть (data, partial).
+         В просмотре его нет: слот скрыт атрибутом hidden, кнопка disabled (JS тайла).
+         Пустой тайл заполняют кнопкой в теле. -->
+    <div class="tile__actions">
+      <button type="button" class="btn btn--outline btn--xs" data-lntr-act="ADD_TRANCHE"><i data-icon="add"></i><span class="btn__label">Добавить транш</span></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- Транши есть: строки ProductRow, как в «Продуктах сделки» — номер и название ссылкой
+         на страницу транша, дата подписания договора и сумма лимита; справа меню ⋮.
+         Пункт «Удалить» выключается (aria-disabled="true", как в дереве продуктов), когда транш
+         удалить нельзя — view.tranches[].canRemove === false, например он прикреплён к ФИ;
+         в образце такой пункт у второго транша.
+         Дерево ProductRow: список строк — группа детей корня (зазор 8px, без отступа), поэтому
+         в обёртке одного узла без своей строки. В просмотре строки без слота действий
+         (LoanNrlTranchesTile.js, mode: 'view'). -->
+    <div class="lc-loan-nrl-tranches-tile__list">
+      <ul class="prow-tree">
+        <li class="prow-tree__node">
+          <ul class="prow-tree__group">
+            <li class="prow-tree__node" data-lntr-id="1027.d1.p1.i1.t1">
+              <div class="prow">
+                <div class="prow__main">
+                  <div class="prow__head"><a class="prow__title prow__title--link" href="#" data-lntr-act="OPEN_TRANCHE" data-lntr-id="1027.d1.p1.i1.t1">1.1.1.1. Транш</a></div>
+                  <div class="prow__meta">
+                    <span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span>
+                    <span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span>
+                  </div>
+                </div>
+                <div class="prow__actions">
+                  <span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="lntr-m-1027-d1-p1-i1-t1" data-menu-align="end"><i data-icon="more-dots"></i></button>
+                    <div id="lntr-m-1027-d1-p1-i1-t1" class="menu menu--floating" role="menu" hidden>
+                      <button type="button" class="menu__item" role="menuitem" data-lntr-act="REPAY_TRANCHE" data-lntr-id="1027.d1.p1.i1.t1"><span class="menu__item-label">Погасить</span></button>
+                      <button type="button" class="menu__item" role="menuitem" data-lntr-act="DELETE_TRANCHE" data-lntr-id="1027.d1.p1.i1.t1"><span class="menu__item-label">Удалить</span></button>
+                    </div></span>
+                </div>
+              </div>
+            </li>
+            <li class="prow-tree__node" data-lntr-id="1027.d1.p1.i1.t2">
+              <div class="prow">
+                <div class="prow__main">
+                  <div class="prow__head"><a class="prow__title prow__title--link" href="#" data-lntr-act="OPEN_TRANCHE" data-lntr-id="1027.d1.p1.i1.t2">1.1.1.2. Транш</a></div>
+                  <div class="prow__meta">
+                    <span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span>
+                    <span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span>
+                  </div>
+                </div>
+                <div class="prow__actions">
+                  <span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="lntr-m-1027-d1-p1-i1-t2" data-menu-align="end"><i data-icon="more-dots"></i></button>
+                    <div id="lntr-m-1027-d1-p1-i1-t2" class="menu menu--floating" role="menu" hidden>
+                      <button type="button" class="menu__item" role="menuitem" data-lntr-act="REPAY_TRANCHE" data-lntr-id="1027.d1.p1.i1.t2"><span class="menu__item-label">Погасить</span></button>
+                      <button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-lntr-act="DELETE_TRANCHE" data-lntr-id="1027.d1.p1.i1.t2"><span class="menu__item-label">Удалить</span></button>
+                    </div></span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Загрузка: две строки-заготовки в габаритах будущих (заголовок, значения) — раскладка
+         не прыгает после ответа. -->
+    <ul class="prow-tree lc-loan-nrl-tranches-tile__loading" aria-busy="true">
+      <li class="prow-tree__node">
+        <ul class="prow-tree__group">
+          <li class="prow-tree__node"><div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div></li>
+          <li class="prow-tree__node"><div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div></li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- Траншей нет, право на правку есть: кнопка без иконки (как на макете) -->
+    <div class="lc-loan-nrl-tranches-tile__fill">
+      <button type="button" class="btn btn--accent btn--s" data-lntr-act="ADD_TRANCHE"><span class="btn__label">Добавить транш</span></button>
+    </div>
+
+    <!-- Траншей нет, права нет: одна строка причины, действия нет -->
+    <p class="lc-loan-nrl-tranches-tile__empty">Не заполнено</p>
+
+  </div>
+</section>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── Окна страницы. Контрагент — окно КНР в режиме инструмента;
+     «Погасить», «Перенести» и подтверждение удаления транша слушают событие
+     ptreeaction (его шлёт страница); «Документы по сделке» — окно ЭКД сделки. -->
+<!-- InstrumentsCounterpartiesModal — окно выбора контрагентов, артефакт тайла
+     CounterpartiesTile. Собран вариант страницы сделки: там тайл называется «КНР»,
+     а окно — поиск и выбор ключевого носителя риска. Фрагмент вшивается ассемблером отдельной меткой ds-include —
+     скрим должен лежать в конце body, а не внутри тайла.
+
+     Два таба: юрлица и физлица. Под каждым — три колонки: форма поиска,
+     результаты поиска и участники сделки.
+
+     Карточек в разметке нет. Разметку карточки даёт локальный компонент
+     «Карточка контрагента» (его шаблон страница вшивает рядом с окном), а данные приходят
+     из CounterpartiesStore — так же, как реестр портфеля рисует сделки из
+     mock-deals.js. Раскладывает одно по другому InstrumentsCounterpartiesModal.js: он же
+     переключает панели табов (рантайма показа панели в ДС нет), ищет по базе
+     контрагентов, переносит карточки между колонками (кнопкой со стрелками и
+     двойным кликом) и ведёт черновик: «Сохранить» применяет правки к сделке,
+     крестик и Esc их отменяют.
+
+     Формы поиска — <form>: Enter в любом поле запускает поиск так же, как
+     «Найти». Колонки «Найдено» и «Физические лица» пусты, пока поиск не задан.
+
+     Что различает колонки: пока контрагент не участник сделки, у него нет ни
+     чекбокса «КНР», ни строки ГСЗ, ни риск-метрики — их показывает только
+     третья колонка. Правило живёт в сторе и в CSS карточки, не здесь.
+
+     Раскладка: окно шириной 8 колонок (modal--w8) и фиксированной высоты
+     (60vh — не прыгает при смене вкладки), колонки разделены вертикальными
+     Divider. У каждой колонки свой скролл с полосой ДС (.ds-scroll, Layout):
+     бегунок стоит вплотную к разделителю, появляется при прокрутке и гаснет.
+     Заголовок H6 Strong стоит на месте: он вне прокручиваемой области.
+
+     Вариант «Контрагент» (страница договора, инструмент): страница включает его
+     вызовом PostModalCounterparties.use({ variant: 'instrument', … }) — скрипт
+     ставит data-variant="instrument" на .lc-knrm. Разметка та же: заголовок
+     окна меняет скрипт, радио-отметку выбора рисует он же в карточке участника.
+     Без вызова окно — окно КНР. Подробно — шапка InstrumentsCounterpartiesModal.js. -->
+
+<div class="modal-scrim" id="knr-scrim" hidden data-widget="InstrumentsCounterpartiesModal" data-widget-group="modals" data-widget-src="../widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.html">
+
+  <!-- эталон карточки (CounterpartyCard/, единственный источник её разметки)
+       вшивает страница рядом с этим окном: общий сборщик метки внутри
+       фрагмента не раскрывает. Шаблону место в DOM не важно — скрипт берёт
+       его по id. -->
+
+  <!-- data-mode — режим прав окна: edit | view. Ставит страница: статус сделки,
+       не допускающий правку, даёт view при любой роли. В view поиск работает,
+       но карточки не переносятся, отметка «КНР» не меняется, а вместо
+       «Сохранить» — «Закрыть» (InstrumentsCounterpartiesModal.css, InstrumentsCounterpartiesModal.js). -->
+  <div class="modal modal--w8 lc-knrm" data-mode="edit" role="dialog" aria-modal="true" aria-labelledby="knr-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="knr-title">Ключевой носитель риска</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <div class="tabs tabs--horiz" role="tablist" data-tabs id="knr-tabs">
+        <button type="button" class="tab tab--s tab--selected" role="tab" aria-selected="true" tabindex="0">
+          <span class="tab__label">Юридические лица</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1">
+          <span class="tab__label">Физические лица</span></button>
+      </div>
+
+      <!-- ══ Панель: юридические лица ══════════════════════════════════ -->
+      <div class="lc-knrm__cols" data-knr-panel>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong-smb">Параметры поиска</h3>
+          <form class="lc-knrm__form ds-scroll" data-knr-search="ul" novalidate>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-name"><span class="ds-label__text">Наименование</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-name" name="name"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-inn"><span class="ds-label__text">ИНН</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-inn" name="inn" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-kpp"><span class="ds-label__text">КПП</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-kpp" name="kpp" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-ogrn"><span class="ds-label__text">ОГРН</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-ogrn" name="ogrn" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-kio"><span class="ds-label__text">КИО</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-kio" name="kio" inputmode="numeric"></div>
+            </div>
+            <button type="submit" class="btn btn--outline btn--m btn--fullwidth"><span class="btn__label">Найти</span></button>
+          </form>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <div class="lc-knrm__drop ds-scroll" data-knr-drop="ul-found">
+            <p class="lc-knrm__hint" data-knr-hint>Поиск осуществляется по любому из параметров</p>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong-smb">Участники сделки</h3>
+          <div class="lc-knrm__drop ds-scroll" data-knr-drop="ul-members">
+            <p class="lc-knrm__hint">Перенесите выбранных участников сделки сюда.
+              Добавить можно только носителей риска или все группы и контрагентов, участвующих в сделке.</p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ══ Панель: физические лица ═══════════════════════════════════ -->
+      <!-- Поиск физлиц возможен только среди юрлиц — участников сделки,
+           поэтому первое поле формы — выбор юрлица из уже перенесённых.
+           Опции списка собирает InstrumentsCounterpartiesModal.js из участников сделки. -->
+      <div class="lc-knrm__cols" data-knr-panel hidden>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong-smb">Параметры поиска</h3>
+          <form class="lc-knrm__form ds-scroll" data-knr-search="fl" novalidate>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-ul"><span class="ds-label__text">Юридическое лицо</span></label>
+              <div class="inp__field" role="combobox" aria-expanded="false" aria-controls="knr-fl-ul-list" data-ddl="knr-fl-ul-list">
+                <input class="inp__control" id="knr-fl-ul" placeholder="Поиск…" autocomplete="off">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button>
+                </span>
+              </div>
+              <div id="knr-fl-ul-list" class="ddl ddl--floating" role="listbox"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-inn"><span class="ds-label__text">ИНН</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-fl-inn" name="inn" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-bd"><span class="ds-label__text">Дата рождения</span></label>
+              <div class="inp__field">
+                <input class="inp__control" id="knr-fl-bd" name="birthDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+                </span>
+              </div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-pass"><span class="ds-label__text">Номер паспорта</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-fl-pass" name="passport" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-tel"><span class="ds-label__text">Номер телефона</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-fl-tel" name="phone" inputmode="tel"></div>
+            </div>
+            <button type="submit" class="btn btn--outline btn--m btn--fullwidth"><span class="btn__label">Найти</span></button>
+          </form>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong-smb">Физические лица</h3>
+          <div class="lc-knrm__drop ds-scroll" data-knr-drop="fl-found">
+            <p class="lc-knrm__hint" data-knr-hint>Поиск осуществляется по юридическим лицам, входящим в участники сделки</p>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong-smb">Участники сделки</h3>
+          <!-- Юрлица здесь тоже видны, но с этой вкладки их не трогают: они
+               рисуются недоступными (Disabled у Card). Зеркально на вкладке
+               юрлиц недоступны физлица. Удаление юрлица не тянет за собой
+               удаление входящих в него физлиц. -->
+          <div class="lc-knrm__drop ds-scroll" data-knr-drop="fl-members">
+            <p class="lc-knrm__hint">Перенесите выбранных физических лиц сюда</p>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-knr-save data-modal-close><span class="btn__label">Сохранить</span></button>
+        <button type="button" class="btn btn--outline btn--m lc-knrm__close" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Связанный артефакт тайла «КНР»: подтверждение удаления контрагента из
+     участников сделки. Открывается ПОВЕРХ модального окна КНР,
+     когда убирают контрагента, уже выбранного как КНР.
+
+     Отдельный файл, потому что у фрагмента один корневой элемент, а вложенный
+     скрим должен быть соседом основного, а не его потомком: иначе он
+     наследует hidden родителя и не покажется.
+
+     Вложение держит ds-modal.js: класс --nested на скриме поднимает слой, не
+     закрывая нижний, и снимает блокировку прокрутки только на последнем. -->
+<div class="modal-scrim modal-scrim--nested" id="knr-confirm-scrim" hidden data-widget="KNRConfirmModal" data-widget-group="modals" data-widget-src="../widgets/modals/InstrumentsCounterpartiesModal/KNRConfirmModal.html">
+  <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="knr-confirm-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="knr-confirm-title">Подтверждение действия</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <!-- один текст в две строки: без зазора между абзацами -->
+      <p class="ds-body-m-reg">Удаление контрагента, который задействован в:<br>1234.1.1.2. Договор займа (НКЛ)</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-knr-confirm="cancel"><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--error btn--m" data-knr-confirm="ok"><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Локальный компонент «Карточка контрагента» — переиспользуемый.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include.
+
+     Корень фрагмента — <template>: карточек на странице много и содержимое у
+     них разное (наименование, состав полей), а через метку ds-include
+     передаются только id/class/state/mode. Поэтому компонент отдаёт ЭТАЛОН
+     разметки, а карточки по нему рисует потребитель из своего стора — так же,
+     как реестр портфеля рисует 50 строк из mock-deals.js.
+
+     data-state — где карточка лежит: found найден | member участник сделки
+     data-mode  — режим прав:         edit (кнопка переноса есть) | view (её нет)
+
+     Недоступность — не data-mode, а состояние Card из ДС: aria-disabled="true"
+     плюс inert (ставит рендер по opts.disabled). Так показываются участники
+     сделки другого вида в окне КНР: видны, но с текущей вкладки не трогаются.
+
+     Что чем управляется. Риск-метрика, строка ГСЗ и чекбокс «КНР» осмыслены
+     только у участника сделки — у найденного контрагента их нет. Сабхедер у
+     юрлица необязателен («Нерезидент», «Консолидированная группа»), у физлица
+     это дата рождения и он есть всегда. Состав полей — контент, а не вариант:
+     у разных контрагентов он разный, и пустых строк под отсутствующее не
+     резервируется.
+
+     Раскладка тела — две колонки: слева реквизиты и чекбокс «КНР», справа
+     риск-метрика. Колонки — flex-ряд, а не сетка: у найденного контрагента
+     метрики нет, и пустая колонка со своим зазором не остаётся.
+
+     Префикс классов lc-knrm__ исторический: карточка выросла из модалки КНР и
+     эти классы держит её скрипт. Переименование стоило бы правок в окне без
+     пользы для вида. -->
+
+<!-- Корень — пустой скрытый контейнер вокруг шаблона. Он нужен по двум
+     причинам: у фрагмента должен быть один корневой элемент, а приёмка читает
+     разметку текстом и видит карточку внутри <template> как обычный тайл —
+     поэтому зона помечена data-off-grid: ширину карточке задаёт колонка
+     потребителя, а не 12-колоночная сетка страницы. -->
+<div hidden
+     data-off-grid="Эталон карточки контрагента: ширину задаёт колонка потребителя, а не сетка страницы" data-widget="CounterpartyCard" data-widget-group="modals" data-widget-src="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.html">
+<template id="lc-cpcard-tpl">
+  <article class="tile tile--card lc-knrm__card" data-state="found" data-mode="edit">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title" data-cp="name"></h3></div>
+        <p class="tile__subtitle" data-cp="subheader"></p>
+      </div>
+      <div class="tile__actions">
+        <!-- Перенос в соседнюю колонку — действие Card (IconButton M 20×20).
+             Карточку не перетаскивают: её переносят этой кнопкой или двойным
+             кликом. Подпись и подсказку («Перенести в участники сделки» /
+             «Убрать из участников сделки») ставит рендер по opts.moveLabel.
+             data-knr-move — хук переноса в окне КНР -->
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" data-knr-move
+                aria-label="Перенести" data-tooltip="Перенести"><i data-icon="arrow-left-right"></i></button>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="lc-knrm__content">
+        <div class="lc-knrm__main">
+          <div class="lc-knrm__fields" data-cp="fields"></div>
+          <label class="cb lc-knrm__knr">
+            <input type="checkbox" class="cb__input" data-cp="knr">
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">КНР</span></span>
+          </label>
+        </div>
+        <!-- риск-метрику рантайм ds-riskmetric.js собирает сам из атрибутов -->
+        <span data-cp="risk" data-riskmetric></span>
+      </div>
+    </div>
+  </article>
+</template>
+</div>
+<!-- Связанный артефакт тайла «Баланс и валюта»: модальное окно правки.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Три поля: «Баланс» и «Валюта» — списки (InputAutocomplete + DropdownList,
+     значение только из списка), «Общая сумма лимита» — текстовое поле суммы с
+     постфиксом-кодом валюты. Макет: пустое окно и заполненное (SBIL · RUB ·
+     123 456 789,00). Подпись «лемита» на макете — опечатка, правим на «лимита».
+
+     Значения в разметке — пример с заполненного макета. Окно заполняет и сохраняет
+     BalanceAndCurrencyModal.js (PostModalBalanceAndCurrency): на открытии читает
+     раздел balanceCurrency записи договора (LoanAgreementStore), «Сохранить» зовёт
+     LoanAgreementStore.setBalanceCurrency и закрывает окно; тайл перерисует страница
+     по событию стора. Кнопка без data-modal-close: окно закрывает скрипт. Крестик и
+     Esc закрывают без сохранения; клик мимо окна не закрывает — защиту включает сам
+     Modal.js, потому что в окне поля ввода.
+
+     Крестика очистки в разметке нет намеренно: он живёт по значению, и рисует его
+     рантайм ds-input.js (между информером и шевроном). Значения окно ставит кодом,
+     поэтому после заполнения зовёт DSInput.syncAll.
+
+     Ширина modal--w3 — 442px, как окно на макете. Своего CSS у окна нет. -->
+
+<div class="modal-scrim" id="bal-scrim" hidden data-widget="BalanceAndCurrencyModal" data-widget-group="modals" data-widget-src="../widgets/modals/BalanceAndCurrencyModal/BalanceAndCurrencyModal.html">
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="bal-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="bal-title">Баланс и валюта</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="bal-balance"><span class="ds-label__text">Баланс</span></label>
+        <div class="inp__box">
+          <div class="inp__field" data-ddl="bal-balance-list">
+            <input class="inp__control" id="bal-balance" name="balanceCode" autocomplete="off" value="SBIL">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+        </div>
+        <div id="bal-balance-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="bal-currency"><span class="ds-label__text">Валюта</span></label>
+        <div class="inp__box">
+          <div class="inp__field" data-ddl="bal-currency-list">
+            <input class="inp__control" id="bal-currency" name="currencyCode" autocomplete="off" value="RUB">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+        </div>
+        <div id="bal-currency-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <!-- Сумма: число с разрядами и запятой; код валюты — неизменяемый постфикс,
+           его скрипт ставит по выбранной валюте (нет валюты — постфикс скрыт). -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="bal-limit"><span class="ds-label__text">Общая сумма лимита</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="bal-limit" name="totalLimitAmount" inputmode="decimal" autocomplete="off" value="123&nbsp;456&nbsp;789,00">
+          <span class="inp__postfix" data-bal-postfix>RUB</span>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-bal-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Связанный артефакт тайла «Договор и дополнительные соглашения»: окно «Договор».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Окно только для типа «НКЛ» (макет «Modal_Contract_&_AdditionalAgreement»):
+     два поля — «Номер договора» и «Дата подписания». «Плановой даты погашения» в окне
+     нет: её берёт готовой тайл (у НКЛ — самая поздняя среди траншей). Окна для других
+     типов продуктов не нарисованы и не делаются (решение человека 26.10.2026).
+
+     Значения в разметке — пример. Окно заполняет и сохраняет
+     InitialAndAdditionalAgreementsModal.js (PostModalInitialAndAdditionalAgreements):
+     на открытии читает LoanAgreementStore.get().contract, «Сохранить» проверяет дату и
+     зовёт LoanAgreementStore.setContract. Кнопка без data-modal-close: окно закрывает
+     скрипт, когда проверка прошла; с ошибкой окно остаётся открытым. Крестик и Esc
+     закрывают без сохранения, клик мимо окна не закрывает (триггеры стоят с
+     data-modal-guarded).
+
+     Раскладка: тело окна ДС — колонка с зазором, своего CSS нет; поля — во всю ширину.
+     Маска даты — ДД.ММ.ГГГГ (на макете ММ.ДД.ГГГГ — ошибка макета, решение человека
+     26.10.2026), календарь и маска — из коробки ДС (InputDate). Крестик очистки в
+     разметке нет намеренно: он живёт по значению, его рисует рантайм ds-input.js. -->
+
+<div class="modal-scrim" id="contract-scrim" hidden data-widget="InitialAndAdditionalAgreementsModal" data-widget-group="modals" data-widget-src="../widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.html">
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="contract-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="contract-title">Договор</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="contract-number"><span class="ds-label__text">Номер договора</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="contract-number" name="contractNumber" autocomplete="off" value="1234567890">
+          </div>
+        </div>
+      </div>
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="contract-sign-date"><span class="ds-label__text">Дата подписания</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="contract-sign-date" name="contractSignDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off" value="01.01.2021">
+            <span class="inp__acts">
+              <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-contract-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Связанный артефакт тайла «Техническая информация»: модальное окно правки.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать в конце
+     body, а не внутри тайла.
+
+     Поля зависят от потребителя (решение человека 02.11.2026, RE0049): НКЛ — «ГФО ID» и
+     «ГФО ID фондирующего кредита»; Транш — плюс «CRM ID продукта». Владелец правила
+     «потребитель → поля» — тайл (список CONSUMERS в LoanExternalDataTile.js); окно при
+     bind показывает только поля разметки, входящие в набор потребителя: поле нового
+     потребителя ставится во фрагмент с data-tech-consumer="<имя>" hidden, без правки JS
+     окна. Значения в разметке — пример.
+
+     Окно заполняет и сохраняет LoanExternalDataModal.js (PostModalLoanExternalData.bind):
+     по умолчанию читает LoanAgreementStore.get().techInfo и зовёт setTechInfo; страница
+     может передать свои get/save и consumer (как страница транша, у которой правка живёт
+     в своей сессии). «Сохранить» закрывает окно; тайл перерисовывает страница по событию
+     стора. Кнопка без data-modal-close: окно закрывает скрипт. Крестик и Esc закрывают без
+     сохранения, клик мимо окна не закрывает (триггеры тайла стоят с data-modal-guarded).
+     Проверки ввода нет — человек её не называл.
+
+     Своего CSS у окна нет: тело Modal — колонка с зазором 16px, поля во всю ширину.
+     Крестика очистки в разметке нет намеренно: он живёт по значению, и рисует его рантайм
+     ds-input.js — ровно тогда, когда в поле есть что стирать; значение окно ставит кодом,
+     поэтому после заполнения зовёт DSInput.sync (см. LoanExternalDataModal.js). -->
+
+<div class="modal-scrim" id="tech-scrim" hidden data-widget="LoanExternalDataModal" data-widget-group="modals" data-widget-src="../widgets/modals/LoanExternalDataModal/LoanExternalDataModal.html">
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="tech-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="tech-title">Техническая информация</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tech-gfo-id"><span class="ds-label__text">ГФО ID</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="tech-gfo-id" name="gfoId" autocomplete="off" value="1234567890">
+          </div>
+        </div>
+      </div>
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tech-gfo-funding-credit-id"><span class="ds-label__text">ГФО ID фондирующего кредита</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="tech-gfo-funding-credit-id" name="gfoFundingCreditId" autocomplete="off" value="1234567890-12-12">
+          </div>
+        </div>
+      </div>
+      <!-- Поле потребителя «Транш»: скрыто по умолчанию, показывает окно по consumer. -->
+      <div class="inp inp--m inp--fullwidth" data-tech-consumer="tranche" hidden>
+        <label class="ds-label" for="tech-crm-product-id"><span class="ds-label__text">CRM ID продукта</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="tech-crm-product-id" name="crmProductId" autocomplete="off" value="">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-tech-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Связанный артефакт тайла «Описание сделки»: окно «Документы по сделке» —
+     первый шаг просмотра документов ЭКД. Открывается кнопкой «Документы ЭКД
+     по сделке» в шапке тайла. Документы ведутся по контрагенту, поэтому
+     сначала выбирают участника сделки, «Открыть» открывает окно документов
+     (подчасть этого окна — EcmModal/EcmModal.html, свой скрим и своя метка).
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include в конце body.
+     Вид — по макету дизайнера «Документы по сделке»
+     (решение человека 25.09.2026): участник — карточкой контрагента, выбранная
+     карточка подсвечена, «Открыть» недоступна, пока участник не выбран.
+
+     Карточки рисует CounterpartiesEcmModal.js по шаблону CounterpartyCard
+     (режим select) из участников сделки CounterpartiesStore — того же
+     состава, что правит окно «КНР». В разметке список пуст.
+
+     data-state на .modal — состояние данных: loading | data | empty. -->
+
+<div class="modal-scrim" id="deal-ecm-scrim" hidden data-widget="CounterpartiesEcmModal" data-widget-group="modals" data-widget-src="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.html">
+  <div class="modal modal--w4 lc-deal-ecm" role="dialog" aria-modal="true" aria-labelledby="deal-ecm-title" data-state="data">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-ecm-title">Документы по сделке</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="lc-deal-ecm__heading" id="deal-ecm-pick">Выберите участника сделки</p>
+
+      <!-- Список карточек — радиогруппа: карточка в режиме select сама
+           пункт группы (role="radio"). Выбор и клавиатуру ведёт скрипт окна. -->
+      <div class="lc-deal-ecm__list" role="radiogroup" aria-labelledby="deal-ecm-pick" data-ecm-items></div>
+
+      <!-- Загрузка: состав сделки ещё читается (сервер данных или localStorage,
+           data/API.md) — каркас двух карточек в их габаритах. -->
+      <div class="lc-deal-ecm__loading" aria-busy="true">
+        <span class="sk-block sk-block--rounded lc-deal-ecm__loading-card" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded lc-deal-ecm__loading-card" aria-hidden="true"></span>
+      </div>
+
+      <!-- Участников нет: одна строка причины. Действия здесь нет — состав
+           правят в окне «КНР», а не отсюда. -->
+      <p class="lc-deal-ecm__empty">У сделки пока нет участников — документы смотреть не по кому.</p>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-ecm-next disabled><span class="btn__label">Открыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Подчасть окна «Документы по сделке» (CounterpartiesEcmModal): документы
+     выбранного участника сделки — второй шаг. Лежит в папке окна-владельца,
+     как у фронтенда (CounterpartiesEcmModal/EcmModal); паспорт общий с
+     владельцем, стили — его же (CounterpartiesEcmModal.css). Вшивается своей
+     меткой рядом с ним — у фрагмента один корневой элемент, и сборщик не
+     раскрывает метки внутри фрагмента.
+
+     Вид — по макету дизайнера «Документы по сделке»:
+     в теле полное наименование контрагента, под ним документы. В продукте
+     документы открываются из внешней системы хранения; в прототипе её нет,
+     поэтому на их месте — пустое состояние с объяснением.
+
+     Подвал (решение человека 25.09.2026): слева «К списку контрагентов» со
+     стрелкой — шаг назад к выбору, справа аутлайновая «Закрыть».
+     Открывает и возвращает к списку CounterpartiesEcmModal.js; наименование
+     ниже — пример. -->
+
+<div class="modal-scrim" id="deal-ecm-docs-scrim" hidden data-widget="EcmModal" data-widget-group="modals" data-widget-src="../widgets/modals/CounterpartiesEcmModal/EcmModal/EcmModal.html">
+  <div class="modal modal--w8" role="dialog" aria-modal="true" aria-labelledby="deal-ecm-docs-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-ecm-docs-title">Документы по сделке</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="lc-deal-ecm__heading" data-ecm-party-name>КГ Самолёт</p>
+      <div class="es es--m">
+        <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <div class="es__body">
+          <p class="es__title">Просмотр документов</p>
+          <p class="es__text">Здесь открываются документы выбранного участника сделки. В прототипе просмотра документов нет.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Шаг назад — слева, как вторичное действие формы; закрытие — справа.
+         «Закрыть» аутлайновая: подтверждать в окне нечего, залитая обещала бы
+         действие, которого нет. -->
+    <footer class="modal__foot">
+      <div class="modal__foot-left">
+        <button type="button" class="btn btn--transparent btn--m" data-ecm-back><i data-icon="arrow-left"></i><span class="btn__label">К списку контрагентов</span></button>
+      </div>
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--outline btn--m" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- RepaymentModal — окно погашения инструмента или транша. Артефакт тайла
+     «Продукты сделки» (DealProductTreeTile): открывается пунктом меню
+     «Погасить» или «Отменить погашение» у инструмента или транша. Фрагмент
+     вшивается отдельной меткой ds-include: скрим лежит в конце body.
+
+     Два варианта (data-variant на .modal), макет «Погашение» (30.09.2026):
+     – repay — «Погашение инструмента N. Имя» / «Погашение транша N. Имя»
+       (у транша своя текстовка — решение человека 02.11.2026, RE0049 Э6)
+       и InputDate «Дата фактического погашения», по умолчанию сегодня;
+       «Подтвердить» гасит узел вместе с вложенными (ответ 30.09.2026, 3);
+     – undo — «Отмена погашения инструмента N. Имя» / «Отмена погашения
+       транша N. Имя», без поля.
+     Крестик, Esc и подложка — без изменений.
+
+     Текст и дату ставит RepaymentModal.js из ProductTreeStore; ниже — пример
+     с макета: погашение транша 1.1.1.1. -->
+<div class="modal-scrim" id="ptree-repay-scrim" hidden data-widget="RepaymentModal" data-widget-group="modals" data-widget-src="../widgets/modals/RepaymentModal/RepaymentModal.html">
+  <div class="modal modal--w3 lc-repay" data-variant="repay" role="dialog" aria-modal="true" aria-labelledby="ptree-repay-title" aria-describedby="ptree-repay-text">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-repay-title">Подтверждение действия</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-repay__text" id="ptree-repay-text">Погашение инструмента 1.1.1.1. Транш</p>
+      <!-- InputDate: маска и календарь — из коробки ДС (ds-datepicker.js по
+           кнопке «Открыть календарь»); крестик очистки рисует ds-input.js по
+           значению, после заполнения кодом окно зовёт DSInput.sync. -->
+      <div class="inp inp--m inp--fullwidth lc-repay__date">
+        <label class="ds-label" for="ptree-repay-date"><span class="ds-label__text">Дата фактического погашения</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="ptree-repay-date" name="repaidAt" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off" value="30.09.2026">
+            <span class="inp__acts">
+              <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-repay-ok data-modal-close><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- InstrumentTransferModal — окно «Перенос инструмента». Артефакт тайла
+     «Продукты сделки» (DealProductTreeTile): открывается пунктом «Перенести»
+     в меню инструмента. Фрагмент вшивается отдельной меткой ds-include: скрим
+     лежит в конце body.
+
+     Макет «Перенос инструмента» (30.09.2026): пояснение, «Откуда» — продукт
+     ДИД и продукт, где инструмент сейчас (выключен), «Куда» — продукты ДИД
+     сделки и их продукты. Выбранная строка — состояние ProductRow «выбрана»;
+     «Сохранить» доступна после выбора, во время сохранения — с индикатором.
+     Строку продукта ДИД сворачивает шеврон справа.
+
+     Списки рисует InstrumentTransferModal.js (listHTML) из ProductTreeStore;
+     ниже — вывод той же функции для сделки 1027: переносится «1.2.1. Корп.
+     договор», подходит только «2.1. Долевое в ЖН». -->
+<div class="modal-scrim" id="ptree-transfer-scrim" hidden data-widget="InstrumentTransferModal" data-widget-group="modals" data-widget-src="../widgets/modals/InstrumentTransferModal/InstrumentTransferModal.html">
+  <div class="modal modal--w4 lc-transfer" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-transfer-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-transfer-title">Перенос инструмента</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-transfer__text">Выберите продукт, в который вы хотите переместить 1.2.1. Корп. договор</p>
+      <section class="lc-transfer__section" aria-labelledby="ptree-transfer-from">
+        <h3 class="ds-h6-strong-smb" id="ptree-transfer-from">Откуда</h3>
+        <ul class="prow-tree" data-transfer-list="from">
+          <li class="prow-tree__node">
+            <div class="prow prow--root"><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Кредитный мезонин</span><span class="prow__mark" role="img" aria-label="Основной продукт ДИД"><i data-icon="star-filled"></i></span></div></div><div class="prow__actions"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div></div>
+            <ul class="prow-tree__group">
+              <li class="prow-tree__node">
+                <div class="prow" aria-disabled="true"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.2. Корп. Контроль</span></div></div></div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+      <section class="lc-transfer__section">
+        <h3 class="ds-h6-strong-smb" id="ptree-transfer-to">Куда</h3>
+        <ul class="prow-tree" role="radiogroup" aria-labelledby="ptree-transfer-to" data-transfer-list="to">
+          <li class="prow-tree__node">
+            <div class="prow prow--root"><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Кредитный мезонин</span><span class="prow__mark" role="img" aria-label="Основной продукт ДИД"><i data-icon="star-filled"></i></span></div></div><div class="prow__actions"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div></div>
+            <ul class="prow-tree__group">
+              <li class="prow-tree__node">
+                <div class="prow" role="radio" aria-checked="false" tabindex="-1" aria-disabled="true" data-transfer-product="1027.d1.p1"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Кредитный мезонин</span></div></div></div>
+              </li>
+              <li class="prow-tree__node">
+                <div class="prow" role="radio" aria-checked="false" tabindex="-1" aria-disabled="true" data-transfer-product="1027.d1.p2"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.2. Корп. Контроль</span></div></div></div>
+              </li>
+            </ul>
+          </li>
+          <li class="prow-tree__node">
+            <div class="prow prow--root"><div class="prow__main"><div class="prow__head"><span class="prow__title">2. Долевое участие в жилой недвижимости</span><span class="prow__mark" aria-hidden="true"><i data-icon="star"></i></span></div></div><div class="prow__actions"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div></div>
+            <ul class="prow-tree__group">
+              <li class="prow-tree__node">
+                <div class="prow" role="radio" aria-checked="false" tabindex="-1" data-transfer-product="1027.d2.p1"><div class="prow__main"><div class="prow__head"><span class="prow__title">2.1. Долевое в ЖН</span></div></div></div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-transfer-save data-modal-close disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- ProductTreeConfirmModal — подтверждение действия над деревом продуктов
+     сделки. Артефакт тайла «Продукты сделки» (DealProductTreeTile) и окон
+     выбора: один диалог на всё дерево, текст и кнопки ставит
+     ProductTreeConfirmModal.js по варианту (data-variant на .modal).
+
+     Два варианта:
+     – delete — удаление продукта ДИД, продукта, инструмента или транша:
+       «Подтвердите действие», «Отменить» и «Подтвердить» в тоне error, как
+       на макете окна «Продукты ДИД» (29.09.2026). Поднимается пунктом
+       «Удалить» в меню узла в тайле (удаление сохраняется сразу) и из окон
+       выбора, когда убирают сохранённый узел (удаление — в черновик окна);
+     – main — назначение основного продукта ДИД (звезда в тайле):
+       «Подтверждение действия», текст «Назначение продукта «N. Имя»
+       основным в сделке» (ответ человека 30.09.2026), одна кнопка
+       «Подтвердить», как у окна погашения.
+     Крестик, Esc, подложка и «Отменить» — без изменений.
+
+     Скрим вложенный (--nested): диалог встаёт и поверх открытого окна
+     выбора, и поверх страницы. Ниже — вариант delete для продукта ДИД. -->
+<div class="modal-scrim modal-scrim--nested" id="ptree-confirm-scrim" hidden data-widget="ProductTreeConfirmModal" data-widget-group="modals" data-widget-src="../widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.html">
+  <div class="modal modal--w3 lc-ptree-confirm" data-variant="delete" role="alertdialog" aria-modal="true" aria-labelledby="ptree-confirm-title" aria-describedby="ptree-confirm-text">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-confirm-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-ptree-confirm__text" id="ptree-confirm-text">Удаление продукта ДИД со всеми продуктами и инструментами</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m lc-ptree-confirm__cancel" data-ptree-confirm="cancel"><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--error btn--m" data-ptree-confirm="ok"><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
+<script src="../data/deals-store.js"></script>
+<script src="../data/mock-counterparties.js"></script>
+<script src="../data/post-api.js"></script>
+<script src="../data/counterparties-store.js"></script>
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/mock-fin-instruments.js"></script>
+<script src="../data/mock-deal-trees.js"></script>
+<script src="../data/product-tree-store.js"></script>
+<script src="../data/mock-loan-agreements.js"></script>
+<script src="../data/loan-agreement-store.js"></script>
+<script src="../data/tranche-context.js"></script>
+<script src="../data/instrument-context.js"></script>
+<script src="../data/loan-contract-fields.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../widgets/modals/BalanceAndCurrencyModal/BalanceAndCurrencyModal.js"></script>
+<script src="../widgets/tiles/BalanceAndCurrencyTile/BalanceAndCurrencyTile.js"></script>
+<script src="../widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.js"></script>
+<script src="../widgets/tiles/InitialAndAdditionalAgreementsTile/InitialAndAdditionalAgreementsTile.js"></script>
+<script src="../widgets/modals/LoanExternalDataModal/LoanExternalDataModal.js"></script>
+<script src="../widgets/tiles/LoanExternalDataTile/LoanExternalDataTile.js"></script>
+<script src="../widgets/tiles/TransferRateTile/TransferRateTile.js"></script>
+<script src="../widgets/tiles/LoanNrlTranchesTile/LoanNrlTranchesTile.js"></script>
+<script src="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script>
+/* Экранный скрипт: меню по каталогу ролей, тайлы и окна страницы договора займа.
+   Данные — LoanAgreementStore (запись договора) и ProductTreeStore (транши, погашение,
+   перенос); режим правки — LoanAgreementStore.isEditable(): статус сделки и погашение
+   договора. Адрес: Instrument.html?id=<сделка>&ins=<id узла договора>. */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'current-portfolio';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../index.html" aria-label="Хаб проектов"';
+
+  function ic(name) { return '<i data-icon="' + name + '"></i>'; }
+
+  function itemHTML(it) {
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="#"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span></a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+      + '</div><div class="nav__list">'
+      + '<a class="nav__item" href="MainPage.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    IBPHome.itemsFor(role).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>' + (window.IBPHome && window.IBPHome.footerHTML
+      ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">'
+        + '<a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">'
+        + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+        + '<span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span>'
+        + '<span class="nav__user-role">' + role + '</span></span></a>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>'
+        + '</div>');
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  }
+
+  var LAS = window.LoanAgreementStore;
+  var trees = window.ProductTreeStore;
+  var cps = window.CounterpartiesStore;
+  var ctx = null;
+
+  /* Страницы собирает ассемблер: соседние — Deal.preview.html и т. п. */
+  var isPreview = /\.preview\.html$/.test(window.location.pathname);
+  function sibling(name) { return name + (isPreview ? '.preview.html' : '.html'); }
+
+  function $(id) { return document.getElementById(id); }
+
+  /* Транши для тайла: вторая строка дерева — дата подписания и сумма лимита, как в «Продуктах сделки» */
+  function trancheViews() {
+    return LAS.tranches().map(function (t) {
+      var date = null, amount = null, cur = 'RUB';
+      (t.details || []).forEach(function (d) {
+        if (d.field === 'signedAt') date = d.value || null;
+        else { amount = d.value == null ? null : d.value; if (d.currency) cur = d.currency; }
+      });
+      /* «Удалить» недоступно, если транш прикреплён к ФИ (ProductTreeStore.canRemove) */
+      return { id: t.id, number: t.number, name: t.name, repaid: !!t.repaidAt, repaidAt: t.repaidAt || null,
+               dateISO: date, amount: amount, currencyCode: cur, canRemove: trees.canRemove(t.id) };
+    });
+  }
+
+  function paintHead() {
+    var node = LAS.instrument();
+    var label = node ? node.number + ' ' + node.name : ctx.instrumentLabel;
+    $('in-title').textContent = label;
+    document.title = label + ' — IBP';
+    window.InstrumentContext.paintCrumbs(document.querySelector('[data-breadcrumbs]'), [
+      null, { href: 'Portfolio.html' }, { text: ctx.dealLabel, href: sibling('Deal') + ctx.dealQuery }, { text: label }
+    ]);
+    /* меню ⋮: «Погасить» (у погашенного — «Отменить погашение») и «Перенести»;
+       когда статус сделки не допускает правку — выключены разметкой */
+    var editable = window.DealsStore.isEditable(ctx.deal);
+    var items = (node && node.menu ? node.menu : []).filter(function (m) { return m.action !== 'DELETE'; });
+    $('in-head-menu').innerHTML = items.map(function (m) {
+      return '<button type="button" class="menu__item" role="menuitem" data-in-act="' + m.action + '"'
+        + (editable ? '' : ' disabled aria-disabled="true"') + '><span class="menu__item-label">' + m.label + '</span></button>';
+    }).join('');
+  }
+
+  function setMode(el, mode) { if (el) el.setAttribute('data-mode', mode); }
+
+  function paint() {
+    if (!ctx) return;
+    var mode = LAS.isEditable() ? 'edit' : 'view';
+    var rec = LAS.get();
+    paintHead();
+
+    var knr = $('tile-counterparty');
+    setMode(knr, mode);
+    setMode(document.querySelector('.lc-knrm'), mode);
+    window.PostTileKNR.setVariant(knr, 'instrument');
+    window.PostTileKNR.renderInstrument(knr, LAS.counterparty());
+    window.PostModalCounterparties.use({ variant: 'instrument', counterpartyId: rec.counterpartyId, onSave: function () {} });
+
+    window.PostTileBalanceAndCurrency.render($('tile-balance-currency'), { mode: mode, data: rec.balanceCurrency });
+
+    var last = LAS.lastAgreement();
+    window.PostTileInitialAndAdditionalAgreements.render($('tile-contract'), {
+      mode: mode, variant: 'loan-ncl', data: rec.contract,
+      plannedRepaymentDate: LAS.plannedRepaymentDate(),
+      lastAgreement: last, lastAgreementNumber: last ? LAS.agreementNumber(last) : null
+    });
+
+    window.PostTileTransferRate.render($('tile-transfer-rate'), { mode: mode, rate: LAS.currentRate() });
+    window.PostTileLoanExternalData.render($('tile-loan-external-data'), { mode: mode, data: rec.techInfo });
+    window.PostTileLoanNrlTranches.render($('tile-loan-tranches'), { mode: mode, tranches: trancheViews() });
+
+    if (window.dsIcons) window.dsIcons.apply(document);
+    if (window.DSMenu && window.DSMenu.bindAll) window.DSMenu.bindAll(document);
+  }
+
+  /* Погашение, перенос и удаление — окна дерева продуктов, они слушают 'ptreeaction' */
+  function emitTree(action, id) {
+    document.dispatchEvent(new CustomEvent('ptreeaction', { detail: { action: action, id: id, node: trees.node(id) } }));
+  }
+
+  /* Действия тайлов: тайл шлёт 'loanaction', что делать — знает страница. */
+  document.addEventListener('loanaction', function (e) {
+    var d = e.detail || {};
+    if (!ctx) return;
+    switch (d.action) {
+      case 'DOCS':
+        /* Кнопка открывает окно программно, без data-modal, — слушатель клика
+           CounterpartiesEcmModal не срабатывает. Refresh до открытия: карточки
+           участников встают в окно до того, как рантайм поставит в них фокус. */
+        if (window.DSModal && $('deal-ecm-scrim')) {
+          if ($('deal-ecm-scrim').__dealEcmApi) $('deal-ecm-scrim').__dealEcmApi.refresh();
+          window.DSModal.open($('deal-ecm-scrim'));
+        }
+        break;
+      case 'OPEN_CONTRACT': window.location.href = sibling('InitialAndAdditionalAgreements') + ctx.instrumentQuery; break;
+      case 'OPEN_ETS': window.location.href = sibling('TransferSchemas') + ctx.instrumentQuery; break;
+      case 'OPEN_TRANCHE': window.location.href = 'Tranche.preview.html' + ctx.trancheQuery(d.id); break;
+      case 'ADD_TRANCHE':
+        /* транш сразу, без окна — как ⊕ у договора займа в «Продуктах сделки» */
+        if (trees.addTranche(ctx.instrument.id)) trees.commit();
+        break;
+      case 'REPAY_TRANCHE': emitTree('REPAY', d.id); break;
+      case 'UNDO_REPAY_TRANCHE': emitTree('UNDO_REPAY', d.id); break;
+      case 'DELETE_TRANCHE': emitTree('DELETE', d.id); break;
+    }
+  });
+
+  /* Меню ⋮ шапки: пункты рантайм держит в общем слое, ловим по атрибуту */
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest('[data-in-act]');
+    if (!el || el.disabled || !ctx) return;
+    emitTree(el.getAttribute('data-in-act'), ctx.instrument.id);
+  });
+
+  function init() {
+    ctx = window.InstrumentContext.resolve(window.location.search);
+    if (!ctx) {
+      $('in-title').textContent = 'Договор займа не найден';
+      return null;
+    }
+    return cps.use(ctx.openedId).then(function () {
+      LAS.use(ctx.openedId, ctx.instrument.id);
+      if (window.PostDealEcmModal) {
+        window.PostDealEcmModal.bind($('deal-ecm-scrim'), $('deal-ecm-docs-scrim'), {
+          members: function () { return String(cps.dealId()) === String(ctx.openedId) ? cps.members() : null; }
+        });
+      }
+      /* перерисовка: запись договора, дерево (транши, погашение, перенос), статус сделки */
+      LAS.on('change', paint);
+      trees.on('commit', paint);
+      window.DealsStore.on('change', paint);
+      paint();
+    });
+  }
+
+  buildNav();
+  /* Окно «Техническая информация» биндит страница (стор по умолчанию):
+     самобинда у окна нет — страница транша биндит его со своим источником. */
+  if (window.PostModalLoanExternalData) window.PostModalLoanExternalData.bind();
+  /* заголовок тайла «Контрагент» — до загрузки данных, иначе пока они грузятся он зовётся «КНР» */
+  if (window.PostTileKNR && $('tile-counterparty')) window.PostTileKNR.setVariant($('tile-counterparty'), 'instrument');
+  Promise.all([trees.ready, LAS.ready, cps.ready]).then(init);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

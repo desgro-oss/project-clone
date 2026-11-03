@@ -2,7 +2,7 @@
 .lc-opp-connections { min-width: 0; }
 
 .lc-opp-connections__empty {
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-secondary);
   margin: 0;
 }

@@ -1,8 +1,8 @@
 ---
 component: Illustrations
 title: "Иллюстрации"
-version: "1.006"
-updated: "04.10.2026"
+version: "1.007"
+updated: "29.10.2026"
 page: foundations/Illustrations/Illustrations.html
 runtime: foundations/Illustrations/Illustrations.js
 css: foundations/Illustrations/Illustrations.css
@@ -27,6 +27,9 @@ SVG-библиотека для NavTile, пустых состояний, оши
 - Неизвестное имя (нет файла в assets/illustrations) → `img` удаляет себя по onerror → `.illu:empty` рисует штриховую заглушку с именем.
 - Цвета SVG — собственная палитра, НЕ currentColor (в отличие от иконок).
 - Тёмная тема: у всех 32 тайловых иллюстраций и у фона есть тёмный вариант `<имя>-dark.svg`. Под темами `ibp-dark`/`service` `Illustrations.js` берёт его, при ошибке загрузки — обычный файл; смена темы перерисовывает слоты (`ds:themechange`). Список тёмных вариантов — в `Illustrations.js` (`DARK`). Варианты собирает генератор `tools/illustration-dark.mjs` (карта «светлый → тёмный» от якорей `current-depo-dark`: светлота инвертируется, тон бирюзовый; цвета внутри `<mask>` и семантика не красятся); `--check`/`--selftest` в гейте `ds-check --all`. Фон стартовых страниц переставляет загрузчик проекта (`--boot-bg-illustration`, RE0011).
+
+## Стиль для новых иллюстраций
+`foundations/Illustrations/illustration-style.json` — правила, по которым агент рисует тайловую иллюстрацию SVG-кодом в стиле библиотеки: холст 195×140, изометрия 30°/150°/90°, плоские заливки без обводок и градиентов, палитра бирюзы с ролями граней (светлая и тёмная), прозрачности 0.3/0.4/0.5, мотивы, композиция, каркас SVG и чек-лист. Тёмную пару не рисуют — её собирает `tools/illustration-dark.mjs`. Файл снят с семи референсов и сверен с парами светлый/тёмный из `assets/illustrations`. Варианты под новую тему агент рисует скиллом `illustration-design` (`.agents/skills/illustration-design/`): сцены пишутся кодом на примитивах генератора, результат и обзор со вкладками — в `tmp/<имя>/`.
 
 ## Библиотека — тайловые (195×140, 32 шт.)
 `deals`, `booked-deals`, `calclate-fv`, `cash-flow`, `ckp-pipeline`, `clients`, `corporate-transactions`, `current-depo`, `dcm-pipeline`, `dcm-potentials`, `ecm-pipeline`, `empty-check`, `empty-folder`, `empty-loading`, `important-deals`, `important-leads`, `kpki-cal`, `mna-pipeline`, `payment-ib`, `pipeline`, `possible-deals`, `possible-leads`, `potentials-rd`, `qliksense-reports`, `registry`, `reports-1-c`, `reserve`, `rwa`, `sales-company`, `sales-projects`, `settings`, `tasks`.

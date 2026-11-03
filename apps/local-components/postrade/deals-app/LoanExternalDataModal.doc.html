@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/LoanExternalDataModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Модальное окно технической информации — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Модальное окно технической информации">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Связанный артефакт тайла «Техническая информация»: модальное окно правки.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать в конце
+     body, а не внутри тайла.
+
+     Поля зависят от потребителя (решение человека 02.11.2026, RE0049): НКЛ — «ГФО ID» и
+     «ГФО ID фондирующего кредита»; Транш — плюс «CRM ID продукта». Владелец правила
+     «потребитель → поля» — тайл (список CONSUMERS в LoanExternalDataTile.js); окно при
+     bind показывает только поля разметки, входящие в набор потребителя: поле нового
+     потребителя ставится во фрагмент с data-tech-consumer="<имя>" hidden, без правки JS
+     окна. Значения в разметке — пример.
+
+     Окно заполняет и сохраняет LoanExternalDataModal.js (PostModalLoanExternalData.bind):
+     по умолчанию читает LoanAgreementStore.get().techInfo и зовёт setTechInfo; страница
+     может передать свои get/save и consumer (как страница транша, у которой правка живёт
+     в своей сессии). «Сохранить» закрывает окно; тайл перерисовывает страница по событию
+     стора. Кнопка без data-modal-close: окно закрывает скрипт. Крестик и Esc закрывают без
+     сохранения, клик мимо окна не закрывает (триггеры тайла стоят с data-modal-guarded).
+     Проверки ввода нет — человек её не называл.
+
+     Своего CSS у окна нет: тело Modal — колонка с зазором 16px, поля во всю ширину.
+     Крестика очистки в разметке нет намеренно: он живёт по значению, и рисует его рантайм
+     ds-input.js — ровно тогда, когда в поле есть что стирать; значение окно ставит кодом,
+     поэтому после заполнения зовёт DSInput.sync (см. LoanExternalDataModal.js). -->
+
+<div id="tech-scrim" hidden class="modal-scrim modal-scrim--inline" data-widget="LoanExternalDataModal" data-widget-group="modals" data-widget-src="../../../postrade/deals-app/widgets/modals/LoanExternalDataModal/LoanExternalDataModal.html">
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="tech-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="tech-title">Техническая информация</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tech-gfo-id"><span class="ds-label__text">ГФО ID</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="tech-gfo-id" name="gfoId" autocomplete="off" value="1234567890">
+          </div>
+        </div>
+      </div>
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tech-gfo-funding-credit-id"><span class="ds-label__text">ГФО ID фондирующего кредита</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="tech-gfo-funding-credit-id" name="gfoFundingCreditId" autocomplete="off" value="1234567890-12-12">
+          </div>
+        </div>
+      </div>
+      <!-- Поле потребителя «Транш»: скрыто по умолчанию, показывает окно по consumer. -->
+      <div class="inp inp--m inp--fullwidth" data-tech-consumer="tranche" hidden>
+        <label class="ds-label" for="tech-crm-product-id"><span class="ds-label__text">CRM ID продукта</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="tech-crm-product-id" name="crmProductId" autocomplete="off" value="">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-tech-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.001</b></span><span>Обновлено: <b>02.11.2026</b></span><span>Категория: <b>Общие</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
+  <h1>Модальное окно технической информации</h1>
+  <p class="lead">Ввести идентификаторы сущности-хозяина — ГФО ID, ГФО ID фондирующего кредита и (у транша) CRM ID продукта</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/LoanExternalDataModal">apps/postrade/deals-app/widgets/modals/LoanExternalDataModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">сверить с фронтендом — в паре с LoanExternalDataTile («по догадке», ответ человека 26.10.2026)</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница «Договор займа (НКЛ)» (Instrument.html) — окно по карандашу и «Заполнить» тайла «Техническая информация», Страница транша (Tranche.html) — окно тайла «Техническая информация», потребитель «tranche»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Instrument.preview.html">apps/postrade/deals-app/pages/Instrument.html</a><br><a class="inl" href="../../../postrade/deals-app/pages/Tranche.preview.html">apps/postrade/deals-app/pages/Tranche.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="LoanExternalDataTile.doc.html">Техническая информация (LoanExternalDataTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл «Техническая информация» — IconButton edit в шапке и кнопка «Заполнить» в пустом состоянии</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">techInfo сущности-хозяина: у НКЛ — LoanAgreementStore.get().techInfo, setTechInfo() (apps/postrade/deals-app/data/loan-agreement-store.js); у транша — get/save страницы (сессия)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Варианты</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Потребитель «НКЛ» (пустое, заполненное)<br>Потребитель «Транш» (плюс «CRM ID продукта»)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (26.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет дизайнера 26.10.2026 («Тех. Инфо» — окно пустое и заполненное)<br>задача RE0049 — решение человека 02.11.2026 (потребитель НКЛ | Транш)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.001 · обновлено 02.11.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.001</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Артефакт тайла «Техническая информация». Не компонент: сам по себе не существует и принадлежит своему тайлу. Заголовок окна — «Техническая информация». Поля ввода зависят от потребителя (решение человека 02.11.2026, RE0049): у НКЛ — «ГФО ID» и «ГФО ID фондирующего кредита»; у транша — плюс «CRM ID продукта». «Сохранить» справа в подвале.</p>
+<p class="desc">Окно самодостаточно по умолчанию: при каждом открытии читает <code class="tok">LoanAgreementStore.get().techInfo</code> (нет записи — поля пустые), «Сохранить» зовёт <code class="tok">LoanAgreementStore.setTechInfo</code> и закрывает окно; тайл перерисовывает страница по событию стора. Страница со своим источником (страница транша — правка живёт в её сессии, отдельного стора транша нет) биндит окно раньше — <code class="tok">bind(scrim, { get, save, consumer })</code>, — и авто-бинд возвращает уже созданный api. Проверки ввода нет — её никто не называл.</p>
+<p class="desc">Крестик и Esc закрывают без сохранения; клик мимо окна не закрывает (в окне ввод, триггеры тайла стоят с <code class="tok">data-modal-guarded</code>). Крестик очистки в поле рисует рантайм ДС по значению.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Бизнес-смысл">
+<h2>Бизнес-смысл</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зачем существует</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дать ввести идентификаторы <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B3%D1%84%D0%BE">ГФО</a> договора займа (<a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%BD%D0%BA%D0%BB">НКЛ</a>). Смысл идентификаторов — не решено (26.10.2026), расшифровку «ГФО» человек уточнит позже</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто заполняет и когда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (26.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто пользуется результатом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (26.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бизнес-правила</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Проверок ввода нет: формат, уникальность и обязательность значений не названы (26.10.2026). Окно открывается, только пока правка договора доступна (роль, статус сделки, погашение — ответ человека 26.10.2026, вопрос 9)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Источники: <code class="tok">docs/tasks/RE0041-nkl-loan-agreement.md</code> (ответы человека 26.10.2026, вопросы 9 и 23), <code class="tok">apps/knowledge-base/glossary/terms/ГФО.md</code></p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Modal (w3)
+├── шапка: «Техническая информация» · крестик
+├── тело: InputText «ГФО ID» · InputText «ГФО ID фондирующего кредита»
+│        · InputText «CRM ID продукта» (только потребитель «tranche»)
+└── подвал справа: «Сохранить» (btn--accent btn--m)</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.4fr) minmax(0,2.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.4fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Modal/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w3</code>, шапка с крестиком, подвал с главной кнопкой справа</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.4fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/InputText/InputText.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">inp--m inp--fullwidth</code>; крестик очистки — рантайм ДС</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.4fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Buttons/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить» <code class="tok">btn--accent btn--m</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.4fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/IconButton/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">крестик закрытия <code class="tok">ibtn--neutral ibtn--l</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputText/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/LoanExternalDataModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/LoanExternalDataModal/LoanExternalDataModal.html">LoanExternalDataModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/LoanExternalDataModal/LoanExternalDataModal.js">LoanExternalDataModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/LoanExternalDataModal/LoanExternalDataModal.md">LoanExternalDataModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/LoanExternalDataModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ГФО ID</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Идентификатор <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B3%D1%84%D0%BE">ГФО</a> сущности-хозяина; смысл — не решено (26.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">techInfo.gfoId</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ГФО ID фондирующего кредита</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Идентификатор <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B3%D1%84%D0%BE">ГФО</a> фондирующего кредита; смысл — не решено (26.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">techInfo.gfoFundingCreditId</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">CRM ID продукта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Идентификатор продукта в CRM; только у потребителя «tranche» (решение человека 02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">techInfo.crmProductId</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.4fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.4fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо: окно открывается только на правку</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (26.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Режим <code class="tok">view</code> окно не открывает: триггеры тайла в просмотре выключены.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно читает запись синхронно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля заполнены значениями договора, в полях крестик очистки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заполнено одно поле</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">оба поля пустые, подписи на месте (макет «Тех. Инфо» слева)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">проверок ввода нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">единственный режим окна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<p class="desc">Своих состояний нет.</p>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет.</li><li>Обязательные поля внутри: нет.</li><li>Что показывает, когда обязательное не заполнено: не применимо.</li><li>Что отдаёт наружу: <code class="tok">LoanAgreementStore.setTechInfo({...})</code> или <code class="tok">save(value)</code> страницы.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поле ввода прокручивает значение внутри себя. Максимальная длина не названа — не решено (26.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Не встречается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно фиксированной ширины <code class="tok">w3</code>, поля на всю ширину</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Не встречается</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Открытие</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля потребителя заполняются из <code class="tok">get()</code> (по умолчанию — <code class="tok">LoanAgreementStore.get().techInfo</code>); несохранённый ввод прошлого открытия сбрасывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значения (обрезанные по краям) уходят в <code class="tok">save()</code> страницы или <code class="tok">setTechInfo</code>, окно закрывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик, Esc</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно закрывается без сохранения</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик мимо окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не закрывает (защита, поле ввода)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<p class="desc">Не применимо: окно ничего не открывает.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Сохранение двух значений договора: «ГФО ID» и «ГФО ID фондирующего кредита». Имена методов и хуков API не придумываются: их выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,2.8fr) minmax(0,2.3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,2.8fr) minmax(0,2.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/loan-agreement-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.LoanAgreementStore</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">get().techInfo</code> · <code class="tok">setTechInfo(t)</code> — потребитель НКЛ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (26.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,2.8fr) minmax(0,2.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/tranche-data.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_TRANCHE</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">gfoId</code>, <code class="tok">gfoFundingCreditId</code>, <code class="tok">crmProductId</code> — страница транша биндит окно своим get/save</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (07.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не задаётся: окно вне сетки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо: окно открывается только при <code class="tok">edit</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Метка ставится в конец <code class="tok">body</code> страницы; скрим — <code class="tok">id=&quot;tech-scrim&quot;</code>, глобал — <code class="tok">PostModalLoanExternalData</code> (<code class="tok">bind()</code>, <code class="tok">open()</code>).</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,2.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/LoanExternalDataModal/LoanExternalDataModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля; пара с <code class="tok">LoanExternalDataTile</code> — сверить с фронтендом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поведение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/LoanExternalDataModal/LoanExternalDataModal.js</code> (<code class="tok">PostModalLoanExternalData</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<p class="desc">Отклонений нет.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li><b>Расшифровка «ГФО»</b> — не решено (26.10.2026): человек уточнит позже; <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B3%D1%84%D0%BE">ГФО</a> в глоссарии тоже открыт.</li><li><b>Проверка ввода</b> — не решено (26.10.2026): формат, длина, уникальность и обязательность значений не названы, окно не проверяет.</li><li><b>Бизнес-смысл</b> — не решено (26.10.2026): кто и когда заполняет, кто пользуется.</li><li><b>Владелец компонента</b> — не назначен (26.10.2026).</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/LoanExternalDataModal/LoanExternalDataModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">LoanExternalDataModal.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/LoanExternalDataModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Instrument.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-loan-agreements.js"></script>
+<script src="../../../postrade/deals-app/data/loan-agreement-store.js"></script>
+<script src="../../../postrade/deals-app/data/tranche-context.js"></script>
+<script src="../../../postrade/deals-app/data/instrument-context.js"></script>
+<script src="../../../postrade/deals-app/data/loan-contract-fields.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/BalanceAndCurrencyModal/BalanceAndCurrencyModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/BalanceAndCurrencyTile/BalanceAndCurrencyTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/InitialAndAdditionalAgreementsTile/InitialAndAdditionalAgreementsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/LoanExternalDataModal/LoanExternalDataModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/LoanExternalDataTile/LoanExternalDataTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/TransferRateTile/TransferRateTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/LoanNrlTranchesTile/LoanNrlTranchesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script src="LoanExternalDataModal.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"LoanExternalDataModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":null,"scenario":true,"fixtures":{"_":"Демо-данные окна «Техническая информация»: view — techInfo сущности-хозяина, как его отдают get() НКЛ и страница транша; потребитель (НКЛ | Транш) переключает контрол сценария демо — у Транша показывается поле «CRM ID продукта». Значения выдуманные (26.10.2026; crmProductId — 02.11.2026).","view":{"gfoId":"1234567890","gfoFundingCreditId":"1234567890-12-12","crmProductId":"1234567890-12-12"}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Связанный артефакт тайла «Техническая информация»: модальное окно правки.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать в конце
+     body, а не внутри тайла.
+
+     Поля зависят от потребителя (решение человека 02.11.2026, RE0049): НКЛ — «ГФО ID» и
+     «ГФО ID фондирующего кредита»; Транш — плюс «CRM ID продукта». Владелец правила
+     «потребитель → поля» — тайл (список CONSUMERS в LoanExternalDataTile.js); окно при
+     bind показывает только поля разметки, входящие в набор потребителя: поле нового
+     потребителя ставится во фрагмент с data-tech-consumer="<имя>" hidden, без правки JS
+     окна. Значения в разметке — пример.
+
+     Окно заполняет и сохраняет LoanExternalDataModal.js (PostModalLoanExternalData.bind):
+     по умолчанию читает LoanAgreementStore.get().techInfo и зовёт setTechInfo; страница
+     может передать свои get/save и consumer (как страница транша, у которой правка живёт
+     в своей сессии). «Сохранить» закрывает окно; тайл перерисовывает страница по событию
+     стора. Кнопка без data-modal-close: окно закрывает скрипт. Крестик и Esc закрывают без
+     сохранения, клик мимо окна не закрывает (триггеры тайла стоят с data-modal-guarded).
+     Проверки ввода нет — человек её не называл.
+
+     Своего CSS у окна нет: тело Modal — колонка с зазором 16px, поля во всю ширину.
+     Крестика очистки в разметке нет намеренно: он живёт по значению, и рисует его рантайм
+     ds-input.js — ровно тогда, когда в поле есть что стирать; значение окно ставит кодом,
+     поэтому после заполнения зовёт DSInput.sync (см. LoanExternalDataModal.js). -->
+
+<div class="modal-scrim" id="tech-scrim" hidden>
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="tech-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="tech-title">Техническая информация</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tech-gfo-id"><span class="ds-label__text">ГФО ID</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="tech-gfo-id" name="gfoId" autocomplete="off" value="1234567890">
+          </div>
+        </div>
+      </div>
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tech-gfo-funding-credit-id"><span class="ds-label__text">ГФО ID фондирующего кредита</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="tech-gfo-funding-credit-id" name="gfoFundingCreditId" autocomplete="off" value="1234567890-12-12">
+          </div>
+        </div>
+      </div>
+      <!-- Поле потребителя «Транш»: скрыто по умолчанию, показывает окно по consumer. -->
+      <div class="inp inp--m inp--fullwidth" data-tech-consumer="tranche" hidden>
+        <label class="ds-label" for="tech-crm-product-id"><span class="ds-label__text">CRM ID продукта</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="tech-crm-product-id" name="crmProductId" autocomplete="off" value="">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-tech-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* У компонента нет своего CSS: вид дают стили ДС. */
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   LoanExternalDataModal.js — поведение окна «Техническая информация».
+
+   Делает то, чего нет в рантаймах ДС, и только это:
+   1) показывает поля потребителя (решение человека 02.11.2026, RE0049):
+      НКЛ — «ГФО ID» и «ГФО ID фондирующего кредита»; Транш — плюс «CRM ID
+      продукта». Владелец правила «потребитель → поля» один — список CONSUMERS
+      тайла (LoanExternalDataTile.js), окно читает его при bind и показывает
+      только те поля разметки, что входят в набор: обёртка поля нового
+      потребителя ставится во фрагмент с data-tech-consumer="<имя>" hidden,
+      JS и разметка окна при этом не меняются. Тайла нет (страница без его
+      скрипта) — окно показывает все поля разметки;
+   2) заполняет окно значениями при каждом открытии; без своих get — из
+      LoanAgreementStore.get().techInfo (нет записи — поля пустые);
+   3) по «Сохранить» отдаёт значения в save() страницы или, без неё, в
+      LoanAgreementStore.setTechInfo, и закрывает окно. Проверки ввода нет —
+      человек её не называл.
+
+   Открытие, фокус, Esc, крестик, крестик очистки поля и защиту от закрытия
+   кликом мимо окна делают рантаймы ДС.
+
+   Порядок привязки: окно НЕ биндится само — bind зовёт страница-хозяин.
+   Страница НКЛ (Instrument.html) — bind() без opts (стор); страница транша —
+   bind(scrim, { get, save, consumer }) со своим источником; витрина — demo.js
+   окна через use(). Самобинд бы выполнялся раньше страницы (окружения, где
+   readyState уже «complete», к моменту внешних скриптов) и занимал api со
+   стором НКЛ на странице транша.
+
+   API (глобал PostModalLoanExternalData):
+     bind([scrim], [{ get, save, consumer }]) → api
+       scrim — по умолчанию #tech-scrim.
+       get() → {} | null и save(value) — подмены стора (страница транша, витрина);
+       consumer — 'nkl' (по умолчанию) | 'tranche': какой набор полей показывать.
+       api.fill()  — заполнить окно заново из get()
+       api.read()  → { gfoId, gfoFundingCreditId, crmProductId? } — введённое сейчас
+       api.save()  — сохранить введённое и закрыть окно
+       api.use(data) — подставить значения без стора и открытия (витрина)
+       api.consumer(name) — сменить потребителя на живом окне (витрина)
+     open() — заполнить и открыть окно (DSModal.open); то же делает триггер
+       data-modal="tech-scrim" тайла
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var SCRIM_ID = 'tech-scrim';
+
+  function isInline(scrim) {
+    return scrim.classList.contains('modal-scrim--inline');
+  }
+
+  function str(x) {
+    return String(x == null ? '' : x).trim();
+  }
+
+  /* Набор полей потребителя: владелец правила — тайл (CONSUMERS, там поля —
+     объекты { key, label }; здесь нужны только имена). Тайла нет (скрипт тайла
+     не подключён) — показываем все поля разметки. */
+  function consumerKeys(consumer) {
+    var T = window.PostTileLoanExternalData;
+    if (T && T.CONSUMERS) {
+      var set = T.CONSUMERS[consumer || T.DEFAULT_CONSUMER] || T.CONSUMERS[T.DEFAULT_CONSUMER];
+      var keys = set.map(function (f) { return typeof f === 'string' ? f : f.key; });
+      return { keys: keys, def: T.DEFAULT_CONSUMER };
+    }
+    return null;
+  }
+
+  function bind(scrim, opts) {
+    scrim = scrim || document.getElementById(SCRIM_ID);
+    if (!scrim) return null;
+    if (scrim.__loanExternalData) return scrim.__loanExternalData;
+    opts = opts || {};
+
+    var gfoId = scrim.querySelector('.inp__control[name="gfoId"]');
+    var gfoFunding = scrim.querySelector('.inp__control[name="gfoFundingCreditId"]');
+    if (!gfoId || !gfoFunding) return null;
+
+    var currentConsumer = opts.consumer;
+
+    /* ── Поля потребителя ───────────────────────────────────────────── */
+    var inputs = [];
+
+    function applyConsumer(name) {
+      currentConsumer = name;
+      var cons = consumerKeys(name);
+      var keys = cons
+        ? cons.keys
+        : Array.prototype.map.call(
+            scrim.querySelectorAll('.inp__control[name]'),
+            function (i) { return i.getAttribute('name'); });
+
+      /* Обёртки полей потребителей показываются, только если их поле входит в
+         набор потребителя. */
+      Array.prototype.forEach.call(scrim.querySelectorAll('[data-tech-consumer]'), function (wrap) {
+        var field = wrap.querySelector('.inp__control[name]');
+        wrap.hidden = !field || keys.indexOf(field.getAttribute('name')) === -1;
+      });
+
+      inputs = keys.map(function (key) {
+        return { key: key, input: scrim.querySelector('.inp__control[name="' + key + '"]') };
+      }).filter(function (f) { return f.input; });
+    }
+
+    applyConsumer(opts.consumer);
+
+    function current() {
+      if (opts.get) return opts.get() || {};
+      var store = window.LoanAgreementStore;
+      var rec = store && store.get ? store.get() : null;
+      return (rec && rec.techInfo) || {};
+    }
+
+    /* ── Заполнение ─────────────────────────────────────────────────── */
+    function setValue(input, value) {
+      input.value = str(value);
+      /* крестик очистки живёт по значению — после записи скриптом его
+         состояние пересчитывает рантайм поля */
+      var inp = input.closest('.inp');
+      if (window.DSInput && inp) window.DSInput.sync(inp);
+    }
+
+    function fill() {
+      var t = current();
+      inputs.forEach(function (f) { setValue(f.input, t[f.key]); });
+    }
+
+    function read() {
+      var value = {};
+      inputs.forEach(function (f) { value[f.key] = str(f.input.value); });
+      return value;
+    }
+
+    /* ── Сохранение ─────────────────────────────────────────────────── */
+    function save() {
+      var value = read();
+      if (opts.save) opts.save(value);
+      else if (window.LoanAgreementStore) window.LoanAgreementStore.setTechInfo(value);
+      if (!isInline(scrim) && window.DSModal) window.DSModal.closeTop(true);
+    }
+
+    /* ── События ────────────────────────────────────────────────────── */
+    /* Окно открылось — значения заново: за время, пока оно было закрыто, запись
+       могла смениться, а несохранённый ввод прошлого открытия не нужен. */
+    var wasOpen = !scrim.hidden;
+    new MutationObserver(function () {
+      var open = !scrim.hidden;
+      if (open === wasOpen) return;
+      wasOpen = open;
+      if (open) fill();
+    }).observe(scrim, { attributes: true, attributeFilter: ['hidden'] });
+
+    scrim.addEventListener('click', function (e) {
+      if (e.target.closest('[data-tech-save]')) save();
+    });
+
+    fill();
+
+    /* значения без стора и без открытия (витрина) */
+    function use(data) {
+      opts.get = function () { return data; };
+      fill();
+    }
+
+    /* сменить потребителя на живом окне (витрина, «Потребитель») */
+    function setConsumer(name) {
+      applyConsumer(name);
+      fill();
+    }
+
+    var api = { fill: fill, read: read, save: save, use: use, consumer: setConsumer };
+    scrim.__loanExternalData = api;
+    return api;
+  }
+
+  function open() {
+    var scrim = document.getElementById(SCRIM_ID);
+    if (!scrim) return;
+    var api = bind(scrim);
+    if (api) api.fill();
+    if (window.DSModal && !isInline(scrim)) window.DSModal.open(scrim);
+  }
+
+  function use(data) {
+    var api = bind();
+    if (api) api.use(data);
+  }
+
+  window.PostModalLoanExternalData = { bind: bind, open: open, use: use };
+
+  /* Самобинда нет: bind зовёт страница-хозяин (НКЛ — со стором, транш — со
+     своим get/save, витрина — demo.js через use). */
+})();
+</script>
+</body>
+</html>

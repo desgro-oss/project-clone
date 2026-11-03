@@ -31,11 +31,11 @@ knowledge: []
 ## Раскладка (Layout)
 
 ```
-Tile headless
+Колонка: тулбар → таблица (ритм 12px, Table, вариант «тулбар над таблицей»)
+├── .dtable-toolbar: TableFilter (кнопка + чип «Применено: N») · «Краткий отчет»
 ├── Alert ошибки (__error, только data-state="error")
-└── Table (.dtable--fill)
-    ├── тулбар: TableFilter (кнопка + чип «Применено: N») · «Краткий отчет»
-    ├── тело: шапка и строки TableCell / .dtable__empty
+└── Table (.dtable--fill, без своего тулбара и без тайла)
+    ├── тело: шапка и строки TableCell (тогл закрепления .th__pin) / .dtable__empty
     └── подвал: Pagination
 ```
 

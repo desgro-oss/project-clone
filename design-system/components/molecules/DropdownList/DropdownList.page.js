@@ -558,11 +558,11 @@ function setSummary(field, n) {
   const tb = document.querySelector('#typo-table tbody');
   if (!tb) return;
   tb.innerHTML = [
-    ['Подпись опции', 'Доллар США', '--type-body-m', 'SB Sans Text', '16 / 20'],
-    ['Подпись · выбранная', 'Доллар США', '--type-body-m-strong', 'SB Sans Text', '16 / 20'],
-    ['Helper-текст', 'USD · 840', '--type-body-xs', 'SB Sans Text', '12 / 16'],
-    ['Заголовок группы', 'ПОПУЛЯРНЫЕ', '--type-body-xs', 'SB Sans Text', '12 / 16'],
-    ['Системное сообщение', 'Ничего не найдено', '--type-body-m-strong', 'SB Sans Text', '16 / 20'],
+    ['Подпись опции', 'Доллар США', '--type-body-m-reg', 'SB Sans Text', '16 / 20'],
+    ['Подпись · выбранная', 'Доллар США', '--type-body-m-strong-smb', 'SB Sans Text', '16 / 20'],
+    ['Helper-текст', 'USD · 840', '--type-body-xs-reg', 'SB Sans Text', '12 / 16'],
+    ['Заголовок группы', 'ПОПУЛЯРНЫЕ', '--type-body-xs-reg', 'SB Sans Text', '12 / 16'],
+    ['Системное сообщение', 'Ничего не найдено', '--type-body-m-strong-smb', 'SB Sans Text', '16 / 20'],
   ].map(([part, sample, tok, font, sl]) => `
     <tr>
       <td>${part}</td>

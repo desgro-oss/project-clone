@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фонды — IBP</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body {
+    margin: 0;
+    font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-page);
+  }
+
+  /* ── Раскладка этого экрана ──────────────────────────────────────────────
+     Здесь только grid / flex / gap и только на токенах.                    */
+
+  /* Ритм экрана с таблицей — 12px (Layout, К13) */
+  .screen__content { gap: var(--space-12); }
+
+  /* Сплиттер списка фондов и активов занимает всю оставшуюся высоту
+     (.screen--app). Без своей рамки и подложки: карточки — сами виджеты,
+     как на ClientInfoPage концепта ibp-redesign-v2 (решение человека
+     20.10.2026). Панели — flex-колонки, виджет тянется на высоту панели. */
+  .fp-split { flex: 1; min-height: 0; background: transparent; border: 0; border-radius: 0; }
+  .fp-split > .splitpane__panel { background: transparent; display: flex; flex-direction: column; min-height: 0; }
+  .splitpane__a > *, .splitpane__b > * { flex: 1; min-width: 0; min-height: 0; }
+</style>
+</head>
+<!-- data-av-tones — разноцветные аватарки модуля «Фонды» (Avatar ДС 1.006, решение человека
+     30.10.2026): тон по хешу data-av-seed (objectId фонда или актива) — один фонд всегда одного
+     цвета в списке и в окнах. Модуль спроектирован «разноцветным»; без атрибута — один цвет. -->
+<body data-av-tones>
+
+<div class="nav-layout">
+
+  <!-- ── Боковое меню ────────────────────────────────────────────────────── -->
+  <nav class="nav nav--rail" aria-label="Главное меню">
+    <div class="nav__top">
+      <button class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list">
+      <a class="nav__item" href="../../../core/host-app/pages/HomePage.html?role=director_ib"><span class="nav__ico"><i data-icon="main-page"></i></span><span class="nav__label">Главная</span></a>
+      <div class="nav__block">
+        <div class="nav__block-label">Origination</div>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="dcm-potentials"></i></span><span class="nav__label">Потенциалы DCM</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="calc"></i></span><span class="nav__label">Прайсер облигаций</span></a>
+        <a class="nav__item nav__item--selected" href="FundsPipeline.preview.html" aria-current="page"><span class="nav__ico"><i data-icon="funds"></i></span><span class="nav__label">Фонды</span></a>
+        <a class="nav__item" href="../../banker-app/pages/RequestThread.html"><span class="nav__ico"><i data-icon="ai-stars"></i></span><span class="nav__label">AI Pitcher</span></a>
+      </div>
+      <div class="nav__block">
+        <div class="nav__block-label">Pipeline</div>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="mna-pipeline"></i></span><span class="nav__label">M&amp;A Pipeline</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="dcm-pipeline"></i></span><span class="nav__label">DCM Pipeline</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="ecm-pipeline"></i></span><span class="nav__label">ECM Pipeline</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="payments-ib"></i></span><span class="nav__label">Реестр платежей IB</span></a>
+      </div>
+      <div class="nav__block">
+        <div class="nav__block-label">Клиенты и задачи</div>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="factory-01"></i></span><span class="nav__label">Клиенты</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="client-search"></i></span><span class="nav__label">Поиск клиентов в ЕПК</span></a>
+        <a class="nav__item" href="#" aria-label="Задачи, 12"><span class="nav__ico"><i data-icon="tasks"></i></span><span class="nav__label">Задачи</span><span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">12</span></span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="calendar"></i></span><span class="nav__label">Встречи</span></a>
+      </div>
+    </div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Пётр Константинович</span><span class="nav__user-role">Руководитель IB</span></span>
+      </a>
+      <button class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <!-- ── Рабочая область ─────────────────────────────────────────────────── -->
+  <div class="screen screen--app">
+
+    <!-- Крошки: 44px и поля 24px задаёт сам компонент, экран их не трогает.
+         Отступ 8px между крошками и контентом даёт .screen__content (--layout-pad-top) -->
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="../../../core/host-app/pages/HomePage.html?role=director_ib">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Фонды</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="Screen">
+
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <h1 class="phead__title">Фонды</h1>
+            </div>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <!-- «Добавить фонд» → окно AddFundEntityFromUcpModal (сценарий страницы) -->
+          <button class="btn btn--accent btn--m" id="btnAddFund"><i data-icon="add"></i><span class="btn__label">Добавить фонд</span></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Контент ────────────────────────────────────────── -->
+      <!-- Список фондов и активы выбранного фонда: правая панель и сплиттер
+           появляются выбором фонда, крестик их прячет (сценарий страницы ниже). -->
+      <div class="splitpane fp-split" id="fundsSplit" data-off-grid="Панели Splitter: ширину задаёт сплиттер">
+        <div class="splitpane__panel splitpane__a">
+          <ds-include src="../widgets/tables/FundsTable/FundsTable.html" id="fundsTable"></ds-include>
+          <!-- Фильтры — в тулбаре таблицы (решение 30.10.2026): сценарий страницы ставит их
+               в слот таблицы вызовом FundsTable.placeFilters до первой отрисовки -->
+          <ds-include src="../widgets/tables/FundsFilters/FundsFilters.html" id="fundsFilters"></ds-include>
+        </div>
+        <div class="spl" role="separator" aria-orientation="vertical" aria-valuemin="35" aria-valuemax="75" aria-valuenow="50" aria-label="Изменить ширину панелей" tabindex="0" hidden>
+          <span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <div class="splitpane__panel splitpane__b" hidden>
+          <ds-include src="../widgets/tables/AssetsTable/AssetsTable.html" id="assetsTable"></ds-include>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── Модальные окна — здесь, в конце body, с hidden.
+     Триггер помечается data-modal="id-скрима".
+     Якорь #sec:modals — точка дозаписи для этапа build-modals: модалки
+     вставляются сюда по grep-у якоря, без перечитывания экрана целиком. -->
+
+<!-- Окна фонда (Э2). «Настройка таблицы» — стандартное окно ДС TableSettings,
+     его строит рантайм по data-table-settings, метки здесь нет. -->
+<ds-include src="../widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.html" id="addFundEntityFromUcpModal"></ds-include>
+<ds-include src="../widgets/modals/EditFundModal/EditFundModal.html" id="editFundModal"></ds-include>
+<ds-include src="../widgets/modals/DeleteFundModal/DeleteFundModal.html" id="deleteFundModal"></ds-include>
+
+<!-- Меню строк: одно меню на все кнопки «⋮» своего вида (ContextMenu) -->
+<ds-include src="../widgets/context-menus/FundActionsMenu/FundActionsMenu.html"></ds-include>
+<ds-include src="../widgets/context-menus/FundActionsMenu/FundActionsMenuCustom.html"></ds-include>
+<ds-include src="../widgets/context-menus/AssetActionsMenu/AssetActionsMenu.html"></ds-include>
+<ds-include src="../widgets/context-menus/AssetActionsMenu/AssetActionsMenuCustom.html"></ds-include>
+
+<script src="../data/funds.js"></script>
+<script src="../../../ds-body.js"></script>
+<script src="../widgets/tables/FundsFilters/FundsFilters.js"></script>
+<script src="../widgets/tables/FundsTable/FundsTable.js"></script>
+<script src="../widgets/tables/AssetsTable/AssetsTable.js"></script>
+<script src="../widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.js"></script>
+<script src="../widgets/modals/EditFundModal/EditFundModal.js"></script>
+<script src="../widgets/modals/DeleteFundModal/DeleteFundModal.js"></script>
+<script>
+/* ── Сценарий страницы FundsPipeline ─────────────────────────────────────
+   Связывает виджеты по их API (паспорта в widgets/): фильтры → список
+   фондов (фильтры стоят в тулбаре таблицы — FundsTable.placeFilters); выбор
+   фонда → активы справа в сплиттере; крестик → панель прячется; шестерёнка
+   таблицы — стандартное окно ДС (TableSettings, по
+   data-table-settings в виджетах); окна фонда — ниже.
+   Демо-параметры адреса: ?state=empty — фондов нет; ?fund=<objectId> —
+   фонд выбран при открытии (fnd-001 — Интеррос, fnd-004 — РФПИ без активов). */
+(function () {
+  'use strict';
+  var params = new URLSearchParams(location.search);
+  var funds = params.get('state') === 'empty' ? [] : window.MOCK_FUNDS;
+  var ff = document.getElementById('fundsFilters');
+  var ft = document.getElementById('fundsTable');
+  var at = document.getElementById('assetsTable');
+
+  /* сплиттер: правая панель показывается выбором фонда (как ClientInfoPage v2) */
+  var split = document.getElementById('fundsSplit');
+  var spl = split.querySelector('.spl'), pa = split.querySelector('.splitpane__a'), pb = split.querySelector('.splitpane__b');
+  var pct = 50;
+  if (window.DSSplitter) window.DSSplitter.wire(spl, { min: 35, max: 75, initial: pct, onChange: function (v) { pct = v; } });
+  function showAssets(on) { pb.hidden = !on; spl.hidden = !on; pa.style.flex = on ? '0 0 ' + pct + '%' : '1 1 auto'; }
+  showAssets(false);
+
+  window.FundsTable.placeFilters(ft, ff);
+  window.FundsFilters.init(ff, { types: window.FUND_TYPE_LABELS, priorities: window.FUND_PRIORITY_LABELS });
+  window.FundsFilters.setDisabled(ff, !funds.length);
+  window.FundsTable.init(ft, { funds: funds });
+
+  function openFund(id) {
+    var fund = funds.filter(function (f) { return f.objectId === id; })[0];
+    if (!fund) return;
+    selectedId = id;
+    window.FundsTable.select(ft, id);
+    showAssets(true); /* панель видна до отрисовки — таблица меряет колонки по видимой ширине */
+    window.AssetsTable.render(at, {
+      fund: fund,
+      assets: window.MOCK_FUND_ASSETS.filter(function (a) { return a.fundId === id; })
+    });
+  }
+
+  ff.addEventListener('fundsfilters:change', function (e) { window.FundsTable.applyFilters(ft, e.detail); });
+  ft.addEventListener('fundstable:select', function (e) { openFund(e.detail.objectId); });
+  at.addEventListener('assetstable:close', function () { showAssets(false); selectedId = null; window.FundsTable.select(ft, null); });
+
+  /* ── Окна фонда (Э2) ──────────────────────────────────────────────────
+     «Добавить фонд» (шапка и пустой список) → поиск в базах
+     (AddFundEntityFromUcpModal) → «Продолжить» с клиентом ЕПК или «Новый фонд»
+     → форма фонда (EditFundModal). Меню фонда: «Редактировать» → EditFundModal,
+     «Удалить фонд» → DeleteFundModal. «Связать с базой ЕПК», «Добавить актив»,
+     «Перейти на страницу клиента» окон не открывают (решения 30.10.2026). */
+  var selectedId = null;
+  var seq = 0;
+  function byId(id) { return funds.filter(function (f) { return f.objectId === id; })[0]; }
+  function refresh(keepId) {
+    window.FundsTable.init(ft, { funds: funds });
+    window.FundsFilters.setDisabled(ff, !funds.length);
+    window.FundsTable.applyFilters(ft, window.FundsFilters.value(ff));
+    if (keepId && byId(keepId)) openFund(keepId);
+    else { showAssets(false); selectedId = null; }
+  }
+  function prioOf(code) { return code ? { code: code, name: window.FUND_PRIORITY_LABELS[code] } : null; }
+  function applyForm(fund, form) {
+    fund.name = form.name;
+    fund.alias = form.alias || null;
+    fund.comment = form.comment || null;
+    fund.keyBeneficiaries = String(form.beneficiaries || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean).map(function (x) { return { displayName: x }; });
+    fund.priority = prioOf(form.priorityCode);
+    if (form.partyId !== undefined) fund.partyId = form.partyId || fund.partyId || null;
+    if (form.inn !== undefined && form.inn !== null) fund.inn = form.inn;
+    if (form.kpp !== undefined && form.kpp !== null) fund.kpp = form.kpp;
+    return fund;
+  }
+  function newFund(form) {
+    seq += 1;
+    return applyForm({
+      objectId: 'fnd-new-' + seq, name: '', alias: null, inn: null, kpp: null, partyId: null,
+      keyBeneficiaries: [], types: [], priority: null, aumAssetsCount: 0, contacts: [], comment: null,
+      investmentVolume: null, keyIndustries: []
+    }, form);
+  }
+  function openEdit(opts) {
+    window.EditFundModal.open('editFundModal', Object.assign({ priorities: window.FUND_PRIORITY_LABELS }, opts, {
+      onSave: function (form) {
+        if (opts.mode === 'update') { applyForm(opts.fund, form); refresh(opts.fund.objectId); return; }
+        var f = newFund(form);
+        funds = funds.concat([f]);
+        refresh(f.objectId);
+      }
+    }));
+  }
+  function openAdd() {
+    window.AddFundEntityFromUcpModal.open('addFundEntityFromUcpModal', {
+      funds: funds, clients: window.MOCK_UCP_CLIENTS,
+      onNext: function (client) { openEdit({ mode: 'create', source: 'ucp', client: client }); },
+      onCreateFund: function (o) { openEdit({ mode: 'create', source: 'custom', name: (o && o.name) || '' }); }
+    });
+  }
+  document.getElementById('btnAddFund').addEventListener('click', openAdd);
+  ft.addEventListener('click', function (e) { if (e.target.closest('[data-fund-add]')) openAdd(); });
+
+  function openDelete(fund) {
+    window.DeleteFundModal.open('deleteFundModal', {
+      fund: fund,
+      onConfirm: function (f) {
+        funds = funds.filter(function (x) { return x.objectId !== f.objectId; });
+        refresh(selectedId === f.objectId ? null : selectedId);
+      }
+    });
+  }
+
+  /* меню фонда: ContextMenu помнит открывший триггер (aria-expanded), у него data-fund-id */
+  var menuTrigger = null;
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-menu^="fundActionsMenu"]');
+    if (t) menuTrigger = t;
+  }, true);
+  document.addEventListener('click', function (e) {
+    var item = e.target.closest('[data-fund-action]');
+    if (!item || !menuTrigger) return;
+    var fund = byId(menuTrigger.getAttribute('data-fund-id'));
+    if (!fund) return;
+    var act = item.getAttribute('data-fund-action');
+    if (act === 'editFund') openEdit({ mode: 'update', source: fund.partyId ? 'ucp' : 'custom', fund: fund });
+    else if (act === 'deleteFund') openDelete(fund);
+  });
+
+  if (params.get('fund')) openFund(params.get('fund'));
+  /* таб System панели прототипа: вариант демо-данных (переключение — перезагрузкой адреса) */
+  (window.PP_SYSTEM = window.PP_SYSTEM || []).push({
+    id: 'funds-data', title: 'Список фондов', desc: 'Демо-данные страницы: 12 фондов или пустой список (?state=empty).',
+    reload: true,
+    options: [{ value: 'data', label: 'Есть фонды' }, { value: 'empty', label: 'Фондов нет' }],
+    value: function () { return params.get('state') === 'empty' ? 'empty' : 'data'; },
+    set: function (v) {
+      var p = new URLSearchParams(location.search);
+      if (v === 'empty') p.set('state', 'empty'); else p.delete('state');
+      p.delete('fund'); p.delete('modal');
+      location.search = p.toString();
+    }
+  });
+
+  /* демо-адреса окон для показа и проверок: ?modal=add | edit | delete (&fund=… — заодно открывает активы фонда) */
+  var m = params.get('modal');
+  if (m === 'add') openAdd();
+  else if (m === 'edit' && byId(params.get('fund'))) { var ef = byId(params.get('fund')); openEdit({ mode: 'update', source: ef.partyId ? 'ucp' : 'custom', fund: ef }); }
+  else if (m === 'delete' && byId(params.get('fund'))) openDelete(byId(params.get('fund')));
+})();
+</script>
+
+</body>
+</html>

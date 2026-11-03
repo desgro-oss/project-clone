@@ -18,7 +18,7 @@
 <main class="page theme-page" data-screen-label="Themes">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.015</b></span><span>Обновлено: <b>08.10.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.016</b></span><span>Обновлено: <b>02.11.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Основы</p>
     <h1>Темы</h1>
     <p class="lead">Соберите тему ДС из двух цветов — brand и neutral, проверьте её на живых компонентах и сохраните в файл. Выбранная тема действует на всех страницах ДС.</p>
@@ -32,6 +32,15 @@
         <div class="menu" id="theme-menu" role="menu" aria-label="Темы"></div>
       </span>
       <span class="badge badge--s badge--neutral" id="theme-status" role="status"></span>
+    </div>
+    <!-- Типографская тема (RE0048): отдельное измерение рядом с цветом — про трекинг, цвет не меняет. Логика — Themes.page.js (#typo-mode). -->
+    <div class="theme-bar__group">
+      <span class="theme-bar__label">Типографика</span>
+      <div class="segctrl" role="radiogroup" aria-label="Типографская тема" id="typo-mode">
+        <div class="segctrl__thumb"></div>
+        <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-value="base"><span class="segctrl__label">Базовая</span></button>
+        <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-value="neo"><span class="segctrl__label">NEO</span></button>
+      </div>
     </div>
     <div class="theme-bar__group">
       <button type="button" class="btn btn--accent btn--m" id="theme-save" data-tooltip=""><span class="btn__label">Сохранить</span></button>
@@ -89,7 +98,7 @@
           </div></header>
           <div class="tile__body theme-ex">
             <span class="illu theme-ex__illu" data-illu="deals" aria-hidden="true"></span>
-            <p class="ds-body-m">Заполните заявку — система подберёт продукт, посчитает риск и подготовит документы к комитету.</p>
+            <p class="ds-body-m-reg">Заполните заявку — система подберёт продукт, посчитает риск и подготовит документы к комитету.</p>
             <button type="button" class="btn btn--accent btn--m btn--fullwidth"><span class="btn__label">Создать заявку</span></button>
           </div>
         </section>
@@ -99,14 +108,14 @@
           <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title" id="ex-apps">Разделы</h3></div></div></header>
           <div class="tile__body">
             <div class="theme-ex-apps">
-              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="deals-possible-deals"></i></span><span class="ds-body-xs">Сделки</span></a>
-              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="user-circle"></i></span><span class="ds-body-xs">Клиенты</span></a>
-              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="a-risk"></i></span><span class="ds-body-xs">Риски</span></a>
-              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="check-shield"></i></span><span class="ds-body-xs">Залоги</span></a>
-              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="target"></i></span><span class="ds-body-xs">Лимиты</span></a>
-              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="file-check"></i></span><span class="ds-body-xs">Документы</span></a>
-              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="reports-1-c"></i></span><span class="ds-body-xs">Отчёты</span></a>
-              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="pie-chart"></i></span><span class="ds-body-xs">Аналитика</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="deals-possible-deals"></i></span><span class="ds-body-xs-reg">Сделки</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="user-circle"></i></span><span class="ds-body-xs-reg">Клиенты</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="a-risk"></i></span><span class="ds-body-xs-reg">Риски</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="check-shield"></i></span><span class="ds-body-xs-reg">Залоги</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="target"></i></span><span class="ds-body-xs-reg">Лимиты</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="file-check"></i></span><span class="ds-body-xs-reg">Документы</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="reports-1-c"></i></span><span class="ds-body-xs-reg">Отчёты</span></a>
+              <a class="theme-ex-app" href="#ex-apps"><span class="av av--circular av--l av--accent"><i class="av__icon" data-icon="pie-chart"></i></span><span class="ds-body-xs-reg">Аналитика</span></a>
             </div>
           </div>
         </section>
@@ -144,11 +153,11 @@
         <section class="tile" aria-labelledby="ex-events">
           <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="calendar"></i></span><h3 class="tile__title" id="ex-events">Комитеты недели</h3></div></div></header>
           <div class="tile__body theme-ex">
-            <div class="theme-ex-event"><span class="ds-h5-strong theme-ex-event__time">9:15</span><div class="theme-ex-grow"><p class="ds-body-m-strong">Кредитный комитет</p><p class="ds-body-s theme-muted">ООО «Орбита» · гарантия 1,2 млрд ₽</p></div><span class="badge badge--m badge--accent">Сегодня</span></div>
+            <div class="theme-ex-event"><span class="ds-h5-strong-smb theme-ex-event__time">9:15</span><div class="theme-ex-grow"><p class="ds-body-m-strong-smb">Кредитный комитет</p><p class="ds-body-s-reg theme-muted">ООО «Орбита» · гарантия 1,2 млрд ₽</p></div><span class="badge badge--m badge--accent">Сегодня</span></div>
             <hr class="dvd dvd--h">
-            <div class="theme-ex-event"><span class="ds-h5-strong theme-ex-event__time">14:00</span><div class="theme-ex-grow"><p class="ds-body-m-strong">Риск-комитет</p><p class="ds-body-s theme-muted">Лимит на группу «Волга-Агро»</p></div><span class="badge badge--m badge--neutral">Завтра</span></div>
+            <div class="theme-ex-event"><span class="ds-h5-strong-smb theme-ex-event__time">14:00</span><div class="theme-ex-grow"><p class="ds-body-m-strong-smb">Риск-комитет</p><p class="ds-body-s-reg theme-muted">Лимит на группу «Волга-Агро»</p></div><span class="badge badge--m badge--neutral">Завтра</span></div>
             <hr class="dvd dvd--h">
-            <div class="theme-ex-event"><span class="ds-h5-strong theme-ex-event__time">16:30</span><div class="theme-ex-grow"><p class="ds-body-m-strong">Комитет по залогам</p><p class="ds-body-s theme-muted">Переоценка складского комплекса</p></div><span class="badge badge--m badge--neutral">Пт</span></div>
+            <div class="theme-ex-event"><span class="ds-h5-strong-smb theme-ex-event__time">16:30</span><div class="theme-ex-grow"><p class="ds-body-m-strong-smb">Комитет по залогам</p><p class="ds-body-s-reg theme-muted">Переоценка складского комплекса</p></div><span class="badge badge--m badge--neutral">Пт</span></div>
           </div>
         </section>
 
@@ -157,8 +166,8 @@
           <div class="tile__body theme-ex theme-ex--center">
             <span class="av av--circular av--xl av--accent"><span class="av__text">ОР</span></span>
             <div class="theme-ex--center-text">
-              <h3 class="ds-h5-strong">ООО «Орбита»</h3>
-              <p class="ds-body-s theme-muted">Заёмщик · рейтинг BB+ · с 2019 года</p>
+              <h3 class="ds-h5-strong-smb">ООО «Орбита»</h3>
+              <p class="ds-body-s-reg theme-muted">Заёмщик · рейтинг BB+ · с 2019 года</p>
             </div>
             <div class="theme-ex-actions"><span class="badge badge--m badge--accent">На сопровождении</span><span class="chip chip--s"><span class="chip__label">Агропром</span></span></div>
             <div class="theme-ex-actions">
@@ -175,7 +184,7 @@
             <p class="tile__subtitle">млрд ₽ · первое полугодие 2026</p>
           </div></header>
           <div class="tile__body theme-ex">
-            <div class="theme-ex-kpi"><span class="ds-h3">213 млрд ₽</span><span class="badge badge--m badge--success">+20 %</span></div>
+            <div class="theme-ex-kpi"><span class="ds-h3-reg">213 млрд ₽</span><span class="badge badge--m badge--success">+20 %</span></div>
             <div id="ex-chart"></div>
           </div>
         </section>
@@ -184,11 +193,11 @@
         <section class="tile" aria-labelledby="ex-kpi">
           <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title" id="ex-kpi">Показатели месяца</h3></div></div></header>
           <div class="tile__body theme-ex">
-            <div class="theme-ex-metric"><p class="ds-body-s theme-muted">Сделок за месяц</p><div class="theme-ex-kpi"><span class="ds-h4-strong">1 284</span><span class="badge badge--m badge--success">+12 %</span></div></div>
+            <div class="theme-ex-metric"><p class="ds-body-s-reg theme-muted">Сделок за месяц</p><div class="theme-ex-kpi"><span class="ds-h4-strong-smb">1 284</span><span class="badge badge--m badge--success">+12 %</span></div></div>
             <hr class="dvd dvd--h">
-            <div class="theme-ex-metric"><p class="ds-body-s theme-muted">Одобрение</p><div class="theme-ex-kpi"><span class="ds-h4-strong">58,2 %</span><span class="badge badge--m badge--success">+2,0 п. п.</span></div></div>
+            <div class="theme-ex-metric"><p class="ds-body-s-reg theme-muted">Одобрение</p><div class="theme-ex-kpi"><span class="ds-h4-strong-smb">58,2 %</span><span class="badge badge--m badge--success">+2,0 п. п.</span></div></div>
             <hr class="dvd dvd--h">
-            <div class="theme-ex-metric"><p class="ds-body-s theme-muted">Просрочка</p><div class="theme-ex-kpi"><span class="ds-h4-strong">2,4 %</span><span class="badge badge--m badge--error">−0,3 п. п.</span></div></div>
+            <div class="theme-ex-metric"><p class="ds-body-s-reg theme-muted">Просрочка</p><div class="theme-ex-kpi"><span class="ds-h4-strong-smb">2,4 %</span><span class="badge badge--m badge--error">−0,3 п. п.</span></div></div>
           </div>
         </section>
 
@@ -304,18 +313,18 @@
           </div></header>
           <div class="tile__body"><div class="theme-ex-plans">
             <section class="tile tile--inset"><div class="tile__body theme-ex">
-              <p class="ds-body-m-strong">Базовый</p><p class="ds-h4-strong">0 ₽ <span class="ds-body-s theme-muted">в месяц</span></p>
-              <p class="ds-body-s theme-muted">Один счёт, выписки и платежи в рублях</p>
+              <p class="ds-body-m-strong-smb">Базовый</p><p class="ds-h4-strong-smb">0 ₽ <span class="ds-body-s-reg theme-muted">в месяц</span></p>
+              <p class="ds-body-s-reg theme-muted">Один счёт, выписки и платежи в рублях</p>
               <button type="button" class="btn btn--outline btn--m btn--fullwidth"><span class="btn__label">Подключить</span></button>
             </div></section>
             <section class="tile tile--inset"><div class="tile__body theme-ex">
-              <div class="theme-ex-kpi"><p class="ds-body-m-strong">Корпоративный</p><span class="badge badge--s badge--accent">Выбор клиентов</span></div><p class="ds-h4-strong">9 900 ₽ <span class="ds-body-s theme-muted">в месяц</span></p>
-              <p class="ds-body-s theme-muted">Валютный контроль, лимиты, персональный менеджер</p>
+              <div class="theme-ex-kpi"><p class="ds-body-m-strong-smb">Корпоративный</p><span class="badge badge--s badge--accent">Выбор клиентов</span></div><p class="ds-h4-strong-smb">9 900 ₽ <span class="ds-body-s-reg theme-muted">в месяц</span></p>
+              <p class="ds-body-s-reg theme-muted">Валютный контроль, лимиты, персональный менеджер</p>
               <button type="button" class="btn btn--accent btn--m btn--fullwidth"><span class="btn__label">Подключить</span></button>
             </div></section>
             <section class="tile tile--inset"><div class="tile__body theme-ex">
-              <p class="ds-body-m-strong">Холдинг</p><p class="ds-h4-strong">24 900 ₽ <span class="ds-body-s theme-muted">в месяц</span></p>
-              <p class="ds-body-s theme-muted">Группа компаний, казначейство, отчётность по группе</p>
+              <p class="ds-body-m-strong-smb">Холдинг</p><p class="ds-h4-strong-smb">24 900 ₽ <span class="ds-body-s-reg theme-muted">в месяц</span></p>
+              <p class="ds-body-s-reg theme-muted">Группа компаний, казначейство, отчётность по группе</p>
               <button type="button" class="btn btn--outline btn--m btn--fullwidth"><span class="btn__label">Обсудить</span></button>
             </div></section>
           </div></div>
@@ -338,10 +347,10 @@
           </div></header>
           <div class="tile__body theme-ex">
             <ol class="theme-ex-steps">
-              <li><span class="stepmark stepmark--m stepmark--done" aria-hidden="true"><span class="stepmark__num">1</span><i class="stepmark__icon" data-icon="check"></i></span><span class="ds-body-s-strong">Заявка</span></li>
-              <li><span class="stepmark stepmark--m stepmark--done" aria-hidden="true"><span class="stepmark__num">2</span><i class="stepmark__icon" data-icon="check"></i></span><span class="ds-body-s-strong">Анализ</span></li>
-              <li><span class="stepmark stepmark--m stepmark--current" aria-hidden="true"><span class="stepmark__num">3</span><i class="stepmark__icon" data-icon="check"></i></span><span class="ds-body-s-strong">Комитет</span></li>
-              <li><span class="stepmark stepmark--m" aria-hidden="true"><span class="stepmark__num">4</span><i class="stepmark__icon" data-icon="check"></i></span><span class="ds-body-s theme-muted">Выдача</span></li>
+              <li><span class="stepmark stepmark--m stepmark--done" aria-hidden="true"><span class="stepmark__num">1</span><i class="stepmark__icon" data-icon="check"></i></span><span class="ds-body-s-strong-smb">Заявка</span></li>
+              <li><span class="stepmark stepmark--m stepmark--done" aria-hidden="true"><span class="stepmark__num">2</span><i class="stepmark__icon" data-icon="check"></i></span><span class="ds-body-s-strong-smb">Анализ</span></li>
+              <li><span class="stepmark stepmark--m stepmark--current" aria-hidden="true"><span class="stepmark__num">3</span><i class="stepmark__icon" data-icon="check"></i></span><span class="ds-body-s-strong-smb">Комитет</span></li>
+              <li><span class="stepmark stepmark--m" aria-hidden="true"><span class="stepmark__num">4</span><i class="stepmark__icon" data-icon="check"></i></span><span class="ds-body-s-reg theme-muted">Выдача</span></li>
             </ol>
             <div class="pbar pbar--accent" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" aria-label="Готовность сделки"><div class="pbar__head"><span class="pbar__label">Готовность</span><span class="pbar__value">62 %</span></div><div class="pbar__track"><div class="pbar__fill" style="width:62%"></div></div></div>
           </div>
@@ -404,7 +413,7 @@
           <div class="slr" data-unit="°"><div class="slr__head"><label for="adjust-hue">Тон</label><output class="slr__value" for="adjust-hue"></output></div><input type="range" class="slr__input" id="adjust-hue" min="-180" max="180" value="0"></div>
           <div class="slr" data-unit=" %"><div class="slr__head"><label for="adjust-saturation">Насыщенность</label><output class="slr__value" for="adjust-saturation"></output></div><input type="range" class="slr__input" id="adjust-saturation" min="-100" max="100" value="0"></div>
           <div class="slr" data-unit=""><div class="slr__head"><label for="adjust-temperature">Температура</label><output class="slr__value" for="adjust-temperature"></output></div><input type="range" class="slr__input" id="adjust-temperature" min="-100" max="100" value="0"></div>
-          <div class="theme-adjust__row"><span class="theme-adjust__label"><i data-icon="paint-pour"></i><span class="ds-body-s">Текст на заливке</span></span>
+          <div class="theme-adjust__row"><span class="theme-adjust__label"><i data-icon="paint-pour"></i><span class="ds-body-s-reg">Текст на заливке</span></span>
             <label class="sw sw--dual"><input type="checkbox" class="sw__input" role="switch" id="theme-onfill" aria-label="Тёмный текст на заливке brand"><span class="sw__control"><span class="sw__thumb"></span></span><span class="sw__side sw__side--off">Белый</span><span class="sw__side sw__side--on">Тёмный</span></label></div>
         </div>
         <div class="pop__foot"><div class="pop__foot-left"><button type="button" class="btn btn--transparent btn--s" id="adjust-reset"><span class="btn__label">Сбросить настройки</span></button></div></div>
@@ -495,7 +504,7 @@
 <div class="modal-scrim" id="folder-modal" hidden>
   <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="folder-title">
     <header class="modal__head"><h2 class="modal__title" id="folder-title">Подключите папку tokens</h2><button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button></header>
-    <div class="modal__body"><p class="ds-body-m">Тема сохраняется файлом в <code>design-system/foundations/Themes/tokens/</code>. Выберите эту папку — браузер запомнит её. В Firefox и Safari запись в папку недоступна: скачайте JSON и положите его в папку вручную.</p></div>
+    <div class="modal__body"><p class="ds-body-m-reg">Тема сохраняется файлом в <code>design-system/foundations/Themes/tokens/</code>. Выберите эту папку — браузер запомнит её. В Firefox и Safari запись в папку недоступна: скачайте JSON и положите его в папку вручную.</p></div>
     <footer class="modal__foot"><div class="modal__foot-right">
       <button type="button" class="btn btn--transparent btn--m" id="folder-download"><span class="btn__label">Скачать JSON</span></button>
       <button type="button" class="btn btn--accent btn--m" id="folder-connect"><i data-icon="folder"></i><span class="btn__label">Подключить папку</span></button>
@@ -507,7 +516,7 @@
 <div class="modal-scrim" id="discard-modal" hidden>
   <div class="modal modal--w4" role="alertdialog" aria-modal="true" aria-labelledby="discard-title">
     <header class="modal__head"><h2 class="modal__title" id="discard-title">Есть несохранённые правки</h2><button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button></header>
-    <div class="modal__body"><p class="ds-body-m">Правки текущей темы не сохранены. Переключить тему и потерять их?</p></div>
+    <div class="modal__body"><p class="ds-body-m-reg">Правки текущей темы не сохранены. Переключить тему и потерять их?</p></div>
     <footer class="modal__foot"><div class="modal__foot-right">
       <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Остаться</span></button>
       <button type="button" class="btn btn--accent btn--m btn--danger" id="discard-confirm"><span class="btn__label">Переключить</span></button>

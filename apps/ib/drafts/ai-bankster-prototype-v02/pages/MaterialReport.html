@@ -25,22 +25,22 @@
 
   /* Обложка: бренд-градиент и ключевые показатели */
   .rep__cover    { display: flex; flex-direction: column; gap: var(--space-24); padding: var(--space-40) var(--space-40) var(--space-32); color: var(--text-on-dark); background: linear-gradient(135deg, var(--primary-dark), var(--primary) 70%, var(--primary-light)); }
-  .rep__eyebrow  { margin: 0; font: var(--type-body-xs); letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
-  .rep__title    { margin: var(--space-6) 0 0; font: var(--type-h2); }
-  .rep__lead     { margin: var(--space-12) 0 0; max-width: 720px; font: var(--type-body-m); opacity: .92; }
-  .rep__meta     { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-16); margin: 0; font: var(--type-body-xs); opacity: .8; }
+  .rep__eyebrow  { margin: 0; font: var(--type-body-xs-reg); letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
+  .rep__title    { margin: var(--space-6) 0 0; font: var(--type-h2-light); }
+  .rep__lead     { margin: var(--space-12) 0 0; max-width: 720px; font: var(--type-body-m-reg); opacity: .92; }
+  .rep__meta     { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-16); margin: 0; font: var(--type-body-xs-reg); opacity: .8; }
   .rep__kpis     { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-12); }
   .rep__kpi      { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-12) var(--space-16); background: color-mix(in srgb, var(--text-on-dark) 12%, transparent); border: 1px solid color-mix(in srgb, var(--text-on-dark) 22%, transparent); border-radius: var(--radius-l); }
-  .rep__kpi-name { font: var(--type-body-xs); letter-spacing: .04em; text-transform: uppercase; opacity: .85; }
-  .rep__kpi-val  { font: var(--type-h4-strong); font-variant-numeric: tabular-nums; }
-  .rep__kpi-note { font: var(--type-body-xs); opacity: .85; }
+  .rep__kpi-name { font: var(--type-body-xs-reg); letter-spacing: .04em; text-transform: uppercase; opacity: .85; }
+  .rep__kpi-val  { font: var(--type-h4-strong-smb); font-variant-numeric: tabular-nums; }
+  .rep__kpi-note { font: var(--type-body-xs-reg); opacity: .85; }
 
   /* Разделы листа */
   .rep__body     { display: flex; flex-direction: column; gap: var(--space-40); padding: var(--space-40); }
   .rep__sec      { display: flex; flex-direction: column; gap: var(--space-16); }
-  .rep__h        { margin: 0; padding-bottom: var(--space-8); font: var(--type-h5-strong); border-bottom: 1px solid var(--border-light); }
-  .rep__p        { margin: 0; font: var(--type-body-m); color: var(--text-primary); }
-  .rep__note     { margin: 0; font: var(--type-body-xs); color: var(--text-secondary); }
+  .rep__h        { margin: 0; padding-bottom: var(--space-8); font: var(--type-h5-strong-smb); border-bottom: 1px solid var(--border-light); }
+  .rep__p        { margin: 0; font: var(--type-body-m-reg); color: var(--text-primary); }
+  .rep__note     { margin: 0; font: var(--type-body-xs-reg); color: var(--text-secondary); }
 
   /* Графики: карточки в две колонки */
   .rep__charts   { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
@@ -52,25 +52,25 @@
   .rep__opp      { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-16); background: var(--bg-page); border: 1px solid var(--border-light); border-radius: var(--radius-l); }
   .rep__opp--top { background: color-mix(in srgb, var(--primary) 6%, var(--bg-tile)); border-color: var(--primary); }
   .rep__opp-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6); }
-  .rep__opp-title { margin: 0; font: var(--type-body-m-strong); }
-  .rep__opp-text { margin: 0; font: var(--type-body-s); color: var(--text-secondary); }
+  .rep__opp-title { margin: 0; font: var(--type-body-m-strong-smb); }
+  .rep__opp-text { margin: 0; font: var(--type-body-s-reg); color: var(--text-secondary); }
 
   /* Инсайты */
   .rep__insights { display: flex; flex-direction: column; gap: var(--space-12); margin: 0; padding: 0; list-style: none; counter-reset: ins; }
   .rep__insight  { display: flex; gap: var(--space-12); counter-increment: ins; }
-  .rep__insight::before { content: counter(ins); flex: none; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; font: var(--type-body-s-strong); color: var(--primary-dark); background: color-mix(in srgb, var(--primary) 12%, var(--bg-tile)); border-radius: var(--radius-full); }
-  .rep__insight p { margin: 0; font: var(--type-body-m); }
+  .rep__insight::before { content: counter(ins); flex: none; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; font: var(--type-body-s-strong-smb); color: var(--primary-dark); background: color-mix(in srgb, var(--primary) 12%, var(--bg-tile)); border-radius: var(--radius-full); }
+  .rep__insight p { margin: 0; font: var(--type-body-m-reg); }
 
   /* Риски */
   .rep__risks    { display: flex; flex-direction: column; border: 1px solid var(--border-light); border-radius: var(--radius-l); overflow: hidden; }
   .rep__risk     { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-16); padding: var(--space-16); }
   .rep__risk + .rep__risk { border-top: 1px solid var(--border-light); }
-  .rep__risk-name { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6); font: var(--type-body-m-strong); }
-  .rep__risk-text { margin: 0; font: var(--type-body-s); color: var(--text-primary); }
+  .rep__risk-name { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6); font: var(--type-body-m-strong-smb); }
+  .rep__risk-text { margin: 0; font: var(--type-body-s-reg); color: var(--text-primary); }
 
   /* Позиция на встрече */
   .rep__call     { display: flex; flex-direction: column; gap: var(--space-6); padding: var(--space-16) var(--space-20); background: color-mix(in srgb, var(--primary) 6%, var(--bg-tile)); border-left: 3px solid var(--primary); border-radius: 0 var(--radius-m) var(--radius-m) 0; }
-  .rep__call-title { margin: 0; font: var(--type-body-m-strong); color: var(--primary-dark); }
+  .rep__call-title { margin: 0; font: var(--type-body-m-strong-smb); color: var(--primary-dark); }
 
   /* ── «Доработать в чате» ──────────────────────────────────────────────────
      Работает, когда материал открыт в панели просмотра экрана «Новый отчёт»:

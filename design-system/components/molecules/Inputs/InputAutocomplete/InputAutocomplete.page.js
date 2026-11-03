@@ -215,10 +215,10 @@
     const gl = document.getElementById('var-list');
     if (gl) {
       const wrapText = document.createElement('div'); wrapText.style.flex = '1 1 240px';
-      wrapText.appendChild(Object.assign(document.createElement('span'), { className: 'th', textContent: 'Список · текст (одиночный)', style: 'display:block;margin-bottom:12px;font:var(--type-body-s-strong);color:var(--text-secondary);' }));
+      wrapText.appendChild(Object.assign(document.createElement('span'), { className: 'th', textContent: 'Список · текст (одиночный)', style: 'display:block;margin-bottom:12px;font:var(--type-body-s-strong-smb);color:var(--text-secondary);' }));
       wrapText.appendChild(makeList(CURRENCIES, { selected: ['usd'], query: 'Дол' }));
       const wrapCb = document.createElement('div'); wrapCb.style.flex = '1 1 240px';
-      wrapCb.appendChild(Object.assign(document.createElement('span'), { className: 'th', textContent: 'Список · чекбоксы (множественный)', style: 'display:block;margin-bottom:12px;font:var(--type-body-s-strong);color:var(--text-secondary);' }));
+      wrapCb.appendChild(Object.assign(document.createElement('span'), { className: 'th', textContent: 'Список · чекбоксы (множественный)', style: 'display:block;margin-bottom:12px;font:var(--type-body-s-strong-smb);color:var(--text-secondary);' }));
       wrapCb.appendChild(makeList(CURRENCIES, { multiple: true, selected: ['usd', 'eur'] }));
       gl.appendChild(wrapText); gl.appendChild(wrapCb);
     }
@@ -343,11 +343,11 @@
     const tb = document.querySelector('#typo-table tbody');
     if (!tb) return;
     [
-      ['Ввод / сводка · M', 'Value 1, +4', '--type-body-m'],
-      ['Ввод / сводка · S', 'Value 1, +4', '--type-body-s'],
-      ['Чип в поле · M → S', 'Value 1', '--type-body-s'],
-      ['Опция списка', 'Доллар США', '--type-body-m'],
-      ['Helper опции / группа', 'USD · 840', '--type-body-xs'],
+      ['Ввод / сводка · M', 'Value 1, +4', '--type-body-m-reg'],
+      ['Ввод / сводка · S', 'Value 1, +4', '--type-body-s-reg'],
+      ['Чип в поле · M → S', 'Value 1', '--type-body-s-reg'],
+      ['Опция списка', 'Доллар США', '--type-body-m-reg'],
+      ['Helper опции / группа', 'USD · 840', '--type-body-xs-reg'],
     ].forEach(([part, sample, token]) => {
       const tr = document.createElement('tr');
       const f = getComputedStyle(document.documentElement).getPropertyValue(token).trim();

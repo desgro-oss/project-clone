@@ -1,9 +1,10 @@
 ---
 component: Avatar
 title: "Avatar"
-version: "1.005"
-updated: "05.09.2026"
+version: "1.006"
+updated: "30.10.2026"
 page: components/atoms/Avatar/Avatar.html
+runtime: components/atoms/Avatar/Avatar.js (автоокраска по data-av-tones, opt-in)
 css: components/atoms/Avatar/Avatar.css
 deps: [badge]
 status: auto
@@ -20,10 +21,14 @@ status: auto
 - Счётчик-бейдж (`.av-stack > .badge`, не dot) — только у размеров L/XL; на M/S не размещается.
 - Аватар без фото декоративен (роль несёт подписанный рядом текст), а не смысловой контент сам по себе.
 - В Avatar Group левый аватар перекрывает правый (порядок в DOM = порядок наложения); разделяющее кольцо — `box-shadow`, не бордер.
+- Цвет по умолчанию один на все аватарки — нейтральная подложка. Разноцветность включается только решением при проектировании модуля: явный `.av--<тон>` или `data-av-tones` на предке. Без этого рантайм ничего не красит.
+- Автоокраска детерминирована: тон = хеш (FNV-1a) от `data-av-seed`, без него — от текста инициалов, по модулю списка тонов автоокраски. Один объект — всегда один цвет.
+- Тональный фон `--st-<рампа>-light` полупрозрачный и кладётся поверх `--bg-tile`: аватар непрозрачен в группе и на подсвеченной строке.
 - `.av--disabled` гасит цветом и блокирует клики одновременно (`opacity`+`grayscale`+`pointer-events:none`).
 
 ## Диагностика
 - «Инициалы вылезают за круг» → `.av__text` должен обрезаться эллипсисом в фикс. боксе, не растягивать шрифт
+- «Под `data-av-tones` все аватарки одного цвета» → нет `data-av-seed`, и у всех одинаковые инициалы, или не подключён `ds.js` (рантайм `Avatar.js`) · «Аватарка в цветном модуле осталась нейтральной» → у неё фото или иконка, явный тон, или ближайший предок — `data-av-tones="off"`
 - «Счётчик-бейдж не виден на M/S аватаре» → по спеке не поддерживается — заменить на dot либо увеличить аватар до L/XL
 
 ## Ключевые правила (из разделов страницы)
@@ -41,6 +46,7 @@ status: auto
 - **Доступность** — Сам по себе аватар — визуальный, декоративный элемент. Доступность определяется контекстом использования.
 - **Типографика** — Инициалы набираются гарнитурой SB Sans Text начертанием Semibold. Кегль пропорционален размеру аватара (около ⅓ стороны). Используются 1–2 заглавные буквы.
 - **Цвета** — Аватар по умолчанию использует нейтральную «болотную» подложку. Для сущностей доступен акцентный тон. Индикаторы статуса наследуют семантические токены из Badge.
+- **Цвета · Разноцветные аватарки** — По умолчанию все аватарки одного цвета. Модуль, спроектированный «разноцветным», даёт аватаркам тона палитры статусов — те же рампы, что у Chip: `.av--green / --lblue / --orange / --red / --dpurple / --grey / --primary`. Фон — `--st-<рампа>-light` поверх `--bg-tile`, инициалы и иконка — `--st-<рампа>-dark`. Автоматически — `data-av-tones` на предке (обычно `<body>` экрана): каждая аватарка с инициалами получает тон по `data-av-seed` (id или название сущности), без него — по тексту инициалов. Автоокраска берёт green, lblue, orange, red, dpurple, primary; серый — только явно. Фото, иконка, явный тон и область `data-av-tones="off"` не перекрашиваются.
 
 ## Для разработчиков (выжимка)
 
@@ -75,6 +81,15 @@ status: auto
   <span class="av-group__more" aria-hidden="true">+3</span>
 </span>
 
+<!-- явный тон палитры статусов -->
+<span class="av av--circular av--m av--lblue"><span class="av__text">ИБ</span></span>
+
+<!-- разноцветный модуль: автоокраска на всём экране, тон — по id сущности -->
+<body data-av-tones>
+  …
+  <span class="av av--circular av--m" data-av-seed="fund-1042"><span class="av__text">ГП</span></span>
+</body>
+
 <!-- интерактивный аватар-ссылка на профиль -->
 <button type="button" class="av av--circular av--l av--button" aria-label="Открыть профиль Игоря Белова">…</button>
 ```
@@ -100,6 +115,15 @@ status: auto
 //    Counter — правый верхний угол (top:0/right:0, только L/XL); Dot — правый нижний угол (right:0/bottom:0) описанного квадрата
 
 // 5. Disabled: класс .av--disabled (opacity .5 + grayscale + pointer-events: none)
+
+// 6. Разноцветные аватарки (рантайм Avatar.js, opt-in):
+//    область = ближайший предок [data-av-tones]; нет её или она 'off' → тон не ставится
+//    пропустить: есть явный .av--<тон>/.av--accent, есть фото (.av__img / image-slot), нет .av__text
+//    seed = data-av-seed || текст инициалов; tone = TONES[fnv1a(seed.trim().toLowerCase()) % TONES.length]
+//    TONES = ['green','lblue','orange','red','dpurple','primary'] — порядок часть контракта
+//    поставить .av--<tone> и data-av-auto=<tone> (по нему снимается при смене seed или выключении)
+//    перерисовки ловит MutationObserver (childList / текст / data-av-seed / data-av-tones), один проход в микрозадаче
+//    API: DSAvatar.tone(seed) → имя тона · DSAvatar.paint(av) · DSAvatar.refresh(root)
 ```
 
 ### Avatar.types.ts
@@ -114,7 +138,8 @@ interface AvatarProps {
   name?: string;                 // источник для авто-инициалов и aria-label
   src?: string;                  // URL фото; при отсутствии/ошибке — фолбэк на инициалы/иконку
   icon?: React.ReactNode;          // переопределяет глиф фолбэка (иначе — нейтральный user)
-  tone?: 'accent';                // акцентная подложка для Entity
+  tone?: 'accent' | 'green' | 'lblue' | 'orange' | 'red' | 'dpurple' | 'grey' | 'primary'; // явный тон
+  seed?: string;                 // data-av-seed: id/название сущности для автоокраски
   badge?: { type: 'counter' | 'dot'; value?: number; tone?: string };
   interactive?: boolean;         // рендерится как <button>, требует aria-label
   disabled?: boolean;
@@ -138,6 +163,10 @@ interface AvatarGroupProps {
 | .av--circular / --rounded | span | Форма |
 | .av--xl / --l / --m / --s | span | Размер |
 | .av--accent | span | Акцентная подложка для Entity/иконки |
+| .av--green / --lblue / --orange / --red / --dpurple / --grey / --primary | span | Тон палитры статусов: фон `--st-<рампа>-light` поверх `--bg-tile`, текст и иконка `--st-<рампа>-dark` |
+| [data-av-tones] | предок (обычно body) | Включает автоокраску аватарок с инициалами внутри; `="off"` — выключает для вложенной области |
+| [data-av-seed] | .av | Ключ тона при автоокраске — id или название сущности; без него — текст инициалов |
+| [data-av-auto] | .av | Ставит рантайм: какой тон выбран автоматически. Руками не ставится |
 | .av--button | button | Интерактивный аватар: hover/focus-visible, требует aria-label |
 | .av--disabled | span | pointer-events:none, opacity .5, grayscale |
 | .av__text / __icon / __img | span/img | Слоты содержимого по типу |

@@ -675,7 +675,7 @@ function drawPie(inst, series, W, H) {
   });
   svg.appendChild(g);
   if (cfg.centerLabel) {
-    svg.appendChild(s('text', { x: cx, y: cy - 2, 'text-anchor': 'middle', class: 'chart__vlabel', style: 'font:var(--type-body-m-strong);fill:var(--text-primary)' }, cfg.centerLabel));
+    svg.appendChild(s('text', { x: cx, y: cy - 2, 'text-anchor': 'middle', class: 'chart__vlabel', style: 'font:var(--type-body-m-strong-smb);fill:var(--text-primary)' }, cfg.centerLabel));
     if (cfg.centerSub) svg.appendChild(s('text', { x: cx, y: cy + 15, 'text-anchor': 'middle', class: 'chart__tick' }, cfg.centerSub));
   }
   if (inst.legend) {

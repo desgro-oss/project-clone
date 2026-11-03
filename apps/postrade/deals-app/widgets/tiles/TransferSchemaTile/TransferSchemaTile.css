@@ -1,0 +1,33 @@
+/* Локальный компонент «Процентная схема ЕТС» (карточка схемы).
+   Только внутренняя раскладка полей. Цвета, шрифты, отступы, радиусы — токены ДС и
+   классы Tile / ReadOnlyField / IconButton / ContextMenu; своих значений здесь нет.
+   Режим прав на вид не влияет: меню ⋮ либо есть в разметке, либо нет
+   (TransferSchemaTile.js), стилем оно не скрывается. */
+
+/* Перестроение — по СВОЕЙ ширине, а не по ширине окна: карточка стоит на двенадцати
+   колонках страницы и в узком окне витрины. */
+.lc-transfer-schema-tile { container-type: inline-size; }
+
+/* Три поля: «Рабочих дней до применения БИ», «Ставка», «Комментарий». Колонки сжимаемые
+   (minmax(0,…)): длинный комментарий усекается одной строкой с тултипом (ReadOnlyField),
+   подпись переносится (ds-label--wrap). Пропорции — как на макете: две узкие колонки и
+   широкий комментарий; на средней ширине узкие колонки шире, чтобы подпись помещалась
+   в две строки. */
+.lc-transfer-schema-tile__grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 4fr);
+}
+
+@container (min-width: 1500px) {
+  .lc-transfer-schema-tile__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 9.5fr); }
+}
+@container (max-width: 960px) {
+  .lc-transfer-schema-tile__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr); }
+}
+/* Две колонки: «Комментарий» уходит отдельной строкой на всю ширину карточки */
+@container (max-width: 560px) {
+  .lc-transfer-schema-tile__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lc-transfer-schema-tile__comment { grid-column: 1 / -1; }
+}
+@container (max-width: 320px) {
+  .lc-transfer-schema-tile__grid { grid-template-columns: minmax(0, 1fr); }
+}

@@ -52,12 +52,14 @@
   PAGES.board = 'HomeBoard.preview.html';
   PAGES.leadsNew = 'LeadsNew.preview.html';
   PAGES.lead = 'Lead.preview.html';
+  PAGES.news = 'NewsPage.preview.html';
+  PAGES.events = 'EventsPage.preview.html';
   var MODE_KEY = 'ibp-redesign-v2-mode';
   var requestedMode = new URLSearchParams(window.location.search).get('mode');
   var currentMode = 'after';
   try { currentMode = requestedMode || sessionStorage.getItem(MODE_KEY) || 'after'; } catch (e) { currentMode = requestedMode || 'after'; }
   if (window.location.pathname.endsWith('/HomePage.html') && !requestedMode) currentMode = 'before';
-  if (['HomeBoard', 'LeadsNew', 'Lead'].some(function (name) { return window.location.pathname.endsWith('/' + name + '.html') || window.location.pathname.endsWith('/' + name + '.preview.html'); }) && !requestedMode) currentMode = 'after';
+  if (['HomeBoard', 'LeadsNew', 'Lead', 'NewsPage', 'EventsPage'].some(function (name) { return window.location.pathname.endsWith('/' + name + '.html') || window.location.pathname.endsWith('/' + name + '.preview.html'); }) && !requestedMode) currentMode = 'after';
   try { sessionStorage.setItem(MODE_KEY, currentMode); } catch (e) { /* режим в памяти */ }
   PAGES.home = currentMode === 'before' ? 'HomePage.html' : PAGES.board;
 

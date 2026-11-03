@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Окно «Валюта транша» — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Окно «Валюта транша»">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Связанный артефакт тайла «Валюта транша»: окно ручной правки.
+     Фрагмент вшивается сборщиком отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Два поля: «Валюта» — список (InputAutocomplete + DropdownList, значение
+     только из списка) и «Сумма лимита» — поле суммы. Постфикса с валютой у
+     суммы НЕТ (решение человека 02.11.2026: «только сама сумма»), хотя у окна
+     «Баланс и валюта» страницы НКЛ он есть. Обычно валюта транша совпадает с
+     валютой НКЛ, но не всегда — поле заполняется вручную.
+
+     Значения в разметке — пример. Окно заполняет и сохраняет
+     TrancheLoanLimitsModal.js (PostModalTrancheLoanLimits): на открытии читает
+     текущие значения через get(), «Сохранить» отдаёт их в save() и закрывает
+     окно. Крестик и Esc закрывают без сохранения; клик мимо окна не закрывает —
+     защиту включает сам Modal.js, потому что в окне поля ввода.
+
+     Ширина modal--w3 — три колонки (решение человека 02.11.2026). Своего CSS
+     у окна нет: раскладка — компоненты ДС. -->
+<div id="tl-scrim" hidden class="modal-scrim modal-scrim--inline" data-widget="TrancheLoanLimitsModal" data-widget-group="modals" data-widget-src="../../../postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.html">
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="tl-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="tl-title">Валюта транша</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tl-currency"><span class="ds-label__text">Валюта</span></label>
+        <div class="inp__box">
+          <div class="inp__field" data-ddl="tl-currency-list">
+            <input class="inp__control" id="tl-currency" name="currencyCode" autocomplete="off" value="RUB">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+        </div>
+        <div id="tl-currency-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <!-- Сумма: число с разрядами и запятой. Постфикса валюты нет по решению
+           человека 02.11.2026 — валюту видно в поле выше. -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tl-limit"><span class="ds-label__text">Сумма лимита</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="tl-limit" name="totalLimitAmount" inputmode="decimal" autocomplete="off" value="1&nbsp;000&nbsp;000,00">
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-tl-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>0.001</b></span><span>Обновлено: <b>02.11.2026</b></span><span>Категория: <b>Транш</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
+  <h1>Окно «Валюта транша»</h1>
+  <p class="lead">Вручную задать валюту и сумму лимита транша</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/TrancheLoanLimitsModal">apps/postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">new</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница транша — из тайла «Валюта транша»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Tranche.preview.html">apps/postrade/deals-app/pages/Tranche.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="TrancheLoanLimitsTile.doc.html">Валюта транша (TrancheLoanLimitsTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Карандаш в шапке тайла «Валюта транша»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="TrancheLoanLimitsTile.doc.html">Валюта транша (TrancheLoanLimitsTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Решение человека 02.11.2026 (задача docs/tasks/RE0049-tranche-page.md)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">0.001 · обновлено 02.11.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.001</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Окно ручной правки валюты транша и суммы лимита. Открывается карандашом в шапке тайла «Валюта транша». Ширина — три колонки (<code class="tok">modal--w3</code>, решение человека 02.11.2026), два поля: «Валюта» — выбор из списка и «Сумма лимита» — поле суммы. <b>Постфикс с валютой у суммы не отображается</b> — в отличие от окна «Баланс и валюта» страницы <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%BD%D0%BA%D0%BB">НКЛ</a>, где он есть (решение человека 02.11.2026).</p>
+<p class="desc">Обычно валюта транша совпадает с валютой НКЛ, но не всегда — поэтому поле заполняется вручную, а не подставляется из договора.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Бизнес-смысл">
+<h2>Бизнес-смысл</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зачем существует</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дать финансисту ДИД ручную правку валюты и лимита транша, когда они отличаются от родительского <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%BD%D0%BA%D0%BB">НКЛ</a> или задаются отдельно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто заполняет и когда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД, вручную; на каком этапе жизни транша — не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто пользуется результатом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл «Валюта транша» на странице транша; другие потребители — не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бизнес-правила</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Валюта выбирается из справочника, сумма — число с двумя знаками. Менять ли значения у выданного транша — не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Источники: <code class="tok">docs/tasks/RE0049-tranche-page.md</code> («Решения человека» 02.11.2026)</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Modal (modal--w3, заголовок «Валюта транша», крестик)
+├── тело
+│   ├── «Валюта» — InputText + DropdownList (значение только из списка)
+│   └── «Сумма лимита» — InputText (число), без постфикса валюты
+└── подвал: «Сохранить» справа</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,2.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Modal/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal-scrim</code>, <code class="tok">modal modal--w3</code>, <code class="tok">modal__head</code> / <code class="tok">__body</code> / <code class="tok">__foot</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAutocomplete</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поле «Валюта»: <code class="tok">inp inp--m inp--fullwidth</code>, <code class="tok">inp__act--chev</code>, значение — только из списка</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/InputText/InputText.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поле «Сумма лимита»: <code class="tok">inp inp--m inp--fullwidth</code>, <code class="tok">inp__control</code>, <code class="tok">inputmode=&quot;decimal&quot;</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">DropdownList</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/DropdownList/DropdownList.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-ddl</code>, <code class="tok">ddl ddl--floating ddl--scroll</code>, <code class="tok">ddl__item</code> — список валют</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/IconButton/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ibtn--neutral ibtn--l</code>, иконка <code class="tok">close</code>, <code class="tok">data-modal-close</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Buttons/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить» <code class="tok">btn--accent btn--m</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputText/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/components/molecules/DropdownList/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.html">TrancheLoanLimitsModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.js">TrancheLoanLimitsModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.md">TrancheLoanLimitsModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,2.4fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,2.4fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Валюта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Валюта транша</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Код ISO 4217 из списка (RUB, USD, EUR, JPY); ручной ввод вне списка откатывается</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_TRANCHE.currencyCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,2.4fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сумма лимита</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Лимит транша</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Число, 2 знака; «1 000 000,00»; постфикса валюты нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_TRANCHE.totalLimitAmount</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да (прототип)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Правка разрешена, только если страница её разрешает (<code class="tok">editable</code> в <code class="tok">bind</code>); окно из тайла в режиме <code class="tok">view</code> не открывается. Кто правит в продукте — не решено (02.11.2026).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля заполнены текущими значениями транша</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо: окно короткое, данные — из страницы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля активны, «Сохранить» работает</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.5fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.5fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ввод суммы вне допустимых символов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">В поле вводят буквы или вторую запятую</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Недопустимые символы не печатаются; при уходе с поля сумма приводится к «1 000 000,00»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.5fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Валюта вне списка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">В поле валюты набран текст, не совпавший с опцией</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">При уходе с поля значение откатывается к выбранному</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: не решено (02.11.2026).</li><li>Обязательные поля внутри: не решено (02.11.2026).</li><li>Что показывает, когда обязательное не заполнено: сохраняется как есть, в том числе пустое (валидации нет).</li><li>Что отдаёт наружу (признак для экрана или формы): не решено (02.11.2026).</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поле ввода — одна строка: длинное число прокручивается внутри поля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Не встречается: полей два</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно <code class="tok">modal--w3</code> на узком экране занимает доступную ширину (правило Modal ДС)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Не встречается</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,0.8fr) minmax(0,1.6fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,0.8fr) minmax(0,1.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">закрытие окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Значения отдаются в <code class="tok">save()</code>; страница перерисовывает тайл</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,0.8fr) minmax(0,1.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик, Esc</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">закрытие окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Изменения не сохраняются</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Клик мимо окна окно не закрывает: защиту включает Modal.js, потому что в окне поля ввода. Кнопка «Сохранить» без <code class="tok">data-modal-close</code> — окно закрывает скрипт.</p>
+<h3 class="kit-md__h3">Правила окна</h3>
+<ul class="bullets"><li>При каждом открытии окно заполняется заново текущими значениями: несохранённый ввод прошлого открытия не нужен.</li><li>Значения окно ставит кодом, поэтому после заполнения зовёт <code class="tok">DSInput.syncAll</code>/<code class="tok">sync</code> — крестик очистки живёт по значению.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Сохранение валюты и суммы лимита транша. Имена методов и хуков API не придумываются: их выбирает разработка (контракт — <code class="tok">apps/postrade/deals-app/data/API.md</code>).</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,2.1fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,2.1fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/tranche-data.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_TRANCHE</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">TrancheRsDto</code>: <code class="tok">currencyCode</code>, <code class="tok">totalLimitAmount</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (07.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Окно работает через переданные страницей <code class="tok">get</code>/<code class="tok">save</code>; собственного стора у него нет. На витрине значения подставляет сценарий демо (<code class="tok">use</code>).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code> скрима</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">tl-scrim</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">скрим окна; тайл открывает его атрибутом <code class="tok">data-modal=&quot;tl-scrim&quot;</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">класс</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal-scrim</code>, <code class="tok">modal modal--w3</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ширина — три колонки</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,2.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поведение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.js</code> (<code class="tok">PostModalTrancheLoanLimits</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,1.2fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,1.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Постфикс валюты у поля суммы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Отсутствует</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Решение человека 02.11.2026: «постфикс с валютой у суммы не отображается, только сама сумма». В окне «Баланс и валюта» НКЛ постфикс есть</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li><b>Пара во фронтенде.</b> Пары у окна нет: <code class="tok">frontend: new</code> (записано в шапке паспорта). Брать ли существующее окно фронтенда или заводить новое — не решено (02.11.2026).</li><li><b>Обязательность полей.</b> Валидации нет: сохраняется и пустое. Обязательны ли валюта и сумма — не решено (02.11.2026).</li><li><b>Хранение.</b> Правка живёт в сессии страницы (отдельного стора транша нет); писать ли в <code class="tok">ProductTreeStore</code> или заводить стор — не решено (02.11.2026).</li><li><b>Справочник валют.</b> RUB, USD, EUR, JPY — как в окне НКЛ; полный справочник не решён (02.11.2026).</li><li><b>Правка выданного транша.</b> Разрешена ли правка валюты и лимита после выдачи — не решено (02.11.2026).</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">TrancheLoanLimitsModal.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Tranche.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-loan-agreements.js"></script>
+<script src="../../../postrade/deals-app/data/loan-agreement-store.js"></script>
+<script src="../../../postrade/deals-app/data/tranche-context.js"></script>
+<script src="../../../postrade/deals-app/data/tranche-data.js"></script>
+<script src="../../../postrade/deals-app/data/loan-contract-fields.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/TrancheNrlSummaryTile/TrancheNrlSummaryTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/TransferRateTile/TransferRateTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/LoanExternalDataTile/LoanExternalDataTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/LoanExternalDataModal/LoanExternalDataModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/InitialAndAdditionalAgreementsTile/InitialAndAdditionalAgreementsTile.js"></script>
+<script src="TrancheLoanLimitsModal.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"TrancheLoanLimitsModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":null,"scenario":true,"fixtures":{"_":"Демо-данные окна «Валюта транша»: view — значения транша при открытии (валюту и сумму страница отдаёт через get()). Окно на витрине работает без стора: PostModalTrancheLoanLimits.use(view) подставляет значения, «Сохранить» закрывает окно без записи. Остальные ключи не нужны: состояний у окна, кроме «данные есть», не проработано.","view":{"currencyCode":"RUB","totalLimitAmount":1000000}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Связанный артефакт тайла «Валюта транша»: окно ручной правки.
+     Фрагмент вшивается сборщиком отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Два поля: «Валюта» — список (InputAutocomplete + DropdownList, значение
+     только из списка) и «Сумма лимита» — поле суммы. Постфикса с валютой у
+     суммы НЕТ (решение человека 02.11.2026: «только сама сумма»), хотя у окна
+     «Баланс и валюта» страницы НКЛ он есть. Обычно валюта транша совпадает с
+     валютой НКЛ, но не всегда — поле заполняется вручную.
+
+     Значения в разметке — пример. Окно заполняет и сохраняет
+     TrancheLoanLimitsModal.js (PostModalTrancheLoanLimits): на открытии читает
+     текущие значения через get(), «Сохранить» отдаёт их в save() и закрывает
+     окно. Крестик и Esc закрывают без сохранения; клик мимо окна не закрывает —
+     защиту включает сам Modal.js, потому что в окне поля ввода.
+
+     Ширина modal--w3 — три колонки (решение человека 02.11.2026). Своего CSS
+     у окна нет: раскладка — компоненты ДС. -->
+<div class="modal-scrim" id="tl-scrim" hidden>
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="tl-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="tl-title">Валюта транша</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tl-currency"><span class="ds-label__text">Валюта</span></label>
+        <div class="inp__box">
+          <div class="inp__field" data-ddl="tl-currency-list">
+            <input class="inp__control" id="tl-currency" name="currencyCode" autocomplete="off" value="RUB">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+        </div>
+        <div id="tl-currency-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <!-- Сумма: число с разрядами и запятой. Постфикса валюты нет по решению
+           человека 02.11.2026 — валюту видно в поле выше. -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tl-limit"><span class="ds-label__text">Сумма лимита</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="tl-limit" name="totalLimitAmount" inputmode="decimal" autocomplete="off" value="1&nbsp;000&nbsp;000,00">
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-tl-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* У компонента нет своего CSS: вид дают стили ДС. */
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   TrancheLoanLimitsModal.js — поведение окна «Валюта транша».
+
+   Делает то, чего нет в рантаймах ДС, и только это:
+   1) заполняет окно текущими значениями при каждом открытии: список валюты и
+      сумма;
+   2) держит список «Валюта» (InputAutocomplete + DropdownList): значение —
+      только из списка; набранный текст, не совпавший с опцией, при уходе с
+      поля откатывается к выбранному; крестик снимает значение;
+   3) держит поле суммы: набрать можно цифры, пробелы и одну запятую; при уходе
+      с поля сумма приводится к виду «1 000 000,00». Постфикса валюты нет
+      (решение человека 02.11.2026);
+   4) «Сохранить» отдаёт значения в save() и закрывает окно. Стор страницы
+      решает, писать ли их (погашенный транш правку не принимает); стор не
+      передан (витрина) — сохранение разрешено.
+   Валидации обязательности нет: на макете её нет, обязательность полей не
+   решена (паспорт, «Открытые вопросы»). Сохраняется то, что в окне.
+
+   Открытие, фокус, Esc, крестик, защита от клика мимо окна, крестик очистки
+   поля и шеврон списка делают рантаймы ДС.
+
+   API:
+     PostModalTrancheLoanLimits.bind(scrim?, { get, save, editable }) → api
+       scrim — скрим окна (по умолчанию #tl-scrim); повторный bind возвращает
+               прежний api
+       get()      → { currencyCode, totalLimitAmount }|null
+       save(value) — принять значения
+       editable() → boolean, правка разрешена (по умолчанию — да)
+       api.fill()  — заполнить окно заново из get()
+       api.use(data) — подставить значения без открытия (витрина)
+       api.read()  → { currencyCode, totalLimitAmount } — что сейчас в окне
+       api.save()  — отдать значения в save() и закрыть окно
+     PostModalTrancheLoanLimits.open() — открыть окно (рантайм ДС)
+     PostModalTrancheLoanLimits.use(data) — заполнить без открытия (витрина)
+   ============================================================ */
+(function () {
+  'use strict';
+
+  /* Неразрывный пробел — escape-последовательностью, а не литералом: литерал
+     невидим и легко превращается в обычный пробел при правке (§8). */
+  var NBSP = '\u00a0';
+
+  /* Валюты — коды ISO, те же, что в окне «Баланс и валюта» страницы НКЛ
+     (BalanceAndCurrencyModal.js). Полный справочник валют не решён (паспорт,
+     «Открытые вопросы»). */
+  var CURRENCY_CODES = ['RUB', 'USD', 'EUR', 'JPY'];
+
+  function has(v) { return v !== null && v !== undefined && v !== ''; }
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function optionHTML(o, selected) {
+    return '<button type="button" class="ddl__item" role="option" aria-selected="' + (selected ? 'true' : 'false')
+      + '" data-code="' + esc(o.code) + '"><span class="ddl__item-body"><span class="ddl__item-label">'
+      + esc(o.label) + '</span></span></button>';
+  }
+
+  /* Список из InputAutocomplete + DropdownList: значение — код, в поле — подпись.
+     Код, которого нет в справочнике, показывается как есть. */
+  function currencySelect(scrim) {
+    var control = scrim.querySelector('#tl-currency');
+    var list = scrim.querySelector('#tl-currency-list');
+    var field = scrim.querySelector('[data-ddl="tl-currency-list"]');
+    var cur = null;
+
+    function options() {
+      return CURRENCY_CODES.map(function (code) { return { code: code, label: code }; });
+    }
+    function labelOf(code) {
+      var o = options().filter(function (x) { return x.code === code; })[0];
+      return o ? o.label : (has(code) ? String(code) : '');
+    }
+    function paint() {
+      if (list) list.innerHTML = options().map(function (o) { return optionHTML(o, o.code === cur); }).join('');
+    }
+    function set(code, silent) {
+      cur = has(code) ? String(code) : null;
+      if (control) control.value = labelOf(cur);
+      paint();
+      if (window.DSInput) window.DSInput.syncAll(scrim);
+    }
+    /* Набранный руками текст: совпал с опцией — выбор; пусто — значение снято;
+       иначе — откат к выбранному. */
+    function commitTyped() {
+      if (!control) return;
+      var s = String(control.value || '').trim().toLowerCase();
+      if (!s) { if (cur) set(null); return; }
+      var hit = options().filter(function (o) { return o.label.toLowerCase() === s; })[0];
+      if (hit) { if (hit.code !== cur) set(hit.code); else set(cur, true); return; }
+      set(cur, true);
+    }
+
+    paint();
+    if (field && list && window.DSDropdownList) {
+      window.DSDropdownList.bind(field, {
+        list: list,
+        onSelect: function (it) { set(it.getAttribute('data-code')); }
+      });
+    }
+    if (control) {
+      control.addEventListener('change', commitTyped);
+      var inp = control.closest('.inp');
+      if (inp) inp.addEventListener('ds-input:clear', function () { set(null); });
+    }
+    return {
+      set: function (code) { set(code, true); },
+      get: function () { return cur; },
+      commitTyped: commitTyped
+    };
+  }
+
+  /* ── Сумма ────────────────────────────────────────────────────────── */
+
+  /* При вводе: цифры, пробелы, одна запятая (точка становится запятой). */
+  function sanitize(text) {
+    var s = String(text == null ? '' : text);
+    var out = '';
+    var sep = false;
+    for (var i = 0; i < s.length; i++) {
+      var ch = s.charAt(i);
+      if (ch >= '0' && ch <= '9') out += ch;
+      else if (ch === ' ' || ch === NBSP) { if (out.length && !sep) out += ch; }
+      else if ((ch === ',' || ch === '.') && !sep && out.length) { out += ','; sep = true; }
+    }
+    return out;
+  }
+
+  function parseAmount(text) {
+    var s = sanitize(text).replace(/[ \u00a0]/g, '').replace(',', '.');
+    if (!s) return null;
+    var n = Number(s);
+    return isFinite(n) ? n : null;
+  }
+
+  /* 1000000 → «1 000 000,00», разряды — неразрывным пробелом */
+  function formatAmount(n) {
+    if (!has(n)) return '';
+    var x = Number(n);
+    if (!isFinite(x)) return '';
+    var parts = x.toFixed(2).split('.');
+    return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP) + ',' + parts[1];
+  }
+
+  /* ── Окно ─────────────────────────────────────────────────────────── */
+
+  function bind(scrim, opts) {
+    scrim = scrim || (typeof document !== 'undefined' && document.getElementById('tl-scrim'));
+    if (!scrim) return null;
+    if (scrim.__trancheLoanLimits) return scrim.__trancheLoanLimits;
+    opts = opts || {};
+
+    var amount = scrim.querySelector('#tl-limit');
+    var currency = currencySelect(scrim);
+
+    function current() {
+      return opts.get ? (opts.get() || null) : null;
+    }
+
+    function fill() {
+      var d = current() || {};
+      currency.set(d.currencyCode);
+      if (amount) {
+        amount.value = formatAmount(d.totalLimitAmount);
+        /* крестик очистки живёт по значению — после записи скриптом его
+           состояние пересчитывает рантайм поля */
+        if (window.DSInput) window.DSInput.sync(amount.closest('.inp'));
+      }
+    }
+
+    function read() {
+      currency.commitTyped();
+      return {
+        currencyCode: currency.get(),
+        totalLimitAmount: amount ? parseAmount(amount.value) : null
+      };
+    }
+
+    function editable() {
+      return opts.editable ? opts.editable() !== false : true;
+    }
+
+    function save() {
+      var value = read();
+      if (editable() && opts.save) opts.save(value);
+      if (!scrim.classList.contains('modal-scrim--inline') && window.DSModal) window.DSModal.closeTop(true);
+    }
+
+    if (amount) {
+      amount.addEventListener('input', function () {
+        var v = sanitize(amount.value);
+        if (v !== amount.value) amount.value = v;
+      });
+      /* уход с поля: сумма приводится к виду «1 000 000,00»; нечитаемое
+         очищается */
+      amount.addEventListener('change', function () {
+        amount.value = formatAmount(parseAmount(amount.value));
+        if (window.DSInput) window.DSInput.sync(amount.closest('.inp'));
+      });
+    }
+
+    /* Окно открылось — значения заново: за время, пока оно было закрыто, они
+       могли смениться, а несохранённый ввод прошлого открытия не нужен. */
+    var wasOpen = !scrim.hidden;
+    new MutationObserver(function () {
+      var open = !scrim.hidden;
+      if (open === wasOpen) return;
+      wasOpen = open;
+      if (open) fill();
+    }).observe(scrim, { attributes: true, attributeFilter: ['hidden'] });
+
+    scrim.addEventListener('click', function (e) {
+      if (e.target.closest('[data-tl-save]')) save();
+    });
+
+    fill();
+
+    /* значения без стора и без открытия (витрина) */
+    function use(data) {
+      opts.get = function () { return data; };
+      fill();
+    }
+
+    var api = { fill: fill, read: read, save: save, use: use };
+    scrim.__trancheLoanLimits = api;
+    return api;
+  }
+
+  function open() {
+    var scrim = document.getElementById('tl-scrim');
+    if (!scrim) return;
+    bind(scrim);
+    if (window.DSModal && !scrim.classList.contains('modal-scrim--inline')) window.DSModal.open(scrim);
+  }
+
+  function use(data) {
+    var api = bind();
+    if (api) api.use(data);
+  }
+
+  window.PostModalTrancheLoanLimits = { bind: bind, open: open, use: use };
+
+  /* Самобинда нет намеренно: окну нужны get/save страницы, а она загружает этот
+     скрипт раньше, чем их передаёт. Страница зовёт bind(scrim, {...}) сама;
+     на витрине без bind в полях остаются примеры разметки. */
+})();
+</script>
+</body>
+</html>

@@ -67,7 +67,7 @@
     return at(cls, x, y, w, h, 'border-width:' + bw + ';');
   }
   function chip(cls, x, y, text) {
-    return '<div class="pp-insp__n ds-body-xs ' + cls + '" style="left:' + px(x) + 'px;top:' + px(y) + 'px">' + esc(text) + '</div>';
+    return '<div class="pp-insp__n ds-body-xs-reg ' + cls + '" style="left:' + px(x) + 'px;top:' + px(y) + 'px">' + esc(text) + '</div>';
   }
 
   /** Кольцо между внешним и внутренним прямоугольниками {l, t, r, b} — до четырёх полос; штриховка у VisBug
@@ -128,7 +128,7 @@
 
   function tag(el, cls) {
     var r = el.getBoundingClientRect();
-    return '<div class="pp-insp__tag ds-body-xs ' + cls + '" style="left:' + px(r.left) + 'px;top:' + px(r.top) + 'px">' + kindIcon(el) + '<span>' + esc(M.describe(el)) + '</span></div>';
+    return '<div class="pp-insp__tag ds-body-xs-reg ' + cls + '" style="left:' + px(r.left) + 'px;top:' + px(r.top) + 'px">' + kindIcon(el) + '<span>' + esc(M.describe(el)) + '</span></div>';
   }
 
   /** Ярлык со знаком и именем над элементом и плашка размера в две-три строки под ним: «W Fixed 320», «H Hug 48»,
@@ -136,12 +136,12 @@
   function labels(el, area, picked) {
     var b = M.box(el), r = b.rect, s = M.sizing(el), h = '', cls = picked ? '' : ' pp-insp__tag--hover';
     var flipT = r.top < 26, flipB = r.bottom > area.h - 64;
-    h += '<div class="pp-insp__tag ds-body-xs' + (flipT ? ' pp-insp__tag--in' : '') + cls + '" style="left:' + px(Math.min(Math.max(r.left, 0), Math.max(0, area.w - 120))) + 'px;top:' + px(r.top) + 'px">' + kindIcon(el) + '<span>' + esc(M.describe(el)) + '</span></div>';
+    h += '<div class="pp-insp__tag ds-body-xs-reg' + (flipT ? ' pp-insp__tag--in' : '') + cls + '" style="left:' + px(Math.min(Math.max(r.left, 0), Math.max(0, area.w - 120))) + 'px;top:' + px(r.top) + 'px">' + kindIcon(el) + '<span>' + esc(M.describe(el)) + '</span></div>';
     var rad = radiusText(b.cs);
     var txt = '<span>W</span><span>' + esc(t('insp.' + s.w)) + '</span><span>' + esc(M.fmt(b.w)) + '</span>'
       + '<span>H</span><span>' + esc(t('insp.' + s.h)) + '</span><span>' + esc(M.fmt(b.h)) + '</span>'
       + (rad ? '<span>R</span><span></span><span>' + esc(rad) + '</span>' : '');
-    h += '<div class="pp-insp__size ds-body-xs' + (flipB ? ' pp-insp__size--in' : '') + cls + '" style="left:' + px((r.left + r.right) / 2) + 'px;top:' + px(r.bottom) + 'px">' + txt + '</div>';
+    h += '<div class="pp-insp__size ds-body-xs-reg' + (flipB ? ' pp-insp__size--in' : '') + cls + '" style="left:' + px((r.left + r.right) / 2) + 'px;top:' + px(r.bottom) + 'px">' + txt + '</div>';
     return h;
   }
 

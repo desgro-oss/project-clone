@@ -265,5 +265,5 @@ window.PRODUCT_DETAIL_LABELS = {
   limitAmount: 'Сумма лимита',
   didEntryAt: 'Дата входа ДИД',
   didExitAt: 'Дата выхода ДИД',
-  repaidAt: 'Фактическая дата погашения'
+  repaidAt: 'Дата фактического погашения'
 };

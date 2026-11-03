@@ -1,0 +1,14 @@
+<!-- Локальный компонент «Меню фонда» (FundActionsMenu) — фонд из ЕПК (partyId есть).
+     Пара во фронтенде — shared/hooks/useFundActions.tsx (пункты addAsset, editFund,
+     deleteFund, openClientPage). Одно меню на все кнопки «⋮» строк FundsTable с
+     data-menu="fundActionsMenu" (ContextMenu ДС: меню помнит открывший триггер,
+     у триггера — data-fund-id). Вариант «фонд не из ЕПК» — FundActionsMenuCustom.html
+     в этой же папке, паспорт общий. Страница вшивает меню меткой в конце body.
+     «Редактировать» и «Удалить фонд» открывают окна фонда (сценарий страницы);
+     «Добавить актив» не делается (решение 30.10.2026); страницы клиента нет. -->
+<div id="fundActionsMenu" class="menu menu--floating" role="menu" aria-label="Действия с фондом" hidden>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="addAsset"><span class="menu__item-label">Добавить актив</span></button>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="editFund"><span class="menu__item-label">Редактировать</span></button>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="deleteFund"><span class="menu__item-label">Удалить фонд</span></button>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="openClientPage"><span class="menu__item-label">Перейти на страницу клиента</span></button>
+</div>

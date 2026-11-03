@@ -1,0 +1,43 @@
+<!-- Окно «История изменения ставок» страницы «Единая трансфертная ставка» (TransferSchemas).
+     Фрагмент вшивается ассемблером меткой ds-include — скрим лежит в конце body.
+     Таблица: шапка в разметке, строки и пагинацию рисует TransferRateHistoryModal.js
+     (PostModalTransferRateHistory.open / bind). Состояние «Нет данных» — .dtable__empty под
+     шапкой (макет); пока скрипт не отдал строки, видно оно. -->
+
+<div class="modal-scrim" id="transfer-rate-history-scrim" hidden>
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="transfer-rate-history-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="transfer-rate-history-title">История изменения ставок</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="dtable dtable--fill">
+        <div class="dtable__body">
+          <div class="tbl" data-table data-trh-table>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 144px 144px minmax(96px,1fr) 8px">
+              <div class="th th--separator"></div>
+              <div class="th" aria-sort="none"><span class="th__label" data-grab>Дата начала</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="startDate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th" aria-sort="none"><span class="th__label" data-grab>Дата оконч.</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="endDate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right" aria-sort="none"><span class="th__label" data-grab>ЕТС, %</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="ratePercent" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+            <!-- строки данных рисует скрипт (по странице, 50 по умолчанию) -->
+          </div>
+          <!-- данных нет: только текст по центру тела, шапка остаётся (макет) -->
+          <div class="dtable__empty" data-trh-empty>
+            <p class="dtable__empty-title">Нет данных</p>
+          </div>
+        </div>
+        <!-- пагинация: только когда есть строки; рисует DSPagination.footer -->
+        <div class="dtable__footer" data-trh-footer hidden></div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

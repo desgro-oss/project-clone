@@ -58,7 +58,7 @@
    человека 30.09.2026, 28); уходит с первой строкой. */
 .lc-prodpick__hint {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-inactive);
 }
 .lc-prodpick__list:has(.prow) > .lc-prodpick__hint { display: none; }

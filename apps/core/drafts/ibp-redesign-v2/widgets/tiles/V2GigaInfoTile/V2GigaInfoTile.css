@@ -12,6 +12,6 @@
 .lc-giga-info[data-state="error"] .lc-giga-info__content { display: none; }
 
 .lc-giga-info__sec { display: flex; flex-direction: column; gap: var(--space-8); min-width: 0; }
-.lc-giga-info__title { font: var(--type-body-m-strong); color: var(--text-primary); margin: 0; }
+.lc-giga-info__title { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin: 0; }
 .lc-giga-info__list { display: flex; flex-direction: column; gap: var(--space-4); }
-.lc-giga-info__text { font: var(--type-body-m); color: var(--text-primary); margin: 0; }
+.lc-giga-info__text { font: var(--type-body-m-reg); color: var(--text-primary); margin: 0; }

@@ -5,7 +5,7 @@
 /* Текст сообщения — Body M, --text-secondary (ответ человека 30.09.2026, 28) */
 .lc-ptree-confirm__text {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-secondary);
 }
 

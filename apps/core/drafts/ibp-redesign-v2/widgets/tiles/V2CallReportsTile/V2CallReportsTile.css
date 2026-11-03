@@ -12,6 +12,6 @@
 .lc-call-reports[data-state="error"] .lc-call-reports__content { display: none; }
 
 .lc-call-reports__note,
-.lc-call-reports__count { font: var(--type-body-m); color: var(--text-primary); margin: 0; }
+.lc-call-reports__count { font: var(--type-body-m-reg); color: var(--text-primary); margin: 0; }
 .lc-call-reports__note { color: var(--text-secondary); }
-.lc-call-reports__num { font: var(--type-body-m-strong); }
+.lc-call-reports__num { font: var(--type-body-m-strong-smb); }

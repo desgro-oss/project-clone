@@ -92,7 +92,7 @@ window.HUB_PROJECTS = [
   { linkId: 'local-kit-pre', teamCode: 'PRE', title: 'Локальные компоненты Pre', descText: 'Тайлы, окна и поповеры модулей Pre: как работают, из чего собраны, зачем', href: 'apps/local-components/pretrade/index.html', folder: 'apps/local-components/pretrade', iconName: 'layout-grid-01' },
 
   { linkId: 'local-kit-ib', teamCode: 'IB', title: 'Локальные компоненты IB', descText: 'Тайлы, окна и поповеры модулей IB: как работают, из чего собраны, зачем', href: 'apps/local-components/ib/index.html', folder: 'apps/local-components/ib', iconName: 'layout-grid-01' },
-  { linkId: 'banker-app', teamCode: 'IB', title: 'AI Pitcher', descText: 'Origination: новый отчёт в чате, история запросов, подготовка материала', href: 'apps/ib/banker-app/pages/index.html', folder: 'apps/ib/banker-app', iconName: 'ai-stars' },
+  { linkId: 'banker-app', teamCode: 'IB', title: 'AI Pitcher', descText: 'Origination: новый отчёт в чате, история запросов, подготовка материала', href: 'apps/ib/banker-app/pages/RequestThread.html', folder: 'apps/ib/banker-app', iconName: 'ai-stars' },
   { linkId: 'screen-map-ib', teamCode: 'IB', title: 'Карта IB', descText: 'Все страницы AI Pitcher в один клик: от главной до нити запроса', href: 'apps/screen-map/ib/index.html', folder: 'apps/screen-map/ib', iconName: 'tree-view' },
 
   { linkId: 'local-kit-core', teamCode: 'CORE', title: 'Локальные компоненты Core', descText: 'Тайлы, окна и поповеры модулей Core: как работают, из чего собраны, зачем', href: 'apps/local-components/core/index.html', folder: 'apps/local-components/core', iconName: 'layout-grid-01' },

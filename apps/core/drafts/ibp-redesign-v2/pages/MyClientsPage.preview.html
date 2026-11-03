@@ -55,22 +55,27 @@
       </div>
 
       <!-- вкладки: «Клиенты моего деска» и «Избранные клиенты» видны, но не
-           переключаются (Р3); «Клиенты ДИД» — пустое состояние -->
+           переключаются (Р3); «Клиенты ДИД» — пустое состояние; «Поиск
+           клиентов» — вся база, та же таблица, что на главной (решение
+           пользователя 26.10.2026) -->
       <div class="tabs tabs--horiz" role="tablist" data-tabs id="reg-tabs">
         <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="my" data-page="MyClientsPage"><span class="tab__label">Мои клиенты</span></button>
         <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="desk" aria-disabled="true"><span class="tab__label">Клиенты моего деска</span></button>
         <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="fav" aria-disabled="true"><span class="tab__label">Избранные клиенты</span></button>
         <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="did"><span class="tab__label">Клиенты ДИД</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="search"><span class="tab__label">Поиск клиентов</span></button>
       </div>
 
       <!-- #sec:content ── реестр: таблица (V2MyClientsTable) или дерево холдингов
            (V2MyClientsHierarchicalTree) — выбор в SegmentControl тулбара -->
-      <!-- Локальный компонент «Мои клиенты» — реестр страницы MyClientsPage. Пара во
+      <!-- Локальный компонент «Мои клиенты» — реестр клиентов: вкладки страницы
+     MyClientsPage и вкладка главной «Поиск клиентов» — одна таблица. Пара во
      фронтенде — V2MyClientsTable (core/clients-app); фильтр MyClientsTableFilters
      — часть виджета (модалка .tfm общего рендера). Таблицу рисует
-     data/registry-table.js; значения и ячейки — скрипт виджета.
+     data/registry-table.js; значения и ячейки — скрипт виджета. Порядок строк
+     держит рендер по всем страницам, поэтому у .tbl нет data-sort-rows.
      Страница вшивает меткой <ds-include> и монтирует:
-     LcMyClientsTable.mount(host, { tab, onView }). -->
+     LcMyClientsTable.mount(host, { tab, tree, onAdd }). -->
 <div id="mc-table" data-state="data" data-mode="view" class="lc-my-clients-table col-12" data-widget="V2MyClientsTable" data-widget-group="tables" data-widget-src="../widgets/tables/V2MyClientsTable/V2MyClientsTable.html">
   <!-- тулбар над таблицей (Table, вариант .dtable-toolbar): фильтр слева,
        действия и вид реестра справа; таблица ниже — headless -->
@@ -78,12 +83,14 @@
     <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter><button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button></div>
     <div class="dtable__toolbar-right lc-my-clients-table__tools">
       <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
-      <button type="button" class="btn btn--accent btn--s"><i data-icon="add"></i><span class="btn__label">Добавить клиента</span></button>
+      <button type="button" class="btn btn--accent btn--s" data-mc-add><i data-icon="add"></i><span class="btn__label">Добавить клиента</span></button>
       <div class="segctrl segctrl--s" role="radiogroup" aria-label="Вид реестра" data-segctrl data-mc-view>
         <div class="segctrl__thumb"></div>
         <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="rows" aria-label="Таблица"><span class="segctrl__label"><i data-icon="layout-rows-01"></i></span></button>
         <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="tree" aria-label="Дерево холдингов"><span class="segctrl__label"><i data-icon="tree-view"></i></span></button>
       </div>
+      <!-- «Настройка таблицы» ДС: модалку строит рантайм TableSettings по шапке таблицы -->
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Настроить колонки" data-table-settings><i data-icon="settings"></i></button>
     </div>
   </div>
   <section class="lc-my-clients-table__tile">
@@ -94,12 +101,12 @@
     </div>
     <div class="dtable dtable--fill">
       <div class="dtable__body">
-        <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+        <div class="tbl" data-table data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
         <div class="dtable__empty" data-rt-empty hidden>
           <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
           <p class="dtable__empty-title" data-rt-empty-title>Здесь пока ничего нет</p>
           <p class="dtable__empty-text" data-rt-empty-only>Выберете клиента через поиск и добавте в список "Клиенты" с помощью кнопки</p>
-          <button type="button" class="btn btn--accent btn--m" data-rt-empty-only><i data-icon="client-search"></i><span class="btn__label">Добавить клиента</span></button>
+          <button type="button" class="btn btn--accent btn--m" data-rt-empty-only data-mc-add><i data-icon="client-search"></i><span class="btn__label">Добавить клиента</span></button>
         </div>
       </div>
       <div class="dtable__footer" data-rt-footer></div>
@@ -109,8 +116,8 @@
       <!-- Локальный компонент «Мои клиенты по холдингам» — вид «дерево» реестра
      страницы MyClientsPage. Пара во фронтенде — V2MyClientsHierarchicalTree
      (core/clients-app). Строки дерева строит скрипт виджета на TableCell ДС.
-     Страница вшивает меткой <ds-include> и заполняет:
-     LcMyClientsHierarchicalTree.render(host, { onView }). -->
+     Вшивается рядом с V2MyClientsTable; показывает и заполняет его скрипт:
+     LcMyClientsHierarchicalTree.render(host, { rows, onView }). -->
 <div id="mc-tree" data-state="data" data-mode="view" class="lc-my-clients-tree col-12" data-widget="V2MyClientsHierarchicalTree" data-widget-group="tables" data-widget-src="../widgets/tables/V2MyClientsHierarchicalTree/V2MyClientsHierarchicalTree.html">
   <!-- тулбар над таблицей (Table, вариант .dtable-toolbar): фильтр слева,
        действия и вид реестра справа; таблица ниже — headless -->
@@ -118,7 +125,7 @@
     <div class="dtable__toolbar-left"></div>
     <div class="dtable__toolbar-right lc-my-clients-tree__tools">
       <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
-      <button type="button" class="btn btn--accent btn--s"><i data-icon="add"></i><span class="btn__label">Добавить клиента</span></button>
+      <button type="button" class="btn btn--accent btn--s" data-mc-add><i data-icon="add"></i><span class="btn__label">Добавить клиента</span></button>
       <div class="segctrl segctrl--s" role="radiogroup" aria-label="Вид реестра" data-segctrl data-mc-view>
         <div class="segctrl__thumb"></div>
         <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="rows" aria-label="Таблица"><span class="segctrl__label"><i data-icon="layout-rows-01"></i></span></button>
@@ -161,28 +168,21 @@
 <script src="../widgets/tables/V2MyClientsHierarchicalTree/V2MyClientsHierarchicalTree.js"></script>
 <script>
 /* Экранный скрипт: меню — data/nav-links.js; реестр — V2MyClientsTable на
-   общем рендере, вид «дерево» — V2MyClientsHierarchicalTree. Вкладки «Клиенты
-   моего деска» и «Избранные клиенты» не переключаются (Р3). */
+   общем рендере, вид «дерево» — V2MyClientsHierarchicalTree (переключает
+   виджет таблицы). Вкладки «Клиенты моего деска» и «Избранные клиенты» не
+   переключаются (Р3). «Добавить клиента» ведёт на «Поиск клиентов»: «Мои
+   клиенты» — клиенты базы, отмеченные избранными. */
 (function () {
   'use strict';
   window.IBPR_NAV.mount({ active: 'clients' });
-  var tableHost = document.getElementById('mc-table');
-  var treeHost = document.getElementById('mc-tree');
-  var treeDrawn = false;
-
-  function setView(view) {
-    var tree = view === 'tree';
-    tableHost.hidden = tree;
-    treeHost.hidden = !tree;
-    if (tree && !treeDrawn) { window.LcMyClientsHierarchicalTree.render(treeHost, { onView: setView }); treeDrawn = true; }
-    window.LcMyClientsTable.setView(tree ? treeHost : tableHost, view);
-  }
-
-  var reg = window.LcMyClientsTable.mount(tableHost, { tab: 'my', onView: setView });
-  window.IBPR_TABLE.tabs(document.getElementById('reg-tabs'), reg,
-    [{ id: 'my', label: 'Мои клиенты', page: 'MyClientsPage' }, { id: 'did', label: 'Клиенты ДИД' }],
-    function () { setView('rows'); });
-  treeHost.hidden = true;
+  var tabsEl = document.getElementById('reg-tabs');
+  var tabsCfg = [{ id: 'my', label: 'Мои клиенты', page: 'MyClientsPage' }, { id: 'did', label: 'Клиенты ДИД' }, { id: 'search', label: 'Поиск клиентов' }];
+  var reg = window.LcMyClientsTable.mount(document.getElementById('mc-table'), {
+    tab: window.IBPR_TABLE.tabFromUrl(tabsCfg),
+    tree: document.getElementById('mc-tree'),
+    onAdd: function () { tabsEl.querySelector('[data-tab-id="search"]').click(); }
+  });
+  window.IBPR_TABLE.tabs(tabsEl, reg, tabsCfg, function () { reg.showView('rows'); });
   if (window.dsIcons) window.dsIcons.apply(document);
 })();
 </script>

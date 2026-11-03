@@ -46,15 +46,15 @@
 <style>
 /* Раскладка страницы документации. Токены ДС, своих значений нет. */
 a{color:var(--link);} a:hover{color:var(--link-dark);}
-.section>p.desc{font:var(--type-body-m);color:var(--text-secondary);margin:0 0 28px;max-width:82ch;text-wrap:pretty;}
-.subhead{font:var(--type-body-m-strong);color:var(--text-primary);margin:32px 0 14px;}
+.section>p.desc{font:var(--type-body-m-reg);color:var(--text-secondary);margin:0 0 28px;max-width:82ch;text-wrap:pretty;}
+.subhead{font:var(--type-body-m-strong-smb);color:var(--text-primary);margin:32px 0 14px;}
 .tk{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--text-secondary);background:var(--bg-table-default-focus);padding:var(--space-2) var(--space-6);border-radius:var(--radius-s);display:inline-block;}
-.crit{margin:0 0 28px;padding-left:22px;font:var(--type-body-m);color:var(--text-secondary);max-width:82ch;}
+.crit{margin:0 0 28px;padding-left:22px;font:var(--type-body-m-reg);color:var(--text-secondary);max-width:82ch;}
 .crit li{margin-bottom:8px;text-wrap:pretty;}
 
 /* демо в верхней панели сплиттера */
 .kb-stage{flex:1;display:flex;min-height:0;background:var(--bg-page);border:1px solid var(--border-light);border-radius:var(--radius-2xl);padding:var(--space-16);width:100%;}
-.ws-cap{font:var(--type-body-xs);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
+.ws-cap{font:var(--type-body-xs-reg);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
 
 /* анатомия: нумерованные маркеры на живом образце + легенда */
 .anat{display:flex;flex-direction:column;gap:28px;}
@@ -66,24 +66,24 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 @media(max-width:860px){.anat__legend{grid-template-columns:minmax(0,1fr);}}
 .anat__legend li{display:flex;gap:12px;align-items:flex-start;}
 .anat__legend .n{width:22px;height:22px;border-radius:var(--radius-circle);background:var(--primary);color:var(--text-on-dark);font:600 12px/22px var(--font-text),sans-serif;display:flex;align-items:center;justify-content:center;flex:none;margin-top:2px;}
-.anat__legend .d{font:var(--type-body-s);color:var(--text-secondary);text-wrap:pretty;min-width:0;}
+.anat__legend .d{font:var(--type-body-s-reg);color:var(--text-secondary);text-wrap:pretty;min-width:0;}
 .anat__legend .d b{color:var(--text-primary);}
 .anat__legend .d em{font-style:normal;color:var(--text-inactive);}
 
 /* образцы состояний и вариантов */
 .samples{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;}
 .sample{display:flex;flex-direction:column;gap:8px;width:264px;}
-.sample__name{font:var(--type-body-xs);color:var(--text-inactive);}
+.sample__name{font:var(--type-body-xs-reg);color:var(--text-inactive);}
 .sample__box{background:var(--bg-page);border:1px solid var(--border-light);border-radius:var(--radius-m);padding:12px;}
 .guide{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:760px){.guide{grid-template-columns:1fr;}}
 .guide-card{background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-2xl);padding:20px 24px;display:flex;flex-direction:column;gap:8px;}
-.guide-card__tag{font:var(--type-body-xs);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
-.guide-card__body{font:var(--type-body-s);color:var(--text-secondary);text-wrap:pretty;}
+.guide-card__tag{font:var(--type-body-xs-reg);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
+.guide-card__body{font:var(--type-body-s-reg);color:var(--text-secondary);text-wrap:pretty;}
 .guide-card__body b{color:var(--text-primary);}
 .pm{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;}
-.pm h4{font:var(--type-body-m-strong);color:var(--text-primary);margin:0 0 8px;}
-.pm ul{margin:0;padding-left:20px;font:var(--type-body-m);color:var(--text-secondary);}
+.pm h4{font:var(--type-body-m-strong-smb);color:var(--text-primary);margin:0 0 8px;}
+.pm ul{margin:0;padding-left:20px;font:var(--type-body-m-reg);color:var(--text-secondary);}
 .pm li{margin-bottom:8px;text-wrap:pretty;}
 </style>
 <script src="../../../docs-kit/ds-theme-boot.js"></script>
@@ -203,7 +203,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     <div class="anat">
       <div class="anat__stage"><div class="anat-dia" id="anat-card"></div></div>
       <ul class="anat__legend">
-        <li><span class="n">1</span><span class="d"><b>Заголовок</b> — <em>Title Card</em>, <span class="tk">--type-h6-strong</span>, клэмп 2 строки, при усечении — Tooltip.</span></li>
+        <li><span class="n">1</span><span class="d"><b>Заголовок</b> — <em>Title Card</em>, <span class="tk">--type-h6-strong-smb</span>, клэмп 2 строки, при усечении — Tooltip.</span></li>
         <li><span class="n">2</span><span class="d"><b>Чипы</b> — <span class="tk">.tile__chiplist</span> под заголовком, переносятся по строкам. Без иконок; исключение — «Ключевая сделка» с молнией.</span></li>
         <li><span class="n">3</span><span class="d"><b>Действия</b> — звезда избранного (<span class="tk">aria-pressed</span>) и кебаб. Удаление карточки живёт в кебабе.</span></li>
         <li><span class="n">4</span><span class="d"><b>Пользовательские поля</b> — две колонки, значение в одну строку. Максимум четыре.</span></li>
@@ -491,7 +491,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
   <div class="subsec" data-screen-label="Поля">
     <h3>Пользовательские поля</h3>
     <ul class="bullets">
-      <li><b>Две колонки, максимум четыре поля.</b> Подпись <span class="tk">--type-body-xs</span> цветом <span class="tk">--text-inactive</span>, значение <span class="tk">--type-body-s</span> цветом <span class="tk">--text-primary</span>.</li>
+      <li><b>Две колонки, максимум четыре поля.</b> Подпись <span class="tk">--type-body-xs-reg</span> цветом <span class="tk">--text-inactive</span>, значение <span class="tk">--type-body-s-reg</span> цветом <span class="tk">--text-primary</span>.</li>
       <li><b>Значение усекается в одну строку.</b> Перенос ломает сетку из двух колонок и делает карточки разной высоты без причины.</li>
       <li><b>Пустое значение — прочерк «—», а не пустота.</b> Пустое место читается как ошибка загрузки; прочерк говорит «данных нет, и это нормально».</li>
       <li><b>Набор полей задаётся на уровне доски.</b> Карточки с разным набором нельзя сканировать взглядом — теряется главное преимущество доски.</li>
@@ -686,7 +686,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 <!-- 10. ТИПОГРАФИКА -->
 <section class="section" id="typography" data-screen-label="Типографика">
   <h2>Типографика</h2>
-  <p class="desc">Ключевое значение — заголовок карточки: <span class="tk">--type-h6-strong</span>. Оно взято не по вкусу, а из объявления Card: у Tile заголовок <span class="tk">--type-h5-strong</span> (18/24), у Card — на ступень ниже. Три размера на карточке — предел: всё мельче <span class="tk">--type-body-xs</span> на плотной доске нечитаемо, всё крупнее заголовка спорит с ним за роль точки входа.</p>
+  <p class="desc">Ключевое значение — заголовок карточки: <span class="tk">--type-h6-strong-smb</span>. Оно взято не по вкусу, а из объявления Card: у Tile заголовок <span class="tk">--type-h5-strong-smb</span> (18/24), у Card — на ступень ниже. Три размера на карточке — предел: всё мельче <span class="tk">--type-body-xs-reg</span> на плотной доске нечитаемо, всё крупнее заголовка спорит с ним за роль точки входа.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
       <div class="tbl__row" style="grid-template-columns:8px 1.7fr 1.3fr 0.8fr 0.9fr 8px;">
@@ -700,49 +700,49 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
       <div class="tbl__row" style="grid-template-columns:8px 1.7fr 1.3fr 0.8fr 0.9fr 8px;">
         <div class="tc tc--separator"></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заголовок карточки (Title Card)</span></span></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--type-h6-strong</code></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--type-h6-strong-smb</code></span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-h6-strong)">Образец</span></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-h6-strong-smb)">Образец</span></span></span></div>
         <div class="tc tc--separator"></div>
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 1.7fr 1.3fr 0.8fr 0.9fr 8px;">
         <div class="tc tc--separator"></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заголовок в компактной плотности</span></span></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-strong</code></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-strong-smb</code></span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-strong)">Образец</span></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-strong-smb)">Образец</span></span></span></div>
         <div class="tc tc--separator"></div>
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 1.7fr 1.3fr 0.8fr 0.9fr 8px;">
         <div class="tc tc--separator"></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Имя колонки</span></span></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-strong</code></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-strong-smb</code></span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-strong)">Образец</span></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-strong-smb)">Образец</span></span></span></div>
         <div class="tc tc--separator"></div>
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 1.7fr 1.3fr 0.8fr 0.9fr 8px;">
         <div class="tc tc--separator"></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Значение поля карточки</span></span></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div>
         <div class="tc tc--separator"></div>
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 1.7fr 1.3fr 0.8fr 0.9fr 8px;">
         <div class="tc tc--separator"></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Подпись поля, метрики, код объекта</span></span></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs-reg)">Образец</span></span></span></div>
         <div class="tc tc--separator"></div>
       </div>
       <div class="tbl__row" style="grid-template-columns:8px 1.7fr 1.3fr 0.8fr 0.9fr 8px;">
         <div class="tc tc--separator"></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Название доски в тулбаре</span></span></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--type-h5-strong</code></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--type-h5-strong-smb</code></span></span></div>
         <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">18 / 24</span></span></div>
-        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-h5-strong)">Образец</span></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-h5-strong-smb)">Образец</span></span></span></div>
         <div class="tc tc--separator"></div>
       </div>
       </div>
@@ -958,7 +958,7 @@ API:           DSKanban.bind(board) · bindAll(root) · move(card, col, i) · sy
       <h2 class="modal__title" id="kb-confirm-t" data-kb-confirm-title>Удалить?</h2>
       <button type="button" class="ibtn ibtn--neutral ibtn--m modal__close" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
     </div>
-    <div class="modal__body"><p id="kb-confirm-d" class="kbcard__flabel" style="margin:0;font:var(--type-body-m);color:var(--text-secondary);white-space:normal;" data-kb-confirm-text>Действие необратимо.</p></div>
+    <div class="modal__body"><p id="kb-confirm-d" class="kbcard__flabel" style="margin:0;font:var(--type-body-m-reg);color:var(--text-secondary);white-space:normal;" data-kb-confirm-text>Действие необратимо.</p></div>
     <div class="modal__foot">
       <div class="modal__foot-left"></div>
       <div class="modal__foot-right">
@@ -1213,7 +1213,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
 }
 .kanban__title {
   margin: 0;
-  font: var(--type-h5-strong);
+  font: var(--type-h5-strong-smb);
   color: var(--text-primary);
 }
 .kanban__toolbar-right {
@@ -1392,7 +1392,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
 .kbcol__name {
   min-width: 0;
   margin-top: var(--space-4);   /* (24 - 16) / 2 — первая строка по центру полосы */
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1404,7 +1404,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
      шапки всех колонок обязаны быть равной высоты, иначе карточки соседних
      колонок начинаются с разной. Две декларации — не дубль: браузер без
      единицы lh отбрасывает вторую и остаётся на px. */
-  min-height: 32px;             /* 2 строки --type-body-s-strong (14px/16px) */
+  min-height: 32px;             /* 2 строки --type-body-s-strong-smb (14px/16px) */
   min-height: 2lh;              /* где есть lh — высота следует за токеном */
 }
 /* Три действия: добавить · перейти на страницу колонки · меню */
@@ -1514,7 +1514,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-primary);
 }
 .kbcol--collapsed .kbcol__vname { display: block; }
@@ -1547,14 +1547,14 @@ window.DS_SPLIT_SWITCH_LABELS = {
   min-width: 0;
 }
 .kbcard__flabel {
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .kbcard__fvalue {
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
@@ -1572,7 +1572,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   display: inline-flex;
   align-items: center;
   gap: var(--space-4);
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
 }
 .kbcard__stat :is(svg, [data-icon]) { width: 16px; height: 16px; }
@@ -1584,7 +1584,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
 }
 .kbcard__id {
   margin-left: auto;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
 }
 
@@ -1608,7 +1608,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   gap: var(--space-8);
 }
 .kbcard--compact .tile__title {
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   -webkit-line-clamp: 1;
   line-clamp: 1;
 }

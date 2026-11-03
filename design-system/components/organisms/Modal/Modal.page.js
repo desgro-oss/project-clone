@@ -47,8 +47,8 @@ const MODAL_CONTENT = {
     wrap.style.cssText = 'flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:24px 0; text-align:center; color:var(--text-inactive);';
     wrap.innerHTML = `
       <span style="width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:var(--tertiary-light);"><i data-icon="folder-close-x" style="width:24px;height:24px;color:var(--text-inactive);"></i></span>
-      <p style="margin:0; font:var(--type-body-m-strong); color:var(--text-secondary);">Пока ничего нет</p>
-      <p style="margin:0; font:var(--type-body-s); max-width:32ch;">Добавьте первую запись, чтобы она появилась здесь</p>`;
+      <p style="margin:0; font:var(--type-body-m-strong-smb); color:var(--text-secondary);">Пока ничего нет</p>
+      <p style="margin:0; font:var(--type-body-s-reg); max-width:32ch;">Добавьте первую запись, чтобы она появилась здесь</p>`;
     return wrap;
   },
   table() {
@@ -57,10 +57,10 @@ const MODAL_CONTENT = {
     wrap.style.cssText = 'border:1px solid var(--border-light); border-radius:12px; overflow:hidden;';
     const rows = [['Выдача','01.02.2026','120 000 000'],['Погашение','01.03.2026','12 500 000'],['Погашение','01.04.2026','12 500 000']];
     wrap.innerHTML = `
-      <div style="display:grid; grid-template-columns:1.2fr 1fr 1fr; padding:11px 16px; background:var(--tertiary-light); font:var(--type-body-s-strong); color:var(--text-secondary);">
+      <div style="display:grid; grid-template-columns:1.2fr 1fr 1fr; padding:11px 16px; background:var(--tertiary-light); font:var(--type-body-s-strong-smb); color:var(--text-secondary);">
         <span>Операция</span><span>Дата</span><span style="text-align:right;">Сумма</span>
       </div>
-      ${rows.map(r=>`<div style="display:grid; grid-template-columns:1.2fr 1fr 1fr; padding:12px 16px; border-top:1px solid var(--border-light); font:var(--type-body-m); color:var(--text-primary);">
+      ${rows.map(r=>`<div style="display:grid; grid-template-columns:1.2fr 1fr 1fr; padding:12px 16px; border-top:1px solid var(--border-light); font:var(--type-body-m-reg); color:var(--text-primary);">
         <span>${r[0]}</span><span style="color:var(--text-secondary);">${r[1]}</span><span style="text-align:right; font-variant-numeric:tabular-nums;">${r[2]}</span>
       </div>`).join('')}`;
     return wrap;
@@ -71,7 +71,7 @@ const MODAL_CONTENT = {
     for (let i = 1; i <= 12; i++) {
       const row = document.createElement('div');
       row.style.cssText = 'display:flex; flex-direction:column; gap:6px; padding-bottom:16px; border-bottom:1px solid var(--border-light);';
-      row.innerHTML = `<span style="font:var(--type-body-m-strong); color:var(--text-primary);">Пункт ${i}</span><span style="font:var(--type-body-s); color:var(--text-secondary);">Пояснение к пункту, чтобы контент занимал больше одной строки и требовал прокрутки.</span>`;
+      row.innerHTML = `<span style="font:var(--type-body-m-strong-smb); color:var(--text-primary);">Пункт ${i}</span><span style="font:var(--type-body-s-reg); color:var(--text-secondary);">Пояснение к пункту, чтобы контент занимал больше одной строки и требовал прокрутки.</span>`;
       wrap.appendChild(row);
     }
     return wrap;

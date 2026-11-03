@@ -1,0 +1,43 @@
+/* Локальный компонент AdditionalAgreementModal.
+   Только внутренняя раскладка и показ своих блоков по режиму.
+   Цвета, шрифты, отступы, радиусы, тени — токены ДС; своих значений здесь нет.
+   Состояния компонентов ДС отсюда не переопределяются. */
+
+/* ── Секции ─────────────────────────────────────────────────────────── */
+/* «Информация о доп. соглашении» и «Информация о решении КО» — две секции стопкой:
+   между секциями 24, внутри секции — 16 (как у окна «Сведения о проекте»). */
+.lc-additional-agreement-modal__sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.lc-additional-agreement-modal__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+/* Подзаголовок секции — ступень H6 Strong, как у окна «Сведения о проекте». */
+.lc-additional-agreement-modal__heading {
+  margin: 0;
+  font: var(--type-h6-strong-smb);
+  color: var(--text-primary);
+}
+
+/* ── Сетка полей ────────────────────────────────────────────────────── */
+/* Три поля в ряд в пропорции макета 2 : 2 : 5 (дата, номер, список); колонки
+   сжимаемые — длинное значение не распирает соседнее поле. Поля на всю ширину
+   занимают строку целиком. */
+.lc-additional-agreement-modal__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 5fr);
+  gap: var(--space-16);
+}
+
+.lc-additional-agreement-modal__wide { grid-column: 1 / -1; }
+
+/* Скрытый контейнер подвала: у ДС-класса .modal__foot-left свой display, а
+   браузерное [hidden] слабее — парное правило, как в ДС. */
+.lc-additional-agreement-modal .modal__foot-left[hidden] { display: none; }

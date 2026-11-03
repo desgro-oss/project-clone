@@ -1,0 +1,69 @@
+<!-- Локальный компонент «Техническая информация» — тайл страницы договора займа (НКЛ).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-state — состояние данных: loading | data | partial | empty. Состояния «Ошибка» у тайла
+                  нет (не решено, 26.10.2026 — паспорт, «Состояния»)
+     data-mode  — режим прав:       edit | view. Ставит страница: роль, статус сделки и
+                  погашение договора дают view
+     Разметка держит ВСЕ состояния сразу, показывает нужное LoanExternalDataTile.css по этим
+     двум атрибутам — так же, как тайл «Сроки сделки».
+     Значения ниже — пример. На странице их заменяет LoanExternalDataTile.js
+     (PostTileLoanExternalData.render) записью LoanAgreementStore.get().techInfo; пока она
+     грузится, тайл стоит в loading.
+     Окно правки — LoanExternalDataModal (скрим tech-scrim): в нём ввод, поэтому триггеры с
+     data-modal-guarded — клик мимо окна его не закрывает. Потребитель (nkl | tranche) ставит
+     страница через render/setConsumer; состав полей — владелец правила, список CONSUMERS
+     здесь, в LoanExternalDataTile.js. -->
+<section class="tile lc-loan-external-data-tile" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Техническая информация</h3></div>
+    </div>
+    <!-- Действие шапки — только в edit и только когда значения есть (data, partial).
+         В просмотре его нет вовсе, пустой тайл заполняют кнопкой в теле. -->
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать" data-modal="tech-scrim" data-modal-guarded><i data-icon="edit"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- Два поля друг под другом, порядок постоянный. Пустое значение — прочерк,
+         поле с места не уходит. Лейбл переносится до двух строк, если колонка уже подписи. -->
+    <div class="tile__grid lc-loan-external-data-tile__grid">
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">ГФО ID</span></span>
+        <div class="rof__row"><span class="rof__value" data-tech-field="gfoId">1234567890</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">ГФО ID фондирующего кредита</span></span>
+        <div class="rof__row"><span class="rof__value" data-tech-field="gfoFundingCreditId">1234567890-12-12</span></div>
+      </div>
+    </div>
+
+    <!-- Загрузка: каркас в той же сетке — подпись и значение каждого поля в габаритах
+         строк (подпись 16px, значение 20px), чтобы раскладка не прыгнула после ответа. -->
+    <div class="tile__grid lc-loan-external-data-tile__grid lc-loan-external-data-tile__loading" aria-busy="true">
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:32%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:120px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:160px" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Не заполнено, право на правку есть -->
+    <div class="lc-loan-external-data-tile__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="tech-scrim" data-modal-guarded>
+        <span class="btn__label">Заполнить</span>
+      </button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действия нет -->
+    <p class="lc-loan-external-data-tile__empty">Не заполнено</p>
+
+  </div>
+</section>

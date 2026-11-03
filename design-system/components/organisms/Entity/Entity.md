@@ -37,13 +37,13 @@ status: manual
 ## Размеры
 Три размера по величине ведущего элемента; типографика и зазоры масштабируются вместе.
 
-| Параметр | S · 32 | M · 40 | L · 96 |
+| Параметр | S · 32 | M · 40 | XL · 96 |
 |---|---|---|---|
 | Ведущий | 32px | 40px | 96px |
 | Радиус иконки | 10px `--radius-l` | 12px `--radius-xl` | 28px `--radius-5xl` |
 | Глиф | 18px | 22px | 48px |
 | Header | Body XS · 12 | Body XS · 12 | Body S · 14 |
-| Label | Body S Strong · 14 | Body M Strong · 16 | Body XL Strong · 24 |
+| Label | Body S · 14 | Body M · 16 | H4 Strong · 22 |
 | Subheaders | Body XS · 12 | Body S · 14 | Body M · 16 |
 | Зазор ведущий↔контент | 10px | 12px | 16px |
 | Зазор Header↔Label | 2px | 2px | 3px |
@@ -77,7 +77,7 @@ status: manual
 - Интерактив: hover `--bg-table-default-hover`, selected `--primary-bg`, закладка active/фокус `--primary`.
 - Ошибка: фон иконки `--error-bg-light`, иконка/Header `--error`.
 
-- **Размеры · Радиус скругления** — Скругление относится к ведущему элементу и растёт вместе с ним. S (32px) — 10px (--radius-l) · M (40px) — 12px (--e-lead-radius = --radius-xl) · L (96px) — 28px (--radius-5xl) · фокус закладки — 4px (--radius-xs).
+- **Размеры · Радиус скругления** — Скругление относится к ведущему элементу и растёт вместе с ним. S (32px) — 10px (--radius-l) · M (40px) — 12px (--e-lead-radius = --radius-xl) · XL (96px) — 28px (--radius-5xl) · фокус закладки — 4px (--radius-xs).
 
 ## Для разработчиков (выжимка)
 
@@ -119,7 +119,7 @@ status: manual
 
 ### React API (предложение)
 ```typescript
-type EntitySize = 's' | 'm' | 'l';
+type EntitySize = 's' | 'm' | 'xl';
 type EntityState = 'default' | 'selected' | 'loading' | 'empty' | 'error';
 interface EntityProps {
   size?: EntitySize; state?: EntityState;
@@ -150,7 +150,7 @@ interface EntityProps {
 | Класс / атрибут | На чём | Назначение |
 |---|---|---|
 | .entity | div | Корень: flex, align-items center, width 100%, без фона |
-| .entity--s/--m/--l | .entity | Размер 32/40/96; токены --e-* |
+| .entity--s/--m/--xl | .entity | Размер 32/40/96; токены --e-* |
 | .entity--inline | .entity | inline-flex, ширина по контенту |
 | .entity__lead | div | Ведущий слот |
 | .entity__icon | span | Скруглённый контейнер; тон --accent/--neutral |
@@ -158,7 +158,7 @@ interface EntityProps {
 | .entity__titles | div | Header + строка Label |
 | .entity__header | p | Надзаголовок Body XS inactive |
 | .entity__labelrow | div | prefix · label · postfix · bookmark (baseline) |
-| .entity__label | span | Основной текст *-strong --text-primary |
+| .entity__label | span | Основной текст `--text-primary`; жирный (`--type-h4-strong-smb`) только у размера XL, у S и M — обычный |
 | .entity__label--truncate | .entity__label | Усечение + Tooltip |
 | .entity__prefix / __postfix | span | Серые аффиксы |
 | .entity__bookmark | button | Избранное; --active = primary |

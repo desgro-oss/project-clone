@@ -31,7 +31,7 @@
 
 /* Имя ФИ в строке группы — Body S Strong (рисует FinancialMetricsTable.js). */
 .lc-kpi-table .lc-financial-metrics-table__group-name.tc__text {
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
 }
 
 /* Пустой отчет: «Нет данных» — по центру тела таблицы, как на макете (см. FinancialMetricsTable.css). */

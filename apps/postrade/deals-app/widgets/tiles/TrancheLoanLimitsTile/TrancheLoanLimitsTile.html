@@ -1,0 +1,44 @@
+<!-- Локальный компонент «Валюта транша» — фрагмент страницы транша.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include; место
+     в сетке и ширину задаёт экран (3 колонки из 12).
+     data-mode — режим прав: edit | view. Ставит страница: погашенный транш,
+     нередактируемый статус сделки или отсутствие права дают view.
+     Состояние данных одно — «данные есть» (решение человека 02.11.2026: на
+     странице те же два поля, что были в инлайне). Загрузка, пусто и ошибка не
+     проработаны — вопрос к человеку, см. паспорт.
+     Значения ниже — пример с текущей страницы. На странице их заменяет
+     TrancheLoanLimitsTile.js (PostTileTrancheLoanLimits.render) значениями
+     транша; правка — окно TrancheLoanLimitsModal по data-modal="tl-scrim".
+     В просмотре карандаш выключается разметкой (disabled — ставит render), CSS
+     его только прячет: запрет несёт атрибут, а не стиль (урок Л235).
+     Чипа «Демо» у компонента нет: чип — маркет тайла, ещё не заведённого в
+     локальные компоненты (решение человека 02.11.2026), а этот заведён. -->
+<section class="tile lc-tranche-loan-limits-tile" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title">Валюта транша</h3>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать: Валюта транша" data-modal="tl-scrim"><i data-icon="edit"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+    <div class="tile__grid lc-tranche-loan-limits-tile__grid">
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Валюта</span></span>
+        <div class="rof__row"><span class="rof__value" data-tl-field="currencyCode">RUB</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Общая сумма лимита</span></span>
+        <div class="rof__row">
+          <span class="rof__value" data-tl-field="totalLimitAmount">1&nbsp;000&nbsp;000,00</span>
+          <span class="rof__affix" data-tl-affix="currencyCode">RUB</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -186,7 +186,7 @@
       + sw('showPlayer', t('settings.showPlayer'), t('settings.showPlayerHelp', { next: HK.next, prev: HK.prev }))
       + sw('closeOnGo', t('settings.closeOnGo'))
       + sw('showActions', t('settings.showActions'), t('settings.showActionsHelp'))
-      + '<p class="ds-body-s-strong pp-subtitle">' + esc(t('settings.keys')) + '</p>'
+      + '<p class="ds-body-s-strong-smb pp-subtitle">' + esc(t('settings.keys')) + '</p>'
       + '<div class="pp-keys">'
       + rof(HK.toggle, t('keys.toggle'))
       + rof(HK.fix, t('keys.fix'))
@@ -209,7 +209,7 @@
       '<div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="pp-confirm-title" aria-describedby="pp-confirm-text">'
       + '<header class="modal__head"><h2 class="modal__title" id="pp-confirm-title"></h2>'
       + '<button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="' + esc(t('btn.close')) + '" data-modal-close><i data-icon="close"></i></button></header>'
-      + '<div class="modal__body"><p class="ds-body-m" id="pp-confirm-text"></p></div>'
+      + '<div class="modal__body"><p class="ds-body-m-reg" id="pp-confirm-text"></p></div>'
       + '<footer class="modal__foot"><div class="modal__foot-right">'
       + '<button type="button" class="btn btn--transparent btn--m" data-modal-close data-pp-confirm-cancel><span class="btn__label">' + esc(t('btn.cancel')) + '</span></button>'
       + '<button type="button" class="btn btn--accent btn--m btn--danger" data-pp-confirm-ok><span class="btn__label">' + esc(t('btn.delete')) + '</span></button>'
@@ -1026,21 +1026,41 @@
     try { if (window.DSTheme && window.DSTheme.files) return window.DSTheme.files(); } catch (e) { /* ДС без тем */ }
     return [{ name: 'ibp-legacy', label: 'IBP Legacy', modes: ['light'] }];
   }
+  /** Типографские темы для панели: null — рантайма нет, блок не рисуется. */
+  function typoList() {
+    try { if (window.DSTypography && window.DSTypography.list) return window.DSTypography.list(); } catch (e) { /* ДС без типографских тем */ }
+    return null;
+  }
   function renderThemePane() {
     var box = document.getElementById('pp-theme');
     if (!box) return;
     var cur = 'legacy';
     try { cur = window.DSTheme && window.DSTheme.get ? window.DSTheme.get() : 'legacy'; } catch (e) { /* нет рантайма тем */ }
-    box.innerHTML = '<p class="ds-body-s pp-muted">' + esc(t('theme.title')) + '</p>'
+    var typos = typoList();
+    var typoCur = 'base';
+    try { typoCur = window.DSTypography && window.DSTypography.get ? window.DSTypography.get() : 'base'; } catch (e) { /* нет рантайма типографики */ }
+    var typoHtml = !typos ? '' : '<p class="ds-body-s-reg pp-muted">' + esc(t('typo.title')) + '</p>'
+      + '<div class="pp-theme__list">' + typos.map(function (tp) {
+        var on = tp.id === typoCur;
+        return '<button type="button" class="btn btn--transparent btn--s pp-theme__item' + (on ? ' is-active' : '') + '"'
+          + ' data-pp-typo="' + esc(tp.id) + '" aria-pressed="' + on + '"><span class="btn__label">' + esc(tp.label) + '</span></button>';
+      }).join('') + '</div>';
+    box.innerHTML = '<p class="ds-body-s-reg pp-muted">' + esc(t('theme.title')) + '</p>'
       + '<div class="pp-theme__list">' + themeList().map(function (th) {
         var on = th.name === 'ibp-legacy' ? cur === 'legacy' : cur.indexOf(th.name + '-') === 0;
         var dark = on && cur.slice(-5) === '-dark';
         return '<div class="pp-theme__row"><button type="button" class="btn btn--transparent btn--s pp-theme__item' + (on ? ' is-active' : '') + '"'
           + ' data-pp-theme="' + esc(th.name) + '" aria-pressed="' + on + '"><span class="btn__label">' + esc(th.label) + '</span></button>'
           + (th.modes.length < 2 ? '' : '<label class="sw sw--dual"><input class="sw__input" type="checkbox" role="switch" data-pp-mode="' + esc(th.name) + '" aria-label="' + esc(t('theme.darkLabel')) + ' ' + esc(th.label) + '"' + (dark ? ' checked' : '') + '><span class="sw__control"><span class="sw__thumb"></span></span><span class="sw__side sw__side--off">' + esc(t('theme.light')) + '</span><span class="sw__side sw__side--on">' + esc(t('theme.dark')) + '</span></label>') + '</div>';
-      }).join('') + '</div>';
+      }).join('') + '</div>' + typoHtml;
     wire(box);
     box.onclick = function (e) {
+      var tp = e.target.closest && e.target.closest('[data-pp-typo]');
+      if (tp) {
+        try { if (window.DSTypography && window.DSTypography.set) window.DSTypography.set(tp.getAttribute('data-pp-typo')); } catch (err) { /* нет рантайма типографики */ }
+        renderThemePane();
+        return;
+      }
       var b = e.target.closest && e.target.closest('[data-pp-theme]');
       if (!b) return;
       try { if (window.DSTheme && window.DSTheme.set) { var name=b.getAttribute('data-pp-theme'),mode=box.querySelector('[data-pp-mode="'+name+'"]'); window.DSTheme.set(name,mode&&mode.checked?'dark':'light'); } } catch (err) { /* нет рантайма тем */ }
@@ -1377,8 +1397,9 @@
     wireGrip();
     wireSettings();
     wireKeys();
-    /* Новая тема и внешний выбор обновляют открытую вкладку без перезагрузки. */
-    ['ds:themelistchange', 'ds:themechange'].forEach(function (event) {
+    /* Новая тема и внешний выбор обновляют открытую вкладку без перезагрузки.
+       То же для типографской темы (RE0048). */
+    ['ds:themelistchange', 'ds:themechange', 'ds:typographychange'].forEach(function (event) {
       document.addEventListener(event, function () { if (rail === 'theme') renderThemePane(); });
     });
 

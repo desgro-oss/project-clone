@@ -33,6 +33,10 @@
         { "action": "edit", "resource": "apps/postrade/post-reports-app/**", "effect": "ask" },
         { "action": "edit", "resource": "apps/core/dashboard-app/**", "effect": "ask" },
         { "action": "edit", "resource": "apps/ib/banker-app/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/ib/funds-app/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/core/host-app/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/core/tasks-app/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/core/clients-app/**", "effect": "ask" },
         { "action": "webfetch", "resource": "*", "effect": "deny" },
         { "action": "websearch", "resource": "*", "effect": "deny" },
         { "action": "subagent", "resource": "*", "effect": "allow" },
@@ -51,6 +55,10 @@
         { "action": "edit", "resource": "apps/postrade/post-reports-app/**", "effect": "ask" },
         { "action": "edit", "resource": "apps/core/dashboard-app/**", "effect": "ask" },
         { "action": "edit", "resource": "apps/ib/banker-app/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/ib/funds-app/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/core/host-app/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/core/tasks-app/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/core/clients-app/**", "effect": "ask" },
         { "action": "webfetch", "resource": "*", "effect": "deny" },
         { "action": "websearch", "resource": "*", "effect": "deny" },
         { "action": "skill", "resource": "*", "effect": "allow" }
@@ -127,6 +135,11 @@
       "description": "Спецификация на разработку по сценарию прототипа — md и автономный html со снимками состояний",
       "agent": "ai-designer",
       "template": "Сценарий команды — файл .agents/commands/dev-spec.md: прочитай его целиком и выполни. Аргументы команды целиком: $ARGUMENTS"
+    },
+    "spec-edits": {
+      "description": "Разбор правок человека в спеке на разработку — журнал, «почему», закономерности",
+      "agent": "ai-designer",
+      "template": "Сценарий команды — файл .agents/commands/spec-edits.md: прочитай его целиком и выполни. Аргументы команды целиком: $ARGUMENTS"
     }
   },
 

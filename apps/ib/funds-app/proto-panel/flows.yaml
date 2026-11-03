@@ -1,0 +1,215 @@
+# Сценарии показа прототипа Фонды — панель прототипа.
+# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
+# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
+version: 1
+lastState: 24
+flows:
+  - id: main
+    title: Список фондов и активы
+    desc: Список → активы фонда → пустые активы → поиск → несколько приоритетов → настройка таблицы
+    steps:
+      - state: 1
+        id: start
+        title: Список фондов
+        page: FundsPipeline.preview.html
+        note: Вход — плитка «Фонды» на главной Руководителя IB. Фонды из ЕПК и не из ЕПК в одном списке.
+      - state: 2
+        id: fund-assets
+        title: Активы фонда Интеррос
+        note: Клик по фонду открывает справа его активы; ширину панелей меняет сплиттер.
+        do:
+          - click: '#fundsTable [data-fund-id="fnd-001"]'
+          - waitFor: '#assetsTable[data-state="data"]'
+      - state: 3
+        id: fund-assets-empty
+        title: У РФПИ активов нет
+        do:
+          - click: '#fundsTable [data-fund-id="fnd-004"]'
+          - waitFor: '#assetsTable[data-state="empty"]'
+      - state: 4
+        id: assets-closed
+        title: Панель активов закрыта
+        do:
+          - click: '#assetsTable [data-at-close]'
+          - waitFor:
+              target: '#assetsTable'
+              state: hidden
+      - state: 5
+        id: search
+        title: Поиск по бенефициару
+        note: Поиск идёт по названию, псевдониму, бенефициару и ИНН — подсказка у значка «i».
+        do:
+          - fill:
+              target: '#fundsFilters [data-ff-field="smartSearch"] input'
+              value: Потанин
+          - waitFor:
+              target: '#fundsTable [data-fund-id="fnd-002"]'
+              state: hidden
+      - state: 24
+        id: priorities
+        title: Несколько приоритетов
+        note: Фильтры стоят в тулбаре таблицы. Приоритетов можно выбрать несколько — чекбоксы и сводка «Высокий, +1». Поля типа и приоритета — по ширине самого длинного значения.
+        do:
+          - fill:
+              target: '#fundsFilters [data-ff-field="smartSearch"] input'
+              value: ''
+          - click: '#fundsFilters [data-ff-field="priorityCodes"] .inp__act--chev'
+          - click: '.ddl[aria-label="Приоритеты фондов"] .ddl__item[data-code="HIGH"]'
+          - click: '.ddl[aria-label="Приоритеты фондов"] .ddl__item[data-code="LOW"]'
+          - waitFor:
+              target: '#fundsTable [data-fund-id="fnd-003"]'
+              state: hidden
+      - state: 6
+        id: table-settings
+        title: Настройка таблицы
+        note: Шестерёнка справа в тулбаре открывает стандартное окно ДС — видимость, порядок и закрепление колонок, «Сбросить настройки».
+        do:
+          - click: '#fundsTable [data-table-settings]'
+          - waitFor: '[id^="ds-table-settings-scrim"]'
+
+  - id: add-from-epk
+    title: Добавить фонд из ЕПК
+    desc: Поиск в базах → клиент ЕПК → форма фонда → фонд в списке
+    steps:
+      - state: 7
+        id: add-open
+        title: Добавить фонд — поиск
+        page: FundsPipeline.preview.html
+        do:
+          - click: '#btnAddFund'
+          - waitFor: '#addFundEntityFromUcpModal'
+      - state: 8
+        id: add-found
+        title: Найдено в базе фондов и в ЕПК
+        note: Интеррос уже есть в базе фондов — «Продолжить» недоступна.
+        do:
+          - fill:
+              target: '#afe-name'
+              value: Интеррос
+          - fill:
+              target: '#afe-inn'
+              value: '0765'
+          - click: '#addFundEntityFromUcpModal [data-afe-search]'
+          - waitFor: '#addFundEntityFromUcpModal [data-afe-id="pty-3001"]'
+      - state: 9
+        id: add-client
+        title: Выбран клиент ЕПК
+        do:
+          - click: '#addFundEntityFromUcpModal [data-afe-id="pty-3001"]'
+          - waitFor: '#addFundEntityFromUcpModal [data-detail="client"]'
+      - state: 10
+        id: add-form
+        title: Форма «Добавить фонд»
+        note: Название, ИНН и КПП приходят из ЕПК и не правятся.
+        do:
+          - click: '#addFundEntityFromUcpModal [data-afe-next]'
+          - waitFor: '#editFundModal'
+      - state: 11
+        id: add-done
+        title: Фонд добавлен
+        do:
+          - click: '#editFundModal [data-efm-save]'
+          - waitFor:
+              target: '#editFundModal'
+              state: hidden
+
+  - id: new-fund
+    title: Новый фонд
+    desc: Ничего не найдено → «Новый фонд» → форма
+    steps:
+      - state: 12
+        id: new-search
+        title: Ничего не найдено
+        page: FundsPipeline.preview.html
+        do:
+          - click: '#btnAddFund'
+          - waitFor: '#addFundEntityFromUcpModal'
+          - fill:
+              target: '#afe-name'
+              value: Андромеда
+          - fill:
+              target: '#afe-inn'
+              value: ''
+          - click: '#addFundEntityFromUcpModal [data-afe-search]'
+          - waitFor: '#addFundEntityFromUcpModal [data-afe-create]'
+      - state: 13
+        id: new-form
+        title: Форма «Новый фонд»
+        note: Название подставлено из поиска; ИНН и КПП у фонда не из ЕПК нет.
+        do:
+          - click: '#addFundEntityFromUcpModal [data-afe-create]'
+          - waitFor: '#editFundModal'
+      - state: 14
+        id: new-done
+        title: Фонд сохранён
+        do:
+          - click: '#editFundModal [data-efm-save]'
+          - waitFor:
+              target: '#editFundModal'
+              state: hidden
+
+  - id: edit-delete
+    title: Редактировать и удалить фонд
+    desc: Меню фонда из ЕПК и не из ЕПК
+    steps:
+      - state: 15
+        id: menu-epk
+        title: Меню фонда из ЕПК
+        page: FundsPipeline.preview.html
+        do:
+          - click: '#fundsTable [data-menu][data-fund-id="fnd-001"]'
+          - waitFor: '#fundActionsMenu'
+      - state: 16
+        id: edit-epk
+        title: Редактировать фонд из ЕПК
+        do:
+          - click: '#fundActionsMenu [data-fund-action="editFund"]'
+          - waitFor: '#editFundModal'
+      - state: 17
+        id: edit-epk-cancel
+        title: Отмена правки
+        do:
+          - click: '#editFundModal [data-efm-cancel]'
+          - waitFor:
+              target: '#editFundModal'
+              state: hidden
+      - state: 22
+        id: menu-custom
+        title: Меню фонда не из ЕПК
+        note: Вместо «Перейти на страницу клиента» — «Связать с базой ЕПК»; воркфлоу привязки пока не делается.
+        do:
+          - click: '#fundsTable [data-menu][data-fund-id="fnd-008"]'
+          - waitFor: '#fundActionsMenuCustom'
+      - state: 23
+        id: edit-custom
+        title: Фонд не из ЕПК — предупреждение
+        note: «Привязать» в предупреждении — без действия, пока нет воркфлоу ЕПК.
+        do:
+          - click: '#fundActionsMenuCustom [data-fund-action="editFund"]'
+          - waitFor: '#editFundModal [data-efm-ucp-alert]'
+      - state: 19
+        id: delete-open
+        title: Удалить фонд
+        page: FundsPipeline.preview.html
+        do:
+          - click: '#fundsTable [data-menu][data-fund-id="fnd-001"]'
+          - waitFor: '#fundActionsMenu'
+          - click: '#fundActionsMenu [data-fund-action="deleteFund"]'
+          - waitFor: '#deleteFundModal'
+      - state: 20
+        id: delete-done
+        title: Фонд удалён
+        do:
+          - click: '#deleteFundModal [data-dfm-confirm]'
+          - waitFor:
+              target: '#fundsTable [data-fund-id="fnd-001"]'
+              state: absent
+
+  - id: empty
+    title: Фондов нет
+    steps:
+      - state: 21
+        id: empty-list
+        title: Пустой список
+        page: FundsPipeline.preview.html?state=empty
+        note: Импорта у Руководителя IB нет — только «Добавить фонд»; фильтры выключены.

@@ -21,14 +21,14 @@
 <style>
 
   /* section */
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:80ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:80ch; text-wrap:pretty; }
 
   .row { display:flex; flex-wrap:wrap; align-items:center; gap:20px; }
   .row + .row { margin-top: 24px; }
 
-  .subhead { font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px; }
+  .subhead { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0 0 16px; }
   .subhead.mt { margin-top: 30px; }
-  .demo-rowlabel { font: var(--type-body-xs); color: var(--text-inactive); margin-bottom:10px; }
+  .demo-rowlabel { font: var(--type-body-xs-reg); color: var(--text-inactive); margin-bottom:10px; }
 
   /* ---------- демо-стадия (docs-split) ---------- */
   .pg__stage { flex:1; min-height:0; width:100%; padding:48px 40px; display:flex; align-items:center; justify-content:center;
@@ -38,11 +38,11 @@
   .pg__stagebox { width:100%; max-width:640px; display:flex; align-items:center; justify-content:center; }
 
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
 
   .toggles { display:flex; flex-direction:column; gap:8px; }
 
-  .pg__code { margin-top:14px; font: var(--type-body-s); color: var(--text-inactive); }
+  .pg__code { margin-top:14px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* ---------- рамка «два уровня» ----------
      Раскладка страницы, не компонент: показывает обязательный контекст —
@@ -50,7 +50,7 @@
   .lvl-frame { border:1px solid var(--border-light); border-radius:var(--radius-2xl); background:var(--bg-tile); overflow:hidden; width:100%; }
   .lvl-frame__l1 { padding: var(--space-16) var(--space-24) 0; }
   .lvl-frame__l2 { padding: var(--space-16) var(--space-24); }
-  .lvl-frame__body { padding: var(--space-32) var(--space-24); border-top:1px solid var(--border-light); background:var(--bg-page); font: var(--type-body-m); color: var(--text-inactive); }
+  .lvl-frame__body { padding: var(--space-32) var(--space-24); border-top:1px solid var(--border-light); background:var(--bg-page); font: var(--type-body-m-reg); color: var(--text-inactive); }
   .use-l2 { margin-top: var(--space-16); }
 
   /* ---------- сравнение / карточки развязки ---------- */
@@ -61,7 +61,7 @@
   @media (max-width:900px){ .diff { grid-template-columns:1fr; } }
   .diff__card { border:1px solid var(--border-light); border-radius:14px; padding:24px; background: var(--bg-tile); display:flex; flex-direction:column; gap:12px; }
   .diff__card.is-current { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary) inset; }
-  .diff__card h4 { font: var(--type-h6-strong); color: var(--text-primary); margin:0; display:flex; align-items:center; gap:8px; }
+  .diff__card h4 { font: var(--type-h6-strong-smb); color: var(--text-primary); margin:0; display:flex; align-items:center; gap:8px; }
   .diff__card h4 .star { font: var(--type-button-xs); text-transform:uppercase; letter-spacing:.06em; color: var(--primary); background: var(--primary-bg); padding:4px 8px; border-radius:999px; }
   .diff__card .stage { min-height:52px; display:flex; align-items:center; }
 
@@ -69,11 +69,11 @@
   .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
   .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
-  .guide-card__tag { display:inline-flex; align-items:center; gap:8px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:8px; font: var(--type-body-s-strong-smb); padding:14px 20px 0; }
   .guide-card.good .guide-card__tag { color: var(--success-dark); }
   .guide-card.bad .guide-card__tag { color: var(--error); }
   .guide-card__body { padding:28px 20px; flex:1; display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; min-height:96px; }
-  .guide-card__cap { padding:0 20px 16px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+  .guide-card__cap { padding:0 20px 16px; font: var(--type-body-xs-reg); color: var(--text-inactive); text-wrap:pretty; }
 
   /* ---------- анатомия ---------- */
   .anat { display:grid; grid-template-columns: minmax(260px,1fr) minmax(240px,360px); gap:40px; align-items:center; }
@@ -81,19 +81,19 @@
   .anat__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:72px 44px; display:flex; justify-content:center; }
   .anat__legend { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; counter-reset:a; }
   .anat__legend li { display:flex; gap:14px; align-items:flex-start; }
-  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center; }
+  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center; }
   .anat__legend li .n::before { content: counter(a); }
-  .anat__legend li .t .k { font: var(--type-body-m-strong); color: var(--text-primary); display:block; }
-  .anat__legend li .t .d { font: var(--type-body-s); color: var(--text-secondary); }
+  .anat__legend li .t .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); display:block; }
+  .anat__legend li .t .d { font: var(--type-body-s-reg); color: var(--text-secondary); }
 
   /* ---------- ряд состояний ---------- */
   .states-grid { display:grid; grid-template-columns: 220px 1fr; gap:14px 24px; align-items:center; }
   @media (max-width:640px){ .states-grid { grid-template-columns:1fr; gap:6px 0; } }
-  .states-grid .k { font: var(--type-body-s-strong); color: var(--text-primary); }
+  .states-grid .k { font: var(--type-body-s-strong-smb); color: var(--text-primary); }
   .states-grid .v { display:flex; align-items:center; }
 
   /* ---------- developer code panels ---------- */
-  .code-panel__name { font: var(--type-body-s-strong); color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; }
+  .code-panel__name { font: var(--type-body-s-strong-smb); color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; }
 </style>
   <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
   <link rel="stylesheet" href="../Splitter/Splitter.css">
@@ -234,7 +234,7 @@
       <div id="size-demo"></div>
     </div>
     <div class="panel" style="padding:0;overflow:hidden; margin-top:20px;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 0.6fr 0.7fr 1.2fr 0.8fr 0.7fr 1fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Размер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Высота</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Подпись</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Паддинг</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Зазор</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Счётчик (Badge)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.6fr 0.7fr 1.2fr 0.8fr 0.7fr 1fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text"><b>M</b></span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">40 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m</code></span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">16 px</span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">8 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">.badge--xs</code> (20)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.6fr 0.7fr 1.2fr 0.8fr 0.7fr 1fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text"><b>S</b> — базовый</span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">32 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">12 px</span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">6 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">.badge--xxs</code> (16)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.6fr 0.7fr 1.2fr 0.8fr 0.7fr 1fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text"><b>XS</b></span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">24 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">8 px</span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">4 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">.badge--xxs</code> (16)</span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 0.6fr 0.7fr 1.2fr 0.8fr 0.7fr 1fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Размер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Высота</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Подпись</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Паддинг</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Зазор</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Счётчик (Badge)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.6fr 0.7fr 1.2fr 0.8fr 0.7fr 1fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text"><b>M</b></span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">40 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m-reg</code></span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">16 px</span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">8 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">.badge--xs</code> (20)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.6fr 0.7fr 1.2fr 0.8fr 0.7fr 1fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text"><b>S</b> — базовый</span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">32 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">12 px</span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">6 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">.badge--xxs</code> (16)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.6fr 0.7fr 1.2fr 0.8fr 0.7fr 1fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text"><b>XS</b></span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">24 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">8 px</span></span></div><div class="tc tc--right"><span class="tc__row"><span class="tc__text">4 px</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">.badge--xxs</code> (16)</span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
 
   <div class="subsec" data-screen-label="Pairing">
@@ -337,7 +337,7 @@
     <h2>Типографика</h2>
     <p class="desc">Подпись набирается гарнитурой <b>SB Sans Text</b>, начертание Regular во всех состояниях, включая выбранное: вес выделения несёт заливка, а не начертание — иначе ряд «прыгал» бы по ширине при каждом переключении. Кегль зависит от размера, <code class="tok">letter-spacing</code> 0 во всех.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.2fr 1.1fr 0.9fr 1.3fr 0.9fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.2fr 1.1fr 0.9fr 1.3fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Подпись · M</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.2fr 1.1fr 0.9fr 1.3fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Подпись · S</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.2fr 1.1fr 0.9fr 1.3fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Подпись · XS</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.2fr 1.1fr 0.9fr 1.3fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Счётчик · M</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.2fr 1.1fr 0.9fr 1.3fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Счётчик · S и XS</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.2fr 1.1fr 0.9fr 1.3fr 0.9fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.2fr 1.1fr 0.9fr 1.3fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Подпись · M</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.2fr 1.1fr 0.9fr 1.3fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Подпись · S</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.2fr 1.1fr 0.9fr 1.3fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Подпись · XS</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.2fr 1.1fr 0.9fr 1.3fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Счётчик · M</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.2fr 1.1fr 0.9fr 1.3fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Счётчик · S и XS</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
   </section>
 
@@ -563,7 +563,7 @@ function makeSubTabs(o) {
   --sub-h: 32px;
   --sub-px: var(--space-12);
   --sub-gap: var(--space-6);
-  --sub-font: var(--type-body-s);
+  --sub-font: var(--type-body-s-reg);
   --sub-radius: var(--radius-control);
 
   box-sizing: border-box;
@@ -594,15 +594,15 @@ function makeSubTabs(o) {
    класса.                                                                    */
 .subtabs--m {
   --sub-h: 40px; --sub-px: var(--space-16); --sub-gap: var(--space-8);
-  --sub-font: var(--type-body-m); --sub-radius: var(--radius-control);
+  --sub-font: var(--type-body-m-reg); --sub-radius: var(--radius-control);
 }
 .subtabs--s {
   --sub-h: 32px; --sub-px: var(--space-12); --sub-gap: var(--space-6);
-  --sub-font: var(--type-body-s); --sub-radius: var(--radius-control);
+  --sub-font: var(--type-body-s-reg); --sub-radius: var(--radius-control);
 }
 .subtabs--xs {
   --sub-h: 24px; --sub-px: var(--space-8); --sub-gap: var(--space-4);
-  --sub-font: var(--type-body-xs); --sub-radius: var(--radius-control-s);
+  --sub-font: var(--type-body-xs-reg); --sub-radius: var(--radius-control-s);
 }
 
 /* ---------- сегмент -------------------------------------------------------- */
@@ -619,7 +619,7 @@ function makeSubTabs(o) {
   background: transparent;
   color: var(--text-secondary);
   font: var(--sub-font);
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   white-space: nowrap;
   cursor: pointer;
   user-select: none;

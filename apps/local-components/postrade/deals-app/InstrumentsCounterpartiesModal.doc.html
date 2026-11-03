@@ -67,7 +67,13 @@
      (60vh — не прыгает при смене вкладки), колонки разделены вертикальными
      Divider. У каждой колонки свой скролл с полосой ДС (.ds-scroll, Layout):
      бегунок стоит вплотную к разделителю, появляется при прокрутке и гаснет.
-     Заголовок H6 Strong стоит на месте: он вне прокручиваемой области. -->
+     Заголовок H6 Strong стоит на месте: он вне прокручиваемой области.
+
+     Вариант «Контрагент» (страница договора, инструмент): страница включает его
+     вызовом PostModalCounterparties.use({ variant: 'instrument', … }) — скрипт
+     ставит data-variant="instrument" на .lc-knrm. Разметка та же: заголовок
+     окна меняет скрипт, радио-отметку выбора рисует он же в карточке участника.
+     Без вызова окно — окно КНР. Подробно — шапка InstrumentsCounterpartiesModal.js. -->
 
 <div id="knr-scrim" hidden class="modal-scrim modal-scrim--inline" data-widget="InstrumentsCounterpartiesModal" data-widget-group="modals" data-widget-src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.html">
 
@@ -99,7 +105,7 @@
       <div class="lc-knrm__cols" data-knr-panel>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Параметры поиска</h3>
+          <h3 class="ds-h6-strong-smb">Параметры поиска</h3>
           <form class="lc-knrm__form ds-scroll" data-knr-search="ul" novalidate>
             <div class="inp inp--m inp--fullwidth">
               <label class="ds-label" for="knr-ul-name"><span class="ds-label__text">Наименование</span></label>
@@ -128,7 +134,7 @@
         <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Найдено</h3>
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
           <div class="lc-knrm__drop ds-scroll" data-knr-drop="ul-found">
             <p class="lc-knrm__hint" data-knr-hint>Поиск осуществляется по любому из параметров</p>
           </div>
@@ -137,7 +143,7 @@
         <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Участники сделки</h3>
+          <h3 class="ds-h6-strong-smb">Участники сделки</h3>
           <div class="lc-knrm__drop ds-scroll" data-knr-drop="ul-members">
             <p class="lc-knrm__hint">Перенесите выбранных участников сделки сюда.
               Добавить можно только носителей риска или все группы и контрагентов, участвующих в сделке.</p>
@@ -153,7 +159,7 @@
       <div class="lc-knrm__cols" data-knr-panel hidden>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Параметры поиска</h3>
+          <h3 class="ds-h6-strong-smb">Параметры поиска</h3>
           <form class="lc-knrm__form ds-scroll" data-knr-search="fl" novalidate>
             <div class="inp inp--m inp--fullwidth">
               <label class="ds-label" for="knr-fl-ul"><span class="ds-label__text">Юридическое лицо</span></label>
@@ -193,7 +199,7 @@
         <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Физические лица</h3>
+          <h3 class="ds-h6-strong-smb">Физические лица</h3>
           <div class="lc-knrm__drop ds-scroll" data-knr-drop="fl-found">
             <p class="lc-knrm__hint" data-knr-hint>Поиск осуществляется по юридическим лицам, входящим в участники сделки</p>
           </div>
@@ -202,7 +208,7 @@
         <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Участники сделки</h3>
+          <h3 class="ds-h6-strong-smb">Участники сделки</h3>
           <!-- Юрлица здесь тоже видны, но с этой вкладки их не трогают: они
                рисуются недоступными (Disabled у Card). Зеркально на вкладке
                юрлиц недоступны физлица. Удаление юрлица не тянет за собой
@@ -239,28 +245,39 @@
             <div class="docs-layout">
               <div class="docs-main">
 <header class="masthead">
-  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>0.008</b></span><span>Обновлено: <b>23.10.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>0.009</b></span><span>Обновлено: <b>27.10.2026</b></span><span>Категория: <b>Сделка</b></span></div>
   <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
   <h1>Модальное окно контрагентов</h1>
   <p class="lead">Найти контрагентов, перенести их в участники сделки и отметить среди них ключевых носителей риска</p>
 </header>
 <section class="section kit-md" data-screen-label="Паспорт">
 <h2>Паспорт</h2>
-<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal">apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="CounterpartiesTile.doc.html">Контрагенты (CounterpartiesTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл контрагентов (на странице сделки — «КНР») — IconButton edit/maximize в шапке и кнопка «Заполнить» в пустом состоянии</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макеты дизайнера 20.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">0.008 · обновлено 23.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.001</span></span></div><div class="tc tc--separator"></div></div></div>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal">apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a><br><a class="inl" href="../../../postrade/deals-app/pages/Instrument.preview.html">apps/postrade/deals-app/pages/Instrument.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="CounterpartiesTile.doc.html">Контрагенты (CounterpartiesTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл контрагентов (на странице сделки — «КНР», на странице договора — «Контрагент») — IconButton edit/maximize в шапке и кнопка «Заполнить» в пустом состоянии</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макеты дизайнера 20.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">0.009 · обновлено 27.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.001</span></span></div><div class="tc tc--separator"></div></div></div>
 </section>
 <section class="section kit-md" data-screen-label="Описание">
 <h2>Описание</h2>
-<p class="desc">Имя — как во фронтенде, <code class="tok">InstrumentsCounterpartiesModal</code> (дерево фронтенда): у фронтенда это одно окно выбора для тайла контрагентов <code class="tok">CounterpartiesTile</code> на всех страницах, где он стоит. До 24.09.2026 окно называлось <code class="tok">KNRModal</code>. Ниже описан собранный вариант — со страницы сделки, где тайл называется «КНР». Заголовок окна и подписи из других контекстов (обеспечение, инструмент) — не решено (24.09.2026).</p>
+<p class="desc">Имя — как во фронтенде, <code class="tok">InstrumentsCounterpartiesModal</code> (дерево фронтенда): у фронтенда это одно окно выбора для тайла контрагентов <code class="tok">CounterpartiesTile</code> на всех страницах, где он стоит. До 24.09.2026 окно называлось <code class="tok">KNRModal</code>. Собраны два варианта: со страницы сделки, где тайл называется «КНР» (по умолчанию), и со страницы договора — «Контрагент» (ниже, «Вариант „Контрагент“»). Заголовок окна и подписи из контекста обеспечения — не решено (24.09.2026); из контекста инструмента — вопрос 8.</p>
 <p class="desc">Артефакт тайла «КНР». Не компонент: сам по себе не существует и в плоском списке кита его нет — он принадлежит своему тайлу и живёт под-пунктом его навигации. В ките и документации оно называется «Модальное окно КНР», заголовок самого окна — «Ключевой носитель риска» (решение человека 21.09.2026).</p>
 <p class="desc">Два таба — юрлица и физлица; под каждым три колонки: параметры поиска, результаты и участники сделки. Контрагента находят поиском, переносят в участники кнопкой со стрелками на карточке или двойным кликом по ней, и там у него появляется чекбокс «КНР».</p>
 <p class="desc">Карточки окно не рисует само: разметку даёт локальный компонент <a class="inl" href="CounterpartyCard.doc.html">Карточка контрагента</a>, данные — стор <code class="tok">CounterpartiesStore</code> (<code class="tok">apps/postrade/deals-app/data/counterparties-store.js</code>): база контрагентов, поиск по ней и состав участников сделки. Перенос меняет данные, а не разметку: колонки перерисовываются по событию стора.</p>
 <p class="desc"><b>Черновик.</b> Правки в окне — черновик. «Сохранить» применяет их к сделке: стор сохраняет состав через <code class="tok">PostApi</code> (сервер данных или localStorage, <code class="tok">apps/postrade/deals-app/data/API.md</code>), тайл «КНР» перерисовывается. Крестик и Esc закрывают окно без сохранения. Триггеры окна стоят с <code class="tok">data-modal-guarded</code>: клик мимо окна его не закрывает (решение человека 21.09.2026).</p>
+<h3 class="kit-md__h3">Вариант «Контрагент» (страница договора) — собран</h3>
+<p class="desc">Включается только атрибутом <code class="tok">data-variant=&quot;instrument&quot;</code> на корне окна <code class="tok">.lc-knrm</code>; без него окно — окно КНР, ни одно правило варианта не действует (решение: страница сделки не меняется, 27.10.2026). Те же два таба и три колонки; отличия:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Что</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вариант «КНР» (по умолчанию)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вариант «Контрагент»</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заголовок окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Ключевой носитель риска»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Контрагент» (вопрос 8)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Отметка у участника сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чекбокс «КНР» (несколько)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">радио-отметка Radiobutton с подписью «Контрагент» — выбирается один контрагент договора на всё окно (обе вкладки); выбранная карточка подсвечена (Selected у Card, <code class="tok">is-selected</code>). Чекбокса «КНР» нет, состав КНР не меняется</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">При открытии</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">отметки КНР сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">отмечен контрагент договора, если он участник сделки; иначе не отмечен</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">всегда доступна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">disabled</code>, пока никто не выбран (недоступное действие выключается разметкой)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Что сохраняется</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состав участников и КНР — <code class="tok">CounterpartiesStore.commit()</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состав участников — тем же <code class="tok">commit()</code> (контрагент, перенесённый из результатов, становится участником сделки), затем <code class="tok">LoanAgreementStore.setCounterparty(id)</code> и <code class="tok">onSave(id)</code> страницы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Убрать выбранного из участников</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подтверждение, если он КНР</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбор сбрасывается (и «Сохранить» гаснет); если он ещё и КНР — то же подтверждение, КНР снимается стором (вопрос 9)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик, Esc</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">откат черновика</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">откат черновика; выбор не записывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Подсказка пустой колонки участников (юрлица)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Перенесите выбранных участников сделки сюда. Добавить можно только носителей риска…»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Перенесите сюда контрагента договора и выберите его» (вопрос 8)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточки без переноса, чекбокс выключен</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточки без переноса, радио выключено, выбранный виден; вместо «Сохранить» — «Закрыть»</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc"><b>Как страница договора подключает окно.</b> Вызывать до открытия окна и при смене договора:</p>
+<pre class="kit-md__pre"><code>PostModalCounterparties.use({
+  variant: 'instrument',               // без него или use() — вариант сделки
+  counterpartyId: rec.counterpartyId,  // кто отмечен при открытии; не задан — берётся LoanAgreementStore.get().counterpartyId
+  onSave: function (id) { /* по желанию: выбор уже записан в LoanAgreementStore */ }
+});</code></pre>
+<p class="desc">Состав участников окно берёт из <code class="tok">CounterpartiesStore</code> текущей сделки — страница должна открыть его на сделке договора (<code class="tok">CounterpartiesStore.use(dealId)</code>). Режим — <code class="tok">data-mode</code> на <code class="tok">.lc-knrm</code>, как у КНР. <code class="tok">PostModalCounterparties.open()</code> открывает окно из кода. Тайл страница перерисовывает по событию <code class="tok">LoanAgreementStore</code> (<code class="tok">change</code>); <code class="tok">onSave</code> — только уведомление.</p>
 
 </section>
 <section class="section kit-md" data-screen-label="Бизнес-смысл">
 <h2>Бизнес-смысл</h2>
-<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зачем существует</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Собрать состав участников сделки и отметить среди них ключевых носителей риска (<a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%BA%D0%BD%D1%80">КНР</a>): найти контрагента поиском, перенести в участники, поставить отметку. Тайл «КНР» — витрина результата и точка входа в это окно (его паспорт указан в «Источниках»)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто заполняет и когда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правит состав тот, у кого есть право на правку и сделка в редактируемом статусе: из тайла — карандаш или «Заполнить». Без права и в статусах «Активная», «Погашена», «Ожидает подтверждения» и «Подтверждение изменений» окно открывается на просмотр: поиск работает, переносить и отмечать КНР нельзя. Какая роль вправе править — не решено (20.09.2026). Обязателен ли хотя бы один КНР у сделки — человек не говорил, не решено (20.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто пользуется результатом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл «КНР» на странице сделки и колонка «КНР» реестра «Текущий портфель ДИД»: сохранённый состав стор переносит в поле <code class="tok">knr</code> сделки. Остальные потребители отметки — не решено (23.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бизнес-правила</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">КНР — основной контрагент по сделке, их может быть несколько. Отметка КНР — только у участника сделки: возврат контрагента в «Найдено» снимает её, потому что носителем риска не может быть тот, кто в сделке не участвует. Контрагента, уже отмеченного КНР, убирают из участников только после подтверждения «Удаление контрагента, который задействован в:». Физлиц ищут только среди юрлиц — участников сделки; удаление юрлица не тянет за собой входящих в него физлиц. Строка <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B3%D1%81%D0%B7">ГСЗ</a> у участника есть не у всех контрагентов. Правки идут в черновик и применяются к сделке по «Сохранить»</span></span></div><div class="tc tc--separator"></div></div></div>
-<p class="desc">Источники: <code class="tok">apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md</code> (тайл «КНР», колонка реестра, режим по статусу), <code class="tok">apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.md</code> (отметка КНР, поля участника), <code class="tok">apps/postrade/deals-app/refs/Текущий портфель.md</code> (колонки «КНР» и «ГСЗ»), <code class="tok">apps/postrade/deals-app/pages/Deal.screen.md</code> (режим страницы, колонка «КНР»), <code class="tok">apps/postrade/deals-app/data/API.md</code> (состав и отметки КНР)</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зачем существует</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Собрать состав участников сделки и отметить среди них ключевых носителей риска (<a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%BA%D0%BD%D1%80">КНР</a>): найти контрагента поиском, перенести в участники, поставить отметку. Тайл «КНР» — витрина результата и точка входа в это окно (его паспорт указан в «Источниках»)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто заполняет и когда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правит состав тот, у кого есть право на правку и сделка в редактируемом статусе: из тайла — карандаш или «Заполнить». Без права и в статусах «Активная», «Погашена», «Ожидает подтверждения» и «Подтверждение изменений» окно открывается на просмотр: поиск работает, переносить и отмечать КНР нельзя. Какая роль вправе править — не решено (20.09.2026). Обязателен ли хотя бы один КНР у сделки — человек не говорил, не решено (20.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто пользуется результатом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл «КНР» на странице сделки и колонка «КНР» реестра «Текущий портфель ДИД»: сохранённый состав стор переносит в поле <code class="tok">knr</code> сделки. Остальные потребители отметки — не решено (23.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Контрагент инструмента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">В варианте «Контрагент» окно выбирает <b>одного контрагента договора</b> (поле <code class="tok">counterpartyId</code>, решение человека 26.10.2026, вопрос 33 задачи RE0041): из участников сделки либо найденного поиском — новый тоже становится участником сделки. Один контрагент может быть выбран у нескольких инструментов и быть <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%BA%D0%BD%D1%80">КНР</a> сделки одновременно; отметок КНР в этом варианте нет и состав КНР не меняется</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бизнес-правила</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">КНР — основной контрагент по сделке, их может быть несколько. Отметка КНР — только у участника сделки: возврат контрагента в «Найдено» снимает её, потому что носителем риска не может быть тот, кто в сделке не участвует. Контрагента, уже отмеченного КНР, убирают из участников только после подтверждения «Удаление контрагента, который задействован в:». Физлиц ищут только среди юрлиц — участников сделки; удаление юрлица не тянет за собой входящих в него физлиц. Строка <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B3%D1%81%D0%B7">ГСЗ</a> у участника есть не у всех контрагентов. Правки идут в черновик и применяются к сделке по «Сохранить»</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Источники: <code class="tok">apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md</code> (тайл «КНР», колонка реестра, режим по статусу), <code class="tok">apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.md</code> (отметка КНР, поля участника), <code class="tok">apps/postrade/deals-app/refs/Текущий портфель.md</code> (колонки «КНР» и «ГСЗ»), <code class="tok">apps/postrade/deals-app/pages/Deal.screen.md</code> (режим страницы, колонка «КНР»), <code class="tok">apps/postrade/deals-app/data/API.md</code> (состав и отметки КНР), <code class="tok">docs/tasks/RE0041-nkl-loan-agreement.md</code> (ответы 8 и 33 — контрагент договора), <code class="tok">apps/postrade/deals-app/data/loan-agreement-store.js</code> (<code class="tok">setCounterparty</code>)</p>
+<p class="desc">Проверено: 27.10.2026</p>
 
 </section>
 <section class="section kit-md" data-screen-label="Раскладка">
@@ -273,7 +290,7 @@
 │   └── «Участники сделки» — колонка карточек (`.lc-knrm__drop`)
 └── Подвал `.modal__foot`: в `edit` — «Сохранить» accent (`data-knr-save`), в `view` —
     «Закрыть» outline (`.lc-knrm__close`, `data-modal-close`)</code></pre>
-<p class="desc">Колонки карточек: заголовок H6 Strong (<code class="tok">h3.ds-h6-strong</code>) и 16px до области прокрутки; подсказка <code class="tok">.lc-knrm__hint[data-knr-hint]</code> — пока карточек нет. Прокрутка колонок — <code class="tok">.ds-scroll</code> из ДС (Layout 1.011) на <code class="tok">.lc-knrm__form</code> и <code class="tok">.lc-knrm__drop</code>: только бегунок, появляется при прокрутке и гаснет. Между колонками — вертикальные Divider (<code class="tok">.dvd--v</code>). 16px после линии — отступ разделителя; 16px перед следующей — полоса внутри колонки: в ней кончается заголовок, а прокручиваемая область доходит до разделителя (8px отступа + 8px под бегунок), и бегунок стоит вплотную к линии.</p>
+<p class="desc">Колонки карточек: заголовок H6 Strong (<code class="tok">h3.ds-h6-strong-smb</code>) и 16px до области прокрутки; подсказка <code class="tok">.lc-knrm__hint[data-knr-hint]</code> — пока карточек нет. Прокрутка колонок — <code class="tok">.ds-scroll</code> из ДС (Layout 1.011) на <code class="tok">.lc-knrm__form</code> и <code class="tok">.lc-knrm__drop</code>: только бегунок, появляется при прокрутке и гаснет. Между колонками — вертикальные Divider (<code class="tok">.dvd--v</code>). 16px после линии — отступ разделителя; 16px перед следующей — полоса внутри колонки: в ней кончается заголовок, а прокручиваемая область доходит до разделителя (8px отступа + 8px под бегунок), и бегунок стоит вплотную к линии.</p>
 <p class="desc">Ширина — <code class="tok">modal--w8</code> (1205px), 8 колонок: решение человека 21.09.2026 (было <code class="tok">--w6</code>, 900px). Три колонки окна — равной ширины (решение человека 23.09.2026): поля формы тянутся за колонкой (<code class="tok">inp--fullwidth</code>). Высота фиксирована — 60% экрана (<code class="tok">.lc-knrm { height: 60vh }</code> в <code class="tok">InstrumentsCounterpartiesModal.css</code>): вкладки юрлиц и физлиц разной длины, и по контенту окно прыгало бы при каждом переключении. Скролла у тела окна нет — у каждой колонки свой, а заголовок колонки стоит на месте: он вне прокручиваемой области. Полоса прокрутки — <code class="tok">.ds-scroll</code> из ДС, её бегунок стоит у разделителя; у последней колонки справа разделителя нет, и бегунок встаёт у края тела окна. Место под бегунок <code class="tok">.ds-scroll</code> держит всегда, и оно не паддинг: DevTools показывает <code class="tok">padding-right: 0</code>, а справа 8px. Поэтому последняя колонка заходит этой полосой в правое поле тела окна (<code class="tok">margin-right: -8px</code>; поле тела — 16px с Modal 1.015): карточки, заголовок колонки и линия табов кончаются вровень с кнопкой подвала (замечание человека 10.10.2026).</p>
 
 </section>
@@ -282,7 +299,7 @@
 <div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Modal/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w8</code>, фиксированная высота 60vh</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tab</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Tab/Tab.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.tabs--horiz</code>, два таба S — юрлица / физлица</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/InputText/InputText.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">параметры поиска — наименование, коды, телефон</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAutocomplete</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">физлицо — юрлицо-участник (<code class="tok">data-ddl</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">DropdownList</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/DropdownList/DropdownList.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">опции списков</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputDate</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/InputDate/InputDate.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата рождения</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Divider</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Divider/Divider.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">dvd--v</code> между колонками</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Buttons/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Найти» outline, «Сохранить» accent / «Закрыть» outline</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/IconButton/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">крестик шапки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tooltip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Tooltip/Tooltip.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подсказки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Карточка контрагента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модуль — <code class="tok">CounterpartyCard/CounterpartyCard.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">локальный компонент, <code class="tok">uses</code></span></span></div><div class="tc tc--separator"></div></div></div>
 <p class="desc">Колонки прокручиваются <code class="tok">.ds-scroll</code> (Layout), заголовки колонок — H6 Strong (Typography).</p>
 <h3 class="kit-md__h3">Из чего собран</h3>
-<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/components/molecules/Tab/Tab.html">Tab</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputText/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputDate/InputDate.html">InputDate</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/components/molecules/DropdownList/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/components/atoms/Divider/Divider.html">Divider</a> · <a class="inl" href="../../../../design-system/foundations/Typography/Typography.html">Typography</a> · <a class="inl" href="../../../../design-system/foundations/Layout/Layout.html">Layout</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Локальные компоненты</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="CounterpartyCard.doc.html">Карточка контрагента (CounterpartyCard/CounterpartyCard.md)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.css">InstrumentsCounterpartiesModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.html">InstrumentsCounterpartiesModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js">InstrumentsCounterpartiesModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.md">InstrumentsCounterpartiesModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/KNRConfirmModal.html">KNRConfirmModal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Подчасти</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="CounterpartyCard.doc.html">CounterpartyCard</a></span></span></div><div class="tc tc--separator"></div></div></div>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/components/molecules/Tab/Tab.html">Tab</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputText/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputDate/InputDate.html">InputDate</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/components/molecules/DropdownList/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/components/atoms/Divider/Divider.html">Divider</a> · <a class="inl" href="../../../../design-system/foundations/Typography/Typography.html">Typography</a> · <a class="inl" href="../../../../design-system/foundations/Layout/Layout.html">Layout</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a> · <a class="inl" href="../../../../design-system/components/atoms/Radiobutton/Radiobutton.html">Radiobutton</a> · <a class="inl" href="../../../../design-system/components/organisms/Tile/Tile.html">Tile</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Локальные компоненты</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="CounterpartyCard.doc.html">Карточка контрагента (CounterpartyCard/CounterpartyCard.md)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.css">InstrumentsCounterpartiesModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.html">InstrumentsCounterpartiesModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js">InstrumentsCounterpartiesModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.md">InstrumentsCounterpartiesModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/KNRConfirmModal.html">KNRConfirmModal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Подчасти</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="CounterpartyCard.doc.html">CounterpartyCard</a></span></span></div><div class="tc tc--separator"></div></div></div>
 
 </section>
 <section class="section kit-md" data-screen-label="Поля">
@@ -300,7 +317,7 @@
 </section>
 <section class="section kit-md" data-screen-label="Состояния">
 <h2>Состояния</h2>
-<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Найдено» — результаты поиска, «Участники сделки» — состав сделки из стора</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">участники есть, поиск не задан: вторая колонка показывает подсказку, третья — карточки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подсказка в колонке: «Поиск осуществляется по любому из параметров» / «Перенесите выбранных участников сделки сюда»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ничего не найдено</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст подсказки колонки «Найдено» меняется на «По заданным параметрам ничего не найдено» (решение человека 21.09.2026: не Alert — это пустой результат, а не ошибка)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сервис поиска не ответил</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопки переноса у карточек, чекбоксы «КНР» активны</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">те же два таба и три колонки, поиск работает. Карточки без кнопки переноса, двойной клик ничего не делает — добавить в участники и убрать из них нельзя. Отметка «КНР» у участника видна, но не переключается. В подвале вместо «Сохранить» — «Закрыть» (outline)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается; решает тайл</span></span></div><div class="tc tc--separator"></div></div></div>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Найдено» — результаты поиска, «Участники сделки» — состав сделки из стора</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">участники есть, поиск не задан: вторая колонка показывает подсказку, третья — карточки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подсказка в колонке: «Поиск осуществляется по любому из параметров» / «Перенесите выбранных участников сделки сюда»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ничего не найдено</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст подсказки колонки «Найдено» меняется на «По заданным параметрам ничего не найдено» (решение человека 21.09.2026: не Alert — это пустой результат, а не ошибка)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сервис поиска не ответил</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопки переноса у карточек, чекбоксы «КНР» активны</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">те же два таба и три колонки, поиск работает. Карточки без кнопки переноса, двойной клик ничего не делает — добавить в участники и убрать из них нельзя. Отметка «КНР» у участника видна, но не переключается. В подвале вместо «Сохранить» — «Закрыть» (outline)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается; решает тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Вариант «Контрагент»: ничего не выбрано</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">радио ни у кого не отмечено, «Сохранить» <code class="tok">disabled</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Вариант «Контрагент»: выбран</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у одного участника радио отмечено, карточка подсвечена, «Сохранить» доступна</span></span></div><div class="tc tc--separator"></div></div></div>
 <h3 class="kit-md__h3">Все состояния рядом</h3>
 <p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
 <div class="kit-cases kit-cases--wide" id="kit-cases"></div>
@@ -337,9 +354,9 @@
 <section class="section kit-md" data-screen-label="Для разработчиков">
 <h2>Для разработчиков</h2>
 <h3 class="kit-md__h3">Параметры метки</h3>
-<p class="desc">Метка <code class="tok">&lt;ds-include&gt;</code> атрибутов не несёт: окно открывает событие тайла. Режим прав — <code class="tok">data-mode</code> на корне окна (<code class="tok">edit</code> | <code class="tok">view</code>), его ставит страница.</p>
+<p class="desc">Метка <code class="tok">&lt;ds-include&gt;</code> атрибутов не несёт: окно открывает событие тайла. Режим прав — <code class="tok">data-mode</code> на корне окна (<code class="tok">edit</code> | <code class="tok">view</code>), его ставит страница. Вариант — <code class="tok">data-variant</code> на корне окна (нет — сделка, <code class="tok">instrument</code> — договор): ставит <code class="tok">PostModalCounterparties.use(…)</code> (глобал окна; параметры — «Вариант „Контрагент“» выше), метка его передать не может.</p>
 <h3 class="kit-md__h3">Соответствие файлов</h3>
-<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/widgets/modals/InstrumentsCounterpartiesModal/</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Стили раскладки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">InstrumentsCounterpartiesModal.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поиск, перенос, состав</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">InstrumentsCounterpartiesModal.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Карточка контрагента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/</code> (<code class="tok">PostCardCounterparty.render</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">CardCounterparty</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Подтверждение действия</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">KNRConfirmModal.html</code> (в папке окна)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/widgets/modals/InstrumentsCounterpartiesModal/</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Стили раскладки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">InstrumentsCounterpartiesModal.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поиск, перенос, состав, вариант «Контрагент»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">InstrumentsCounterpartiesModal.js</code> (<code class="tok">PostModalCounterparties.use</code> / <code class="tok">open</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Карточка контрагента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/</code> (<code class="tok">PostCardCounterparty.render</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">CardCounterparty</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Подтверждение действия</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">KNRConfirmModal.html</code> (в папке окна)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
 
 </section>
 <section class="section kit-md" data-screen-label="Осознанные отклонения">
@@ -349,7 +366,7 @@
 </section>
 <section class="section kit-md" data-screen-label="Открытые вопросы">
 <h2>Открытые вопросы</h2>
-<ol class="kit-md__ol"><li><b>Владелец</b> — не назначен (20.09.2026).</li><li><b>Поиск</b> — закрыт 21.09.2026: ищет по базе контрагентов (мок), правила — «Правила состава», п. 12. Ожидание и ошибка сервиса поиска — не решено (21.09.2026).</li><li><b>Тон кнопки подтверждения</b> — закрыт 21.09.2026: Error.</li><li><b>Порядок даты.</b> На макете поле «Дата рождения» подписано <code class="tok">ММ.ДД.ГГГГ</code>; маска ДС — <code class="tok">ДД.ММ.ГГГГ</code>. Взят порядок ДС.</li><li><b>Свой JavaScript переноса</b> — закрыт 21.09.2026: перетаскивания нет, перенос — кнопкой и двойным кликом (см. <code class="tok">CounterpartiesTile.md</code>, «Осознанные отклонения», п. 1).</li><li><b>Фиксированная высота 60vh</b> — осознанное отклонение от правила Modal «высота по контенту до 80vh», решение человека 21.09.2026: высота окна не должна меняться при переключении вкладок. Потолок ДС (80vh) не превышен. Если такое окно понадобится ещё где-то — кандидат в модификатор Modal.</li><li><b>Бизнес-смысл</b> — не решено: какая роль вправе править состав участников и отметки КНР (матрицы ролей нет — <code class="tok">не решено (20.09.2026)</code>), обязателен ли хотя бы один КНР у сделки (человек не говорил) и кто ещё читает отметку КНР кроме тайла и реестра; остальное закрыто по источникам.</li></ol>
+<ol class="kit-md__ol"><li><b>Владелец</b> — не назначен (20.09.2026).</li><li><b>Поиск</b> — закрыт 21.09.2026: ищет по базе контрагентов (мок), правила — «Правила состава», п. 12. Ожидание и ошибка сервиса поиска — не решено (21.09.2026).</li><li><b>Тон кнопки подтверждения</b> — закрыт 21.09.2026: Error.</li><li><b>Порядок даты.</b> На макете поле «Дата рождения» подписано <code class="tok">ММ.ДД.ГГГГ</code>; маска ДС — <code class="tok">ДД.ММ.ГГГГ</code>. Взят порядок ДС.</li><li><b>Свой JavaScript переноса</b> — закрыт 21.09.2026: перетаскивания нет, перенос — кнопкой и двойным кликом (см. <code class="tok">CounterpartiesTile.md</code>, «Осознанные отклонения», п. 1).</li><li><b>Фиксированная высота 60vh</b> — осознанное отклонение от правила Modal «высота по контенту до 80vh», решение человека 21.09.2026: высота окна не должна меняться при переключении вкладок. Потолок ДС (80vh) не превышен. Если такое окно понадобится ещё где-то — кандидат в модификатор Modal.</li><li><b>Бизнес-смысл</b> — не решено: какая роль вправе править состав участников и отметки КНР (матрицы ролей нет — <code class="tok">не решено (20.09.2026)</code>), обязателен ли хотя бы один КНР у сделки (человек не говорил) и кто ещё читает отметку КНР кроме тайла и реестра; остальное закрыто по источникам.</li><li><b>Вариант «Контрагент»: заголовок и подписи.</b> На макете страницы договора окна нет. Взято: заголовок «Контрагент» (по заголовку тайла), подпись радио «Контрагент», подсказка пустой колонки участников «Перенесите сюда контрагента договора и выберите его». Тексты не решены (26.10.2026): заголовок и подписи в режиме инструмента не утверждены. Радио-отметка в карточке участника — Radiobutton ДС вместо чекбокса «КНР»; как выглядит выбор на макете — не решено (26.10.2026).</li><li><b>Вариант «Контрагент»: удаление выбранного контрагента, который ещё и КНР.</b> Окно оставляет прежнее подтверждение (текст про участие в договоре общий), а при «Подтвердить» стор снимает с него отметку КНР — это меняет состав КНР сделки из окна инструмента. Допустимо ли это, или такого контрагента нельзя убирать из участников в этом варианте, — не решено (27.10.2026).</li><li><b>Вариант «Контрагент»: может ли контрагентом договора быть физлицо.</b> Радио стоит у любого участника сделки, включая физлиц на вкладке «Физические лица». Нужно ли ограничить юрлицами — не решено (27.10.2026).</li></ol>
 
 </section>
 <footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
@@ -407,7 +424,7 @@
     </header>
     <div class="modal__body">
       <!-- один текст в две строки: без зазора между абзацами -->
-      <p class="ds-body-m">Удаление контрагента, который задействован в:<br>1234.1.1.2. Договор займа (НКЛ)</p>
+      <p class="ds-body-m-reg">Удаление контрагента, который задействован в:<br>1234.1.1.2. Договор займа (НКЛ)</p>
     </div>
     <footer class="modal__foot">
       <div class="modal__foot-right">
@@ -579,7 +596,13 @@ window.IBPKitDoc.page(window.IBPKitPage);
      (60vh — не прыгает при смене вкладки), колонки разделены вертикальными
      Divider. У каждой колонки свой скролл с полосой ДС (.ds-scroll, Layout):
      бегунок стоит вплотную к разделителю, появляется при прокрутке и гаснет.
-     Заголовок H6 Strong стоит на месте: он вне прокручиваемой области. -->
+     Заголовок H6 Strong стоит на месте: он вне прокручиваемой области.
+
+     Вариант «Контрагент» (страница договора, инструмент): страница включает его
+     вызовом PostModalCounterparties.use({ variant: 'instrument', … }) — скрипт
+     ставит data-variant="instrument" на .lc-knrm. Разметка та же: заголовок
+     окна меняет скрипт, радио-отметку выбора рисует он же в карточке участника.
+     Без вызова окно — окно КНР. Подробно — шапка InstrumentsCounterpartiesModal.js. -->
 
 <div class="modal-scrim" id="knr-scrim" hidden>
 
@@ -611,7 +634,7 @@ window.IBPKitDoc.page(window.IBPKitPage);
       <div class="lc-knrm__cols" data-knr-panel>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Параметры поиска</h3>
+          <h3 class="ds-h6-strong-smb">Параметры поиска</h3>
           <form class="lc-knrm__form ds-scroll" data-knr-search="ul" novalidate>
             <div class="inp inp--m inp--fullwidth">
               <label class="ds-label" for="knr-ul-name"><span class="ds-label__text">Наименование</span></label>
@@ -640,7 +663,7 @@ window.IBPKitDoc.page(window.IBPKitPage);
         <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Найдено</h3>
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
           <div class="lc-knrm__drop ds-scroll" data-knr-drop="ul-found">
             <p class="lc-knrm__hint" data-knr-hint>Поиск осуществляется по любому из параметров</p>
           </div>
@@ -649,7 +672,7 @@ window.IBPKitDoc.page(window.IBPKitPage);
         <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Участники сделки</h3>
+          <h3 class="ds-h6-strong-smb">Участники сделки</h3>
           <div class="lc-knrm__drop ds-scroll" data-knr-drop="ul-members">
             <p class="lc-knrm__hint">Перенесите выбранных участников сделки сюда.
               Добавить можно только носителей риска или все группы и контрагентов, участвующих в сделке.</p>
@@ -665,7 +688,7 @@ window.IBPKitDoc.page(window.IBPKitPage);
       <div class="lc-knrm__cols" data-knr-panel hidden>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Параметры поиска</h3>
+          <h3 class="ds-h6-strong-smb">Параметры поиска</h3>
           <form class="lc-knrm__form ds-scroll" data-knr-search="fl" novalidate>
             <div class="inp inp--m inp--fullwidth">
               <label class="ds-label" for="knr-fl-ul"><span class="ds-label__text">Юридическое лицо</span></label>
@@ -705,7 +728,7 @@ window.IBPKitDoc.page(window.IBPKitPage);
         <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Физические лица</h3>
+          <h3 class="ds-h6-strong-smb">Физические лица</h3>
           <div class="lc-knrm__drop ds-scroll" data-knr-drop="fl-found">
             <p class="lc-knrm__hint" data-knr-hint>Поиск осуществляется по юридическим лицам, входящим в участники сделки</p>
           </div>
@@ -714,7 +737,7 @@ window.IBPKitDoc.page(window.IBPKitPage);
         <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
 
         <section class="lc-knrm__col">
-          <h3 class="ds-h6-strong">Участники сделки</h3>
+          <h3 class="ds-h6-strong-smb">Участники сделки</h3>
           <!-- Юрлица здесь тоже видны, но с этой вкладки их не трогают: они
                рисуются недоступными (Disabled у Card). Зеркально на вкладке
                юрлиц недоступны физлица. Удаление юрлица не тянет за собой
@@ -790,7 +813,7 @@ window.IBPKitDoc.page(window.IBPKitPage);
   flex-direction: column;
   gap: var(--space-16);
 }
-.lc-knrm__col > .ds-h6-strong { margin-right: var(--space-16); }
+.lc-knrm__col > .ds-h6-strong-smb { margin-right: var(--space-16); }
 
 /* Прокручиваемые области колонок. overflow-y, бегунок и место под него
    (scrollbar-gutter: stable) даёт .ds-scroll из ДС, он же запрещает
@@ -811,7 +834,7 @@ window.IBPKitDoc.page(window.IBPKitPage);
    Modal 1.015 оно 16px): карточки и заголовок кончаются вровень с кнопками
    подвала, бегунок колонки — в поле окна (замечание человека 10.10.2026). */
 .lc-knrm__col:last-child { margin-right: calc(-1 * var(--space-8)); }
-.lc-knrm__col:last-child > .ds-h6-strong { margin-right: var(--space-8); }
+.lc-knrm__col:last-child > .ds-h6-strong-smb { margin-right: var(--space-8); }
 .lc-knrm__col:last-child > .lc-knrm__drop { padding-right: 0; }
 
 /* ── Колонка формы ──────────────────────────────────────────────────── */
@@ -833,7 +856,7 @@ window.IBPKitDoc.page(window.IBPKitPage);
    найдено» (InstrumentsCounterpartiesModal.js). */
 .lc-knrm__hint {
   margin: 0;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
 }
 .lc-knrm__drop:has(.lc-knrm__card) .lc-knrm__hint { display: none; }
@@ -852,6 +875,14 @@ window.IBPKitDoc.page(window.IBPKitPage);
 .lc-knrm__close { display: none; }
 .lc-knrm[data-mode="view"] .lc-knrm__close { display: inline-flex; }
 .lc-knrm[data-mode="view"] [data-knr-save] { display: none; }
+
+/* ── Вариант «Контрагент» (data-variant="instrument", страница договора) ── */
+/* Выбор одного контрагента договора вместо отметки КНР: чекбокс «КНР» в этом
+   варианте не показывается (отметок КНР нет, состав КНР не меняется), а вместо
+   него у участника сделки стоит Radiobutton ДС — его рисует скрипт окна. Без
+   атрибута ни одно правило ниже не действует: окно КНР остаётся как было. */
+.lc-knrm[data-variant="instrument"] .lc-knrm__knr { display: none; }
+.lc-knrm__pick { margin-top: var(--space-12); align-self: flex-start; }
 </script>
 <script type="text/plain" id="src-code-js">
 /* ============================================================
@@ -870,6 +901,34 @@ window.IBPKitDoc.page(window.IBPKitPage);
       страница. В view поиск работает, а карточки рисуются в режиме просмотра:
       без кнопки переноса, отметка «КНР» не меняется. Смена режима
       перерисовывает колонки.
+
+   6) вариант «Контрагент» (страница договора, инструмент) — data-variant="instrument"
+      на .lc-knrm. По умолчанию атрибута нет, окно работает как окно КНР, и ни одна
+      строка ниже на него не влияет. В варианте instrument:
+      – заголовок окна — «Контрагент»;
+      – вместо чекбокса «КНР» у участника сделки — радио-отметка (Radiobutton ДС):
+        выбор одного контрагента договора, выбранная карточка подсвечена
+        (Selected у Card). Отметок КНР в интерфейсе нет, состав КНР не меняется;
+      – при открытии отмечен контрагент договора, если он участник сделки;
+      – «Сохранить» недоступна (disabled), пока никто не выбран; убрать выбранного
+        из участников — сбросить выбор;
+      – «Сохранить»: состав участников — тем же store.commit(), что у окна КНР, затем
+        LoanAgreementStore.setCounterparty(id) и onSave(id). Контрагент, найденный
+        поиском и перенесённый в участники, становится участником сделки по этому
+        же commit(). Крестик, Esc — откат черновика, как в окне КНР.
+
+   Как страница договора подключает окно (КНР на странице сделки это не нужно):
+     PostModalCounterparties.use({
+       variant: 'instrument',        // без него (или use()) — вариант сделки
+       counterpartyId: 'ul-10',      // кто отмечен при открытии; не задан — берётся
+                                     // LoanAgreementStore.get().counterpartyId
+       onSave: function (id) { … }   // по желанию: окно уже записало выбор в
+                                     // LoanAgreementStore; тайл страница
+                                     // перерисует по событию стора
+     });
+     — вызвать до открытия окна и при смене договора; режим прав — как у КНР,
+     data-mode на .lc-knrm. Окно открывают кнопки тайла (data-modal="knr-scrim").
+     PostModalCounterparties.open() — открыть окно из кода.
 
    Данные — CounterpartiesStore (data/counterparties-store.js): состав сделки,
    поиск, черновик и сохранение живут там. Разметку карточки даёт локальный
@@ -929,6 +988,90 @@ window.IBPKitDoc.page(window.IBPKitPage);
     return root && root.getAttribute('data-mode') === 'view' ? 'view' : 'edit';
   }
 
+  /* ── Вариант «Контрагент» (страница договора) ───────────────────── */
+  /* Единственный вход варианта — data-variant="instrument" на корне окна. Без
+     него в этом разделе ничего не исполняется: окно КНР остаётся как было. */
+  var useOpts = null;           /* параметры PostModalCounterparties.use */
+  var chosen = null;            /* id выбранного контрагента договора (черновик) */
+  var saveLocked = false;       /* «Сохранить» выключена вариантом, а не разметкой */
+  var titleEl = scrim.querySelector('#knr-title');
+  var TITLE_DEFAULT = titleEl ? titleEl.textContent : '';
+  var TITLE_INSTRUMENT = 'Контрагент';
+  var PICK_LABEL = 'Контрагент';
+  var PICK_HINT = 'Перенесите сюда контрагента договора и выберите его';
+
+  function isInstrument() {
+    return !!root && root.getAttribute('data-variant') === 'instrument';
+  }
+
+  /* Кого отметить при открытии: контрагента, переданного страницей, а если не
+     передан — контрагента записи договора. Не участник сделки — не отмечен. */
+  function preselect() {
+    var id = null;
+    if (useOpts && useOpts.counterpartyId !== undefined) {
+      id = useOpts.counterpartyId;
+    } else if (window.LoanAgreementStore && window.LoanAgreementStore.get) {
+      try { id = window.LoanAgreementStore.get().counterpartyId; } catch (e) { id = null; }
+    }
+    return id && store() && store().isMember(id) ? id : null;
+  }
+
+  function pickHTML(id, checked, disabled) {
+    return '<label class="rb lc-knrm__pick">'
+      + '<input type="radio" class="rb__input" name="knr-counterparty" value="' + escHtml(id) + '"'
+      + (checked ? ' checked' : '') + (disabled ? ' disabled' : '') + '>'
+      + '<span class="rb__box"><i class="rb__mark" data-icon="'
+      + (checked ? 'radio-button-checked' : 'radio-button-unchecked') + '"></i></span>'
+      + '<span class="rb__content"><span class="rb__label">' + PICK_LABEL + '</span></span></label>';
+  }
+
+  /* Радио-отметка участника сделки и подсветка выбранной карточки */
+  function pickify(el, item) {
+    var main = el.querySelector('.lc-knrm__main');
+    if (!main) return;
+    var on = item.id === chosen;
+    main.insertAdjacentHTML('beforeend', pickHTML(item.id, on, modeOf() === 'view'));
+    if (on) el.classList.add('is-selected');
+  }
+
+  /* Выбор поменялся: отметки всех карточек (обеих вкладок) — по chosen,
+     иконка радио — по состоянию; перерисовки карточек не нужно. */
+  function syncPicks() {
+    Array.prototype.forEach.call(scrim.querySelectorAll('.lc-knrm__pick .rb__input'), function (inp) {
+      var on = inp.value === chosen;
+      inp.checked = on;
+      var mark = inp.closest('.rb').querySelector('.rb__mark');
+      if (mark) {
+        mark.setAttribute('data-icon', on ? 'radio-button-checked' : 'radio-button-unchecked');
+        mark.removeAttribute('data-icon-done');
+      }
+      var card = inp.closest('.lc-knrm__card');
+      if (card) card.classList.toggle('is-selected', on);
+    });
+    if (window.dsIcons) window.dsIcons.apply(scrim);
+    syncSave();
+  }
+
+  /* Недоступное действие выключается разметкой: нет выбора — нет «Сохранить» */
+  function syncSave() {
+    var btn = scrim.querySelector('[data-knr-save]');
+    if (!btn) return;
+    if (isInstrument()) {
+      btn.disabled = !chosen;
+      saveLocked = true;
+    } else if (saveLocked) {
+      btn.disabled = false;
+      saveLocked = false;
+    }
+  }
+
+  /* Заголовок окна по варианту */
+  function syncTitle() {
+    if (!titleEl) return;
+    var t = isInstrument() ? TITLE_INSTRUMENT : TITLE_DEFAULT;
+    if (titleEl.textContent !== t) titleEl.textContent = t;
+  }
+
   /* ── Результаты поиска ──────────────────────────────────────────── */
   /* По вкладке: null — поиск не задан (в колонке подсказка), массив id —
      что нашлось. Убранный из участников контрагент дописывается в конец
@@ -985,8 +1128,28 @@ window.IBPKitDoc.page(window.IBPKitPage);
         disabled: members && item.kind !== kind,
         moveLabel: members ? 'Убрать из участников сделки' : 'Перенести в участники сделки'
       });
-      if (el) drop.appendChild(el);
+      if (el) {
+        if (members && isInstrument()) pickify(el, item);
+        drop.appendChild(el);
+      }
     });
+
+    /* Колонка участников в варианте «Контрагент»: радиогруппа и свой текст
+       подсказки. В варианте сделки ничего из этого не ставится и не снимается,
+       пока вариант не включали. */
+    if (members) {
+      var mHint = drop.querySelector('.lc-knrm__hint');
+      if (isInstrument()) {
+        drop.setAttribute('role', 'radiogroup');
+        drop.setAttribute('aria-label', PICK_LABEL);
+        if (mHint && !mHint.hasAttribute('data-hint-deal')) mHint.setAttribute('data-hint-deal', mHint.textContent);
+        if (mHint && kind === 'ul') mHint.textContent = PICK_HINT;
+      } else if (drop.getAttribute('role') === 'radiogroup') {
+        drop.removeAttribute('role');
+        drop.removeAttribute('aria-label');
+        if (mHint && mHint.hasAttribute('data-hint-deal')) mHint.textContent = mHint.getAttribute('data-hint-deal');
+      }
+    }
 
     /* Подсказка колонки результатов: пока поиска не было — как искать,
        после пустого поиска — что ничего не нашлось. Карточки её прячут (CSS). */
@@ -1003,12 +1166,18 @@ window.IBPKitDoc.page(window.IBPKitPage);
     /* Подсказка кнопки, которую сейчас уберёт перерисовка, иначе осталась бы
        висеть: mouseleave у удалённого узла не наступает. */
     if (window.DSTooltip) window.DSTooltip.hideAll();
+    /* выбранного убрали из участников (перенос, откат, смена сделки) — выбор сброшен */
+    if (isInstrument() && chosen && store() && !store().isMember(chosen)) chosen = null;
     Array.prototype.slice.call(scrim.querySelectorAll('[data-knr-drop]')).forEach(fill);
+    syncTitle();
+    syncSave();
     buildUlList();
     /* риск-метрики появились вместе с карточками — их рантайм собирает чип и
        поповер сам, но только по свежей разметке (подсказку кнопки переноса
        привязывает рендер карточки) */
     if (window.DSRiskMetric) window.DSRiskMetric.mount(scrim);
+    /* радио-отметки варианта «Контрагент» дорисованы после карточек — иконки подключаем здесь */
+    if (isInstrument() && window.dsIcons) window.dsIcons.apply(scrim);
     if (focusId) {
       var panel = scrim.querySelector('[data-knr-panel]:not([hidden])') || scrim;
       var btn = panel.querySelector('[data-knr-card="' + focusId + '"] [data-knr-move]');
@@ -1030,6 +1199,7 @@ window.IBPKitDoc.page(window.IBPKitPage);
     if (!rec) return;
     addResult(rec.kind, id);
     focusId = id;
+    if (isInstrument() && chosen === id) chosen = null;
     store().move(id, 'found');
   }
 
@@ -1077,6 +1247,16 @@ window.IBPKitDoc.page(window.IBPKitPage);
     if (!box || modeOf() === 'view') return;
     var card = box.closest('.lc-knrm__card');
     if (card && store()) store().setKnr(cardId(card), box.checked);
+  });
+
+  /* Выбор контрагента договора (вариант instrument): одна отметка на всё окно.
+     Делегированно, потому что карточки перерисовываются. В просмотре радио
+     выключено разметкой; проверка режима — страховка. */
+  scrim.addEventListener('change', function (e) {
+    var inp = e.target.closest('.lc-knrm__pick .rb__input');
+    if (!inp || !isInstrument() || modeOf() === 'view') return;
+    chosen = inp.checked ? inp.value : chosen;
+    syncPicks();
   });
 
   /* ── Подтверждение удаления КНР ─────────────────────────────────── */
@@ -1228,6 +1408,7 @@ window.IBPKitDoc.page(window.IBPKitPage);
         saving = false;
         resetSearch();
         store().begin();
+        chosen = isInstrument() ? preselect() : null;
         repaint();
       } else if (!saving) {
         store().rollback();
@@ -1236,9 +1417,23 @@ window.IBPKitDoc.page(window.IBPKitPage);
 
     scrim.addEventListener('click', function (e) {
       if (!e.target.closest('[data-knr-save]') || !store()) return;
+      if (isInstrument() && !chosen) return;
       saving = true;
       store().commit();
+      if (isInstrument()) saveInstrument();
     });
+  }
+
+  /* Вариант «Контрагент»: выбор уходит в запись договора. Состав участников
+     уже ушёл в commit() выше — перенесённый из результатов контрагент стал
+     участником сделки именно им. Окно самодостаточно: стор договора зовёт оно,
+     onSave страницы — только уведомление. */
+  function saveInstrument() {
+    var id = chosen;
+    if (window.LoanAgreementStore && window.LoanAgreementStore.setCounterparty) {
+      window.LoanAgreementStore.setCounterparty(id);
+    }
+    if (useOpts && typeof useOpts.onSave === 'function') useOpts.onSave(id);
   }
 
   /* Смена режима — карточки рисуются заново в новом режиме. На странице
@@ -1246,7 +1441,7 @@ window.IBPKitDoc.page(window.IBPKitPage);
      наблюдатель нужен тому, кто переключает режим у открытого окна, — витрине. */
   function bindMode() {
     if (!root) return;
-    new MutationObserver(repaint).observe(root, { attributes: true, attributeFilter: ['data-mode'] });
+    new MutationObserver(repaint).observe(root, { attributes: true, attributeFilter: ['data-mode', 'data-variant'] });
   }
 
   /* Перерисовка по событию стора: перенос, отметка КНР, откат черновика,
@@ -1254,10 +1449,31 @@ window.IBPKitDoc.page(window.IBPKitPage);
   function bindStore() {
     if (!store()) return;
     store().on('change', function (d) {
-      if (d && d.reason === 'use') resetSearch();
+      if (d && d.reason === 'use') {
+        resetSearch();
+        if (isInstrument()) chosen = preselect();
+      }
       repaint();
     });
   }
+
+  /* Подключение страницей (описание — в шапке файла) */
+  function use(opts) {
+    opts = opts || {};
+    var instrument = opts.variant === 'instrument';
+    useOpts = instrument ? { counterpartyId: opts.counterpartyId, onSave: opts.onSave } : null;
+    if (!root) return;
+    if (instrument) root.setAttribute('data-variant', 'instrument');
+    else root.removeAttribute('data-variant');
+    chosen = instrument ? preselect() : null;
+    repaint();
+  }
+
+  function open() {
+    if (window.DSModal) window.DSModal.open(scrim);
+  }
+
+  window.PostModalCounterparties = { use: use, open: open };
 
   bindTabs();
   bindConfirm();

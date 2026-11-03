@@ -1,0 +1,8 @@
+{
+  "_": "Демо-данные: компонент наполняет скрипт страницы NewsPage из data/news.js (MOCK_NEWS); ключи — состояния данных.",
+  "data": { "newsId": "N-301" },
+  "partial": {},
+  "empty": {},
+  "error": { "message": "" },
+  "long": { "newsId": "N-303" }
+}

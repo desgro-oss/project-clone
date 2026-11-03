@@ -34,13 +34,13 @@
 
 a{color:var(--link);} a:hover{color:var(--link-dark);}
 
-.section>p.desc{font:var(--type-body-m);color:var(--text-secondary);margin:0 0 28px;max-width:82ch;text-wrap:pretty;}
+.section>p.desc{font:var(--type-body-m-reg);color:var(--text-secondary);margin:0 0 28px;max-width:82ch;text-wrap:pretty;}
 
-.subhead{font:var(--type-body-m-strong);color:var(--text-primary);margin:32px 0 14px;}
+.subhead{font:var(--type-body-m-strong-smb);color:var(--text-primary);margin:32px 0 14px;}
 
 .disclaimer{border:1px solid var(--warning);background:var(--warning-bg);border-radius:14px;padding:22px 26px;}
-.disclaimer p.disclaimer__title{font:var(--type-h4-strong);color:var(--warning-dark,var(--text-primary));margin:0 0 10px;}
-.disclaimer p{font:var(--type-body-m);color:var(--text-secondary);margin:0 0 6px;max-width:88ch;text-wrap:pretty;}
+.disclaimer p.disclaimer__title{font:var(--type-h4-strong-smb);color:var(--warning-dark,var(--text-primary));margin:0 0 10px;}
+.disclaimer p{font:var(--type-body-m-reg);color:var(--text-secondary);margin:0 0 6px;max-width:88ch;text-wrap:pretty;}
 .disclaimer p:last-child{margin-bottom:0;}
 /* playground: демо — в верхнюю панель сплиттера, контролы — во вкладку «Конструктор» */
 .pg__stage{flex:1;min-height:0;width:100%;display:flex;align-items:stretch;padding:24px 26px;min-width:0;}
@@ -50,13 +50,13 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 .toggles>.is-off{display:none;}
 .ctl>.lbl{font:600 11px/1 var(--font-text),sans-serif;color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
 .pg-stage-grid{flex:1;display:grid;grid-template-columns:repeat(12,1fr);gap:16px;align-content:center;background:var(--bg-page);border:1px solid var(--border-light);border-radius:12px;padding:28px;min-height:260px;}
-.ws-cap{font:var(--type-body-xs);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
+.ws-cap{font:var(--type-body-xs-reg);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
 /* demo content inside tiles */
 .tl-fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .tl-fieldgrid>.rof{min-width:0;}
 .tl-field{display:flex;flex-direction:column;gap:2px;min-width:0;}
-.tl-field__label{font:var(--type-body-xs);color:var(--text-inactive);}
-.tl-field__value{font:var(--type-body-m-strong);color:var(--text-primary);}
+.tl-field__label{font:var(--type-body-xs-reg);color:var(--text-inactive);}
+.tl-field__value{font:var(--type-body-m-strong-smb);color:var(--text-primary);}
 .tl-field__value .u{color:var(--text-inactive);font-weight:400;}
 /* anatomy */
 .anat{display:grid;grid-template-columns:1fr 340px;gap:40px;align-items:start;}
@@ -69,36 +69,36 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 .anat__legend li .n{width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;font:700 12px/24px var(--font-text),sans-serif;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px;}
 /* sizes rail */
 .size-row{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:center;padding:22px 0;border-bottom:1px solid var(--border-light);}
-.size-tag{font:var(--type-body-s-strong);color:var(--text-primary);}
+.size-tag{font:var(--type-body-s-strong-smb);color:var(--text-primary);}
 .colspan{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;}
 .colspan .cs{height:34px;border-radius:6px;background:var(--swamp-100,var(--primary-bg));border:1px solid var(--border-light);}
-.colspan .cs--fill{background:var(--primary-bg);border-color:var(--primary);display:flex;align-items:center;justify-content:center;font:var(--type-body-xs);color:var(--primary-dark,var(--primary));font-weight:600;}
+.colspan .cs--fill{background:var(--primary-bg);border-color:var(--primary);display:flex;align-items:center;justify-content:center;font:var(--type-body-xs-reg);color:var(--primary-dark,var(--primary));font-weight:600;}
 /* content guide */
 .guide{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:700px){.guide{grid-template-columns:1fr;}}
 .guide-card{border-radius:12px;overflow:hidden;border:1px solid var(--border-light);background:var(--bg-tile);}
-.guide-card__tag{font:var(--type-body-s-strong);padding:12px 18px 0;}
-.guide-card__body{padding:14px 18px 18px;font:var(--type-body-s);color:var(--text-secondary);}
+.guide-card__tag{font:var(--type-body-s-strong-smb);padding:12px 18px 0;}
+.guide-card__body{padding:14px 18px 18px;font:var(--type-body-s-reg);color:var(--text-secondary);}
 /* states / variants grid */
 .mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 @media(max-width:820px){.mini-grid{grid-template-columns:1fr;}}
 .mini{display:flex;flex-direction:column;gap:12px;}
-.mini__cap{font:var(--type-body-xs);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
+.mini__cap{font:var(--type-body-xs-reg);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
 .mini__cap b{color:var(--text-secondary);}
 .stagebg{background:var(--bg-page);border:1px solid var(--border-light);border-radius:12px;padding:24px;}
 /* page example */
 .page-ex{background:var(--bg-page);border:1px solid var(--border-light);border-radius:14px;padding:24px;overflow:hidden;}
-.page-ex__crumbs{font:var(--type-body-xs);color:var(--text-inactive);margin:0 0 6px;}
-.page-ex__title{font:var(--type-h4-strong);color:var(--text-primary);margin:0 0 18px;}
+.page-ex__crumbs{font:var(--type-body-xs-reg);color:var(--text-inactive);margin:0 0 6px;}
+.page-ex__title{font:var(--type-h4-strong-smb);color:var(--text-primary);margin:0 0 18px;}
 .page-ex__row{display:grid;gap:16px;grid-template-columns:repeat(12,1fr);}
 .page-ex__row+.page-ex__row{margin-top:16px;}
 /* colors */
 @media(max-width:700px){.cref{grid-template-columns:1fr;}}
 
-.cref-group>h3{font:var(--type-body-m-strong);margin:0;padding:14px 18px;border-bottom:1px solid var(--border-light);color:var(--text-primary);}
-.cref-row{display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--border-light);font:var(--type-body-s);color:var(--text-secondary);}
+.cref-group>h3{font:var(--type-body-m-strong-smb);margin:0;padding:14px 18px;border-bottom:1px solid var(--border-light);color:var(--text-primary);}
+.cref-row{display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--border-light);font:var(--type-body-s-reg);color:var(--text-secondary);}
 /* ref table */
-.ref-table th,.ref-table td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--border-light);font:var(--type-body-m);color:var(--text-primary);vertical-align:middle;}
+.ref-table th,.ref-table td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--border-light);font:var(--type-body-m-reg);color:var(--text-primary);vertical-align:middle;}
 .rl-sample{position:absolute;top:-9999px;left:0;width:520px;}
 /* code blocks */
 
@@ -398,7 +398,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 
   <div class="subsec">
     <h3>Card</h3>
-    <p class="desc tight">Родственник с хэдером типа Card: Title на ступень ниже (<code class="tok">--type-h6-strong</code>, 16/20 вместо 18/24), отступы контента 8/16/20/16 вместо 10/20/24/20, зазор Title↔Subtitle↔Chiplist 4 вместо 8 и — главное — <b>собственные интерактивные состояния</b>, которых у Tile нет. Применяется в модальных окнах, списках и на канбан-доске. Alert-слот у Card не предполагается.</p>
+    <p class="desc tight">Родственник с хэдером типа Card: Title на ступень ниже (<code class="tok">--type-h6-strong-smb</code>, 16/20 вместо 18/24), отступы контента 8/16/20/16 вместо 10/20/24/20, зазор Title↔Subtitle↔Chiplist 4 вместо 8 и — главное — <b>собственные интерактивные состояния</b>, которых у Tile нет. Применяется в модальных окнах, списках и на канбан-доске. Alert-слот у Card не предполагается.</p>
     <p class="desc tight"><b>Грип переноса</b> — <code class="tok">.tile__grip</code>: IconButton M (20×20, глиф <code class="tok">drag-dots</code>) последним в <code class="tok">.tile__actions</code>, разметка <code class="tok">&lt;button class="ibtn ibtn--neutral ibtn--m tile__grip" aria-label="Перенести"&gt;</code>. Card даёт только точку захвата и курсор; жест переноса — у потребителя. Грип нужен, когда в карточке должно работать выделение текста и тащить за тело нельзя. Собрать карточку с грипом можно в конструкторе.</p>
     <p class="desc tight">Класс — модификатор <code class="tok">.tile--card</code>: вся анатомия TileHeader (<code class="tok">.tile__header-main</code>, <code class="tok">.tile__title-row</code>, <code class="tok">.tile__chiplist</code>, <code class="tok">.tile__actions</code>) остаётся той же, меняются геометрия, ступень заголовка и набор состояний. Пример сборки на нём — организм <a class="inl" href="../Kanban/Kanban.html">Kanban</a>.</p>
     <div class="stagebg">
@@ -760,61 +760,61 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
         <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.2fr 1.1fr .9fr 1fr 1fr 8px;">
           <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Title (Tile M)</span></span></div>
-          <div class="tc"><code class="tok">--type-h5-strong</code></div>
+          <div class="tc"><code class="tok">--type-h5-strong-smb</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Display</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Bold</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">18 / 24, SemiBold</span></span></div>
-          <div class="tc"><span style="font:var(--type-h5-strong)">Образец</span></div>
+          <div class="tc"><span style="font:var(--type-h5-strong-smb)">Образец</span></div>
           <div class="tc tc--separator"></div>
         </div>
         <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.2fr 1.1fr .9fr 1fr 1fr 8px;">
           <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Title (Card)</span></span></div>
-          <div class="tc"><code class="tok">--type-h6-strong</code></div>
+          <div class="tc"><code class="tok">--type-h6-strong-smb</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Display</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Bold</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">16 / 20, SemiBold</span></span></div>
-          <div class="tc"><span style="font:var(--type-h6-strong)">Образец</span></div>
+          <div class="tc"><span style="font:var(--type-h6-strong-smb)">Образец</span></div>
           <div class="tc tc--separator"></div>
         </div>
         <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.2fr 1.1fr .9fr 1fr 1fr 8px;">
           <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Title (Inset)</span></span></div>
-          <div class="tc"><code class="tok">--type-body-s-strong</code></div>
+          <div class="tc"><code class="tok">--type-body-s-strong-smb</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">SemiBold</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">14 / 16, SemiBold</span></span></div>
-          <div class="tc"><span style="font:var(--type-body-s-strong)">Образец</span></div>
+          <div class="tc"><span style="font:var(--type-body-s-strong-smb)">Образец</span></div>
           <div class="tc tc--separator"></div>
         </div>
         <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.2fr 1.1fr .9fr 1fr 1fr 8px;">
           <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Subtitle</span></span></div>
-          <div class="tc"><code class="tok">--type-body-xs</code></div>
+          <div class="tc"><code class="tok">--type-body-xs-reg</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">12 / 16, Regular</span></span></div>
-          <div class="tc"><span style="font:var(--type-body-xs)">Образец</span></div>
+          <div class="tc"><span style="font:var(--type-body-xs-reg)">Образец</span></div>
           <div class="tc tc--separator"></div>
         </div>
         <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.2fr 1.1fr .9fr 1fr 1fr 8px;">
           <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Метка поля контента</span></span></div>
-          <div class="tc"><code class="tok">--type-body-xs</code></div>
+          <div class="tc"><code class="tok">--type-body-xs-reg</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">12 / 16, Regular</span></span></div>
-          <div class="tc"><span style="font:var(--type-body-xs)">Образец</span></div>
+          <div class="tc"><span style="font:var(--type-body-xs-reg)">Образец</span></div>
           <div class="tc tc--separator"></div>
         </div>
         <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.2fr 1.1fr .9fr 1fr 1fr 8px;">
           <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Значение поля</span></span></div>
-          <div class="tc"><code class="tok">--type-body-m</code></div>
+          <div class="tc"><code class="tok">--type-body-m-reg</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">16 / 20, Regular</span></span></div>
-          <div class="tc"><span style="font:var(--type-body-m)">Образец</span></div>
+          <div class="tc"><span style="font:var(--type-body-m-reg)">Образец</span></div>
           <div class="tc tc--separator"></div>
         </div>
       </div>
@@ -1026,7 +1026,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
         <div class="tc tc--separator"></div>
         <div class="tc"><span class="tc__row"><span class="tc__text">Размер шрифта Title</span></span></div>
         <div class="tc"><span class="tc__row"><span class="tc__text" id="rl-title">—</span></span></div>
-        <div class="tc"><code class="tok">--type-h5-strong</code></div>
+        <div class="tc"><code class="tok">--type-h5-strong-smb</code></div>
         <div class="tc tc--separator"></div>
       </div>
     </div>
@@ -1444,7 +1444,7 @@ DSTile.toggle(tileEl, true);        // свернуть / развернуть �
 .tile__title {
   margin: 0;
   min-width: 0;
-  font: var(--type-h5-strong);
+  font: var(--type-h5-strong-smb);
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1466,7 +1466,7 @@ DSTile.toggle(tileEl, true);        // свернуть / развернуть �
   align-items: center;
   justify-content: center;
   height: 1lh;
-  font: var(--type-h5-strong);
+  font: var(--type-h5-strong-smb);
   color: var(--secondary);
 }
 .tile__title-icon > :is(svg,[data-icon]){ width: var(--tile-title-icon); height: var(--tile-title-icon); display: block; flex: none; }
@@ -1506,7 +1506,7 @@ DSTile.toggle(tileEl, true);        // свернуть / развернуть �
   gap: 6px;
   min-width: 0;
   margin: 0;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-secondary);
 }
 .tile__subtitle-icon {
@@ -1675,7 +1675,7 @@ DSTile.toggle(tileEl, true);        // свернуть / развернуть �
    у .tile__title, здесь меняется только ступень шрифта. */
 .tile--card .tile__title,
 .tile--card .tile__title-icon {
-  font: var(--type-h6-strong);
+  font: var(--type-h6-strong-smb);
 }
 /* Зазор Title↔Subtitle↔Chiplist у Card — 4 (у плашки 8): заголовок на
    ступень ниже, и 8px отрывали сабхедер от своего заголовка. */
@@ -1775,7 +1775,7 @@ DSTile.toggle(tileEl, true);        // свернуть / развернуть �
 }
 .tile--inset .tile__title,
 .tile--inset .tile__title-icon {
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
 }
 .tile--inset .tile__title-icon {
   --tile-title-icon: 18px;

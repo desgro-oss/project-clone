@@ -1,0 +1,26 @@
+<!-- Подтверждение окна «Фиксация ЭПС/ВБС»: вложенное окно, которое открывается поверх
+     окна фиксации, когда «Сохранить» нажали до конца предварительного расчёта.
+     Паспорт у него общий с окном (FixationModal.md). Свой файл — потому что у
+     фрагмента один корневой элемент, а каждый скрим — отдельный корень.
+
+     «Отменить» закрывает без сохранения (data-modal-close), «Подтвердить» закрывает
+     с результатом «да» — это делает скрипт окна (data-fix-confirm-ok). Рядом с
+     окном фиксации стоит своё подтверждение, а не подтверждение страницы: окно
+     открывается и на странице сделки, где общего подтверждения нет. -->
+<div class="modal-scrim modal-scrim--nested" id="fm-fix-confirm-scrim" hidden>
+  <div class="modal modal--w4" role="alertdialog" aria-modal="true" aria-labelledby="fm-fix-confirm-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fm-fix-confirm-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <div>Процесс предварительного расчета не завершен, сохранить фиксацию ЭПС/ВБС?</div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-fix-confirm-ok><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

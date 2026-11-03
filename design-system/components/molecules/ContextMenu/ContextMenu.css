@@ -56,7 +56,7 @@
   border: 1px solid var(--border-light);
   border-radius: var(--menu-radius);
   box-shadow: var(--menu-shadow);
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   z-index: 40;
 }
 
@@ -74,7 +74,7 @@
   border: 0;
   background: transparent;
   color: var(--text-primary);
-  font: var(--type-body-m);              /* Body M — 16/20 */
+  font: var(--type-body-m-reg);              /* Body M — 16/20 */
   text-align: left;
   cursor: pointer;
   user-select: none;
@@ -110,7 +110,7 @@
   margin-left: auto;
   padding-left: 12px;
   color: var(--text-inactive);
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -162,7 +162,7 @@
 .menu__item[aria-checked="true"] .menu__item-check,
 .menu__item--selected .menu__item-check { opacity: 1; }
 .menu__item[aria-checked="true"] .menu__item-label,
-.menu__item--selected .menu__item-label { color: var(--text-primary); font: var(--type-body-m-strong); }
+.menu__item--selected .menu__item-label { color: var(--text-primary); font: var(--type-body-m-strong-smb); }
 
 /* ---------- danger (деструктивное действие) ------------------------------- */
 .menu__item--danger { color: var(--error-dark); }
@@ -180,7 +180,7 @@
 .menu__label {
   padding: 8px var(--menu-item-px) 4px;
   color: var(--text-inactive);
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   text-transform: uppercase;
   letter-spacing: .04em;
   user-select: none;

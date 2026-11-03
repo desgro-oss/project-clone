@@ -28,7 +28,10 @@
      nodes:                       экраны; порядок узлов — порядок на схеме
        - id: deal                 латиница, цифры, дефис; уникален в карте
          app: deals-app           модуль раздела: id из app.json или путь от
-                                  раздела; концепт (drafts/) — нельзя
+                                  раздела; концепт (drafts/) — нельзя;
+                                  home — главная роли (project.json →
+                                  roleHomes, модуль другого раздела):
+                                  page: HomePage.html?role=<код>
          title: Сделка
          page: Deal.preview.html?id=1024   файл в pages/ приложения, можно с
                                   ?параметрами; модульная страница — собранная
@@ -190,6 +193,13 @@ export function sectionApps(P, section) {
       kind: sub.startsWith(drafts + '/') ? 'concept' : 'module',
       panel: !!P.panel && isDir(path.join(a.abs, P.panel.dir)),
     });
+  }
+  /* Главная роли (project.json → roleHomes, 29.10.2026): страница модуля
+     другого раздела (core/host-app), узел карты — `app: home`. На карте
+     раздела обязана стоять только она, а не все экраны модуля. */
+  const RH = P.roleHomes;
+  if (RH && RH.entries.some((e) => e.section === section) && isDir(RH.rootAbs)) {
+    out.push({ id: 'home', dir: RH.root.slice(P.appsDir.length + 1), sub: 'home', abs: RH.rootAbs, title: 'Главная', track: 'product', kind: 'home', panel: !!P.panel && isDir(path.join(RH.rootAbs, P.panel.dir)), homePage: RH.page });
   }
   return out;
 }
@@ -446,7 +456,7 @@ function analyse(P, core, mp, map, apps, lazyDs) {
     const modules = apps.filter((x) => x.kind === 'module');
     if (r.length > 1) defects.push('КЭ3 ' + at(n.at.app) + ' — ' + where + ': приложение «' + n.app + '» неоднозначно (' + r.map((x) => x.sub).join(', ') + ') — назовите путь от раздела');
     else if (!a) defects.push('КЭ3 ' + at(n.at.app) + ' — ' + where + ': приложения «' + n.app + '» нет в разделе ' + mp.section + (modules.length ? ' (модули: ' + modules.map((x) => x.sub).join(', ') + ')' : ''));
-    else if (a.kind !== 'module') {
+    else if (a.kind === 'concept') {
       /* решение человека 11.10.2026: на карте только страницы проекта — модули раздела */
       defects.push('КЭ3 ' + at(n.at.app) + ' — ' + where + ': «' + n.app + '» — концепт: концепты на карту не ставятся, только модули раздела');
       a = null;
@@ -568,6 +578,9 @@ function analyse(P, core, mp, map, apps, lazyDs) {
   /* КЭ6 — покрытие: каждый экран модулей раздела (концептов на карте нет). */
   const cover = { modules: [0, 0] };
   for (const a of apps) {
+    if (a.kind === 'home' && !(covered.get(a.abs) || new Set()).has(screenKey(a.homePage))) {
+      defects.push('КЭ6 ' + srcRel + ' — главной роли ' + P.appsDir + '/' + a.dir + '/' + P.appShape.pages + '/' + a.homePage + ' нет на карте: добавьте узел — app: home, page: ' + a.homePage + '?role=<код>, без parent');
+    }
     if (a.kind !== 'module') continue;
     const have = covered.get(a.abs) || new Set();
     for (const f of screensOf(P, a)) {

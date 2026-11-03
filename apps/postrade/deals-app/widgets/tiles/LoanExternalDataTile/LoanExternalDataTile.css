@@ -1,0 +1,44 @@
+/* Локальный компонент «Техническая информация» (LoanExternalDataTile).
+   Только внутренняя раскладка. Цвета, шрифты, отступы — токены ДС;
+   своих значений здесь нет.
+   Состояния компонентов ДС отсюда не переопределяются: переключается только
+   присутствие собственных блоков .lc-loan-external-data-tile__* и слотов тайла.
+   Режим (data-mode) ставит страница: edit | view. В просмотре действия правки не
+   рисуются вовсе, а не выключаются стилем. */
+
+/* Компонент перестраивается по СВОЕЙ ширине, а не по ширине окна. */
+.lc-loan-external-data-tile { container-type: inline-size; }
+
+/* Поля друг под другом: одна сжимаемая колонка (minmax(0,1fr)); длинный лейбл
+   переносится внутри колонки (ds-label--wrap), а не распирает тайл. */
+.lc-loan-external-data-tile__grid { grid-template-columns: minmax(0, 1fr); }
+
+/* ── Не заполнено, прав на правку нет ───────────────────────────────── */
+.lc-loan-external-data-tile__empty {
+  margin: 0;
+  font: var(--type-body-m-reg);
+  color: var(--text-inactive);
+}
+
+/* ── Что видно в каком состоянии ────────────────────────────────────── */
+/* База — «данные есть» и «заполнено частично» (та же сетка, пустое значение —
+   прочерком); остальные блоки появляются по data-state. Сетка загрузки несёт два
+   класса сетки сразу, поэтому скрывается правилом с двумя классами. */
+.lc-loan-external-data-tile__grid.lc-loan-external-data-tile__loading,
+.lc-loan-external-data-tile__fill,
+.lc-loan-external-data-tile__empty { display: none; }
+
+.lc-loan-external-data-tile[data-state="loading"] .lc-loan-external-data-tile__grid,
+.lc-loan-external-data-tile[data-state="empty"] .lc-loan-external-data-tile__grid { display: none; }
+
+.lc-loan-external-data-tile[data-state="loading"] .lc-loan-external-data-tile__grid.lc-loan-external-data-tile__loading { display: grid; }
+.lc-loan-external-data-tile[data-state="empty"][data-mode="edit"] .lc-loan-external-data-tile__fill { display: block; }
+.lc-loan-external-data-tile[data-state="empty"][data-mode="view"] .lc-loan-external-data-tile__empty { display: block; }
+
+/* ── Действие шапки ─────────────────────────────────────────────────── */
+/* «Редактировать» — только в режиме правки и только когда значения есть. Пустой
+   тайл заполняют кнопкой в теле, пока данные грузятся — править нечего. В
+   просмотре действия нет ни в одном состоянии. */
+.lc-loan-external-data-tile[data-mode="view"] .tile__actions,
+.lc-loan-external-data-tile[data-state="loading"] .tile__actions,
+.lc-loan-external-data-tile[data-state="empty"] .tile__actions { display: none; }

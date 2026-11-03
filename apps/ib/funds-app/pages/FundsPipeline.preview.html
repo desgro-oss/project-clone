@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фонды — IBP</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body {
+    margin: 0;
+    font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-page);
+  }
+
+  /* ── Раскладка этого экрана ──────────────────────────────────────────────
+     Здесь только grid / flex / gap и только на токенах.                    */
+
+  /* Ритм экрана с таблицей — 12px (Layout, К13) */
+  .screen__content { gap: var(--space-12); }
+
+  /* Сплиттер списка фондов и активов занимает всю оставшуюся высоту
+     (.screen--app). Без своей рамки и подложки: карточки — сами виджеты,
+     как на ClientInfoPage концепта ibp-redesign-v2 (решение человека
+     20.10.2026). Панели — flex-колонки, виджет тянется на высоту панели. */
+  .fp-split { flex: 1; min-height: 0; background: transparent; border: 0; border-radius: 0; }
+  .fp-split > .splitpane__panel { background: transparent; display: flex; flex-direction: column; min-height: 0; }
+  .splitpane__a > *, .splitpane__b > * { flex: 1; min-width: 0; min-height: 0; }
+</style>
+<link rel="stylesheet" href="../widgets/tables/FundsTable/FundsTable.css">
+<link rel="stylesheet" href="../widgets/tables/FundsFilters/FundsFilters.css">
+<link rel="stylesheet" href="../widgets/tables/AssetsTable/AssetsTable.css">
+<link rel="stylesheet" href="../widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.css">
+<link rel="stylesheet" href="../widgets/modals/EditFundModal/EditFundModal.css">
+<link rel="stylesheet" href="../widgets/modals/DeleteFundModal/DeleteFundModal.css">
+<link rel="stylesheet" href="../widgets/context-menus/FundActionsMenu/FundActionsMenu.css">
+<link rel="stylesheet" href="../widgets/context-menus/AssetActionsMenu/AssetActionsMenu.css">
+</head>
+<!-- data-av-tones — разноцветные аватарки модуля «Фонды» (Avatar ДС 1.006, решение человека
+     30.10.2026): тон по хешу data-av-seed (objectId фонда или актива) — один фонд всегда одного
+     цвета в списке и в окнах. Модуль спроектирован «разноцветным»; без атрибута — один цвет. -->
+<body data-av-tones>
+
+<div class="nav-layout">
+
+  <!-- ── Боковое меню ────────────────────────────────────────────────────── -->
+  <nav class="nav nav--rail" aria-label="Главное меню">
+    <div class="nav__top">
+      <button class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list">
+      <a class="nav__item" href="../../../core/host-app/pages/HomePage.html?role=director_ib"><span class="nav__ico"><i data-icon="main-page"></i></span><span class="nav__label">Главная</span></a>
+      <div class="nav__block">
+        <div class="nav__block-label">Origination</div>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="dcm-potentials"></i></span><span class="nav__label">Потенциалы DCM</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="calc"></i></span><span class="nav__label">Прайсер облигаций</span></a>
+        <a class="nav__item nav__item--selected" href="FundsPipeline.preview.html" aria-current="page"><span class="nav__ico"><i data-icon="funds"></i></span><span class="nav__label">Фонды</span></a>
+        <a class="nav__item" href="../../banker-app/pages/RequestThread.html"><span class="nav__ico"><i data-icon="ai-stars"></i></span><span class="nav__label">AI Pitcher</span></a>
+      </div>
+      <div class="nav__block">
+        <div class="nav__block-label">Pipeline</div>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="mna-pipeline"></i></span><span class="nav__label">M&amp;A Pipeline</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="dcm-pipeline"></i></span><span class="nav__label">DCM Pipeline</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="ecm-pipeline"></i></span><span class="nav__label">ECM Pipeline</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="payments-ib"></i></span><span class="nav__label">Реестр платежей IB</span></a>
+      </div>
+      <div class="nav__block">
+        <div class="nav__block-label">Клиенты и задачи</div>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="factory-01"></i></span><span class="nav__label">Клиенты</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="client-search"></i></span><span class="nav__label">Поиск клиентов в ЕПК</span></a>
+        <a class="nav__item" href="#" aria-label="Задачи, 12"><span class="nav__ico"><i data-icon="tasks"></i></span><span class="nav__label">Задачи</span><span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">12</span></span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="calendar"></i></span><span class="nav__label">Встречи</span></a>
+      </div>
+    </div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Пётр Константинович</span><span class="nav__user-role">Руководитель IB</span></span>
+      </a>
+      <button class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <!-- ── Рабочая область ─────────────────────────────────────────────────── -->
+  <div class="screen screen--app">
+
+    <!-- Крошки: 44px и поля 24px задаёт сам компонент, экран их не трогает.
+         Отступ 8px между крошками и контентом даёт .screen__content (--layout-pad-top) -->
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="../../../core/host-app/pages/HomePage.html?role=director_ib">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Фонды</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="Screen">
+
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <h1 class="phead__title">Фонды</h1>
+            </div>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <!-- «Добавить фонд» → окно AddFundEntityFromUcpModal (сценарий страницы) -->
+          <button class="btn btn--accent btn--m" id="btnAddFund"><i data-icon="add"></i><span class="btn__label">Добавить фонд</span></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Контент ────────────────────────────────────────── -->
+      <!-- Список фондов и активы выбранного фонда: правая панель и сплиттер
+           появляются выбором фонда, крестик их прячет (сценарий страницы ниже). -->
+      <div class="splitpane fp-split" id="fundsSplit" data-off-grid="Панели Splitter: ширину задаёт сплиттер">
+        <div class="splitpane__panel splitpane__a">
+          <!-- Локальный компонент «Список фондов» (FundsTable) страницы «Фонды» (FundsPipeline).
+     Пара во фронтенде — widgets/tables/FundsTable (+ ui/EmptyFundsPreview).
+     Карточка — сама таблица ДС (.dtable --fill) с тулбаром без заголовка (решение
+     человека 30.10.2026): слева — слот фильтров (data-fundstable-filters: страница
+     ставит туда виджет FundsFilters через FundsTable.placeFilters), справа —
+     шестерёнка «Настроить колонки» (ibtn neutral M, глиф settings; хук ДС
+     data-table-settings — стандартное окно TableSettings строит рантайм ДС из колонок
+     шапки; таблицу находит по .dtable). В «Загрузке» кнопка disabled.
+     Фрагмент показан в состоянии «Загрузка»: шапка таблицы и строки-скелетоны, пока
+     страница не передала фонды. Строки, пустые состояния и «Ничего не найдено» рисует
+     FundsTable.js: FundsTable.init(корень, { funds }). Вшивается меткой ds-include. -->
+<div class="dtable dtable--fill lc-funds-table" data-state="loading" aria-busy="true" id="fundsTable" data-widget="FundsTable" data-widget-group="tables" data-widget-src="../widgets/tables/FundsTable/FundsTable.html">
+  <div class="dtable__toolbar lc-funds-table__toolbar">
+    <div class="dtable__toolbar-left lc-funds-table__filters" data-fundstable-filters></div>
+    <div class="dtable__toolbar-right" data-fundstable-tools>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-table-settings aria-label="Настроить колонки" disabled><i data-icon="settings"></i></button>
+    </div>
+  </div>
+  <div class="dtable__body">
+    <div class="tbl" data-table data-sort-rows data-fundstable-tbl>
+      <div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(441px,441fr) minmax(403px,403fr) minmax(453px,453fr) 160px 140px 148px 575px 575px 52px minmax(8px,1fr)">
+        <div class="th th--separator"></div>
+        <div class="th"><span class="th__label">Название фонда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th"><span class="th__label">Псевдоним</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th"><span class="th__label">Бенефициар</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th"><span class="th__label">Приоритет</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th th--right"><span class="th__label">Активов</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th"><span class="th__label">Контактные лица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th"><span class="th__label">Комментарий</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th th--actions th--pinned" data-col="actions"><span class="th__label">Действия</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th th--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px minmax(441px,441fr) minmax(403px,403fr) minmax(453px,453fr) 160px 140px 148px 575px 575px 52px minmax(8px,1fr)">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--center tc--pinned"></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px minmax(441px,441fr) minmax(403px,403fr) minmax(453px,453fr) 160px 140px 148px 575px 575px 52px minmax(8px,1fr)">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--center tc--pinned"></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px minmax(441px,441fr) minmax(403px,403fr) minmax(453px,453fr) 160px 140px 148px 575px 575px 52px minmax(8px,1fr)">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--center tc--pinned"></div>
+        <div class="tc tc--separator"></div>
+      </div>
+    </div>
+    <!-- Данных нет (фондов нет вовсе): EmptyState L, одно действие «Добавить фонд»
+         (data-fund-add — окно AddFundEntityFromUcpModal открывает страница). Импорта
+         у Руководителя IB нет — ни кнопки, ни упоминания в тексте (решение 30.10.2026);
+         текст — допущение 30.10.2026. -->
+    <div class="es es--l" data-fundstable-empty hidden>
+      <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+      <div class="es__body">
+        <p class="es__title">Здесь пока ничего нет</p>
+        <p class="es__text">Добавьте первый фонд, чтобы начать работу со списком</p>
+      </div>
+      <div class="es__actions">
+        <button type="button" class="btn btn--accent btn--m" data-fund-add><i data-icon="add"></i><span class="btn__label">Добавить фонд</span></button>
+      </div>
+    </div>
+    <!-- Ничего не найдено по фильтрам: текст — допущение 30.10.2026 (макета нет) -->
+    <div class="es es--l" data-fundstable-notfound role="status" aria-live="polite" hidden>
+      <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+      <div class="es__body">
+        <p class="es__title">Ничего не найдено</p>
+        <p class="es__text">Измените условия поиска или фильтры</p>
+      </div>
+    </div>
+  </div>
+</div>
+          <!-- Фильтры — в тулбаре таблицы (решение 30.10.2026): сценарий страницы ставит их
+               в слот таблицы вызовом FundsTable.placeFilters до первой отрисовки -->
+          <div class="lc-funds-filters" data-state="data" data-mode="view" role="group" aria-label="Фильтры списка фондов" id="fundsFilters" data-widget="FundsFilters" data-widget-group="tables" data-widget-src="../widgets/tables/FundsFilters/FundsFilters.html">
+  <!-- Ряд фильтров в тулбаре таблицы «Список фондов» (решение человека 30.10.2026: фильтры —
+       внутри таблицы, своей карточки нет). Три поля размера S (32px): тип и приоритет — одной
+       ширины, по самому длинному значению (data-ff-fit; поиск — не шире их двух вместе; ширины считает
+       FundsFilters.js по подписям справочника). Тип и приоритет — множественный выбор:
+       список с чекбоксами, выбранное — сводкой «Первое, +N». Опции строит FundsFilters.init из
+       справочников страницы; когда фондов нет, FundsFilters.setDisabled выключает все три поля. -->
+
+  <!-- smartSearch: InputText S с иконкой поиска и информером. Подсказка — своя разметка
+       Tooltip ДС (.tip внутри .tip-anchor): текст и строки атрибутов через <br>.
+       id тултипа и aria-describedby у информера ставит DSTooltip.bind в FundsFilters.init —
+       так у каждой копии виджета (витрина) свой тултип. -->
+  <div class="inp inp--s lc-funds-filters__search" data-ff-field="smartSearch">
+    <div class="inp__field">
+      <span class="inp__lead"><i data-icon="search"></i></span>
+      <input class="inp__control" type="text" placeholder="по атрибутам фонда..." aria-label="Поиск по атрибутам фонда" autocomplete="off">
+      <span class="inp__acts">
+        <span class="tip-anchor">
+          <button type="button" class="inp__act inp__act--static" aria-label="Подсказка" data-ff-tip><i data-icon="info-circle"></i></button>
+          <span class="tip tip--main tip--top tip--center tip--floating" role="tooltip">Поиск записей осуществляется по атрибутам:<br>•&nbsp;Название Фонда<br>•&nbsp;Псевдоним<br>•&nbsp;Бенефициар<br>•&nbsp;ИНН Фонда<span class="tip__arrow"></span></span>
+        </span>
+        <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+      </span>
+    </div>
+  </div>
+
+  <!-- typeCodes: InputAutocomplete S — сводка «PE, +1» (.inp__summary; вариант S ДС — только
+       сводкой), список с чекбоксами. Сводку вставляет FundsFilters.js перед полем ввода. -->
+  <div class="inp inp--s" data-ff-field="typeCodes" data-ff-fit>
+    <div class="inp__field">
+      <input class="inp__control" type="text" placeholder="Все типы" aria-label="Тип фонда" autocomplete="off">
+      <span class="inp__acts">
+        <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+        <button type="button" class="inp__act inp__act--chev" aria-label="Показать список типов"><i data-icon="chevron-down"></i></button>
+      </span>
+    </div>
+    <div class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true" aria-label="Типы фондов"></div>
+  </div>
+
+  <!-- priorityCodes: InputAutocomplete S — как тип: несколько приоритетов, чекбоксы, сводка
+       (решение человека 30.10.2026: «там можно выбрать несколько значений») -->
+  <div class="inp inp--s" data-ff-field="priorityCodes" data-ff-fit>
+    <div class="inp__field">
+      <input class="inp__control" type="text" placeholder="Все приоритеты" aria-label="Приоритет фонда" autocomplete="off">
+      <span class="inp__acts">
+        <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+        <button type="button" class="inp__act inp__act--chev" aria-label="Показать список приоритетов"><i data-icon="chevron-down"></i></button>
+      </span>
+    </div>
+    <div class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true" aria-label="Приоритеты фондов"></div>
+  </div>
+
+</div>
+        </div>
+        <div class="spl" role="separator" aria-orientation="vertical" aria-valuemin="35" aria-valuemax="75" aria-valuenow="50" aria-label="Изменить ширину панелей" tabindex="0" hidden>
+          <span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <div class="splitpane__panel splitpane__b" hidden>
+          <!-- Локальный компонент «Активы фонда» (AssetsTable) — правая панель сплиттера
+     страницы FundsPipeline. Карточка — сама .dtable (Table ДС), без тайла-подложки,
+     как V2MeetingsProtocolsList (решение человека 20.10.2026). Заголовок, строки
+     и пустое состояние рисует AssetsTable.render (AssetsTable.js); разметка ниже —
+     каркас всех состояний, нужное показывает CSS по data-state. -->
+<div class="dtable dtable--fill lc-assets-table" data-state="data" data-mode="edit" id="assetsTable" data-widget="AssetsTable" data-widget-group="tables" data-widget-src="../widgets/tables/AssetsTable/AssetsTable.html">
+  <div class="dtable__toolbar">
+    <div class="dtable__toolbar-left"><h3 class="dtable__title" data-at-title>Активы фонда</h3></div>
+    <div class="dtable__toolbar-right">
+      <!-- окно добавления актива не делается (решение человека 30.10.2026) -->
+      <button type="button" class="btn btn--outline btn--xs lc-assets-table__add"><i data-icon="add"></i><span class="btn__label">Добавить актив</span></button>
+      <!-- Шестерёнка «Настроить колонки» (как в ДС: ibtn neutral M, глиф settings; решение
+           человека 30.10.2026) — стандартное окно ДС TableSettings по хуку data-table-settings:
+           строится из колонок шапки первой .tbl этой .dtable (таблица данных) -->
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-assets-table__setup" data-table-settings aria-label="Настроить колонки"><i data-icon="settings"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Закрыть активы фонда" data-at-close><i data-icon="close"></i></button>
+    </div>
+  </div>
+  <div class="dtable__body">
+    <!-- данные есть: строки рисует AssetsTable.render -->
+    <div class="tbl lc-assets-table__data" data-table data-sort-rows data-table-persist="AssetsTable" data-at-tbl>
+      <div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div>
+    </div>
+    <!-- загрузка: шапка на месте, строки — скелетоны -->
+    <div class="tbl lc-assets-table__loading" data-table aria-busy="true">
+      <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 272px 158px 120px 180px 145px 125px 180px minmax(200px,1fr) 52px minmax(8px,1fr)">
+        <div class="th th--separator"></div>
+        <div class="th"><span class="th__label">Название актива</span></div>
+        <div class="th"><span class="th__label">Псевдоним</span></div>
+        <div class="th"><span class="th__label">Дата приобретения</span></div>
+        <div class="th th--right"><span class="th__label">Enterprise Value, млн RUB</span></div>
+        <div class="th th--right"><span class="th__label">MCAP / 100% equity, млн RUB</span></div>
+        <div class="th th--right"><span class="th__label">Доля владения</span></div>
+        <div class="th th--right"><span class="th__label">Стоимость доли, млн RUB</span></div>
+        <div class="th"><span class="th__label">Отрасль</span></div>
+        <div class="th th--actions th--pinned" data-col="actions"><span class="th__label">Действия</span></div>
+        <div class="th th--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px 272px 158px 120px 180px 145px 125px 180px minmax(200px,1fr) 52px minmax(8px,1fr)">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:70%" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:64px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:88px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:72px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:40px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:88px" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span></div>
+        <div class="tc"></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px 272px 158px 120px 180px 145px 125px 180px minmax(200px,1fr) 52px minmax(8px,1fr)">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:55%" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:64px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:72px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:88px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:40px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:72px" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:45%" aria-hidden="true"></span></div>
+        <div class="tc"></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px 272px 158px 120px 180px 145px 125px 180px minmax(200px,1fr) 52px minmax(8px,1fr)">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:62%" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:64px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:88px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:64px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:40px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:88px" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:50%" aria-hidden="true"></span></div>
+        <div class="tc"></div>
+        <div class="tc tc--separator"></div>
+      </div>
+    </div>
+    <!-- данных нет: у фонда нет активов (EmptyAssetsPreview фронтенда) -->
+    <div class="lc-assets-table__empty">
+      <div class="es es--l">
+        <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <div class="es__body">
+          <p class="es__title">Здесь пока ничего нет</p>
+          <p class="es__text" data-at-empty-text>—</p>
+        </div>
+        <div class="es__actions">
+          <!-- окно добавления актива не делается (решение человека 30.10.2026) -->
+          <button type="button" class="btn btn--accent btn--m lc-assets-table__add"><i data-icon="add"></i><span class="btn__label">Добавить актив</span></button>
+        </div>
+      </div>
+    </div>
+    <!-- ошибка: причина словами пользователя и повтор; остальной экран работает -->
+    <div class="lc-assets-table__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Не удалось загрузить активы фонда</p>
+          <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── Модальные окна — здесь, в конце body, с hidden.
+     Триггер помечается data-modal="id-скрима".
+     Якорь #sec:modals — точка дозаписи для этапа build-modals: модалки
+     вставляются сюда по grep-у якоря, без перечитывания экрана целиком. -->
+
+<!-- Окна фонда (Э2). «Настройка таблицы» — стандартное окно ДС TableSettings,
+     его строит рантайм по data-table-settings, метки здесь нет. -->
+<!-- AddFundEntityFromUcpModal — «Добавить фонд», шаг 1: поиск в базе фондов и в ЕПК.
+     Макеты «Add fund / Step 01 — Search empty · Search result A · Search result B ·
+     Empty search result». Открывает его кнопка «Добавить фонд» страницы «Фонды»;
+     окно открывает скрипт окна: AddFundEntityFromUcpModal.open(scrimId, opts).
+
+     Состояние окна — data-state на .modal (свои значения, как у окон модуля postrade):
+       idle    — поиск не выполнялся: справа иллюстрация и подсказка;
+       loading — поиск идёт: скелетоны карточек и деталей;
+       data    — найдено: колонки «Найдено» и детали выбранной карточки;
+       empty   — ничего не найдено: строка причины и «Новый фонд»;
+       error   — поиск не выполнен: Alert ошибки с «Повторить» в колонке результатов.
+     Что выбрано — data-detail на .modal: fund (детали фонда) | client (детали клиента ЕПК).
+     Карточки результатов и детали рисует скрипт окна; ниже — пример по макету A. -->
+<div class="modal-scrim" hidden id="addFundEntityFromUcpModal" data-widget="AddFundEntityFromUcpModal" data-widget-group="modals" data-widget-src="../widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.html">
+  <div class="modal modal--w9 lc-afe" role="dialog" aria-modal="true" aria-labelledby="afe-title" data-state="data" data-detail="fund">
+    <header class="modal__head">
+      <h2 class="modal__title" id="afe-title">Добавить фонд</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert">
+      <div class="alert alert--info alert--m alert--flush" role="status" aria-live="polite">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">В соответствии с распоряжением № 524/3-Р от 08.04.2022 вся информация об американских клиентах скрыта для использования. Все российские юридические лица есть в базе юр. лиц Сбера (ЕПК).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body modal__body--flush">
+      <div class="lc-afe__grid">
+
+        <!-- 1. Параметры поиска. Enter в любом поле — тот же поиск (submit формы) -->
+        <form class="lc-afe__col lc-afe__params" data-afe-form novalidate>
+          <h3 class="ds-h6-strong-smb">Параметры поиска</h3>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-name"><span class="ds-label__text">Название</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-name" name="name" autocomplete="off" value="Интеррос"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-inn"><span class="ds-label__text">ИНН</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-inn" name="inn" inputmode="numeric" autocomplete="off" value="0765"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-ogrn"><span class="ds-label__text">ОГРН</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-ogrn" name="ogrn" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-kpp"><span class="ds-label__text">КПП</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-kpp" name="kpp" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-kio"><span class="ds-label__text">КИО</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-kio" name="kio" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <label class="cb">
+            <input type="checkbox" class="cb__input" name="hideNoCrm" checked>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Скрывать клиентов без CRM ID</span></span>
+          </label>
+          <button type="submit" class="btn btn--outline btn--m btn--fullwidth" data-afe-search><span class="btn__label">Поиск</span></button>
+        </form>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <!-- 2а. Поиск не выполнялся (idle): иллюстрация и подсказка на месте двух колонок -->
+        <div class="lc-afe__col lc-afe__wide lc-afe__idle">
+          <div class="es es--m">
+            <span class="illu es__illu" data-illu="possible-deals" aria-hidden="true"></span>
+            <div class="es__body">
+              <p class="es__text">Проверьте наличие фонда или актива в базах Сбера.<br>При отсутствии подходящих результатов создайте новую запись.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2б. Ничего не найдено (empty): строка причины и действие -->
+        <div class="lc-afe__col lc-afe__wide lc-afe__notfound" role="status" aria-live="polite">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <p class="ds-body-m-reg lc-afe__note">По вашему запросу результатов не найдено. Вы можете создать новую запись.</p>
+          <div><button type="button" class="btn btn--outline btn--m" data-afe-create><i data-icon="add"></i><span class="btn__label">Новый фонд</span></button></div>
+        </div>
+
+        <!-- 2в. Ошибка поиска (error): Alert в колонке результатов, повтор запроса -->
+        <div class="lc-afe__col lc-afe__wide lc-afe__error">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <div class="alert alert--error alert--m" role="alert" aria-live="assertive">
+            <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+            <div class="alert__body">
+              <p class="alert__text" data-afe-error-text>Не удалось выполнить поиск. Попробуйте ещё раз.</p>
+              <div class="alert__buttons">
+                <button type="button" class="btn btn--outline btn--xs btn--error" data-afe-retry><span class="btn__label">Повторить</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Найдено (data) и загрузка (loading) -->
+        <div class="lc-afe__col lc-afe__results">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <div class="lc-afe__loading" aria-busy="true">
+            <span class="sk-block sk-block--rounded lc-afe__sk-card" aria-hidden="true"></span>
+            <span class="sk-block sk-block--rounded lc-afe__sk-card" aria-hidden="true"></span>
+            <span class="sk-block sk-block--rounded lc-afe__sk-card" aria-hidden="true"></span>
+          </div>
+          <div class="lc-afe__list" role="radiogroup" aria-label="Найденные записи" data-afe-list
+               data-off-grid="Карточки результатов поиска: ширину задаёт колонка «Найдено» окна, а не сетка страницы">
+            <section class="lc-afe__group" data-afe-group="funds">
+              <p class="ds-body-xs-reg lc-afe__group-title">В базе фондов</p>
+              <div class="lc-afe__cards" data-afe-cards="funds">
+                <article class="tile tile--card lc-afe__card" role="radio" aria-checked="true" tabindex="0" data-afe-kind="fund" data-afe-id="fnd-001">
+                  <header class="tile__header">
+                    <div class="tile__header-main">
+                      <div class="tile__title-row">
+                        <span class="tile__title-icon" aria-hidden="true"><i data-icon="factory-01"></i></span>
+                        <h4 class="tile__title">Интеррос</h4>
+                      </div>
+                      <p class="tile__subtitle">PE</p>
+                    </div>
+                  </header>
+                </article>
+                <article class="tile tile--card lc-afe__card" role="radio" aria-checked="false" tabindex="-1" data-afe-kind="fund" data-afe-id="fnd-008">
+                  <header class="tile__header">
+                    <div class="tile__header-main">
+                      <div class="tile__title-row">
+                        <span class="tile__title-icon" aria-hidden="true"><i data-icon="factory-01"></i></span>
+                        <h4 class="tile__title">Это пример фонда не из ЕПК</h4>
+                        <span class="tile__title-add tile__title-add--icon tile__title-add--warning" tabindex="0" role="img" aria-label="Клиент не привязан к базе юр. лиц Сбера (ЕПК)." data-tooltip="Клиент не привязан к базе юр. лиц Сбера (ЕПК)." data-tooltip-multiline="yes"><i data-icon="alert-triangle-filled"></i></span>
+                      </div>
+                      <p class="tile__subtitle">PE</p>
+                    </div>
+                  </header>
+                </article>
+              </div>
+            </section>
+            <section class="lc-afe__group" data-afe-group="clients">
+              <div class="lc-afe__group-head">
+                <p class="ds-body-xs-reg lc-afe__group-title">В базе юр. лиц Сбера (ЕПК)</p>
+                <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Юр. лица из этого списка не добавлены в базу фондов" data-tooltip="Юр. лица из этого списка не добавлены в базу фондов" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button>
+              </div>
+              <div class="lc-afe__cards" data-afe-cards="clients">
+                <article class="tile tile--card lc-afe__card" role="radio" aria-checked="false" tabindex="-1" data-afe-kind="client" data-afe-id="pty-3001">
+                  <header class="tile__header">
+                    <div class="tile__header-main">
+                      <div class="tile__title-row">
+                        <span class="tile__title-icon" aria-hidden="true"><i data-icon="building-03"></i></span>
+                        <h4 class="tile__title">ИП «Интер О.С.»</h4>
+                      </div>
+                      <p class="tile__subtitle">Юридическое лицо · Резидент</p>
+                    </div>
+                  </header>
+                  <div class="tile__body">
+                    <dl class="lc-afe__kv">
+                      <dt>ИНН</dt><dd>076543834</dd>
+                      <dt>КПП</dt><dd>33432423423</dd>
+                      <dt>КПП КН</dt><dd>7788994455</dd>
+                      <dt>ОГРН</dt><dd>076543834</dd>
+                      <dt>CRM ID</dt><dd>1-1V9D55</dd>
+                    </dl>
+                  </div>
+                </article>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div class="dvd dvd--v lc-afe__dvd-detail" role="separator" aria-orientation="vertical"></div>
+
+        <!-- 4. Детали выбранного (data): фонд или клиент ЕПК -->
+        <div class="lc-afe__col lc-afe__detail" aria-live="polite">
+          <div class="lc-afe__loading" aria-busy="true">
+            <div class="sk-group">
+              <span class="sk-line sk-line--title" style="--sk-w:40%" aria-hidden="true"></span>
+              <span class="sk-line" style="--sk-w:72%" aria-hidden="true"></span>
+              <span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span>
+              <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <!-- 4а. Фонд из базы фондов (макет A) -->
+          <div class="lc-afe__info lc-afe__info--fund" data-afe-fund>
+            <div class="lc-afe__info-head">
+              <h3 class="ds-h6-strong-smb" data-afe-f="title">Интеррос</h3>
+              <a class="btn btn--outline btn--xs" href="#" data-afe-f="link"><span class="btn__label">Страница фонда</span><i data-icon="arrow-right"></i></a>
+            </div>
+            <!-- только у фонда без partyId; «Привязать» — воркфлоу не делается (решение 30.10.2026) -->
+            <div class="alert alert--warning alert--m alert--row" role="status" data-afe-unbound hidden>
+              <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+              <div class="alert__body">
+                <p class="alert__text">Клиент не привязан к базе юр. лиц Сбера (ЕПК).</p>
+                <div class="alert__buttons">
+                  <button type="button" class="btn btn--outline btn--xs btn--warning" data-afe-bind><span class="btn__label">Привязать</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="lc-afe__fields">
+              <div class="rof lc-afe__full">
+                <span class="ds-label"><span class="ds-label__text">Название</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="name">Интеррос</span></div>
+              </div>
+              <div class="rof lc-afe__full">
+                <span class="ds-label"><span class="ds-label__text">Бенефициар</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="beneficiaries">Владимир Потанин</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Объем инвестиций, млрд RUB</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="investmentVolume">987,65</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Приоритет</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="priority">Высокий</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ИНН</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="inn">7706419639</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">КПП</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="kpp">1157746316598</span></div>
+              </div>
+              <div class="rof lc-afe__full">
+                <span class="ds-label"><span class="ds-label__text">Ключевые отрасли</span></span>
+                <div class="rof__row">
+                  <div class="rof__value rof__value--chips">
+                    <div class="chiplist chiplist--s" data-afe-f="keyIndustries">
+                      <span class="chip chip--s"><span class="chip__label">Металлы и руды</span></span>
+                      <span class="chip chip--s"><span class="chip__label">Информационно-технологические услуги</span></span>
+                      <span class="chip chip--s"><span class="chip__label">Банки</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4б. Клиент из ЕПК (макет B) -->
+          <div class="lc-afe__info lc-afe__info--client" data-afe-client>
+            <div class="lc-afe__info-head">
+              <h3 class="ds-h6-strong-smb" data-afe-c="title">ИП «Интер О.С.»</h3>
+              <a class="btn btn--outline btn--xs" href="#" data-afe-c="link"><span class="btn__label">Страница клиента</span><i data-icon="arrow-right"></i></a>
+            </div>
+            <div class="lc-afe__fields lc-afe__fields--single">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Полное наименование</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="fullName">ОТКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО "Интеррос"</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Тип клиента</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="clientTypeName">Юридическое лицо</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование холдинга</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="holdingName">ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "РОМАШКА-ПРОМОКАШКА-ХОЛДИНГ"</span></div>
+              </div>
+              <div class="lc-afe__team">
+                <h4 class="ds-body-m-strong-smb">Команда клиента</h4>
+                <p class="ds-body-m-reg" data-afe-c="teamEmpty" hidden>—</p>
+                <div class="dtable" data-afe-c="team">
+                  <div class="dtable__body">
+                    <div class="tbl" data-table data-sort-rows>
+                      <div class="tbl__row tbl__row--head lc-afe__team-row">
+                        <div class="th th--separator"></div>
+                        <div class="th" aria-sort="none" data-col="employeeNumber"><span class="th__label">Табельный номер</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="employeeNumber" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                        <div class="th" aria-sort="none" data-col="fio"><span class="th__label">ФИО</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="fio" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                        <div class="th" aria-sort="none" data-col="role"><span class="th__label">Роль</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="role" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                        <div class="th th--separator"></div>
+                      </div>
+                      <div class="tbl__row lc-afe__team-row" data-afe-team-row>
+                        <div class="tc tc--separator"></div>
+                        <div class="tc" data-col="employeeNumber"><span class="tc__row"><span class="tc__text tc__text--truncate">18181811</span></span></div>
+                        <div class="tc" data-col="fio"><span class="tc__row"><span class="tc__text tc__text--truncate">Иванов Иван Иванович</span></span></div>
+                        <div class="tc" data-col="role"><span class="tc__row"><span class="tc__text tc__text--truncate">Клиентский менеджер</span></span></div>
+                        <div class="tc tc--separator"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование подотрасли</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="subIndustryName">Производство железной руды</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование отрасли</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="industryName">Металлургическая и горнодобывающая промышленность</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование сегмента</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="segmentName">Крупнейшие</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <!-- доступна только при выбранном клиенте ЕПК (урок Л235: запрет — атрибутом disabled) -->
+        <button type="button" class="btn btn--accent btn--m" data-afe-next disabled><span class="btn__label">Продолжить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Локальный компонент «Форма фонда» (EditFundModal) — окно добавления фонда из ЕПК,
+     создания нового фонда и редактирования фонда (макеты «Add-Edit-funds», 30.10.2026).
+     Вшивается в конец страницы меткой ds-include; страница связывает скриптом:
+     EditFundModal.open('editFundModal', { mode, source, client, fund, name, priorities, onSave }).
+     Заголовок, подписи кнопок, значения полей, выключенные поля, ряд ИНН | КПП и
+     предупреждение ЕПК ставит скрипт окна по варианту (паспорт, variants).
+     Состояние данных — data-state на .modal: data · partial · loading · updating. -->
+<div class="modal-scrim" hidden id="editFundModal" data-widget="EditFundModal" data-widget-group="modals" data-widget-src="../widgets/modals/EditFundModal/EditFundModal.html">
+  <div class="modal modal--w5 lc-edit-fund-modal" role="dialog" aria-modal="true" aria-labelledby="efm-title" data-state="data" data-variant="add-ucp">
+    <header class="modal__head">
+      <h2 class="modal__title" id="efm-title" data-efm-title>Добавить фонд</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <!-- фонд не из ЕПК (вариант edit-custom): предупреждение уровня окна; «Привязать» —
+         воркфлоу не делается (решение 30.10.2026), обработчика у кнопки нет -->
+    <div class="modal__alert" data-efm-ucp-alert hidden>
+      <div class="alert alert--warning alert--m alert--row alert--flush" role="status">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Клиент не привязан к базе юр. лиц Сбера (ЕПК).</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--warning" data-efm-link-ucp><span class="btn__label">Привязать</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <!-- fieldset — для состояния «Обновление»: правило Modal «поля в <fieldset disabled>» -->
+      <fieldset class="lc-edit-fund-modal__fields" aria-labelledby="efm-title" data-efm-fields>
+
+        <div class="inp inp--m inp--disabled" data-efm-field="name">
+          <label class="ds-label ds-label--disabled" for="efm-name"><span class="ds-label__text">Название фонда</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-name" type="text" autocomplete="off" disabled value="ИП «Интер О.С.»">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m" data-efm-field="alias">
+          <label class="ds-label" for="efm-alias"><span class="ds-label__text">Псевдоним</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-alias" type="text" autocomplete="off" value="Большой перспективный фонд">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m" data-efm-field="beneficiaries">
+          <label class="ds-label" for="efm-beneficiaries"><span class="ds-label__text">Бенефициар</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-beneficiaries" type="text" autocomplete="off" value="Иванов Сергей Петрович">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--multiline" data-efm-field="comment">
+          <label class="ds-label" for="efm-comment"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <textarea class="inp__control" id="efm-comment" rows="2">Текст комментария</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ИНН | КПП — только у фонда из ЕПК, всегда выключены -->
+        <div class="lc-edit-fund-modal__row" data-efm-requisites>
+          <div class="inp inp--m inp--disabled" data-efm-field="inn">
+            <label class="ds-label ds-label--disabled" for="efm-inn"><span class="ds-label__text">ИНН</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="efm-inn" type="text" autocomplete="off" disabled value="7706419639">
+              </div>
+            </div>
+          </div>
+          <div class="inp inp--m inp--disabled" data-efm-field="kpp">
+            <label class="ds-label ds-label--disabled" for="efm-kpp"><span class="ds-label__text">КПП</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="efm-kpp" type="text" autocomplete="off" disabled value="1157746314274">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Приоритет — одиночный выбор, половина ширины; список заполняет скрипт окна -->
+        <div class="lc-edit-fund-modal__row">
+          <div class="inp inp--m" data-efm-field="priorityCode">
+            <label class="ds-label" for="efm-priority"><span class="ds-label__text">Приоритет</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="efm-priority-list">
+                <input class="inp__control" id="efm-priority" type="text" autocomplete="off" value="Высокий">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button>
+                  <button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button>
+                </span>
+              </div>
+            </div>
+            <div id="efm-priority-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-label="Приоритет фонда" data-efm-priority-list>
+              <button type="button" class="ddl__item" role="option" aria-selected="true" data-code="HIGH"><span class="ddl__item-body"><span class="ddl__item-label">Высокий</span></span></button>
+              <button type="button" class="ddl__item" role="option" aria-selected="false" data-code="MEDIUM"><span class="ddl__item-body"><span class="ddl__item-label">Средний</span></span></button>
+              <button type="button" class="ddl__item" role="option" aria-selected="false" data-code="LOW"><span class="ddl__item-body"><span class="ddl__item-label">Низкий</span></span></button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close data-efm-cancel><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-efm-save><span class="btn__label" data-efm-save-label>Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Локальный компонент «Удалить фонд» (DeleteFundModal) — подтверждение удаления фонда
+     из меню фонда страницы «Фонды» (макет «Удаление фонда», 30.10.2026).
+     Вшивается в конец страницы меткой ds-include; страница связывает скриптом:
+     DeleteFundModal.open('deleteFundModal', { fund, onConfirm }).
+     Блок «Данные фонда» заполняет скрипт окна: аватар с инициалами, название и
+     «ИНН … · КПП …» — та же разметка ДС, что ячейка «Название фонда» FundsTable;
+     справа — число активов. Состояние данных — data-state на .modal: data · partial. -->
+<div class="modal-scrim" hidden id="deleteFundModal" data-widget="DeleteFundModal" data-widget-group="modals" data-widget-src="../widgets/modals/DeleteFundModal/DeleteFundModal.html">
+  <div class="modal modal--w5 lc-delete-fund-modal" role="dialog" aria-modal="true" aria-labelledby="dfm-title" data-state="data">
+    <header class="modal__head">
+      <h2 class="modal__title" id="dfm-title">Удалить фонд</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="ds-body-m-reg lc-delete-fund-modal__text">Все данные о фонде и его связях с активами будут удалены</p>
+
+      <section class="tile tile--inset" aria-labelledby="dfm-fund-title">
+        <header class="tile__header">
+          <div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" id="dfm-fund-title">Данные фонда</h3></div>
+          </div>
+        </header>
+        <div class="tile__body">
+          <div class="lc-delete-fund-modal__fund">
+            <div data-dfm-name>
+              <div class="tc" data-col="name"><span class="tc__row">
+                <span class="av av--rounded av--m" data-av-seed="fnd-001" aria-hidden="true"><span class="av__text">ИН</span></span>
+                <span class="tc__body"><span class="tc__row"><span class="tc__text tc__text--truncate">Интеррос</span></span>
+                <span class="tc__subtext">ИНН 7706419639 · КПП 1157746316598</span></span>
+              </span></div>
+            </div>
+            <div class="rof">
+              <span class="ds-label"><span class="ds-label__text">Активов</span></span>
+              <div class="rof__row"><span class="rof__value" data-dfm-count>16</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-dfm-confirm><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Меню строк: одно меню на все кнопки «⋮» своего вида (ContextMenu) -->
+<!-- Локальный компонент «Меню фонда» (FundActionsMenu) — фонд из ЕПК (partyId есть).
+     Пара во фронтенде — shared/hooks/useFundActions.tsx (пункты addAsset, editFund,
+     deleteFund, openClientPage). Одно меню на все кнопки «⋮» строк FundsTable с
+     data-menu="fundActionsMenu" (ContextMenu ДС: меню помнит открывший триггер,
+     у триггера — data-fund-id). Вариант «фонд не из ЕПК» — FundActionsMenuCustom.html
+     в этой же папке, паспорт общий. Страница вшивает меню меткой в конце body.
+     «Редактировать» и «Удалить фонд» открывают окна фонда (сценарий страницы);
+     «Добавить актив» не делается (решение 30.10.2026); страницы клиента нет. -->
+<div id="fundActionsMenu" class="menu menu--floating" role="menu" aria-label="Действия с фондом" hidden data-widget="FundActionsMenu" data-widget-group="context-menus" data-widget-src="../widgets/context-menus/FundActionsMenu/FundActionsMenu.html">
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="addAsset"><span class="menu__item-label">Добавить актив</span></button>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="editFund"><span class="menu__item-label">Редактировать</span></button>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="deleteFund"><span class="menu__item-label">Удалить фонд</span></button>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="openClientPage"><span class="menu__item-label">Перейти на страницу клиента</span></button>
+</div>
+<!-- «Меню фонда», вариант «фонд не из ЕПК» (partyId нет) — второй файл FundActionsMenu,
+     паспорт общий (FundActionsMenu.md). Кнопки «⋮» строк FundsTable с
+     data-menu="fundActionsMenuCustom". Вместо «Перейти на страницу клиента» — «Связать
+     с базой ЕПК» (макет «ContextMenu / Фонд не в ЕПК (Custom)»); воркфлоу привязки
+     к ЕПК не делается (решение 30.10.2026). «Редактировать» и «Удалить фонд» открывают окна фонда. -->
+<div id="fundActionsMenuCustom" class="menu menu--floating" role="menu" aria-label="Действия с фондом" hidden data-widget="FundActionsMenuCustom" data-widget-group="context-menus" data-widget-src="../widgets/context-menus/FundActionsMenu/FundActionsMenuCustom.html">
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="addAsset"><span class="menu__item-label">Добавить актив</span></button>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="editFund"><span class="menu__item-label">Редактировать</span></button>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="deleteFund"><span class="menu__item-label">Удалить фонд</span></button>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="linkToUcp"><span class="menu__item-label">Связать с базой ЕПК</span></button>
+</div>
+<!-- Локальный компонент «Меню актива» (AssetActionsMenu) — актив с partyId (клиент ЕПК).
+     Одно меню на все кнопки «⋮» строк AssetsTable: триггер — data-menu="assetActionsMenu"
+     (ContextMenu ДС). Пункты — useAssetActions фронтенда, порядок — макет «ContextMenu».
+     Окна активов не делаются (решение человека 30.10.2026): пункты меню только закрывают его.
+     Вариант без «Перейти на страницу клиента» — AssetActionsMenuCustom.html. -->
+<div id="assetActionsMenu" class="menu menu--floating" role="menu" aria-label="Действия с активом" hidden data-widget="AssetActionsMenu" data-widget-group="context-menus" data-widget-src="../widgets/context-menus/AssetActionsMenu/AssetActionsMenu.html">
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Редактировать</span></button>
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Удалить актив из фонда</span></button>
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Перейти на страницу клиента</span></button>
+</div>
+<!-- Вариант «Меню актива» (AssetActionsMenu) для актива без partyId (не из ЕПК):
+     без «Перейти на страницу клиента» — во фронтенде пункт есть только при partyId
+     (useAssetActions; допущение 30.10.2026, макета нет). Триггер — кнопка «⋮» строки
+     AssetsTable с data-menu="assetActionsMenuCustom". Паспорт общий — AssetActionsMenu.md. -->
+<div id="assetActionsMenuCustom" class="menu menu--floating" role="menu" aria-label="Действия с активом" hidden data-widget="AssetActionsMenuCustom" data-widget-group="context-menus" data-widget-src="../widgets/context-menus/AssetActionsMenu/AssetActionsMenuCustom.html">
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Редактировать</span></button>
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Удалить актив из фонда</span></button>
+</div>
+
+<script src="../data/funds.js"></script>
+<script src="../../../ds-body.js"></script>
+<script src="../widgets/tables/FundsFilters/FundsFilters.js"></script>
+<script src="../widgets/tables/FundsTable/FundsTable.js"></script>
+<script src="../widgets/tables/AssetsTable/AssetsTable.js"></script>
+<script src="../widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.js"></script>
+<script src="../widgets/modals/EditFundModal/EditFundModal.js"></script>
+<script src="../widgets/modals/DeleteFundModal/DeleteFundModal.js"></script>
+<script>
+/* ── Сценарий страницы FundsPipeline ─────────────────────────────────────
+   Связывает виджеты по их API (паспорта в widgets/): фильтры → список
+   фондов (фильтры стоят в тулбаре таблицы — FundsTable.placeFilters); выбор
+   фонда → активы справа в сплиттере; крестик → панель прячется; шестерёнка
+   таблицы — стандартное окно ДС (TableSettings, по
+   data-table-settings в виджетах); окна фонда — ниже.
+   Демо-параметры адреса: ?state=empty — фондов нет; ?fund=<objectId> —
+   фонд выбран при открытии (fnd-001 — Интеррос, fnd-004 — РФПИ без активов). */
+(function () {
+  'use strict';
+  var params = new URLSearchParams(location.search);
+  var funds = params.get('state') === 'empty' ? [] : window.MOCK_FUNDS;
+  var ff = document.getElementById('fundsFilters');
+  var ft = document.getElementById('fundsTable');
+  var at = document.getElementById('assetsTable');
+
+  /* сплиттер: правая панель показывается выбором фонда (как ClientInfoPage v2) */
+  var split = document.getElementById('fundsSplit');
+  var spl = split.querySelector('.spl'), pa = split.querySelector('.splitpane__a'), pb = split.querySelector('.splitpane__b');
+  var pct = 50;
+  if (window.DSSplitter) window.DSSplitter.wire(spl, { min: 35, max: 75, initial: pct, onChange: function (v) { pct = v; } });
+  function showAssets(on) { pb.hidden = !on; spl.hidden = !on; pa.style.flex = on ? '0 0 ' + pct + '%' : '1 1 auto'; }
+  showAssets(false);
+
+  window.FundsTable.placeFilters(ft, ff);
+  window.FundsFilters.init(ff, { types: window.FUND_TYPE_LABELS, priorities: window.FUND_PRIORITY_LABELS });
+  window.FundsFilters.setDisabled(ff, !funds.length);
+  window.FundsTable.init(ft, { funds: funds });
+
+  function openFund(id) {
+    var fund = funds.filter(function (f) { return f.objectId === id; })[0];
+    if (!fund) return;
+    selectedId = id;
+    window.FundsTable.select(ft, id);
+    showAssets(true); /* панель видна до отрисовки — таблица меряет колонки по видимой ширине */
+    window.AssetsTable.render(at, {
+      fund: fund,
+      assets: window.MOCK_FUND_ASSETS.filter(function (a) { return a.fundId === id; })
+    });
+  }
+
+  ff.addEventListener('fundsfilters:change', function (e) { window.FundsTable.applyFilters(ft, e.detail); });
+  ft.addEventListener('fundstable:select', function (e) { openFund(e.detail.objectId); });
+  at.addEventListener('assetstable:close', function () { showAssets(false); selectedId = null; window.FundsTable.select(ft, null); });
+
+  /* ── Окна фонда (Э2) ──────────────────────────────────────────────────
+     «Добавить фонд» (шапка и пустой список) → поиск в базах
+     (AddFundEntityFromUcpModal) → «Продолжить» с клиентом ЕПК или «Новый фонд»
+     → форма фонда (EditFundModal). Меню фонда: «Редактировать» → EditFundModal,
+     «Удалить фонд» → DeleteFundModal. «Связать с базой ЕПК», «Добавить актив»,
+     «Перейти на страницу клиента» окон не открывают (решения 30.10.2026). */
+  var selectedId = null;
+  var seq = 0;
+  function byId(id) { return funds.filter(function (f) { return f.objectId === id; })[0]; }
+  function refresh(keepId) {
+    window.FundsTable.init(ft, { funds: funds });
+    window.FundsFilters.setDisabled(ff, !funds.length);
+    window.FundsTable.applyFilters(ft, window.FundsFilters.value(ff));
+    if (keepId && byId(keepId)) openFund(keepId);
+    else { showAssets(false); selectedId = null; }
+  }
+  function prioOf(code) { return code ? { code: code, name: window.FUND_PRIORITY_LABELS[code] } : null; }
+  function applyForm(fund, form) {
+    fund.name = form.name;
+    fund.alias = form.alias || null;
+    fund.comment = form.comment || null;
+    fund.keyBeneficiaries = String(form.beneficiaries || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean).map(function (x) { return { displayName: x }; });
+    fund.priority = prioOf(form.priorityCode);
+    if (form.partyId !== undefined) fund.partyId = form.partyId || fund.partyId || null;
+    if (form.inn !== undefined && form.inn !== null) fund.inn = form.inn;
+    if (form.kpp !== undefined && form.kpp !== null) fund.kpp = form.kpp;
+    return fund;
+  }
+  function newFund(form) {
+    seq += 1;
+    return applyForm({
+      objectId: 'fnd-new-' + seq, name: '', alias: null, inn: null, kpp: null, partyId: null,
+      keyBeneficiaries: [], types: [], priority: null, aumAssetsCount: 0, contacts: [], comment: null,
+      investmentVolume: null, keyIndustries: []
+    }, form);
+  }
+  function openEdit(opts) {
+    window.EditFundModal.open('editFundModal', Object.assign({ priorities: window.FUND_PRIORITY_LABELS }, opts, {
+      onSave: function (form) {
+        if (opts.mode === 'update') { applyForm(opts.fund, form); refresh(opts.fund.objectId); return; }
+        var f = newFund(form);
+        funds = funds.concat([f]);
+        refresh(f.objectId);
+      }
+    }));
+  }
+  function openAdd() {
+    window.AddFundEntityFromUcpModal.open('addFundEntityFromUcpModal', {
+      funds: funds, clients: window.MOCK_UCP_CLIENTS,
+      onNext: function (client) { openEdit({ mode: 'create', source: 'ucp', client: client }); },
+      onCreateFund: function (o) { openEdit({ mode: 'create', source: 'custom', name: (o && o.name) || '' }); }
+    });
+  }
+  document.getElementById('btnAddFund').addEventListener('click', openAdd);
+  ft.addEventListener('click', function (e) { if (e.target.closest('[data-fund-add]')) openAdd(); });
+
+  function openDelete(fund) {
+    window.DeleteFundModal.open('deleteFundModal', {
+      fund: fund,
+      onConfirm: function (f) {
+        funds = funds.filter(function (x) { return x.objectId !== f.objectId; });
+        refresh(selectedId === f.objectId ? null : selectedId);
+      }
+    });
+  }
+
+  /* меню фонда: ContextMenu помнит открывший триггер (aria-expanded), у него data-fund-id */
+  var menuTrigger = null;
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-menu^="fundActionsMenu"]');
+    if (t) menuTrigger = t;
+  }, true);
+  document.addEventListener('click', function (e) {
+    var item = e.target.closest('[data-fund-action]');
+    if (!item || !menuTrigger) return;
+    var fund = byId(menuTrigger.getAttribute('data-fund-id'));
+    if (!fund) return;
+    var act = item.getAttribute('data-fund-action');
+    if (act === 'editFund') openEdit({ mode: 'update', source: fund.partyId ? 'ucp' : 'custom', fund: fund });
+    else if (act === 'deleteFund') openDelete(fund);
+  });
+
+  if (params.get('fund')) openFund(params.get('fund'));
+  /* таб System панели прототипа: вариант демо-данных (переключение — перезагрузкой адреса) */
+  (window.PP_SYSTEM = window.PP_SYSTEM || []).push({
+    id: 'funds-data', title: 'Список фондов', desc: 'Демо-данные страницы: 12 фондов или пустой список (?state=empty).',
+    reload: true,
+    options: [{ value: 'data', label: 'Есть фонды' }, { value: 'empty', label: 'Фондов нет' }],
+    value: function () { return params.get('state') === 'empty' ? 'empty' : 'data'; },
+    set: function (v) {
+      var p = new URLSearchParams(location.search);
+      if (v === 'empty') p.set('state', 'empty'); else p.delete('state');
+      p.delete('fund'); p.delete('modal');
+      location.search = p.toString();
+    }
+  });
+
+  /* демо-адреса окон для показа и проверок: ?modal=add | edit | delete (&fund=… — заодно открывает активы фонда) */
+  var m = params.get('modal');
+  if (m === 'add') openAdd();
+  else if (m === 'edit' && byId(params.get('fund'))) { var ef = byId(params.get('fund')); openEdit({ mode: 'update', source: ef.partyId ? 'ucp' : 'custom', fund: ef }); }
+  else if (m === 'delete' && byId(params.get('fund'))) openDelete(byId(params.get('fund')));
+})();
+</script>
+
+</body>
+</html>

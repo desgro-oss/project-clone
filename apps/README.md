@@ -40,6 +40,17 @@ apps/
   одной командой (раздел «Перенос концепта в модуль»).
 - `ui-kit/` фронтенда здесь не заводится: его роль у нас играет дизайн-система
   `../design-system/`.
+- **Главные ролей.** Роль — `?role=<код>`; коды — `LoginForRolesKeys`
+  фронтенда, каталог — `host-app/data/authentication.js`, адрес — поле `home`.
+  С 30.10.2026 (RE0044) главная нового Аналитика (`core_analyst`, Core) —
+  `core/dashboard-app/pages/HomePage.preview.html`; прежний вход host-app для
+  этой роли перенаправляет туда. Прежний Аналитик ДИД (`analyst`) остаётся
+  в Pre с плиточной главной host-app (уточнение человека RE0044a). Руководитель IB (`director_ib`) остаётся
+  в `core/host-app/pages/HomePage.html` с плиточной навигацией. Меню ролей —
+  `host-app/data/navigation.js`, плитки — `dashboard.js`. Другие модули своей
+  главной не держат; концепты `drafts/` сохраняют собственные входы.
+  Строки хаба прежних главных Pre и IB — `../project.json → roleHomes`, узел её карты —
+  `app: home`; главная Аналитика — запись `dashboard-app/app.json` в Core.
 - **`local-components/`** — витрина локальных компонентов (пункт хаба «Локальные
   компоненты»): страница на каждый виджет модулей; виджеты концептов `drafts/`
   в неё не входят — только после `/promote`. Это не раздел и не приложение —
@@ -59,7 +70,8 @@ apps/
 
 ```
 postrade/deals-app/  Post — ДИД: главная, текущий портфель, страница сделки (модуль, трек product)
-ib/banker-app/       AI Pitcher: главная, новый отчёт — нить запроса (модуль, трек product)
+core/host-app/       главная IBP по ролям: HomePage.html?role=<код> (модуль, трек product, на хабе — строкой раздела роли)
+ib/banker-app/       AI Pitcher: новый отчёт — нить запроса (модуль, трек product)
 ib/drafts/           ai-bankster-prototype-v01 · ai-bankster-prototype-v02
 pretrade/drafts/     pipelineManager-v01 · pipelineManager-v02 · pipelineScanner-v07
 ```
@@ -126,6 +138,11 @@ apps/
 │   ├── drafts/
 │   │   ├── ai-bankster-prototype-v01/   ← приложение (app.json)
 │   │   └── ai-bankster-prototype-v02/   ← приложение (app.json)
+│   ├── funds-app/
+│   │   ├── data/
+│   │   ├── pages/
+│   │   ├── refs/
+│   │   └── widgets/
 │   ├── ib-payments-app/
 │   │   ├── data/
 │   │   ├── pages/

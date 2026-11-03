@@ -24,20 +24,20 @@
 <style>
 .page{max-width:1560px;margin:0 auto;padding:clamp(40px,7vw,96px) clamp(24px,4vw,56px) 140px}
 a{color:var(--link)}a:hover{color:var(--link-dark)}
-.section>p.desc{font:var(--type-body-m);color:var(--text-secondary);margin:0 0 28px;max-width:92ch;text-wrap:pretty}
+.section>p.desc{font:var(--type-body-m-reg);color:var(--text-secondary);margin:0 0 28px;max-width:92ch;text-wrap:pretty}
 .tbl{margin:0 0 28px}
 .role-block{margin:0 0 32px}
-.role-block__name{font:var(--type-h4-strong);color:var(--text-primary);margin:0 0 6px}
-.role-block__desc{font:var(--type-body-s);color:var(--text-secondary);margin:0 0 14px}
+.role-block__name{font:var(--type-h4-strong-smb);color:var(--text-primary);margin:0 0 6px}
+.role-block__desc{font:var(--type-body-s-reg);color:var(--text-secondary);margin:0 0 14px}
 /* живое переключение роли */
 .roles-demo{display:grid;grid-template-columns:minmax(280px,1fr) 2fr;gap:32px;align-items:start}
 @media (max-width:1100px){.roles-demo{grid-template-columns:1fr}}
 .role-switch{display:flex;flex-direction:column;gap:8px;align-self:start}
 .demo-menu{width:320px;border:1px solid var(--border-light);border-radius:12px;overflow:hidden}
 .demo-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:16px}
-.demo-cap{font:var(--type-body-s-strong);color:var(--text-primary);text-transform:uppercase;letter-spacing:.05em;font-size:11px;margin:0 0 10px}
+.demo-cap{font:var(--type-body-s-strong-smb);color:var(--text-primary);text-transform:uppercase;letter-spacing:.05em;font-size:11px;margin:0 0 10px}
 .demo-col{min-width:0}
-.demo-col h3{font:var(--type-body-m-strong);margin:0 0 14px;color:var(--text-primary)}
+.demo-col h3{font:var(--type-body-m-strong-smb);margin:0 0 14px;color:var(--text-primary)}
 </style>
 <script src="../../docs-kit/ds-theme-boot.js"></script>
 </head>
@@ -145,7 +145,7 @@ a{color:var(--link)}a:hover{color:var(--link-dark)}
     H.itemsFor(role).forEach(function (g) {
       var tiles = g.items.filter(function (it) { return it.tile; });
       if (!tiles.length) return;
-      s += '<h4 style="grid-column:1/-1;font:var(--type-h5-strong);margin:0;color:var(--text-primary)">' + g.label + '</h4>';
+      s += '<h4 style="grid-column:1/-1;font:var(--type-h5-strong-smb);margin:0;color:var(--text-primary)">' + g.label + '</h4>';
       s += tiles.map(function (it) { return H.tileHTML(it); }).join('');
     });
     return s;

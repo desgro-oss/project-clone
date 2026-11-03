@@ -1,0 +1,36 @@
+<!-- Локальный компонент «Отчет финансовых метрик» (FinancialMetricsTable) — вкладки МСФО и РСБУ
+     страницы «Финансовые метрики». Пара во фронтенде — FinancialMetricsTable.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране,
+     на странице дважды (МСФО и РСБУ) — поэтому в разметке нет id.
+     Каркас показан в состоянии «Загрузка», пока страница не передала отчет: кнопка «Фильтр»
+     заблокирована, в таблице скелетоны. Таблицу, тулбар и остальные состояния рисует
+     FinancialMetricsTable.js: PostFinMetricsTable.render(корень, отчет, фильтр). -->
+<section class="lc-financial-metrics-table" data-state="loading">
+  <div class="dtable-toolbar">
+    <div class="tfilter tfilter--disabled" role="group" aria-label="Фильтр таблицы">
+      <button type="button" class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false" disabled><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+    </div>
+  </div>
+  <div class="lc-financial-metrics-table__table" data-fm-table>
+    <div class="dtable dtable--fill" aria-busy="true">
+      <div class="dtable__body">
+        <div class="tbl" data-table>
+          <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 400px repeat(2, 160px) minmax(8px,1fr)">
+            <div class="th th--separator"></div>
+            <div class="th"><span class="th__label" data-grab>Наименование метрики</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--right"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+            <div class="th th--separator"></div>
+          </div>
+          <div class="tbl__row" style="grid-template-columns:8px 400px repeat(2, 160px) minmax(8px,1fr)">
+            <div class="tc tc--separator"></div>
+            <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+            <div class="tc tc--separator"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

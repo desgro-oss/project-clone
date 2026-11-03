@@ -36,7 +36,7 @@
      SectionAccordion» записана в Deal.screen.md, §6. */
   .gen { display: flex; flex-direction: column; gap: var(--space-12); }
   .gen__head { display: flex; align-items: center; gap: var(--space-8); }
-  .gen__title { margin: 0; font: var(--type-h5-strong); color: var(--text-primary); }
+  .gen__title { margin: 0; font: var(--type-h5-strong-smb); color: var(--text-primary); }
   .gen__chevron { transition: transform .15s ease; }
   .gen__toggle[aria-expanded="false"] .gen__chevron { transform: rotate(180deg); }
   @media (prefers-reduced-motion: reduce) { .gen__chevron { transition: none; } }
@@ -508,7 +508,7 @@
     var repaid = deal.status === 'Погашена';
     box.hidden = !repaid;
     if (!repaid) return;
-    var label = (window.PRODUCT_DETAIL_LABELS || {}).repaidAt || 'Фактическая дата погашения';
+    var label = (window.PRODUCT_DETAIL_LABELS || {}).repaidAt || 'Дата фактического погашения';
     document.getElementById('deal-subtitle-text').textContent = label + (deal.repayDate ? ' ' + deal.repayDate : '');
   }
 
@@ -938,11 +938,19 @@
   });
 
   /* Куда ведёт узел дерева или карточки ФИ — одно место на странице. Правило
-     «есть страница» — флаг hasPage каталога типов; сейчас собрана только
-     страница транша, остальные типы получат адрес вместе со своей страницей. */
+     «есть страница» — флаг hasPage каталога типов; сейчас собраны страницы
+     транша и договора займа (НКЛ), остальные типы получат адрес вместе со своей
+     страницей. Обе — собранные preview: страница модульная, тайлы вшивает
+     ассемблер, у исходника рантайм-инклуд на file:// фрагмент не загрузит. */
   function nodePage(node) {
-    if (!node || node.hasPage !== true || node.kind !== 'TRANCHE') return null;
-    return 'Tranche.html?id=' + encodeURIComponent(openedId) + '&tr=' + encodeURIComponent(node.id);
+    if (!node || node.hasPage !== true) return null;
+    if (node.kind === 'TRANCHE') {
+      return 'Tranche.preview.html?id=' + encodeURIComponent(openedId) + '&tr=' + encodeURIComponent(node.id);
+    }
+    if (node.kind === 'INSTRUMENT' && node.code === 'LOAN_NCL') {
+      return 'Instrument.preview.html?id=' + encodeURIComponent(openedId) + '&ins=' + encodeURIComponent(node.id);
+    }
+    return null;
   }
 
   /* «→» в шапке карточки ФИ — переход на страницу финансового инструмента,

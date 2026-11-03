@@ -53,7 +53,7 @@
   border: none;
   border-radius: var(--radius-s);
   background: transparent;
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-primary);
   cursor: pointer;
   transition: background-color .12s;
@@ -73,7 +73,7 @@
   height: 32px;
   display: grid;
   place-items: center;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
 }
 
@@ -89,7 +89,7 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-primary);
 }
 /* фон-полоса диапазона (позади кружка) */
@@ -161,7 +161,7 @@
   border: none;
   background: transparent;
   border-radius: var(--radius-pill);
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-primary);
   cursor: pointer;
   font-variant-numeric: tabular-nums;

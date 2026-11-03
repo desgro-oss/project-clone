@@ -163,7 +163,7 @@
 
 /* ---------- content (label + helper) -------------------------------------- */
 .sw__content { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.sw__label  { font: var(--type-body-m);  color: var(--text-primary); }
+.sw__label  { font: var(--type-body-m-reg);  color: var(--text-primary); }
 /* звёздочка обязательного выбора — как у cb__req / rb__req */
 .sw__req { color: var(--error); margin-left: 2px; }
 /* Хелпер — общий компонент подкачки (не собственный класс), см. label-helper.css → .ds-helper */
@@ -187,7 +187,7 @@
    track), and the active area stretches to the full row height. */
 .sw-group { display: flex; flex-direction: column; }
 .sw-group__title {
-  font: var(--type-h6-strong);
+  font: var(--type-h6-strong-smb);
   color: var(--text-primary);
   margin: 0 0 4px;
 }
@@ -197,7 +197,7 @@
 /* Два названия положений. Input остаётся непосредственно перед control:
    прежнее кольцо focus-visible действует без изменения старого варианта. */
 .sw--dual { align-items: center; gap: var(--space-8); }
-.sw--dual .sw__side { font: var(--type-body-s); color: var(--text-secondary); }
+.sw--dual .sw__side { font: var(--type-body-s-reg); color: var(--text-secondary); }
 .sw--dual .sw__side--off { order: -1; color: var(--text-primary); }
 .sw--dual:has(.sw__input:checked) .sw__side--off { color: var(--text-secondary); }
 .sw--dual:has(.sw__input:checked) .sw__side--on { color: var(--text-primary); }

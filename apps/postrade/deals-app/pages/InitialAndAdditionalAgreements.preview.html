@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Договор и дополнительные соглашения — IBP</title>
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  /* Секции страницы: заголовок на фоне страницы, не в тайле (как на странице договора займа) */
+  .ia-sec { display: flex; flex-direction: column; gap: var(--space-8); }
+  .ia-sec__head { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-8); }
+  .ia-sec__title { margin: 0; font: var(--type-body-m-reg); color: var(--text-secondary); }
+
+  /* Минимальная высота тайла договора — как у тайлов страницы договора займа */
+  .screen__content .tile { min-height: 200px; }
+  .screen__content .tile-stack .tile { min-height: 0; }
+
+  @container screen (max-width: 1240px) {
+    .grid12 > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+</style>
+<link rel="stylesheet" href="../widgets/tiles/ContractTile/ContractTile.css">
+<link rel="stylesheet" href="../widgets/tiles/AdditionalAgreementTile/AdditionalAgreementTile.css">
+<link rel="stylesheet" href="../widgets/modals/AdditionalAgreementModal/AdditionalAgreementModal.css">
+<link rel="stylesheet" href="../widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.css">
+<link rel="stylesheet" href="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.css">
+<link rel="stylesheet" href="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.css">
+</head>
+<body>
+
+<div class="nav-layout">
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="MainPage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="Portfolio.html">Текущий портфель ДИД</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Сделка</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Договор займа</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Договор и дополнительные соглашения</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- #sec:head ── Шапка: «В инструмент» — обратно на страницу договора займа;
+           «Новое соглашение» в просмотре выключена разметкой (ia-new-btn) -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Договор и дополнительные соглашения</h1></div>
+            <span class="phead__return">
+              <button type="button" class="btn btn--outline btn--xs" id="ia-back-btn"><i data-icon="flip-backward"></i><span class="btn__label">В инструмент</span></button>
+            </span>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <button type="button" class="btn btn--accent btn--m" id="ia-new-btn" data-ia-act="NEW"><i data-icon="add"></i><span class="btn__label">Новое соглашение</span></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Договор -->
+      <div class="grid12">
+        <!-- Локальный компонент «Договор» — тайл внутренней страницы «Договор и дополнительные соглашения».
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-variant — тип продукта: loan-ncl (НКЛ) | tranche | shares | options-repo |
+                    corporate-agreement | collaterals | pjsc-guarantee | pjsc-ncl (НКЛ с баланса ПАО) |
+                    compensation-payments. Состав полей по типу — общий словарь тайла «Договор и
+                    дополнительные соглашения» (data/loan-contract-fields.js, LOAN_CONTRACT_FIELDS);
+                    тип выставляет PostTileContract.render из view.variant.
+     data-state   — data | empty. Тайл ВСЕГДА показывает поля: договор не заполнен (empty) —
+                    те же поля, значения «—». Состояний «Заполнить» и «Не заполнено» у тайла нет.
+                    Состояния «Загрузка» и «Ошибка» на макете не нарисованы — не решено
+     data-mode    — режим прав: edit | view. Ставит страница: роль, статус сделки и погашение
+                    договора, не допускающие правку, дают view. Карандаш в шапке есть в разметке
+                    ТОЛЬКО в edit: в view PostTileContract.syncActions удаляет его из разметки
+                    (не прячет стилем). Статичный эталон ниже — edit, поэтому карандаш в нём есть;
+                    переключая data-mode снаружи (витрина), зовите syncActions(tile).
+     Разметка держит оба состояния сразу: сетка data и сетка empty (прочерки), нужную
+     показывает ContractTile.css по data-state. Поля в разметке — пример типа «НКЛ»; на странице
+     их заменяет PostTileContract.render.
+     «Документы по сделке» — всегда, в любом состоянии и режиме: событие loanaction на тайл,
+     detail.action = 'DOCS'. Стрелки «→» в шапке нет (она у тайла страницы договора).
+     Скрипты страницы — в таком порядке: data/loan-contract-fields.js (словарь полей, общий
+     с соседним тайлом), затем ContractTile.js.
+     Карандаш открывает окно «Договор» (скрим contract-scrim, виджет
+     InitialAndAdditionalAgreementsModal) по data-modal; окно вшивается страницей отдельной
+     меткой ds-include. В окне ввод, поэтому триггер с data-modal-guarded. -->
+<section data-variant="loan-ncl" data-state="data" id="tile-contract" data-mode="edit" class="tile lc-contract-tile col-4 colw-6" data-widget="ContractTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/ContractTile/ContractTile.html">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Договор</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать договор" data-modal="contract-scrim" data-modal-guarded><i data-icon="edit"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+    <div class="tile__rows lc-contract-tile__content">
+
+      <!-- Данные есть: поля типа в порядке паспорта; пустое значение — прочерк, поле с места не уходит -->
+      <div class="tile__grid lc-contract-tile__grid lc-contract-tile__grid--data">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер договора</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractNumber">1234567890</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата подписания</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractSignDate">12.09.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Плановая дата погашения</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="plannedRepaymentDate">12.09.2022</span></div>
+        </div>
+      </div>
+
+      <!-- Данных нет: те же поля, значения — прочерки (ответ 41) -->
+      <div class="tile__grid lc-contract-tile__grid lc-contract-tile__grid--empty">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер договора</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractNumber">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата подписания</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractSignDate">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Плановая дата погашения</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="plannedRepaymentDate">—</span></div>
+        </div>
+      </div>
+
+      <!-- Всегда: и с данными, и без, в edit и в view -->
+      <button type="button" class="btn btn--outline btn--s" data-lc-action="DOCS">
+        <i data-icon="attach"></i><span class="btn__label">Документы по сделке</span>
+      </button>
+
+    </div>
+  </div>
+</section>
+      </div>
+
+      <!-- Дополнительные соглашения: «Фильтр» и список карточек; без ДС — пустое состояние -->
+      <section class="ia-sec">
+        <div class="ia-sec__head">
+          <h2 class="ia-sec__title">Дополнительные соглашения</h2>
+          <!-- бар «Фильтр» рисует скрипт страницы: рантайм ДС убирает чип «Применено» из разметки
+               при сбросе, поэтому чип создаётся заново при каждой перерисовке -->
+          <div class="tfilter" role="group" aria-label="Фильтр дополнительных соглашений" id="ia-filter" hidden></div>
+        </div>
+
+        <div class="grid12">
+          <!-- Локальный компонент «Дополнительное соглашение» — карточка ДС в списке страницы
+     «Договор и дополнительные соглашения». Вшивается общим сборщиком
+     (.agents/tools/assemble.mjs) по метке ds-include; на странице карточки рисует
+     AdditionalAgreementTile.js (PostTileAdditionalAgreement.renderList) в этот контейнер.
+     Здесь только разметка: место в колонках задаёт экран (метка с class="col-12").
+     Фрагмент — эталон состояний: четыре карточки как на макете «Tile_AdditionalAgreement»,
+     в таком порядке: правка есть × свёрнута / развёрнута, правки нет × свёрнута / развёрнута.
+     data-mode — режим прав: edit | view. Ставит страница: роль, статус сделки и погашение
+                 договора, не допускающие правку, дают view. Карандаш — только в edit: в
+                 просмотре его нет в разметке (на макете «правка недоступна» карандаш
+                 нарисован — ошибка макета, решение человека 26.10.2026).
+     Шеврон есть всегда. Свёрнутую карточку держит класс tile--collapsed на корне,
+     сворачивает рантайм ДС (Tile.js): нужен на странице.
+     Поля всегда видны, «Комментарий» — в сворачиваемой части (.tile__collapsible).
+     Незаполненное — прочерк на своём месте. Карточки стоят стопкой (.tile-stack).
+     Действие карандаша — событие loanaction { action: 'EDIT_AGREEMENT', id } на карточку. -->
+<div data-mode="edit" id="aa-list" class="tile-stack col-12" data-widget="AdditionalAgreementTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/AdditionalAgreementTile/AdditionalAgreementTile.html">
+  <!-- 1. правка есть · свёрнута -->
+  <section class="tile tile--accordion lc-additional-agreement-tile tile--collapsed" data-agreement-id="aa-1" data-mode="edit">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title">№ 4-1234567890 от 01.10.2023</h3></div>
+      </div>
+      <div class="tile__actions">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать соглашение" data-lc-action="EDIT_AGREEMENT">
+          <i data-icon="edit"></i>
+        </button>
+        <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="aat-aa-1-comment" aria-label="Развернуть">
+          <span class="tile__chevron"><i data-icon="chevron-up"></i></span>
+        </button>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-additional-agreement-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Тип изменения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="changeType">Финансовое и нефинансовое</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата решения</span></span>
+          <div class="rof__row"><span class="rof__value" data-agreement-field="decisionDate">01.01.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер решения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="decisionNumber">1234567890</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Уровень одобрения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="approvalLevel">КПКИ ГОСБ</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ключевые изменения</span></span>
+          <div class="rof__row">
+            <div class="rof__value rof__value--chips" data-agreement-field="keyChanges">
+              <div class="chiplist chiplist--s">
+                <span class="chip chip--xs"><span class="chip__label">График погашения основного долга</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tile__collapsible" id="aat-aa-1-comment">
+      <div class="tile__body">
+        <div class="tile__grid">
+          <div class="rof tile__grid-full">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+            <div class="rof__row">
+              <span class="rof__value" data-agreement-field="comment">Изменён график погашения основного долга: платежи перенесены на конец квартала, срок договора не меняется. Решение коллегиального органа принято без замечаний; новая редакция графика приложена к соглашению.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 2. правка есть · развёрнута -->
+  <section class="tile tile--accordion lc-additional-agreement-tile" data-agreement-id="aa-2" data-mode="edit">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title">№ 4-1234567890 от 01.10.2023</h3></div>
+      </div>
+      <div class="tile__actions">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать соглашение" data-lc-action="EDIT_AGREEMENT">
+          <i data-icon="edit"></i>
+        </button>
+        <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="true" aria-controls="aat-aa-2-comment" aria-label="Свернуть">
+          <span class="tile__chevron"><i data-icon="chevron-up"></i></span>
+        </button>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-additional-agreement-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Тип изменения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="changeType">Финансовое и нефинансовое</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата решения</span></span>
+          <div class="rof__row"><span class="rof__value" data-agreement-field="decisionDate">01.01.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер решения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="decisionNumber">1234567890</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Уровень одобрения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="approvalLevel">КПКИ ГОСБ</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ключевые изменения</span></span>
+          <div class="rof__row">
+            <div class="rof__value rof__value--chips" data-agreement-field="keyChanges">
+              <div class="chiplist chiplist--s">
+                <span class="chip chip--xs"><span class="chip__label">График погашения основного долга</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tile__collapsible" id="aat-aa-2-comment">
+      <div class="tile__body">
+        <div class="tile__grid">
+          <div class="rof tile__grid-full">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+            <div class="rof__row">
+              <span class="rof__value" data-agreement-field="comment">Изменён график погашения основного долга: платежи перенесены на конец квартала, срок договора не меняется. Решение коллегиального органа принято без замечаний; новая редакция графика приложена к соглашению.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 3. правки нет · свёрнута -->
+  <section class="tile tile--accordion lc-additional-agreement-tile tile--collapsed" data-agreement-id="aa-3" data-mode="view">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title">№ 4-1234567890 от 01.10.2023</h3></div>
+      </div>
+      <div class="tile__actions">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="aat-aa-3-comment" aria-label="Развернуть">
+          <span class="tile__chevron"><i data-icon="chevron-up"></i></span>
+        </button>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-additional-agreement-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Тип изменения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="changeType">Финансовое и нефинансовое</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата решения</span></span>
+          <div class="rof__row"><span class="rof__value" data-agreement-field="decisionDate">01.01.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер решения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="decisionNumber">1234567890</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Уровень одобрения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="approvalLevel">КПКИ ГОСБ</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ключевые изменения</span></span>
+          <div class="rof__row">
+            <div class="rof__value rof__value--chips" data-agreement-field="keyChanges">
+              <div class="chiplist chiplist--s">
+                <span class="chip chip--xs"><span class="chip__label">График погашения основного долга</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tile__collapsible" id="aat-aa-3-comment">
+      <div class="tile__body">
+        <div class="tile__grid">
+          <div class="rof tile__grid-full">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+            <div class="rof__row">
+              <span class="rof__value" data-agreement-field="comment">Изменён график погашения основного долга: платежи перенесены на конец квартала, срок договора не меняется. Решение коллегиального органа принято без замечаний; новая редакция графика приложена к соглашению.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 4. правки нет · развёрнута -->
+  <section class="tile tile--accordion lc-additional-agreement-tile" data-agreement-id="aa-4" data-mode="view">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title">№ 4-1234567890 от 01.10.2023</h3></div>
+      </div>
+      <div class="tile__actions">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="true" aria-controls="aat-aa-4-comment" aria-label="Свернуть">
+          <span class="tile__chevron"><i data-icon="chevron-up"></i></span>
+        </button>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-additional-agreement-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Тип изменения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="changeType">Финансовое и нефинансовое</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата решения</span></span>
+          <div class="rof__row"><span class="rof__value" data-agreement-field="decisionDate">01.01.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер решения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="decisionNumber">1234567890</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Уровень одобрения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="approvalLevel">КПКИ ГОСБ</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ключевые изменения</span></span>
+          <div class="rof__row">
+            <div class="rof__value rof__value--chips" data-agreement-field="keyChanges">
+              <div class="chiplist chiplist--s">
+                <span class="chip chip--xs"><span class="chip__label">График погашения основного долга</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tile__collapsible" id="aat-aa-4-comment">
+      <div class="tile__body">
+        <div class="tile__grid">
+          <div class="rof tile__grid-full">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+            <div class="rof__row">
+              <span class="rof__value" data-agreement-field="comment">Изменён график погашения основного долга: платежи перенесены на конец квартала, срок договора не меняется. Решение коллегиального органа принято без замечаний; новая редакция графика приложена к соглашению.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+        </div>
+
+        <!-- пусто: ДС у договора нет вовсе -->
+        <!-- как на макете: заголовок без иллюстрации и заливная кнопка; кнопку рисует скрипт
+             страницы только при праве на правку — в просмотре её нет в разметке (Л235) -->
+        <div class="es es--m" id="ia-empty" role="status" aria-live="polite" hidden>
+          <div class="es__body">
+            <p class="es__title">Дополнительные соглашения отсутствуют</p>
+          </div>
+          <div class="es__actions" id="ia-empty-actions"></div>
+        </div>
+
+        <!-- пусто: фильтр ничего не нашёл -->
+        <div class="es es--m" id="ia-nothing" role="status" aria-live="polite" hidden>
+          <div class="es__body">
+            <p class="es__title">Ничего не найдено</p>
+            <p class="es__text">По заданному фильтру дополнительных соглашений нет.</p>
+          </div>
+          <div class="es__actions">
+            <button type="button" class="btn btn--outline btn--m" data-ia-act="CLEAR_FILTER"><span class="btn__label">Очистить фильтр</span></button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── Окна страницы. «Договор» открывает карандаш тайла (data-modal), окна ДС
+     и фильтра — страница вызовом PostModalAdditionalAgreement.open / …Filter.open;
+     «Документы по сделке» — окно ЭКД сделки. -->
+<!-- Связанный артефакт тайла «Договор и дополнительные соглашения»: окно «Договор».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Окно только для типа «НКЛ» (макет «Modal_Contract_&_AdditionalAgreement»):
+     два поля — «Номер договора» и «Дата подписания». «Плановой даты погашения» в окне
+     нет: её берёт готовой тайл (у НКЛ — самая поздняя среди траншей). Окна для других
+     типов продуктов не нарисованы и не делаются (решение человека 26.10.2026).
+
+     Значения в разметке — пример. Окно заполняет и сохраняет
+     InitialAndAdditionalAgreementsModal.js (PostModalInitialAndAdditionalAgreements):
+     на открытии читает LoanAgreementStore.get().contract, «Сохранить» проверяет дату и
+     зовёт LoanAgreementStore.setContract. Кнопка без data-modal-close: окно закрывает
+     скрипт, когда проверка прошла; с ошибкой окно остаётся открытым. Крестик и Esc
+     закрывают без сохранения, клик мимо окна не закрывает (триггеры стоят с
+     data-modal-guarded).
+
+     Раскладка: тело окна ДС — колонка с зазором, своего CSS нет; поля — во всю ширину.
+     Маска даты — ДД.ММ.ГГГГ (на макете ММ.ДД.ГГГГ — ошибка макета, решение человека
+     26.10.2026), календарь и маска — из коробки ДС (InputDate). Крестик очистки в
+     разметке нет намеренно: он живёт по значению, его рисует рантайм ds-input.js. -->
+
+<div class="modal-scrim" id="contract-scrim" hidden data-widget="InitialAndAdditionalAgreementsModal" data-widget-group="modals" data-widget-src="../widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.html">
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="contract-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="contract-title">Договор</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="contract-number"><span class="ds-label__text">Номер договора</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="contract-number" name="contractNumber" autocomplete="off" value="1234567890">
+          </div>
+        </div>
+      </div>
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="contract-sign-date"><span class="ds-label__text">Дата подписания</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="contract-sign-date" name="contractSignDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off" value="01.01.2021">
+            <span class="inp__acts">
+              <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-contract-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Окно дополнительного соглашения (ДС) к договору займа (НКЛ): создание, правка и
+     подтверждение удаления. Артефакт тайла «Договор и дополнительные соглашения»
+     (страница «Договор и дополнительные соглашения»): окно открывает страница
+     PostModalAdditionalAgreement.open({ id?, nextSeqNumber? }) — «Новое соглашение» в шапке
+     страницы или карандаш карточки ДС. Фрагмент вшивается ассемблером отдельной меткой
+     ds-include в конец страницы, не внутри тайла.
+
+     В файле два соседних скрима (макет «Новое соглашение + редактирование», 26.10.2026):
+     1) agreement-scrim — окно «Создание / Редактирование дополнительного соглашения».
+        Три состояния макета — одно окно: пустое создание (эталон ниже), заполненное
+        создание и правка. Правка отличается заголовком и кнопкой «Удалить» слева в подвале;
+        значения полей и заголовок ставит AdditionalAgreementModal.js при каждом открытии
+        (значения примеров — в fixtures.json). В разметке — состояние создания: кнопка
+        «Удалить» выключена (disabled), её контейнер скрыт атрибутом hidden;
+     2) agreement-delete-scrim — подтверждение удаления. Отдельный скрим-сосед: вложенный
+        скрим внутри основного унаследовал бы его hidden и не показался бы. Открывается
+        поверх основного по «Удалить» (скрим вложенный, --nested), крестик, Esc и
+        «Отменить» — без удаления.
+
+     Раскладка полей — как на макете: строка 1 — «Дата подписания», «Номер доп. соглашения»,
+     «Тип изменения» (2 : 2 : 5); «Ключевые изменения» и «Комментарий» — на всю ширину;
+     блок «Информация о решении КО» — «Дата решения», «Номер решения», «Уровень
+     одобрения» (2 : 2 : 5). Ширина окна — modal--w6 (900 px: на макете окно того же
+     размера).
+
+     Отличия от макета (решения человека 26.10.2026): подпись «Дата создания» названа
+     «Дата подписания» (ответ 5/25); маска даты — ДД.ММ.ГГГГ вместо ММ.ДД.ГГГГ (ответы 7 и 25);
+     «Номер решения» — одна строка, а не многострочное поле (ответ 14).
+
+     Списки «Тип изменения», «Ключевые изменения», «Уровень одобрения» пусты в разметке:
+     опции собирает скрипт из справочников LOAN_CHANGE_TYPE_LABELS, LOAN_KEY_CHANGE_LABELS,
+     LOAN_APPROVAL_LEVEL_LABELS. Крестик очистки в разметке нет намеренно: он живёт по
+     значению, его рисует рантайм поля. «Сохранить» и «Удалить» без data-modal-close: окно
+     закрывает скрипт, когда проверка прошла. Клик по скриму не закрывает окно с вводом. -->
+
+<div class="modal-scrim" id="agreement-scrim" hidden data-widget="AdditionalAgreementModal" data-widget-group="modals" data-widget-src="../widgets/modals/AdditionalAgreementModal/AdditionalAgreementModal.html">
+  <div class="modal modal--w6 lc-additional-agreement-modal" data-mode="create" role="dialog" aria-modal="true" aria-labelledby="agreement-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="agreement-title">Создание дополнительного соглашения</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-additional-agreement-modal__sections">
+
+        <!-- ── Информация о доп. соглашении ─────────────────────────── -->
+        <section class="lc-additional-agreement-modal__section" aria-labelledby="agreement-sec-main">
+          <h3 class="lc-additional-agreement-modal__heading" id="agreement-sec-main">Информация о доп. соглашении</h3>
+          <div class="lc-additional-agreement-modal__grid">
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="agreement-sign-date"><span class="ds-label__text">Дата подписания</span></label>
+              <div class="inp__box">
+                <div class="inp__field">
+                  <input class="inp__control" id="agreement-sign-date" name="signDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+                  <span class="inp__acts">
+                    <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="agreement-seq-number"><span class="ds-label__text">Номер доп. соглашения</span></label>
+              <div class="inp__box">
+                <div class="inp__field">
+                  <input class="inp__control" id="agreement-seq-number" name="seqNumber" inputmode="numeric" autocomplete="off" value="1">
+                </div>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="agreement-change-type"><span class="ds-label__text">Тип изменения</span></label>
+              <div class="inp__box">
+                <div class="inp__field" data-ddl="agreement-change-type-list">
+                  <input class="inp__control" id="agreement-change-type" name="changeTypeCode" autocomplete="off">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+              </div>
+              <div id="agreement-change-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth lc-additional-agreement-modal__wide">
+              <label class="ds-label" for="agreement-key-changes"><span class="ds-label__text">Ключевые изменения</span></label>
+              <div class="inp__box">
+                <div class="inp__field" data-ddl="agreement-key-changes-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="agreement-key-changes" name="keyChangeCodes" autocomplete="off">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+              </div>
+              <div id="agreement-key-changes-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth inp--multiline lc-additional-agreement-modal__wide">
+              <label class="ds-label" for="agreement-comment"><span class="ds-label__text">Комментарий</span></label>
+              <div class="inp__field">
+                <textarea class="inp__control" id="agreement-comment" name="comment" rows="4"></textarea>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ── Информация о решении КО ──────────────────────────────── -->
+        <section class="lc-additional-agreement-modal__section" aria-labelledby="agreement-sec-decision">
+          <h3 class="lc-additional-agreement-modal__heading" id="agreement-sec-decision">Информация о решении КО</h3>
+          <div class="lc-additional-agreement-modal__grid">
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="agreement-decision-date"><span class="ds-label__text">Дата решения</span></label>
+              <div class="inp__box">
+                <div class="inp__field">
+                  <input class="inp__control" id="agreement-decision-date" name="decisionDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+                  <span class="inp__acts">
+                    <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="agreement-decision-number"><span class="ds-label__text">Номер решения</span></label>
+              <div class="inp__box">
+                <div class="inp__field">
+                  <input class="inp__control" id="agreement-decision-number" name="decisionNumber" autocomplete="off">
+                </div>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="agreement-approval-level"><span class="ds-label__text">Уровень одобрения</span></label>
+              <div class="inp__box">
+                <div class="inp__field" data-ddl="agreement-approval-level-list">
+                  <input class="inp__control" id="agreement-approval-level" name="approvalLevelCode" autocomplete="off">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+              </div>
+              <div id="agreement-approval-level-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <!-- Правка: «Удалить» есть и доступна. Создание: контейнер скрыт, кнопка выключена. -->
+      <div class="modal__foot-left" hidden>
+        <button type="button" class="btn btn--transparent btn--m" data-agreement-delete disabled><i data-icon="trash"></i><span class="btn__label">Удалить</span></button>
+      </div>
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-agreement-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<div class="modal-scrim modal-scrim--nested" id="agreement-delete-scrim" hidden>
+  <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="agreement-delete-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="agreement-delete-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="ds-body-m-reg">Удаление дополнительного соглашения</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-agreement-confirm="cancel"><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--error btn--m" data-agreement-confirm="ok"><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Окно «Фильтр» списка дополнительных соглашений (ДС) — связанный артефакт кнопки
+     «Фильтр» (TableFilter) на внутренней странице «Договор и дополнительные соглашения».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include: скрим лежит в конце
+     body страницы (якорь #sec:modals), а не внутри тайла. Кнопка «Фильтр» и чип
+     «Применено: N» живут на странице, не в окне.
+
+     Структура — штатная модалка фильтра ДС (образец — FinancialMetricsFilterModal):
+     .modal--w6.tfm, тело .modal__body--flush > .tfm__body = вертикальные табы-разделы
+     .tfm__nav + .tfm__panel с двумя разделами .tfm__sec подряд (табы — якорные ссылки,
+     панель прокручивается). Раздел «Основная информация»: номер соглашения, дата
+     подписания (InputDateRange), тип изменения (одиночный выбор: InputAutocomplete +
+     DropdownList), ключевые изменения (мультивыбор с чипами). Раздел «Решение»: номер
+     решения, дата решения (InputDateRange), уровень одобрения (мультивыбор с чипами).
+     Бейдж таба — число заполненных полей раздела, при нуле скрыт атрибутом hidden;
+     диапазон дат считается за одно поле. Макет подписывает дату «Дата соглашения»;
+     в окне «Дата подписания» (ответ человека 27.10.2026).
+
+     Списки опций и чипы пустые: скрипт (AdditionalAgreementsFilterModal.js) строит их из
+     глобалов LOAN_CHANGE_TYPE_LABELS, LOAN_KEY_CHANGE_LABELS, LOAN_APPROVAL_LEVEL_LABELS
+     и заполняет поля текущим фильтром при каждом открытии. Значений полей в разметке нет:
+     эталон — пустое окно (состояния — fixtures.json).
+
+     Подвал: «Очистить фильтр» (сбрасывает поля окна, окно остаётся открытым; выключена,
+     пока очищать нечего) и «Сохранить» (проверяет даты, закрывает окно и отдаёт фильтр
+     событием agreementsfilter). Ни одна не несёт data-modal-close: закрытие и результат
+     ведёт скрипт. Крестик и Esc закрывают без сохранения.
+
+     Даты: на каждой половине диапазона префикс «От»/«До» (правило InputDateRange: префикс
+     всегда есть; на макете его нет). Поле в .inp__box — якорь тултипа ошибки формата даты
+     (правило InputText: текст ошибки только в тултипе на фокусе). Крестика очистки в
+     разметке нет намеренно: его рисует рантайм по значению. -->
+
+<div class="modal-scrim" id="agreements-filter-scrim" hidden data-widget="AdditionalAgreementsFilterModal" data-widget-group="modals" data-widget-src="../widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.html">
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="aaf-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="aaf-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="aaf-sec-main"><span class="tab__label">Основная информация</span><span class="tab__badge" data-aaf-badge="main" hidden>0</span></button>
+          <button type="button" class="tab tab--m tab--vert" data-target="aaf-sec-decision"><span class="tab__label">Решение</span><span class="tab__badge" data-aaf-badge="decision" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel">
+
+          <section class="tfm__sec" id="aaf-sec-main" aria-labelledby="aaf-sec-main-t">
+            <p class="tfm__sec-title" id="aaf-sec-main-t">Основная информация</p>
+            <div class="tfm__grid">
+
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="aaf-number"><span class="ds-label__text">Номер соглашения</span></label>
+                <div class="inp__field">
+                  <input class="inp__control" id="aaf-number" name="number" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Дата подписания</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">От</span>
+                        <input class="inp__control" id="aaf-sign-from" name="signFrom" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата подписания, от">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">До</span>
+                        <input class="inp__control" id="aaf-sign-to" name="signTo" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата подписания, до">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="aaf-change-type"><span class="ds-label__text">Тип изменения</span></label>
+                <div class="inp__field" data-ddl="aaf-change-type-list">
+                  <input class="inp__control" id="aaf-change-type" name="changeTypeCode" autocomplete="off" placeholder="Выберите тип изменения">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="aaf-change-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+              </div>
+
+              <div class="inp inp--m tfm__span-2" data-aaf-multi="keyChangeCodes">
+                <label class="ds-label" for="aaf-key-changes"><span class="ds-label__text">Ключевые изменения</span></label>
+                <div class="inp__field" data-ddl="aaf-key-changes-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="aaf-key-changes" autocomplete="off" placeholder="Выберите ключевые изменения">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="aaf-key-changes-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+
+            </div>
+          </section>
+
+          <section class="tfm__sec" id="aaf-sec-decision" aria-labelledby="aaf-sec-decision-t">
+            <p class="tfm__sec-title" id="aaf-sec-decision-t">Решение</p>
+            <div class="tfm__grid">
+
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="aaf-decision-number"><span class="ds-label__text">Номер решения</span></label>
+                <div class="inp__field">
+                  <input class="inp__control" id="aaf-decision-number" name="decisionNumber" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Дата решения</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">От</span>
+                        <input class="inp__control" id="aaf-decision-from" name="decisionFrom" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата решения, от">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__box">
+                      <div class="inp__field">
+                        <span class="inp__prefix">До</span>
+                        <input class="inp__control" id="aaf-decision-to" name="decisionTo" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off" aria-label="Дата решения, до">
+                        <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="inp inp--m tfm__span-2" data-aaf-multi="approvalLevelCodes">
+                <label class="ds-label" for="aaf-approval"><span class="ds-label__text">Уровень одобрения</span></label>
+                <div class="inp__field" data-ddl="aaf-approval-list">
+                  <span class="inp__chips"></span>
+                  <input class="inp__control" id="aaf-approval" autocomplete="off" placeholder="Выберите уровни одобрения">
+                  <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="aaf-approval-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-aaf-clear disabled><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-aaf-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Карточка контрагента — эталон разметки для списка участников окна «Документы по сделке» -->
+<!-- Локальный компонент «Карточка контрагента» — переиспользуемый.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include.
+
+     Корень фрагмента — <template>: карточек на странице много и содержимое у
+     них разное (наименование, состав полей), а через метку ds-include
+     передаются только id/class/state/mode. Поэтому компонент отдаёт ЭТАЛОН
+     разметки, а карточки по нему рисует потребитель из своего стора — так же,
+     как реестр портфеля рисует 50 строк из mock-deals.js.
+
+     data-state — где карточка лежит: found найден | member участник сделки
+     data-mode  — режим прав:         edit (кнопка переноса есть) | view (её нет)
+
+     Недоступность — не data-mode, а состояние Card из ДС: aria-disabled="true"
+     плюс inert (ставит рендер по opts.disabled). Так показываются участники
+     сделки другого вида в окне КНР: видны, но с текущей вкладки не трогаются.
+
+     Что чем управляется. Риск-метрика, строка ГСЗ и чекбокс «КНР» осмыслены
+     только у участника сделки — у найденного контрагента их нет. Сабхедер у
+     юрлица необязателен («Нерезидент», «Консолидированная группа»), у физлица
+     это дата рождения и он есть всегда. Состав полей — контент, а не вариант:
+     у разных контрагентов он разный, и пустых строк под отсутствующее не
+     резервируется.
+
+     Раскладка тела — две колонки: слева реквизиты и чекбокс «КНР», справа
+     риск-метрика. Колонки — flex-ряд, а не сетка: у найденного контрагента
+     метрики нет, и пустая колонка со своим зазором не остаётся.
+
+     Префикс классов lc-knrm__ исторический: карточка выросла из модалки КНР и
+     эти классы держит её скрипт. Переименование стоило бы правок в окне без
+     пользы для вида. -->
+
+<!-- Корень — пустой скрытый контейнер вокруг шаблона. Он нужен по двум
+     причинам: у фрагмента должен быть один корневой элемент, а приёмка читает
+     разметку текстом и видит карточку внутри <template> как обычный тайл —
+     поэтому зона помечена data-off-grid: ширину карточке задаёт колонка
+     потребителя, а не 12-колоночная сетка страницы. -->
+<div hidden
+     data-off-grid="Эталон карточки контрагента: ширину задаёт колонка потребителя, а не сетка страницы" data-widget="CounterpartyCard" data-widget-group="modals" data-widget-src="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.html">
+<template id="lc-cpcard-tpl">
+  <article class="tile tile--card lc-knrm__card" data-state="found" data-mode="edit">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title" data-cp="name"></h3></div>
+        <p class="tile__subtitle" data-cp="subheader"></p>
+      </div>
+      <div class="tile__actions">
+        <!-- Перенос в соседнюю колонку — действие Card (IconButton M 20×20).
+             Карточку не перетаскивают: её переносят этой кнопкой или двойным
+             кликом. Подпись и подсказку («Перенести в участники сделки» /
+             «Убрать из участников сделки») ставит рендер по opts.moveLabel.
+             data-knr-move — хук переноса в окне КНР -->
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" data-knr-move
+                aria-label="Перенести" data-tooltip="Перенести"><i data-icon="arrow-left-right"></i></button>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="lc-knrm__content">
+        <div class="lc-knrm__main">
+          <div class="lc-knrm__fields" data-cp="fields"></div>
+          <label class="cb lc-knrm__knr">
+            <input type="checkbox" class="cb__input" data-cp="knr">
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">КНР</span></span>
+          </label>
+        </div>
+        <!-- риск-метрику рантайм ds-riskmetric.js собирает сам из атрибутов -->
+        <span data-cp="risk" data-riskmetric></span>
+      </div>
+    </div>
+  </article>
+</template>
+</div>
+<!-- Связанный артефакт тайла «Описание сделки»: окно «Документы по сделке» —
+     первый шаг просмотра документов ЭКД. Открывается кнопкой «Документы ЭКД
+     по сделке» в шапке тайла. Документы ведутся по контрагенту, поэтому
+     сначала выбирают участника сделки, «Открыть» открывает окно документов
+     (подчасть этого окна — EcmModal/EcmModal.html, свой скрим и своя метка).
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include в конце body.
+     Вид — по макету дизайнера «Документы по сделке»
+     (решение человека 25.09.2026): участник — карточкой контрагента, выбранная
+     карточка подсвечена, «Открыть» недоступна, пока участник не выбран.
+
+     Карточки рисует CounterpartiesEcmModal.js по шаблону CounterpartyCard
+     (режим select) из участников сделки CounterpartiesStore — того же
+     состава, что правит окно «КНР». В разметке список пуст.
+
+     data-state на .modal — состояние данных: loading | data | empty. -->
+
+<div class="modal-scrim" id="deal-ecm-scrim" hidden data-widget="CounterpartiesEcmModal" data-widget-group="modals" data-widget-src="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.html">
+  <div class="modal modal--w4 lc-deal-ecm" role="dialog" aria-modal="true" aria-labelledby="deal-ecm-title" data-state="data">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-ecm-title">Документы по сделке</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="lc-deal-ecm__heading" id="deal-ecm-pick">Выберите участника сделки</p>
+
+      <!-- Список карточек — радиогруппа: карточка в режиме select сама
+           пункт группы (role="radio"). Выбор и клавиатуру ведёт скрипт окна. -->
+      <div class="lc-deal-ecm__list" role="radiogroup" aria-labelledby="deal-ecm-pick" data-ecm-items></div>
+
+      <!-- Загрузка: состав сделки ещё читается (сервер данных или localStorage,
+           data/API.md) — каркас двух карточек в их габаритах. -->
+      <div class="lc-deal-ecm__loading" aria-busy="true">
+        <span class="sk-block sk-block--rounded lc-deal-ecm__loading-card" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded lc-deal-ecm__loading-card" aria-hidden="true"></span>
+      </div>
+
+      <!-- Участников нет: одна строка причины. Действия здесь нет — состав
+           правят в окне «КНР», а не отсюда. -->
+      <p class="lc-deal-ecm__empty">У сделки пока нет участников — документы смотреть не по кому.</p>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-ecm-next disabled><span class="btn__label">Открыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Подчасть окна «Документы по сделке» (CounterpartiesEcmModal): документы
+     выбранного участника сделки — второй шаг. Лежит в папке окна-владельца,
+     как у фронтенда (CounterpartiesEcmModal/EcmModal); паспорт общий с
+     владельцем, стили — его же (CounterpartiesEcmModal.css). Вшивается своей
+     меткой рядом с ним — у фрагмента один корневой элемент, и сборщик не
+     раскрывает метки внутри фрагмента.
+
+     Вид — по макету дизайнера «Документы по сделке»:
+     в теле полное наименование контрагента, под ним документы. В продукте
+     документы открываются из внешней системы хранения; в прототипе её нет,
+     поэтому на их месте — пустое состояние с объяснением.
+
+     Подвал (решение человека 25.09.2026): слева «К списку контрагентов» со
+     стрелкой — шаг назад к выбору, справа аутлайновая «Закрыть».
+     Открывает и возвращает к списку CounterpartiesEcmModal.js; наименование
+     ниже — пример. -->
+
+<div class="modal-scrim" id="deal-ecm-docs-scrim" hidden data-widget="EcmModal" data-widget-group="modals" data-widget-src="../widgets/modals/CounterpartiesEcmModal/EcmModal/EcmModal.html">
+  <div class="modal modal--w8" role="dialog" aria-modal="true" aria-labelledby="deal-ecm-docs-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-ecm-docs-title">Документы по сделке</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="lc-deal-ecm__heading" data-ecm-party-name>КГ Самолёт</p>
+      <div class="es es--m">
+        <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <div class="es__body">
+          <p class="es__title">Просмотр документов</p>
+          <p class="es__text">Здесь открываются документы выбранного участника сделки. В прототипе просмотра документов нет.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Шаг назад — слева, как вторичное действие формы; закрытие — справа.
+         «Закрыть» аутлайновая: подтверждать в окне нечего, залитая обещала бы
+         действие, которого нет. -->
+    <footer class="modal__foot">
+      <div class="modal__foot-left">
+        <button type="button" class="btn btn--transparent btn--m" data-ecm-back><i data-icon="arrow-left"></i><span class="btn__label">К списку контрагентов</span></button>
+      </div>
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--outline btn--m" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
+<script src="../data/deals-store.js"></script>
+<script src="../data/mock-counterparties.js"></script>
+<script src="../data/post-api.js"></script>
+<script src="../data/counterparties-store.js"></script>
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/mock-fin-instruments.js"></script>
+<script src="../data/mock-deal-trees.js"></script>
+<script src="../data/product-tree-store.js"></script>
+<script src="../data/mock-loan-agreements.js"></script>
+<script src="../data/loan-agreement-store.js"></script>
+<script src="../data/tranche-context.js"></script>
+<script src="../data/instrument-context.js"></script>
+<script src="../data/loan-contract-fields.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.js"></script>
+<script src="../widgets/tiles/ContractTile/ContractTile.js"></script>
+<script src="../widgets/tiles/AdditionalAgreementTile/AdditionalAgreementTile.js"></script>
+<script src="../widgets/modals/AdditionalAgreementModal/AdditionalAgreementModal.js"></script>
+<script src="../widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.js"></script>
+<script src="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script>
+/* Экранный скрипт: меню по каталогу ролей, тайл «Договор», список дополнительных соглашений (ДС),
+   окна ДС и фильтра. Данные — LoanAgreementStore (запись договора); режим правки —
+   LoanAgreementStore.isEditable(): статус сделки и погашение договора.
+   Адрес: InitialAndAdditionalAgreements.html?id=<сделка>&ins=<id узла договора>. */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'current-portfolio';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../index.html" aria-label="Хаб проектов"';
+
+  function ic(name) { return '<i data-icon="' + name + '"></i>'; }
+
+  function itemHTML(it) {
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="#"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span></a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+      + '</div><div class="nav__list">'
+      + '<a class="nav__item" href="MainPage.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    IBPHome.itemsFor(role).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>' + (window.IBPHome && window.IBPHome.footerHTML
+      ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">'
+        + '<a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">'
+        + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+        + '<span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span>'
+        + '<span class="nav__user-role">' + role + '</span></span></a>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>'
+        + '</div>');
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  }
+
+  var LAS = window.LoanAgreementStore;
+  var cps = window.CounterpartiesStore;
+  var ctx = null;
+  /* применённый фильтр ДС — в памяти страницы, как фильтры страницы «Финансовые метрики» */
+  var filter = {};
+  var filterCount = 0;
+
+  /* Страницы собирает ассемблер: соседние — Instrument.preview.html и т. п. */
+  var isPreview = /\.preview\.html$/.test(window.location.pathname);
+  function sibling(name) { return name + (isPreview ? '.preview.html' : '.html'); }
+
+  function $(id) { return document.getElementById(id); }
+  function show(el, on) { if (el) el.hidden = !on; }
+
+  function agreementViews() {
+    return LAS.agreements(filter).map(function (a) {
+      return {
+        id: a.id, number: LAS.agreementNumber(a), signDate: a.signDate,
+        changeTypeCode: a.changeTypeCode, keyChangeCodes: a.keyChangeCodes || [],
+        decisionDate: a.decisionDate, decisionNumber: a.decisionNumber,
+        approvalLevelCode: a.approvalLevelCode, comment: a.comment
+      };
+    });
+  }
+
+  function paintHead(editable) {
+    var node = LAS.instrument();
+    var label = node ? node.number + ' ' + node.name : ctx.instrumentLabel;
+    document.title = 'Договор и дополнительные соглашения — IBP';
+    window.InstrumentContext.paintCrumbs(document.querySelector('[data-breadcrumbs]'), [
+      null, { href: 'Portfolio.html' }, { text: ctx.dealLabel, href: sibling('Deal') + ctx.dealQuery },
+      { text: label, href: sibling('Instrument') + ctx.instrumentQuery }, null
+    ]);
+    /* «Новое соглашение» в шапке в просмотре выключена разметкой */
+    var btn = $('ia-new-btn');
+    btn.disabled = !editable;
+    if (editable) btn.removeAttribute('aria-disabled'); else btn.setAttribute('aria-disabled', 'true');
+  }
+
+  function paint() {
+    if (!ctx) return;
+    var editable = LAS.isEditable();
+    var mode = editable ? 'edit' : 'view';
+    var rec = LAS.get();
+    paintHead(editable);
+
+    window.PostTileContract.render($('tile-contract'), {
+      mode: mode, variant: 'loan-ncl', data: rec.contract, plannedRepaymentDate: LAS.plannedRepaymentDate()
+    });
+
+    var total = LAS.agreements().length;
+    var items = agreementViews();
+    /* фильтр есть, только когда есть что фильтровать (так на макете «нет доп. соглашений») */
+    $('ia-filter').innerHTML = '<button type="button" class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false" data-ia-filter-open>'
+      + '<i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>'
+      + (filterCount > 0
+        ? '<span class="chip chip--edit chip--m tfilter__applied" tabindex="0"><span class="chip__label">Применено: ' + filterCount + '</span>'
+          + '<span class="chip__remove" role="button" aria-label="Сбросить все фильтры"><i data-icon="close"></i></span></span>'
+        : '');
+    show($('ia-filter'), total > 0);
+
+    window.PostTileAdditionalAgreement.renderList($('aa-list'), { mode: mode, items: items });
+    show($('aa-list'), items.length > 0);
+
+    show($('ia-empty'), total === 0);
+    /* кнопки «Новое соглашение» в пустом состоянии в просмотре нет в разметке */
+    $('ia-empty-actions').innerHTML = editable
+      ? '<button type="button" class="btn btn--accent btn--m" data-ia-act="NEW"><i data-icon="add"></i><span class="btn__label">Новое соглашение</span></button>'
+      : '';
+    show($('ia-empty-actions'), editable);
+    show($('ia-nothing'), total > 0 && items.length === 0);
+
+    if (window.dsIcons) window.dsIcons.apply(document);
+    if (window.DSModal && window.DSModal.bindAll) window.DSModal.bindAll(document);
+  }
+
+  function openAgreement(id) {
+    if (!LAS.isEditable() || !window.PostModalAdditionalAgreement) return;
+    window.PostModalAdditionalAgreement.open(id ? { id: id } : { nextSeqNumber: LAS.nextSeqNumber() });
+  }
+
+  /* Действия тайлов: тайл шлёт 'loanaction', что делать — знает страница. */
+  document.addEventListener('loanaction', function (e) {
+    var d = e.detail || {};
+    if (!ctx) return;
+    switch (d.action) {
+      case 'DOCS':
+        /* Кнопка открывает окно программно, без data-modal, — слушатель клика
+           CounterpartiesEcmModal не срабатывает. Refresh до открытия: карточки
+           участников встают в окно до того, как рантайм поставит в них фокус. */
+        if (window.DSModal && $('deal-ecm-scrim')) {
+          if ($('deal-ecm-scrim').__dealEcmApi) $('deal-ecm-scrim').__dealEcmApi.refresh();
+          window.DSModal.open($('deal-ecm-scrim'));
+        }
+        break;
+      case 'EDIT_AGREEMENT': openAgreement(d.id); break;
+    }
+  });
+
+  /* «Новое соглашение», «Очистить фильтр» */
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest('[data-ia-act]');
+    if (!el || el.disabled || !ctx) return;
+    var act = el.getAttribute('data-ia-act');
+    if (act === 'NEW') openAgreement(null);
+    else if (act === 'CLEAR_FILTER') { filter = {}; filterCount = 0; paint(); }
+  });
+
+  /* «Фильтр»: окно открывает страница, применённый фильтр отдаёт ему при каждом открытии */
+  $('ia-filter').addEventListener('click', function (e) {
+    if (!e.target.closest || !e.target.closest('[data-ia-filter-open]')) return;
+    if (window.PostModalAdditionalAgreementsFilter) window.PostModalAdditionalAgreementsFilter.open(filter);
+  });
+
+  /* Результат окна: «Сохранить» → фильтр и счётчик применённых полей */
+  document.addEventListener('agreementsfilter', function (e) {
+    var d = e.detail || {};
+    filter = d.filter || {};
+    filterCount = d.count || 0;
+    paint();
+  });
+
+  /* Крестик чипа «Применено: N» сбрасывает фильтр целиком (штатное событие ДС) */
+  $('ia-filter').addEventListener('tfilter:reset', function () {
+    filter = {};
+    filterCount = 0;
+    paint();
+  });
+
+  $('ia-back-btn').addEventListener('click', function () {
+    if (ctx) window.location.href = sibling('Instrument') + ctx.instrumentQuery;
+  });
+
+  function init() {
+    ctx = window.InstrumentContext.resolve(window.location.search);
+    if (!ctx) {
+      document.querySelector('.phead__title').textContent = 'Договор займа не найден';
+      return null;
+    }
+    return cps.use(ctx.openedId).then(function () {
+      LAS.use(ctx.openedId, ctx.instrument.id);
+      if (window.PostDealEcmModal) {
+        window.PostDealEcmModal.bind($('deal-ecm-scrim'), $('deal-ecm-docs-scrim'), {
+          members: function () { return String(cps.dealId()) === String(ctx.openedId) ? cps.members() : null; }
+        });
+      }
+      /* перерисовка: запись договора (договор, ДС), статус сделки */
+      LAS.on('change', paint);
+      window.DealsStore.on('change', paint);
+      paint();
+    });
+  }
+
+  buildNav();
+  Promise.all([window.ProductTreeStore.ready, LAS.ready, cps.ready]).then(init);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

@@ -139,7 +139,7 @@
 
 .pop__title {
   margin: 0;
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-primary);
   flex: 0 1 auto;
   min-width: 0;
@@ -162,7 +162,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-primary);
 }
 /* Полоса прокрутки тела — как у .ds-scroll (Layout): только бегунок 8px,
@@ -244,7 +244,7 @@
   align-items: center;
   gap: 8px;
   min-width: 0;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
 }
 .pop__foot-right { margin-left: auto; gap: 10px; }

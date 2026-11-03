@@ -1,0 +1,22 @@
+/* Локальный компонент V2EventDetailsTile — подробности выбранного события.
+   Тайл заполняет высоту панели сплиттера, прокручивается тело (.ds-scroll).
+   Отступы тела — селектором не слабее .tile--headless > .tile__body (Л177). */
+.lc-v2-event-details-tile { flex: 1; min-height: 0; }
+.lc-v2-event-details-tile[hidden],
+.lc-v2-event-details-tile [hidden] { display: none; }
+.tile--headless > .lc-v2-event-details-tile__body { flex: 1; min-height: 0; overflow-y: auto; padding: var(--space-32) var(--space-24); }
+.lc-v2-event-details-tile--embedded { display: flex; flex-direction: column; min-width: 0; }
+.lc-v2-event-details-tile--embedded > .lc-v2-event-details-tile__body { flex: 1; min-height: 0; overflow-y: auto; padding: var(--space-16); }
+.lc-v2-event-details-tile__event { display: flex; flex-direction: column; gap: var(--space-16); max-width: 72ch; }
+.lc-v2-event-details-tile__type { display: flex; }
+.lc-v2-event-details-tile__title { margin: 0; font: var(--type-h5-strong-smb); color: var(--text-primary); }
+.lc-v2-event-details-tile__meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); margin: 0; font: var(--type-body-xs-reg); color: var(--text-secondary); }
+.lc-v2-event-details-tile__section { display: flex; flex-direction: column; gap: var(--space-12); padding-top: var(--space-8); }
+.lc-v2-event-details-tile__section-title { margin: 0; font: var(--type-body-m-strong-smb); color: var(--text-primary); }
+/* «Поле» — во всю ширину, под ним пара «Было | Стало»; колонка не уже
+   240px (K5): в узком тайле «Было» и «Стало» встают друг под другом */
+.lc-v2-event-details-tile__fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: var(--space-16); }
+.lc-v2-event-details-tile__fields > .rof:first-child { grid-column: 1 / -1; }
+.lc-v2-event-details-tile__links { display: flex; flex-direction: column; gap: var(--space-8); margin: 0; padding: 0; list-style: none; }
+.lc-v2-event-details-tile__link-kind { font: var(--type-body-xs-reg); color: var(--text-secondary); margin-right: var(--space-8); }
+

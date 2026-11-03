@@ -1,0 +1,66 @@
+<!-- Связанный артефакт тайла «Техническая информация»: модальное окно правки.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать в конце
+     body, а не внутри тайла.
+
+     Поля зависят от потребителя (решение человека 02.11.2026, RE0049): НКЛ — «ГФО ID» и
+     «ГФО ID фондирующего кредита»; Транш — плюс «CRM ID продукта». Владелец правила
+     «потребитель → поля» — тайл (список CONSUMERS в LoanExternalDataTile.js); окно при
+     bind показывает только поля разметки, входящие в набор потребителя: поле нового
+     потребителя ставится во фрагмент с data-tech-consumer="<имя>" hidden, без правки JS
+     окна. Значения в разметке — пример.
+
+     Окно заполняет и сохраняет LoanExternalDataModal.js (PostModalLoanExternalData.bind):
+     по умолчанию читает LoanAgreementStore.get().techInfo и зовёт setTechInfo; страница
+     может передать свои get/save и consumer (как страница транша, у которой правка живёт
+     в своей сессии). «Сохранить» закрывает окно; тайл перерисовывает страница по событию
+     стора. Кнопка без data-modal-close: окно закрывает скрипт. Крестик и Esc закрывают без
+     сохранения, клик мимо окна не закрывает (триггеры тайла стоят с data-modal-guarded).
+     Проверки ввода нет — человек её не называл.
+
+     Своего CSS у окна нет: тело Modal — колонка с зазором 16px, поля во всю ширину.
+     Крестика очистки в разметке нет намеренно: он живёт по значению, и рисует его рантайм
+     ds-input.js — ровно тогда, когда в поле есть что стирать; значение окно ставит кодом,
+     поэтому после заполнения зовёт DSInput.sync (см. LoanExternalDataModal.js). -->
+
+<div class="modal-scrim" id="tech-scrim" hidden>
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="tech-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="tech-title">Техническая информация</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tech-gfo-id"><span class="ds-label__text">ГФО ID</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="tech-gfo-id" name="gfoId" autocomplete="off" value="1234567890">
+          </div>
+        </div>
+      </div>
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tech-gfo-funding-credit-id"><span class="ds-label__text">ГФО ID фондирующего кредита</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="tech-gfo-funding-credit-id" name="gfoFundingCreditId" autocomplete="off" value="1234567890-12-12">
+          </div>
+        </div>
+      </div>
+      <!-- Поле потребителя «Транш»: скрыто по умолчанию, показывает окно по consumer. -->
+      <div class="inp inp--m inp--fullwidth" data-tech-consumer="tranche" hidden>
+        <label class="ds-label" for="tech-crm-product-id"><span class="ds-label__text">CRM ID продукта</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="tech-crm-product-id" name="crmProductId" autocomplete="off" value="">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-tech-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

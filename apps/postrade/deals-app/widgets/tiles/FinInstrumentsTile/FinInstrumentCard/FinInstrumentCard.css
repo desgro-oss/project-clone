@@ -61,7 +61,7 @@
 }
 .lc-fin-card__nodes-title {
   margin: 0;
-  font: var(--type-h6-strong);
+  font: var(--type-h6-strong-smb);
   color: var(--text-primary);
 }
 .lc-fin-card__add-node { margin-left: auto; }
@@ -76,7 +76,7 @@
 }
 .lc-fin-card__no-nodes {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-secondary);
   text-align: center;
 }

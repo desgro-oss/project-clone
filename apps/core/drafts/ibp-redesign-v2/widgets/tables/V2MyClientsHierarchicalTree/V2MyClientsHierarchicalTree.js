@@ -1,7 +1,9 @@
 /* V2MyClientsHierarchicalTree — клиенты, сгруппированные по холдингам.
-   render(host, { onView }) — строки-группы холдингов (TableCell tree,
+   render(host, { rows, onView }) — строки-группы холдингов (TableCell tree,
    раскрытие — рантайм Table ДС по [data-node]/[data-parent]) и клиенты
-   холдинга; клиент → ClientInfoPage. onView — выбор вида в SegmentControl. */
+   холдинга; клиент → ClientInfoPage. rows — клиенты выборки таблицы
+   V2MyClientsTable (по умолчанию — портфель IBPR.clients()); onView — выбор
+   вида в SegmentControl. */
 (function () {
   'use strict';
   function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -25,11 +27,11 @@
       + HEADS.map(function (l, i) { return '<div class="th' + (i ? '' : ' th--pinned') + '"><span class="th__label">' + l + '</span><span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__pin" aria-pressed="' + (i ? 'false' : 'true') + '" aria-label="' + (i ? 'Закрепить колонку' : 'Открепить колонку') + '"><i data-icon="' + (i ? 'pin' : 'pin-filled') + '"></i></button></span><span class="th__resize"' + rs + '></span></div>'; }).join('')
       + '<div class="th th--separator"></div></div>';
     var groups = {};
-    S.clients().forEach(function (c) { (groups[c.holdingId] = groups[c.holdingId] || { name: c.holdingName, list: [] }).list.push(c); });
+    (opts.rows || S.clients()).forEach(function (c) { (groups[c.holdingId] = groups[c.holdingId] || { name: c.holdingName, list: [] }).list.push(c); });
     Object.keys(groups).forEach(function (hid) {
       var g = groups[hid], node = 'mt-' + hid;
       h += '<div class="tbl__row" style="grid-template-columns:' + GRID + '" data-node="' + node + '"><div class="tc tc--separator"></div>'
-        + '<div class="tc tc--tree tc--pinned"><span class="tc__row"><button type="button" class="tc__twisty" aria-expanded="true" aria-label="Свернуть холдинг"><i data-icon="chevron-down"></i></button>'
+        + '<div class="tc tc--tree tc--pinned"><span class="tc__row"><button type="button" class="tc__twisty" aria-expanded="true" aria-label="Свернуть холдинг"><i data-icon="chevron-right"></i></button>'
         + '<span class="tc__text tc__text--truncate">' + esc(g.name) + ' (' + g.list.length + ')</span></span></div>'
         + HEADS.slice(1).map(function () { return cell('', true); }).join('')
         + '<div class="tc tc--separator"></div></div>';

@@ -1,0 +1,66 @@
+<!-- Локальный компонент «История фиксаций» (FixationHistoryTable) — вкладка «Фиксации ЭПС/ВБС»
+     страницы «Финансовые метрики». Пара во фронтенде — FixationHistoryTable. Карточка (Tile)
+     с заголовком и сегмент-контролом «По ФИ» / «По дате» (SegmentControl XS) в действиях
+     шапки (внутри вкладки «Фиксации ЭПС/ВБС» страницы МСФО · РСБУ · KPI · Фиксации ЭПС/ВБС
+     стоит эта карточка) и таблица фиксаций. Вшивается общим сборщиком
+     (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Каркас показан в состоянии «Загрузка», пока страница не передала фиксации: в таблице
+     скелетоны, кнопка сортировки заблокирована. Таблицу и остальные состояния рисует
+     FixationHistoryTable.js поверх FinancialMetricsTable.js:
+     PostFixationHistoryTable.render(корень, фиксации, { mode, busy }). -->
+<section class="tile lc-fixation-history-table" data-state="loading" data-view="BY_FI" data-mode="edit" data-busy="false">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">История фиксаций</h3></div>
+    </div>
+    <div class="tile__actions">
+      <div class="segctrl segctrl--xs" role="radiogroup" data-segctrl aria-label="Вид истории фиксаций">
+        <div class="segctrl__thumb"></div>
+        <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="BY_FI"><span class="segctrl__label">По ФИ</span></button>
+        <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="BY_DATE"><span class="segctrl__label">По дате</span></button>
+      </div>
+    </div>
+  </header>
+  <div class="tile__body lc-fixation-history-table__body">
+    <div class="lc-fixation-history-table__table" data-fh-table>
+      <div class="dtable dtable--fill" aria-busy="true">
+        <div class="dtable__body">
+          <div class="tbl" data-table>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 64px 160px 140px 120px 140px 120px 200px 160px 180px 160px 280px 96px minmax(8px,1fr)">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label" data-grab>№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th" aria-sort="none"><span class="th__label" data-grab>Дата изменений</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="changeDate" aria-label="Сортировать" disabled><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Значение ЭПС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Δ ЭПС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Значение ЕТС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Δ ЕТС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>ВБС на дату фиксации, в валюте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Влияние на ВБС, %</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label" data-grab>Day1PnL, в валюте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label" data-grab>Вид модификации</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label" data-grab>Комментарий</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--center"><span class="th__label" data-grab>Действия</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+            <div class="tbl__row" style="grid-template-columns:8px 64px 160px 140px 120px 140px 120px 200px 160px 180px 160px 280px 96px minmax(8px,1fr)">
+              <div class="tc tc--separator"></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

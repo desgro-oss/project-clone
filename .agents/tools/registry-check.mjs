@@ -200,7 +200,8 @@ export function check(from = HERE) {
     if (groupDir && !hasRoot) defects.push('П1 ' + name + ' — нет root (папка записи от корня, внутри ' + groupDir + '/)');
     if (icons && !icons.has(e.icon)) defects.push('П2 ' + name + ' — иконки «' + e.icon + '» нет в ' + P.ds + '/' + ICONS_SPEC);
 
-    const href = path.resolve(repo, e.href);
+    /* адрес с параметрами (главная роли: HomePage.html?role=…, project.json → roleHomes) — файл без них */
+    const href = path.resolve(repo, e.href.split('#')[0].split('?')[0]);
     if (!existsSync(href)) defects.push('П3 ' + name + ' — href ведёт на несуществующий файл: ' + e.href);
     let rootAbs = null;
     if (hasRoot) {

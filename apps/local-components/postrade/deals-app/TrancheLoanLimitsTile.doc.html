@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Валюта транша — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Валюта транша">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--tile" id="pg-stage">
+<!-- Локальный компонент «Валюта транша» — фрагмент страницы транша.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include; место
+     в сетке и ширину задаёт экран (3 колонки из 12).
+     data-mode — режим прав: edit | view. Ставит страница: погашенный транш,
+     нередактируемый статус сделки или отсутствие права дают view.
+     Состояние данных одно — «данные есть» (решение человека 02.11.2026: на
+     странице те же два поля, что были в инлайне). Загрузка, пусто и ошибка не
+     проработаны — вопрос к человеку, см. паспорт.
+     Значения ниже — пример с текущей страницы. На странице их заменяет
+     TrancheLoanLimitsTile.js (PostTileTrancheLoanLimits.render) значениями
+     транша; правка — окно TrancheLoanLimitsModal по data-modal="tl-scrim".
+     В просмотре карандаш выключается разметкой (disabled — ставит render), CSS
+     его только прячет: запрет несёт атрибут, а не стиль (урок Л235).
+     Чипа «Демо» у компонента нет: чип — маркет тайла, ещё не заведённого в
+     локальные компоненты (решение человека 02.11.2026), а этот заведён. -->
+<section class="tile lc-tranche-loan-limits-tile" data-mode="edit" id="tile-tr-loan-limits" data-widget="TrancheLoanLimitsTile" data-widget-group="tiles" data-widget-src="../../../postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.html">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title">Валюта транша</h3>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать: Валюта транша" data-modal="tl-scrim"><i data-icon="edit"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+    <div class="tile__grid lc-tranche-loan-limits-tile__grid">
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Валюта</span></span>
+        <div class="rof__row"><span class="rof__value" data-tl-field="currencyCode">RUB</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Общая сумма лимита</span></span>
+        <div class="rof__row">
+          <span class="rof__value" data-tl-field="totalLimitAmount">1&nbsp;000&nbsp;000,00</span>
+          <span class="rof__affix" data-tl-affix="currencyCode">RUB</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>0.002</b></span><span>Обновлено: <b>02.11.2026</b></span><span>Категория: <b>Транш</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
+  <h1>Валюта транша</h1>
+  <p class="lead">Показать валюту и общую сумму лимита транша и дать точку входа в ручную правку</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile">apps/postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница транша — раздел «Общая информация», 3 колонки из 12 (узкая ширина — 6)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Tranche.preview.html">apps/postrade/deals-app/pages/Tranche.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="TrancheLoanLimitsModal.doc.html">Окно «Валюта транша» (TrancheLoanLimitsModal)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно «Валюта транша» — правка значений</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Решение человека 02.11.2026 (задача docs/tasks/RE0049-tranche-page.md)<br>текущая страница транша от 07.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">0.002 · обновлено 02.11.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.001</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Тайл раздела «Общая информация» страницы транша: валюта транша и общая сумма лимита. Оба значения — параметры самого <a class="inl" href="../../../knowledge-base/glossary/index.html#%D1%82%D1%80%D0%B0%D0%BD%D1%88">транша</a>, а не родительского договора. Карандаш в шапке открывает окно ручной правки.</p>
+<p class="desc">Обычно валюта транша совпадает с валютой <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%BD%D0%BA%D0%BB">НКЛ</a>, но не всегда — поэтому поле заполняется вручную, а не наследуется (решение человека 02.11.2026).</p>
+<p class="desc">До 02.11.2026 тайл был инлайн-разметкой страницы (<code class="tok">Tranche.html</code>); вид и состав полей перенесены в компонент без изменений. Место в сетке, ширину и минимальную высоту задаёт страница, не компонент.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Бизнес-смысл">
+<h2>Бизнес-смысл</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зачем существует</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Показать, в какой валюте выдан транш и каков его лимит: по этим двум параметрам транш учитывается в портфеле. Валюта транша не всегда равна валюте <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%BD%D0%BA%D0%BB">НКЛ</a>, поэтому это самостоятельное значение, а не пересчёт</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто заполняет и когда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД, вручную — через окно правки. На каком этапе жизни транша значение задаётся и можно ли его менять после выдачи — не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто пользуется результатом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Контекст страницы транша. Другие потребители валюты и лимита транша — не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бизнес-правила</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Валюта транша по умолчанию совпадает с валютой НКЛ, но может отличаться; значение выбирается из справочника валют (полный справочник не решён). Связь с лимитом НКЛ (может ли лимит транша превышать лимит договора) — не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Источники: <code class="tok">docs/tasks/RE0049-tranche-page.md</code> («Решения человека» 02.11.2026), страница транша <code class="tok">pages/Tranche.html</code> (вид до 02.11.2026)</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Tile (заголовок «Валюта транша», карандаш — по data-mode)
+└── тело
+    └── сетка, одна колонка
+        ├── «Валюта» — значение (код ISO)
+        └── «Общая сумма лимита» — значение + аффикс валюты</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Tile/Tile.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заголовок, действия шапки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ReadOnlyField</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/ReadOnlyField/ReadOnlyField.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.rof</code>, <code class="tok">.rof__value</code>, <code class="tok">.rof__affix</code> (аффикс валюты у суммы)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/IconButton/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ibtn--neutral ibtn--m</code>, иконка <code class="tok">edit</code>; открывает окно по <code class="tok">data-modal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Modal/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">скрим окна правки открывается рантаймом ДС по <code class="tok">data-modal=&quot;tl-scrim&quot;</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Чипа «Демо» у компонента нет: чип — маркет тайла, ещё не заведённого в локальные компоненты (решение человека 02.11.2026); этот заведён.</p>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Tile/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/components/molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.css">TrancheLoanLimitsTile.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.html">TrancheLoanLimitsTile.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.js">TrancheLoanLimitsTile.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.md">TrancheLoanLimitsTile.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,1.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,1.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Валюта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Валюта транша</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Код ISO 4217 (RUB, USD, EUR, JPY)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_TRANCHE.currencyCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,1.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Общая сумма лимита</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Лимит транша</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Число, 2 знака; на экране «1 000 000,00» без кода, код — аффиксом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_TRANCHE.totalLimitAmount</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Порядок строк — порядок отображения. Имя поля — как в описании типа демо-данных (<code class="tok">data/tranche-data.js</code>, <code class="tok">TrancheRsDto</code>). Незаполненное поле — прочерк на своём месте, с места не уходит.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да (прототип)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Режим прав приходит атрибутом <code class="tok">data-mode</code> (<code class="tok">edit</code> | <code class="tok">view</code>). В просмотре карандаш не рисуется и выключен разметкой (<code class="tok">disabled</code>). Какие роли правят в продукте — не решено (02.11.2026).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">два поля в одну колонку, значения или прочерк</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карандаш в шапке</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карандаша нет; значения видны</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Состояние данных одно — «данные есть»: решение человека 02.11.2026 — на странице те же два поля, что были в инлайне. Загрузка, пусто и ошибка не проработаны (вопрос 2 ниже), в компоненте намеренно не рисуются.</p>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<p class="desc">Не применимо: своих состояний сверх <code class="tok">data-mode</code> у компонента нет.</p>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: не решено (02.11.2026).</li><li>Обязательные поля внутри: не решено (02.11.2026).</li><li>Что показывает, когда обязательное не заполнено: прочерк в поле.</li><li>Что отдаёт наружу (признак для экрана или формы): не решено (02.11.2026).</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Значения выводятся с неразрывными пробелами в разрядах: сумма не переносится, при нехватке ширины строка переполняется (проверить в браузере). Аффикс валюты не переносится и с места не уходит. Подпись «Общая сумма лимита» переносится по словам</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Не встречается: полей всегда два</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл на 6 колонках: колонка одна, поля идут друг под другом в том же порядке</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Не встречается: тайл стоит на 3 или 6 колонках</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.7fr) minmax(0,2.1fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.7fr) minmax(0,2.1fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Карандаш в шапке тайла (только <code class="tok">edit</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно «Валюта транша» (<code class="tok">TrancheLoanLimitsModal</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Валюта» — список валют, «Сумма лимита» — поле суммы без постфикса валюты</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить» — тайл перерисовывается значениями из окна; крестик и Esc правки отменяют</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.11.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Правку в сессии страницы держит экранный скрипт страницы (отдельного стора транша нет, см. «Данные»). Открытие окна, фокус, Esc и крестик делает рантайм ДС.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Валюта и общая сумма лимита транша; сохранение правки. Имена методов и хуков API не придумываются: их выбирает разработка (контракт — <code class="tok">apps/postrade/deals-app/data/API.md</code>).</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,2.1fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,2.1fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/tranche-data.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_TRANCHE</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">TrancheRsDto</code>: <code class="tok">currencyCode</code>, <code class="tok">totalLimitAmount</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (07.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Отдельного стора транша нет: правку окна страница держит в своей сессии и отдаёт тайлу через <code class="tok">render</code>. Хранение — вопрос 3 ниже.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.1fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.1fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">col-3 colw-6</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">место в сетке страницы (3 колонки из 12, узкая — 6)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.1fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">tile-tr-loan-limits</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по нему страница находит тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.1fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code> · <code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">режим прав; ставит страница, <code class="tok">render</code> перекрывает</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,2.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Стили</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Значения полей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.js</code> (<code class="tok">PostTileTrancheLoanLimits.render</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно правки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/TrancheLoanLimitsModal/</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/TrancheLoanLimitsModal/</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<p class="desc">Отклонений нет.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li><b>Пара во фронтенде.</b> Имя <code class="tok">TrancheLoanLimitsTile</code> взято из «Имен фронтенда» README модуля как ближайшая сущность; совпадает ли состав тайла во фронтенде — не сверено (02.11.2026).</li><li><b>Состояния загрузки, пусто и ошибки.</b> Не проработаны: на странице решено показывать только «данные есть». Что показывать, пока лимит не задан или сервис не ответил, — не решено (02.11.2026).</li><li><b>Хранение правки.</b> В прототипе правка живёт в сессии страницы; отдельного стора транша нет. Писать ли значения в <code class="tok">ProductTreeStore</code> (детали узла транша) или заводить стор — не решено (02.11.2026).</li><li><b>Справочник валют.</b> Коды RUB, USD, EUR, JPY — те же, что в окне «Баланс и валюта» НКЛ; полный справочник — не решено (02.11.2026).</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">TrancheLoanLimitsTile.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Tranche.html): окна и подчасти, которые открывает виджет. -->
+<!-- Связанный артефакт тайла «Валюта транша»: окно ручной правки.
+     Фрагмент вшивается сборщиком отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Два поля: «Валюта» — список (InputAutocomplete + DropdownList, значение
+     только из списка) и «Сумма лимита» — поле суммы. Постфикса с валютой у
+     суммы НЕТ (решение человека 02.11.2026: «только сама сумма»), хотя у окна
+     «Баланс и валюта» страницы НКЛ он есть. Обычно валюта транша совпадает с
+     валютой НКЛ, но не всегда — поле заполняется вручную.
+
+     Значения в разметке — пример. Окно заполняет и сохраняет
+     TrancheLoanLimitsModal.js (PostModalTrancheLoanLimits): на открытии читает
+     текущие значения через get(), «Сохранить» отдаёт их в save() и закрывает
+     окно. Крестик и Esc закрывают без сохранения; клик мимо окна не закрывает —
+     защиту включает сам Modal.js, потому что в окне поля ввода.
+
+     Ширина modal--w3 — три колонки (решение человека 02.11.2026). Своего CSS
+     у окна нет: раскладка — компоненты ДС. -->
+<div class="modal-scrim" id="tl-scrim" hidden data-widget="TrancheLoanLimitsModal" data-widget-group="modals" data-widget-src="../../../postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.html">
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="tl-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="tl-title">Валюта транша</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tl-currency"><span class="ds-label__text">Валюта</span></label>
+        <div class="inp__box">
+          <div class="inp__field" data-ddl="tl-currency-list">
+            <input class="inp__control" id="tl-currency" name="currencyCode" autocomplete="off" value="RUB">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+        </div>
+        <div id="tl-currency-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <!-- Сумма: число с разрядами и запятой. Постфикса валюты нет по решению
+           человека 02.11.2026 — валюту видно в поле выше. -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="tl-limit"><span class="ds-label__text">Сумма лимита</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="tl-limit" name="totalLimitAmount" inputmode="decimal" autocomplete="off" value="1&nbsp;000&nbsp;000,00">
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-tl-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-loan-agreements.js"></script>
+<script src="../../../postrade/deals-app/data/loan-agreement-store.js"></script>
+<script src="../../../postrade/deals-app/data/tranche-context.js"></script>
+<script src="../../../postrade/deals-app/data/tranche-data.js"></script>
+<script src="../../../postrade/deals-app/data/loan-contract-fields.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/TrancheNrlSummaryTile/TrancheNrlSummaryTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/TransferRateTile/TransferRateTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/LoanExternalDataTile/LoanExternalDataTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/LoanExternalDataModal/LoanExternalDataModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/InitialAndAdditionalAgreementsTile/InitialAndAdditionalAgreementsTile.js"></script>
+<script src="TrancheLoanLimitsTile.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"TrancheLoanLimitsTile","type":"tile","base":"../..","hub":"../../../../index.html","states":[],"modes":["edit","view"],"state":null,"mode":"edit","width":400,"scenario":true,"fixtures":{"_":"Демо-данные конструктора витрины: view — значения транша, как их отдаёт страница (MOCK_TRANCHE: currencyCode, totalLimitAmount). long — те же поля с самыми длинными значениями: крупная сумма, чтобы увидеть поведение аффикса валюты. Состояние у компонента одно — «данные есть»; режим прав edit | view переключает конструктор по data-mode в CSS. Рисует их сценарий демо функциями самого виджета (PostTileTrancheLoanLimits.render).","view":{"currencyCode":"RUB","totalLimitAmount":1000000},"long":{"_":"Крупная сумма: длинное число переносится внутри своей строки, аффикс валюты с места не уходит.","currencyCode":"RUB","totalLimitAmount":12345678900}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Валюта транша» — фрагмент страницы транша.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include; место
+     в сетке и ширину задаёт экран (3 колонки из 12).
+     data-mode — режим прав: edit | view. Ставит страница: погашенный транш,
+     нередактируемый статус сделки или отсутствие права дают view.
+     Состояние данных одно — «данные есть» (решение человека 02.11.2026: на
+     странице те же два поля, что были в инлайне). Загрузка, пусто и ошибка не
+     проработаны — вопрос к человеку, см. паспорт.
+     Значения ниже — пример с текущей страницы. На странице их заменяет
+     TrancheLoanLimitsTile.js (PostTileTrancheLoanLimits.render) значениями
+     транша; правка — окно TrancheLoanLimitsModal по data-modal="tl-scrim".
+     В просмотре карандаш выключается разметкой (disabled — ставит render), CSS
+     его только прячет: запрет несёт атрибут, а не стиль (урок Л235).
+     Чипа «Демо» у компонента нет: чип — маркет тайла, ещё не заведённого в
+     локальные компоненты (решение человека 02.11.2026), а этот заведён. -->
+<section class="tile lc-tranche-loan-limits-tile" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title">Валюта транша</h3>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать: Валюта транша" data-modal="tl-scrim"><i data-icon="edit"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+    <div class="tile__grid lc-tranche-loan-limits-tile__grid">
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Валюта</span></span>
+        <div class="rof__row"><span class="rof__value" data-tl-field="currencyCode">RUB</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Общая сумма лимита</span></span>
+        <div class="rof__row">
+          <span class="rof__value" data-tl-field="totalLimitAmount">1&nbsp;000&nbsp;000,00</span>
+          <span class="rof__affix" data-tl-affix="currencyCode">RUB</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «Валюта транша».
+   Только внутренняя раскладка. Цвета, шрифты, отступы — токены ДС; своих
+   значений здесь нет. Состояния компонентов ДС отсюда не переопределяются.
+   Режим (data-mode) ставит страница: edit | view. В просмотре карандаш
+   выключен разметкой (disabled — TrancheLoanLimitsTile.js), CSS его прячет. */
+
+/* ── Значения: два поля в одну колонку, как было в инлайне страницы ──── */
+/* repeat(1, …) — чтобы сенсор раскладки читал число колонок (K5). */
+.lc-tranche-loan-limits-tile__grid { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+
+/* Аффикс валюты у суммы не переносится и с места не уходит. */
+.lc-tranche-loan-limits-tile__grid .rof__affix { white-space: nowrap; }
+
+/* ── Действие шапки ─────────────────────────────────────────────────── */
+/* «Редактировать» — только в режиме правки. В просмотре кнопка скрыта и
+   выключена (урок Л235): запрет несёт атрибут disabled, не стиль. */
+.lc-tranche-loan-limits-tile[data-mode="view"] .tile__actions { display: none; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   TrancheLoanLimitsTile.js — значения тайла «Валюта транша».
+
+   Фрагмент держит пример значений; страница транша отдаёт свои через render:
+   валюта и общая сумма лимита ТРАНША (data/tranche-data.js, window.MOCK_TRANCHE;
+   правки окна живут в сессии страницы). Витрина строит поля этой же функцией —
+   разметка полей одна на оба места.
+
+   API:
+     PostTileTrancheLoanLimits.fieldsHTML(data) → строка
+       data — { currencyCode, totalLimitAmount } или null. Два поля в
+       постоянном порядке: «Валюта» (код) и «Общая сумма лимита» («1 000 000,00»
+       с неразрывным пробелом) с аффиксом валюты. Пустое значение — прочерк,
+       поле с места не уходит.
+     PostTileTrancheLoanLimits.formatAmount(n) → '1 000 000,00' | ''
+     PostTileTrancheLoanLimits.render(tile, view)
+       view = { mode: 'edit' | 'view', data }
+       mode ставит data-mode; в просмотре карандаш выключается разметкой
+       (disabled), CSS его прячет. Окно открывает рантайм ДС по data-modal.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  /* Неразрывный пробел — escape-последовательностью, а не литералом: литерал
+     невидим и легко превращается в обычный пробел при правке (§8). */
+  var NBSP = '\u00a0';
+
+  /* Порядок полей — порядок отображения (паспорт, «Поля») */
+  var FIELDS = [
+    { key: 'currencyCode', label: 'Валюта', affix: false },
+    { key: 'totalLimitAmount', label: 'Общая сумма лимита', affix: true }
+  ];
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function has(v) { return v !== null && v !== undefined && String(v).trim() !== ''; }
+
+  /* 1000000 → «1 000 000,00», разряды — неразрывным пробелом */
+  function formatAmount(n) {
+    if (!has(n)) return '';
+    var x = Number(n);
+    if (!isFinite(x)) return '';
+    var parts = x.toFixed(2).split('.');
+    return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP) + ',' + parts[1];
+  }
+
+  function textOf(data, key) {
+    if (!data || !has(data[key])) return '';
+    return key === 'totalLimitAmount' ? formatAmount(data[key]) : String(data[key]).trim();
+  }
+
+  function fieldsHTML(data) {
+    var currency = data && has(data.currencyCode) ? String(data.currencyCode).trim() : '';
+    return FIELDS.map(function (f) {
+      var v = textOf(data, f.key);
+      var affix = f.affix
+        ? '<span class="rof__affix" data-tl-affix="currencyCode">' + esc(currency) + '</span>'
+        : '';
+      /* Прочерк — значение, а не подсказка, и своего цвета у него нет
+         (ReadOnlyField 1.010). */
+      return '<div class="rof">'
+        + '<span class="ds-label ds-label--wrap"><span class="ds-label__text">' + f.label + '</span></span>'
+        + '<div class="rof__row"><span class="rof__value" data-tl-field="' + f.key + '">'
+        + (v ? esc(v) : '—') + '</span>' + affix + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  function render(tile, view) {
+    if (!tile) return;
+    view = view || {};
+    var grid = tile.querySelector('.lc-tranche-loan-limits-tile__grid');
+    if (grid) grid.innerHTML = fieldsHTML(view.data);
+    var mode = view.mode === 'edit' ? 'edit' : 'view';
+    /* Недоступное действие выключается разметкой, а не только стилем
+       (урок Л235). */
+    Array.prototype.forEach.call(tile.querySelectorAll('[data-modal]'), function (b) {
+      b.disabled = mode !== 'edit';
+    });
+    tile.setAttribute('data-mode', mode);
+  }
+
+  window.PostTileTrancheLoanLimits = {
+    fieldsHTML: fieldsHTML,
+    formatAmount: formatAmount,
+    render: render
+  };
+})();
+</script>
+</body>
+</html>

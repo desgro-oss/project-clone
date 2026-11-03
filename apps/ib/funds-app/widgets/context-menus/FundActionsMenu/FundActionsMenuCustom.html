@@ -1,0 +1,11 @@
+<!-- «Меню фонда», вариант «фонд не из ЕПК» (partyId нет) — второй файл FundActionsMenu,
+     паспорт общий (FundActionsMenu.md). Кнопки «⋮» строк FundsTable с
+     data-menu="fundActionsMenuCustom". Вместо «Перейти на страницу клиента» — «Связать
+     с базой ЕПК» (макет «ContextMenu / Фонд не в ЕПК (Custom)»); воркфлоу привязки
+     к ЕПК не делается (решение 30.10.2026). «Редактировать» и «Удалить фонд» открывают окна фонда. -->
+<div id="fundActionsMenuCustom" class="menu menu--floating" role="menu" aria-label="Действия с фондом" hidden>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="addAsset"><span class="menu__item-label">Добавить актив</span></button>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="editFund"><span class="menu__item-label">Редактировать</span></button>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="deleteFund"><span class="menu__item-label">Удалить фонд</span></button>
+  <button type="button" class="menu__item" role="menuitem" data-fund-action="linkToUcp"><span class="menu__item-label">Связать с базой ЕПК</span></button>
+</div>

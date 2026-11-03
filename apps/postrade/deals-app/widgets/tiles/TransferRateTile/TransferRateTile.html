@@ -1,0 +1,61 @@
+<!-- Локальный компонент «ЕТС» — тайл страницы договора займа (НКЛ).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-state — состояние данных: loading | data | empty. Состояния «Ошибка» у тайла нет
+                  (не решено, 26.10.2026 — паспорт, «Состояния»)
+     data-mode  — режим прав:       edit | view. Ставит страница: роль, статус сделки и
+                  погашение договора дают view
+     Разметка держит ВСЕ состояния сразу, показывает нужное TransferRateTile.css по этим двум
+     атрибутам — так же, как тайл «Сроки сделки».
+     Ставка ниже — пример. На странице её заменяет TransferRateTile.js
+     (PostTileTransferRate.render) ставкой LoanAgreementStore.currentRate(); пока данные
+     грузятся, тайл стоит в loading.
+     Окна у тайла нет: стрелка в шапке и «Заполнить →» ведут на страницу ЕТС — тайл шлёт
+     событие loanaction { action: 'OPEN_ETS' }, переход делает страница. Стрелка есть в любом
+     режиме и состоянии (решение человека 26.10.2026, ответы 1 и 29). -->
+<section class="tile lc-transfer-rate-tile" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">ЕТС</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть страницу ЕТС" data-loan-act="OPEN_ETS"><i data-icon="arrow-right"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- Ставка схемы на сегодня: подпись по типу ставки, значение — итоговая ставка.
+         У плавающей справа от значения — постфикс «КС +5%» (ReadOnlyField, rof__affix):
+         подпись базового индекса и спред. У фиксированной постфикса нет. -->
+    <div class="tile__grid lc-transfer-rate-tile__grid">
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Плавающая ставка</span></span>
+        <div class="rof__row">
+          <span class="rof__value" data-ets-field="percent">15%</span>
+          <span class="rof__affix" data-ets-field="affix">КС +5%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Загрузка: каркас в той же сетке — подпись и значение в габаритах строк
+         (подпись 16px, значение 20px), чтобы раскладка не прыгнула после ответа. -->
+    <div class="tile__grid lc-transfer-rate-tile__grid lc-transfer-rate-tile__loading" aria-busy="true">
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:80px" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Не заполнено, право на правку есть: кнопка со стрелкой ведёт на страницу ЕТС -->
+    <div class="lc-transfer-rate-tile__fill">
+      <button type="button" class="btn btn--accent btn--s" data-loan-act="OPEN_ETS">
+        <span class="btn__label">Заполнить</span><i data-icon="arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действия нет -->
+    <p class="lc-transfer-rate-tile__empty">Не заполнено</p>
+
+  </div>
+</section>

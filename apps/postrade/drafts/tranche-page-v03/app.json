@@ -5,7 +5,7 @@
   "desc": "Сделка и транш: фиксация расчёта процентов на вкладке РСБУ, корректировка по дельтам (RE0034)",
   "home": "pages/Deal.preview.html",
   "icon": "folder",
-  "shelf": "actual",
+  "shelf": "archive",
   "concept": "Корректировки РСБУ",
   "version": "v3"
 }

@@ -85,7 +85,7 @@
 @media (max-width:640px){ .tfm__nav { position:static; border-bottom:1px solid var(--border-light); } }
 .tfm__panel { padding:24px 26px 24px; display:flex; flex-direction:column; gap:28px; min-width:0; }
 .tfm__sec { display:flex; flex-direction:column; gap:16px; }
-.tfm__sec-title, .tfm__panel-title { font: var(--type-body-m-strong); color: var(--text-primary); margin:0; }
+.tfm__sec-title, .tfm__panel-title { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0; }
 /* двухколоночная форма: поле = одна клетка, широкое поле — .tfm__span-2 */
 .tfm__grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; align-items:start; }
 /* .inp по умолчанию 280px — в сетке поле тянется на всю клетку */

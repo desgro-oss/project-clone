@@ -1,0 +1,38 @@
+/* Локальный компонент «Транши» (LoanNrlTranchesTile).
+   Только внутренняя раскладка и показ своих блоков по состоянию и режиму.
+   Цвета, шрифты, отступы, радиусы, тени — токены ДС; своих значений здесь нет.
+   Строки и их список — компонент ДС ProductRow: размеры, отступы и состояния отсюда
+   не переопределяются, переключается только присутствие собственных блоков
+   .lc-loan-nrl-tranches-tile__*. Режим (data-mode) ставит страница: edit | view. */
+
+/* ── Не заполнено, прав на правку нет ───────────────────────────────── */
+.lc-loan-nrl-tranches-tile__empty {
+  margin: 0;
+  font: var(--type-body-m-reg);
+  color: var(--text-inactive);
+}
+
+/* ── Что видно в каком состоянии ────────────────────────────────────── */
+/* База — «транши есть» и «заполнено частично» (строки с «–» на месте пустых значений);
+   остальные блоки появляются по data-state. Скрытие — через корень тайла: заготовка загрузки
+   — это .prow-tree, и у её класса ДС своя display той же специфичности. */
+.lc-loan-nrl-tranches-tile .lc-loan-nrl-tranches-tile__loading,
+.lc-loan-nrl-tranches-tile .lc-loan-nrl-tranches-tile__fill,
+.lc-loan-nrl-tranches-tile .lc-loan-nrl-tranches-tile__empty { display: none; }
+
+.lc-loan-nrl-tranches-tile[data-state="loading"] .lc-loan-nrl-tranches-tile__list,
+.lc-loan-nrl-tranches-tile[data-state="empty"] .lc-loan-nrl-tranches-tile__list { display: none; }
+
+.lc-loan-nrl-tranches-tile[data-state="loading"] .lc-loan-nrl-tranches-tile__loading { display: flex; }
+.lc-loan-nrl-tranches-tile[data-state="empty"][data-mode="edit"] .lc-loan-nrl-tranches-tile__fill { display: block; }
+.lc-loan-nrl-tranches-tile[data-state="empty"][data-mode="view"] .lc-loan-nrl-tranches-tile__empty { display: block; }
+
+/* ── Действия правки ────────────────────────────────────────────────── */
+/* В просмотре действия не выключаются стилем, а не рисуются: LoanNrlTranchesTile.js в режиме
+   view строит строки без слота действий и скрывает слот шапки (hidden + disabled). Правила
+   «view → display:none» здесь нет: образец во фрагменте — состояние edit, а view рисует
+   только render, и образец не должен расходиться с ним. Пока транши грузятся и пока их нет,
+   кнопки добавления в шапке нет: пустой тайл заполняют кнопкой в теле (render ставит и
+   hidden, правило — для образца). */
+.lc-loan-nrl-tranches-tile[data-state="loading"] .tile__actions,
+.lc-loan-nrl-tranches-tile[data-state="empty"] .tile__actions { display: none; }

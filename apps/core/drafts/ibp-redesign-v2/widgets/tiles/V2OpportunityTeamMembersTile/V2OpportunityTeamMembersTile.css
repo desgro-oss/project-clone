@@ -15,7 +15,7 @@
 }
 
 .lc-opp-team__fio {
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-primary);
   flex: 1;
   min-width: 0;
@@ -30,7 +30,7 @@
 }
 
 .lc-opp-team__role {
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
   flex: none;
 }

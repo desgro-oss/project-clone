@@ -1,0 +1,137 @@
+<!-- Локальный компонент «Процентная схема ЕТС» — карточка схемы в списке страницы
+     «Единая трансфертная ставка». Вшивается общим сборщиком (.agents/tools/assemble.mjs)
+     по метке ds-include; на странице карточки рисует TransferSchemaTile.js
+     (PostTileTransferSchema.renderList) в этот контейнер. Здесь только разметка: место в
+     колонках задаёт экран (метка с class="col-12").
+     Фрагмент — эталон: четыре карточки в порядке «правка есть × плавающая, с комментарием»,
+     «правка есть × фиксированная, без комментария», «просмотр × плавающая, без комментария»,
+     «просмотр × фиксированная, с комментарием». Карточки стоят стопкой (.tile-stack).
+     data-mode — режим прав: edit | view. Ставит страница: роль, статус сделки и погашение
+                 договора, не допускающие правку, дают view. Меню ⋮ — только в edit: в
+                 просмотре его нет в разметке вовсе, не скрыто и не выключено.
+     «Ставка» — формула схемы: «4%», «7,5%», «КС+2%». Расчёта на сегодня здесь нет.
+     «Комментарий» — одна строка с усечением и тултипом (ReadOnlyField); пусто — «—».
+     Действия меню — событие loanaction { action: 'EDIT_SCHEME' | 'REMOVE_SCHEME', id } на карточку. -->
+<div class="tile-stack" data-mode="edit">
+  <!-- 1. правка есть · плавающая · комментарий -->
+  <section class="tile lc-transfer-schema-tile" data-scheme-id="ts-1" data-mode="edit">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title" data-scheme-field="period">01.01.2021—31.12.2021</h3></div>
+      </div>
+      <div class="tile__actions">
+        <span class="menu-anchor">
+          <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия со схемой" data-menu="lts-m-ts-1" data-menu-align="end">
+            <i data-icon="more-dots"></i>
+          </button>
+          <div id="lts-m-ts-1" class="menu menu--floating" role="menu" hidden>
+            <button type="button" class="menu__item" role="menuitem" data-lc-action="EDIT_SCHEME"><span class="menu__item-label">Изменить</span></button>
+            <button type="button" class="menu__item" role="menuitem" data-lc-action="REMOVE_SCHEME"><span class="menu__item-label">Удалить</span></button>
+          </div>
+        </span>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-transfer-schema-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Рабочих дней до применения БИ</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="baseIndexLagWorkDays">2</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ставка</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="rate">КС+2%</span></div>
+        </div>
+        <div class="rof lc-transfer-schema-tile__comment">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+          <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-scheme-field="comment">Очень длинный текст комментария в одну строку Очень длинный текст комментария в одну строку Очень длинный текст комментария в одну строку Очень длинный текст комментария в одну строку</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. правка есть · фиксированная · без комментария -->
+  <section class="tile lc-transfer-schema-tile" data-scheme-id="ts-2" data-mode="edit">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title" data-scheme-field="period">01.01.2022—31.12.2022</h3></div>
+      </div>
+      <div class="tile__actions">
+        <span class="menu-anchor">
+          <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия со схемой" data-menu="lts-m-ts-2" data-menu-align="end">
+            <i data-icon="more-dots"></i>
+          </button>
+          <div id="lts-m-ts-2" class="menu menu--floating" role="menu" hidden>
+            <button type="button" class="menu__item" role="menuitem" data-lc-action="EDIT_SCHEME"><span class="menu__item-label">Изменить</span></button>
+            <button type="button" class="menu__item" role="menuitem" data-lc-action="REMOVE_SCHEME"><span class="menu__item-label">Удалить</span></button>
+          </div>
+        </span>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-transfer-schema-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Рабочих дней до применения БИ</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="baseIndexLagWorkDays">3</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ставка</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="rate">7,5%</span></div>
+        </div>
+        <div class="rof lc-transfer-schema-tile__comment">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+          <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-scheme-field="comment">—</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. просмотр · плавающая · без комментария: меню ⋮ в разметке нет -->
+  <section class="tile lc-transfer-schema-tile" data-scheme-id="ts-3" data-mode="view">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title" data-scheme-field="period">01.01.2023—31.12.2023</h3></div>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-transfer-schema-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Рабочих дней до применения БИ</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="baseIndexLagWorkDays">2</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ставка</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="rate">КС+2%</span></div>
+        </div>
+        <div class="rof lc-transfer-schema-tile__comment">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+          <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-scheme-field="comment">—</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. просмотр · фиксированная · комментарий: меню ⋮ в разметке нет -->
+  <section class="tile lc-transfer-schema-tile" data-scheme-id="ts-4" data-mode="view">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title" data-scheme-field="period">01.01.2024—31.12.2024</h3></div>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-transfer-schema-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Рабочих дней до применения БИ</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="baseIndexLagWorkDays">0</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ставка</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="rate">4%</span></div>
+        </div>
+        <div class="rof lc-transfer-schema-tile__comment">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+          <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-scheme-field="comment">Ставка согласована на год вперёд</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

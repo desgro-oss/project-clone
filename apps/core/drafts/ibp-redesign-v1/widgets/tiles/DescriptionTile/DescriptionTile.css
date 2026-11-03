@@ -13,4 +13,4 @@
 /* режим просмотра: точки входа в правку не рисуются */
 .lc-desc[data-mode="view"] [data-dt-edit] { display: none; }
 
-.lc-desc__text { font: var(--type-body-m); color: var(--text-primary); margin: 0; overflow-wrap: anywhere; }
+.lc-desc__text { font: var(--type-body-m-reg); color: var(--text-primary); margin: 0; overflow-wrap: anywhere; }

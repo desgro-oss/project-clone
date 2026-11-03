@@ -1,0 +1,9 @@
+{
+  "id": "host-app",
+  "track": "product",
+  "title": "Главная IBP",
+  "desc": "Главная страница по ролям: набор разделов роли, переключатель ролей",
+  "home": "pages/HomePage.html",
+  "icon": "main-page",
+  "hub": false
+}

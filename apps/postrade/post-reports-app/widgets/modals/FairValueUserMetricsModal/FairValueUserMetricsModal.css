@@ -18,6 +18,6 @@
 /* Заголовок таблицы инструментов — H6 Strong. */
 .lc-fv-metrics__heading {
   margin: 0;
-  font: var(--type-h6-strong);
+  font: var(--type-h6-strong-smb);
   color: var(--text-primary);
 }

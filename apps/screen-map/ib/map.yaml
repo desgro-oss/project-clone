@@ -5,12 +5,12 @@
 version: 1
 section: ib
 title: Карта экранов IB
-desc: Все страницы AI Pitcher в один клик — от главной до нити запроса
+desc: Все страницы IB в один клик — от главной до нити запроса AI Pitcher
 nodes:
   - id: main
-    app: banker-app
-    title: Главная
-    page: index.html
+    app: home
+    title: Главная — Руководитель IB
+    page: HomePage.html?role=director_ib
 
   - id: thread
     app: banker-app
@@ -31,3 +31,19 @@ nodes:
       - id: answered
         title: Ответ в диалоге
         page: RequestThread.html?id=4
+
+  - id: funds
+    app: funds-app
+    title: Фонды
+    page: FundsPipeline.preview.html
+    parent: main
+    states:
+      - id: assets
+        title: Активы фонда (Интеррос)
+        page: FundsPipeline.preview.html?fund=fnd-001
+      - id: assets-empty
+        title: У фонда нет активов (РФПИ)
+        page: FundsPipeline.preview.html?fund=fnd-004
+      - id: empty
+        title: Фондов нет
+        page: FundsPipeline.preview.html?state=empty

@@ -25,7 +25,7 @@
 
   /* section */
 
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:78ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:78ch; text-wrap:pretty; }
 
   
   .row { display:flex; flex-wrap:wrap; align-items:flex-start; gap:20px; }
@@ -42,23 +42,23 @@
   .pg__stagebox { display:flex; align-items:center; justify-content:center; }
 
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
-  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .pg__code { margin-top:4px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* ---------- sizes matrix ---------- */
   .matrix-wrap { overflow-x:auto; }
   .size-matrix { display:grid; grid-template-columns: 70px repeat(4, 1fr); gap:26px 16px; align-items:center; min-width:560px; text-align:center; }
-  .size-matrix .col-head { font: var(--type-body-s-strong); color: var(--primary); }
-  .size-matrix .col-head .sub { font:var(--type-body-xs); color:var(--text-inactive); display:block; }
-  .size-matrix .rowname { font: var(--type-body-s-strong); color: var(--text-secondary); text-align:right; }
+  .size-matrix .col-head { font: var(--type-body-s-strong-smb); color: var(--primary); }
+  .size-matrix .col-head .sub { font:var(--type-body-xs-reg); color:var(--text-inactive); display:block; }
+  .size-matrix .rowname { font: var(--type-body-s-strong-smb); color: var(--text-secondary); text-align:right; }
   .size-matrix .cell { display:flex; justify-content:center; }
 
   /* ---------- content type cards ---------- */
   .type-cards { display:grid; grid-template-columns: repeat(3,1fr); gap:20px; }
   @media (max-width:760px){ .type-cards{ grid-template-columns:1fr; } }
   .type-card { border:1px solid var(--border-light); border-radius:14px; padding:28px 24px; background:var(--bg-tile); display:flex; flex-direction:column; align-items:center; gap:18px; text-align:center; }
-  .type-card .nm { font:var(--type-h5-strong); color:var(--text-primary); }
-  .type-card .ds { font:var(--type-body-s); color:var(--text-secondary); text-wrap:pretty; }
+  .type-card .nm { font:var(--type-h5-strong-smb); color:var(--text-primary); }
+  .type-card .ds { font:var(--type-body-s-reg); color:var(--text-secondary); text-wrap:pretty; }
 
   /* ---------- usage tiles ---------- */
   .use-tiles { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
@@ -68,27 +68,27 @@
   /* entity row */
   .entity { display:flex; align-items:center; gap:12px; }
   .entity .ent-txt { display:flex; flex-direction:column; gap:2px; min-width:0; text-align:left; }
-  .entity .ent-name { font:var(--type-body-m-strong); color:var(--text-primary); }
-  .entity .ent-role { font:var(--type-body-xs); color:var(--text-secondary); }
+  .entity .ent-name { font:var(--type-body-m-strong-smb); color:var(--text-primary); }
+  .entity .ent-role { font:var(--type-body-xs-reg); color:var(--text-secondary); }
   /* comment */
   .comment { display:flex; gap:12px; max-width:340px; }
   .comment .cm-body { background:var(--bg-tile); border:1px solid var(--border-light); border-radius:0 12px 12px 12px; padding:10px 14px; }
-  .comment .cm-name { font:var(--type-body-s-strong); color:var(--text-primary); margin:0 0 3px; }
-  .comment .cm-text { font:var(--type-body-s); color:var(--text-secondary); margin:0; }
+  .comment .cm-name { font:var(--type-body-s-strong-smb); color:var(--text-primary); margin:0 0 3px; }
+  .comment .cm-text { font:var(--type-body-s-reg); color:var(--text-secondary); margin:0; }
 
   /* presence legend */
   .presence { display:grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap:16px; }
   .presence-cell { border:1px solid var(--border-light); border-radius:12px; padding:18px; display:flex; align-items:center; gap:14px; background:var(--bg-tile); }
   .presence-cell .pc-txt { display:flex; flex-direction:column; gap:2px; }
-  .presence-cell .pc-nm { font:var(--type-body-m-strong); color:var(--text-primary); }
-  .presence-cell .pc-rl { font:var(--type-body-xs); color:var(--text-secondary); }
+  .presence-cell .pc-nm { font:var(--type-body-m-strong-smb); color:var(--text-primary); }
+  .presence-cell .pc-rl { font:var(--type-body-xs-reg); color:var(--text-secondary); }
 
   /* fallback chain */
   .fallback { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
   .fallback .arrow { color:var(--text-inactive); display:flex; }
   .fallback .arrow svg { width:22px; height:22px; }
   .fallback .step { display:flex; flex-direction:column; align-items:center; gap:10px; }
-  .fallback .step .cap { font:var(--type-body-xs); color:var(--text-secondary); }
+  .fallback .step .cap { font:var(--type-body-xs-reg); color:var(--text-secondary); }
 
   /* ---------- anatomy ---------- */
   .anat { display:grid; grid-template-columns: minmax(260px,1fr) minmax(240px,360px); gap:40px; align-items:center; }
@@ -96,25 +96,25 @@
   .anat__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:54px 44px; display:flex; justify-content:center; }
   .anat__legend { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; counter-reset:a; }
   .anat__legend li { display:flex; gap:14px; align-items:flex-start; }
-  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center; }
-  .anat__legend li .t .k { font: var(--type-body-m-strong); color: var(--text-primary); display:block; }
+  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center; }
+  .anat__legend li .t .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); display:block; }
   .anat-dia { position:relative; }
-  .anat-dia .mk { position:absolute; width:22px; height:22px; border-radius:50%; background:var(--text-primary); color:#fff; font:var(--type-body-xs); font-weight:600; display:flex; align-items:center; justify-content:center; transform:translate(-50%,-50%); }
+  .anat-dia .mk { position:absolute; width:22px; height:22px; border-radius:50%; background:var(--text-primary); color:#fff; font:var(--type-body-xs-reg); font-weight:600; display:flex; align-items:center; justify-content:center; transform:translate(-50%,-50%); }
 
   /* ---------- do / don't ---------- */
   .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
   .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
-  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong-smb); padding:14px 20px 0; }
   .guide-card__body { padding:28px 20px; flex:1; display:flex; align-items:center; justify-content:center; gap:18px; }
-  .guide-card__cap { padding:0 20px 18px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+  .guide-card__cap { padding:0 20px 18px; font: var(--type-body-xs-reg); color: var(--text-inactive); text-wrap:pretty; }
 
   /* ---------- reference tables ---------- */
-  .ref-table th, .ref-table td { text-align:left; padding:15px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); vertical-align:middle; }
+  .ref-table th, .ref-table td { text-align:left; padding:15px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); vertical-align:middle; }
 
   @media (max-width:760px){ .color-ref { grid-template-columns:1fr; } }
   
-  .cref-group > h3 { font: var(--type-h5-strong); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
+  .cref-group > h3 { font: var(--type-h5-strong-smb); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
   .cref-row { display:grid; grid-template-columns: 36px 1fr auto; gap:14px; align-items:center; padding:9px 22px; }
   .cref-sw .cf { position:absolute; inset:0; }
 
@@ -154,7 +154,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.005</b></span><span>Обновлено: <b>21.09.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.006</b></span><span>Обновлено: <b>30.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>Avatar</h1>
     <p class="lead">Аватар — компактное визуальное представление пользователя или сущности. Содержит инициалы (Text), запасную иконку (Icon) или фотографию (Image). Две формы — Circular и Rounded — четыре размера и опциональный бейдж: счётчик или индикатор статуса.</p>
@@ -457,7 +457,7 @@
   <!-- COLORS -->
   <section class="section" data-screen-label="Colors">
     <h2>Цвета</h2>
-    <p class="desc">Аватар по умолчанию использует нейтральную «болотную» подложку. Для сущностей доступен акцентный тон. Индикаторы статуса наследуют семантические токены из <a class="inl" href="../Badge/Badge.html">Badge</a>.</p>
+    <p class="desc">Аватар по умолчанию использует нейтральную «болотную» подложку. Для сущностей доступен акцентный тон, для разноцветных модулей — тона палитры статусов (ниже). Индикаторы статуса наследуют семантические токены из <a class="inl" href="../Badge/Badge.html">Badge</a>.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
         <div class="tbl__row" style="grid-template-columns:8px 1.2fr 1.4fr 1.1fr .7fr .8fr 8px;">
@@ -567,6 +567,35 @@
           <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--primary)"></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">#00AA9B</span></span></div>
           <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subsec" data-screen-label="Tones">
+      <h3>Разноцветные аватарки</h3>
+      <p class="desc">По умолчанию все аватарки одного цвета — нейтральная подложка. Если модуль спроектирован «разноцветным», аватаркам дают тона палитры статусов — те же рампы, что у <a class="inl" href="../Chip/Chip.html">Chip</a>. Фон — самый светлый шаг рампы <code class="tok">--st-&lt;рампа&gt;-light</code> поверх <code class="tok">--bg-tile</code>, инициалы и иконка — <code class="tok">--st-&lt;рампа&gt;-dark</code>.</p>
+      <div class="panel">
+        <div class="row" style="gap:28px; justify-content:center; padding:8px 0;" id="tone-demo">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><span class="av av--circular av--l av--green"><span class="av__text">ИБ</span></span><code class="tok">av--green</code></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><span class="av av--circular av--l av--lblue"><span class="av__text">ИБ</span></span><code class="tok">av--lblue</code></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><span class="av av--circular av--l av--orange"><span class="av__text">ИБ</span></span><code class="tok">av--orange</code></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><span class="av av--circular av--l av--red"><span class="av__text">ИБ</span></span><code class="tok">av--red</code></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><span class="av av--circular av--l av--dpurple"><span class="av__text">ИБ</span></span><code class="tok">av--dpurple</code></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><span class="av av--circular av--l av--grey"><span class="av__text">ИБ</span></span><code class="tok">av--grey</code></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><span class="av av--circular av--l av--primary"><span class="av__text">ИБ</span></span><code class="tok">av--primary</code></div>
+        </div>
+      </div>
+      <p class="desc">Тон вручную — модификатор <code class="tok">.av--&lt;тон&gt;</code>. Автоматически — атрибут <code class="tok">data-av-tones</code> на любом предке (обычно <code class="tok">&lt;body&gt;</code> экрана): рантайм красит каждую аватарку с инициалами внутри. Тон зависит от <code class="tok">data-av-seed</code> (id или название сущности), а без него — от текста инициалов, поэтому один и тот же объект всегда одного цвета. Серый в автоокраску не входит. Аватарки с фото, с иконкой и с явным тоном не перекрашиваются; <code class="tok">data-av-tones="off"</code> выключает автоокраску для части экрана.</p>
+      <div class="panel" data-av-tones>
+        <div class="row" style="gap:12px; justify-content:center; padding:8px 0;" id="tone-auto">
+        <span class="av av--circular av--m" data-av-seed="f-101" title="Игорь Белов"><span class="av__text">ИБ</span></span>
+        <span class="av av--circular av--m" data-av-seed="f-102" title="Вера Белова"><span class="av__text">ВБ</span></span>
+        <span class="av av--circular av--m" data-av-seed="f-103" title="Мария Андреева"><span class="av__text">МА</span></span>
+        <span class="av av--circular av--m" data-av-seed="f-104" title="Кирилл Гусев"><span class="av__text">КГ</span></span>
+        <span class="av av--circular av--m" data-av-seed="f-105" title="Олег Петров"><span class="av__text">ОП</span></span>
+        <span class="av av--circular av--m" data-av-seed="f-106" title="Анна Смирнова"><span class="av__text">АС</span></span>
+        <span class="av av--circular av--m" data-av-seed="f-107" title="Денис Орлов"><span class="av__text">ДО</span></span>
+        <span class="av av--circular av--m" data-av-seed="f-108" title="Юлия Ким"><span class="av__text">ЮК</span></span>
         </div>
       </div>
     </div>
@@ -888,7 +917,7 @@ function makeGroup({ size='m', shape='circular', items=[], more=0 }) {
   const tc=document.createElement('div'); tc.className='entity';
   tc.appendChild(makeAvatar({shape:'circular',size:'s',content:'text',text:'КГ'}));
   const tt=document.createElement('div'); tt.className='ent-txt';
-  tt.innerHTML='<span class="ent-name" style="font:var(--type-body-s-strong)">Кирилл Г.</span>';
+  tt.innerHTML='<span class="ent-name" style="font:var(--type-body-s-strong-smb)">Кирилл Г.</span>';
   tc.appendChild(tt); t.appendChild(tc);
 
   // group
@@ -920,7 +949,7 @@ function makeGroup({ size='m', shape='circular', items=[], more=0 }) {
   [['circular','Circular','ИБ','text',null],['rounded','Rounded','',  'icon','accent']].forEach(([shape,label,text,content,tone])=>{
     const col=document.createElement('div'); col.style.cssText='display:flex;flex-direction:column;align-items:center;gap:14px;';
     col.appendChild(makeAvatar({shape,size:'xl',content,text,tone,icon:ICONS.entity}));
-    const cap=document.createElement('span'); cap.style.cssText='font:var(--type-body-m-strong);color:var(--text-primary);'; cap.textContent=label;
+    const cap=document.createElement('span'); cap.style.cssText='font:var(--type-body-m-strong-smb);color:var(--text-primary);'; cap.textContent=label;
     col.appendChild(cap); s.appendChild(col);
   });
 })();
@@ -948,7 +977,7 @@ function makeGroup({ size='m', shape='circular', items=[], more=0 }) {
   sizes.forEach(([sz,nm])=>{
     const col=document.createElement('div'); col.style.cssText='display:flex;flex-direction:column;align-items:center;gap:12px;';
     col.appendChild(avStack(makeAvatar({shape:'circular',size:sz,content:'text',text:'ИБ'}), dot('success'), false));
-    const cap=document.createElement('span'); cap.style.cssText='font:var(--type-body-s);color:var(--text-secondary);'; cap.textContent=nm;
+    const cap=document.createElement('span'); cap.style.cssText='font:var(--type-body-s-reg);color:var(--text-secondary);'; cap.textContent=nm;
     col.appendChild(cap); rowDot.appendChild(col);
   });
   // Counter — только L / XL
@@ -957,7 +986,7 @@ function makeGroup({ size='m', shape='circular', items=[], more=0 }) {
     const col=document.createElement('div'); col.style.cssText='display:flex;flex-direction:column;align-items:center;gap:12px;';
     const b=Object.assign(document.createElement('span'),{className:'badge badge--'+bs+' badge--accent badge--bordered',textContent:'8'});
     col.appendChild(avStack(makeAvatar({shape:'circular',size:sz,content:'text',text:'ИБ'}), b, false));
-    const cap=document.createElement('span'); cap.style.cssText='font:var(--type-body-s);color:var(--text-secondary);'; cap.textContent=nm;
+    const cap=document.createElement('span'); cap.style.cssText='font:var(--type-body-s-reg);color:var(--text-secondary);'; cap.textContent=nm;
     col.appendChild(cap); rowCnt.appendChild(col);
   });
   const h1=document.createElement('p'); h1.className='desc tight'; h1.style.cssText='margin:0 0 16px;'; h1.innerHTML='<b>Статус-точка (Dot)</b> — на всех размерах, в правом нижнем углу описанного квадрата; касается его нижней и правой граней. Размер точки: XL 22 · L 12 · M 10 · S 8.';
@@ -979,7 +1008,7 @@ function makeGroup({ size='m', shape='circular', items=[], more=0 }) {
   [['l','L · 40'],['m','M · 32'],['s','S · 24']].forEach(([size,lbl])=>{
     const wrap=document.createElement('div'); wrap.style.cssText='display:flex;align-items:center;gap:20px;';
     wrap.appendChild(makeGroup({ size, items:['ИБ','ВБ','МА','КГ'], more:3 }));
-    const cap=document.createElement('span'); cap.style.cssText='font:var(--type-body-s);color:var(--text-inactive);'; cap.textContent=lbl;
+    const cap=document.createElement('span'); cap.style.cssText='font:var(--type-body-s-reg);color:var(--text-inactive);'; cap.textContent=lbl;
     wrap.appendChild(cap); gs.appendChild(wrap);
   });
 
@@ -1018,7 +1047,7 @@ function makeGroup({ size='m', shape='circular', items=[], more=0 }) {
   items.forEach(([lbl,av])=>{
     const col=document.createElement('div'); col.style.cssText='display:flex;flex-direction:column;align-items:center;gap:12px;';
     col.appendChild(av);
-    const c=document.createElement('span'); c.style.cssText='font:var(--type-body-s);color:var(--text-secondary);'; c.textContent=lbl;
+    const c=document.createElement('span'); c.style.cssText='font:var(--type-body-s-reg);color:var(--text-secondary);'; c.textContent=lbl;
     col.appendChild(c); d.appendChild(col);
   });
 })();
@@ -1173,6 +1202,7 @@ function makeGroup({ size='m', shape='circular', items=[], more=0 }) {
 <script src="../../../docs-kit/ds-nav.js"></script>
 <script src="../../molecules/Splitter/Splitter.js"></script>
 <script src="../../molecules/Tab/Tab.js"></script>
+<script src="Avatar.js"></script>
 <script src="../../organisms/Table/TableResize.js"></script>
 <script src="../../organisms/Table/TableReorder.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Форма': 'Rounded' };</script>
@@ -1255,7 +1285,7 @@ function makeAvatar(o) {
   font-weight: var(--weight-semibold);
   font-size: var(--av-font);
   line-height: 1;
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   user-select: none;
   -webkit-user-select: none;
 }

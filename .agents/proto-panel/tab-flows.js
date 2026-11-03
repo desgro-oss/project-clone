@@ -58,7 +58,7 @@
     else text = t('rec.entryEmpty', { page: c.page, state: core.stateLabel(c.n) });
     var acts = c.step ? c.step.do : [];
     var list = showActs && acts.length
-      ? '<ul class="pp-rec__list ds-body-xs">' + acts.map(function (a, i) {
+      ? '<ul class="pp-rec__list ds-body-xs-reg">' + acts.map(function (a, i) {
         var e = c.entries && c.entries[i];
         return '<li class="pp-rec__item' + (e && e.fragile ? ' pp-rec__item--fragile' : '') + '">'
           + (e && e.fragile ? '<span class="pp-rec__icon" aria-hidden="true"><i data-icon="alert-triangle"></i></span>' : '')
@@ -66,7 +66,7 @@
       }).join('') + '</ul>'
       : '';
     return '<div class="pp-rec" aria-live="polite">'
-      + '<p class="pp-rec__line ds-body-s"><span class="pp-rec__dot" aria-hidden="true"><i data-icon="circle-filled-small"></i></span>'
+      + '<p class="pp-rec__line ds-body-s-reg"><span class="pp-rec__dot" aria-hidden="true"><i data-icon="circle-filled-small"></i></span>'
       + '<span class="pp-rec__text">' + esc(text) + '</span>'
       + (acts.length ? '<button type="button" class="btn btn--transparent btn--xs" data-pp-rec="toggle" aria-expanded="' + showActs + '"><span class="btn__label">' + esc(showActs ? t('btn.hide') : t('btn.show')) + '</span></button>' : '')
       + '</p>' + list + '</div>';
@@ -96,20 +96,20 @@
       : '<span class="av av--circular av--s pp-step__num" aria-hidden="true"><span class="av__text">' + (s.state || i + 1) + '</span></span>';
     var nActs = s.do.length ? S.count(s.do.length, 'action', 'actions') : t('node.noActions');
     var meta = s.page
-      ? '<span class="pp-step__meta ds-body-xs"><i data-icon="file"></i><span>' + esc(s.page) + ' · ' + esc(nActs) + '</span></span>'
-      : '<span class="pp-step__meta ds-body-xs">' + esc(nActs) + '</span>';
+      ? '<span class="pp-step__meta ds-body-xs-reg"><i data-icon="file"></i><span>' + esc(s.page) + ' · ' + esc(nActs) + '</span></span>'
+      : '<span class="pp-step__meta ds-body-xs-reg">' + esc(nActs) + '</span>';
     var chips = (s.recorded ? chip(t('node.recorded'), '') : '') + (s.draft ? chip(t('node.unsaved'), ' chip--warning') : '')
       + (st.current ? chip(st.dirty ? t('node.currentChanged') : t('node.current'), ' chip--info') : '');
-    var over = '<span class="pp-step__over"><span class="pp-step__overline ds-body-xs">' + esc(s.state ? t('node.overline', { n: core.pad2(s.state) }) : t('node.unnumbered')) + '</span>' + chips + '</span>';
+    var over = '<span class="pp-step__over"><span class="pp-step__overline ds-body-xs-reg">' + esc(s.state ? t('node.overline', { n: core.pad2(s.state) }) : t('node.unnumbered')) + '</span>' + chips + '</span>';
     var editingThis = editing && editing.kind === 'state' && editing.n === s.state;
-    var titleHtml = editingThis ? '' : '<span class="pp-step__title ds-body-m-strong">' + esc(s.title) + '</span>';
-    var note = s.note ? '<span class="pp-step__note ds-body-s' + (st.current ? ' pp-step__note--full' : '') + '">' + esc(s.note) + '</span>' : '';
+    var titleHtml = editingThis ? '' : '<span class="pp-step__title ds-body-m-strong-smb">' + esc(s.title) + '</span>';
+    var note = s.note ? '<span class="pp-step__note ds-body-s-reg' + (st.current ? ' pp-step__note--full' : '') + '">' + esc(s.note) + '</span>' : '';
     var issues = (s.issues || []).map(function (code) {
-      return '<span class="pp-step__issue ds-body-xs"><i data-icon="alert-triangle"></i><span>' + esc(t('issue.' + code)) + '</span></span>';
+      return '<span class="pp-step__issue ds-body-xs-reg"><i data-icon="alert-triangle"></i><span>' + esc(t('issue.' + code)) + '</span></span>';
     }).join('');
-    var err = st.error ? '<span class="pp-step__err ds-body-xs"><i data-icon="alert-triangle"></i><span>' + esc(st.message) + '</span></span>' : '';
+    var err = st.error ? '<span class="pp-step__err ds-body-xs-reg"><i data-icon="alert-triangle"></i><span>' + esc(st.message) + '</span></span>' : '';
     var link = i ? '<div class="pp-link" aria-hidden="true"><span class="pp-link__line"></span><i data-icon="arrow-narrow-down"></i>'
-      + (s.page ? '<span class="pp-link__page ds-body-xs">↻ ' + esc(s.page) + '</span>' : '') + '</div>' : '';
+      + (s.page ? '<span class="pp-link__page ds-body-xs-reg">↻ ' + esc(s.page) + '</span>' : '') + '</div>' : '';
     var mid = 'pp-step-menu-' + i;
     var deps = !core.canDeleteState(flow, i) ? t('node.deleteDeps') : null;
     var name = label(flow, i);
@@ -150,14 +150,14 @@
         }).join('')
         + '</div></div>';
     } else if (flow) {
-      html += '<p class="ds-body-l-strong pp-flow__title">' + esc(flow.title) + '</p>';
+      html += '<p class="ds-body-l-strong-smb pp-flow__title">' + esc(flow.title) + '</p>';
     }
     if (flow && !(editing && editing.kind === 'flow')) {
       html += '<button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="' + esc(t('flows.renameFlow')) + '" data-tooltip="' + esc(t('flows.renameFlow')) + '" data-pp-flow-cmd="rename"><i data-icon="edit"></i></button>';
     }
     html += '<button type="button" class="btn btn--transparent btn--s" data-pp-flow-cmd="new"><i data-icon="add"></i><span class="btn__label">' + esc(t('flows.newFlow')) + '</span></button>';
     html += '</div>';
-    if (flow && flow.desc) html += '<p class="ds-body-s pp-muted">' + esc(flow.desc) + '</p>';
+    if (flow && flow.desc) html += '<p class="ds-body-s-reg pp-muted">' + esc(flow.desc) + '</p>';
     if (flow && flow.steps.length) {
       html += '<div class="pp-row">'
         + '<button type="button" class="btn btn--accent btn--s" data-pp-flow-cmd="start"><i data-icon="arrow-right"></i><span class="btn__label">' + esc(t('flows.play')) + '</span></button>'
@@ -180,7 +180,7 @@
     if (!d) {
       /* Панель без сценария (хаб, ДС, концепт без папки): только текст-заглушка,
          без кнопок — сценарий описывает агент в чате (решение человека 04.10.2026). */
-      pane.innerHTML = '<p class="ds-body-m pp-muted" id="pp-stub">' + esc(t('flows.stub')) + '</p>';
+      pane.innerHTML = '<p class="ds-body-m-reg pp-muted" id="pp-stub">' + esc(t('flows.stub')) + '</p>';
       return;
     }
     if (d.flowErrors && d.flowErrors.length) {

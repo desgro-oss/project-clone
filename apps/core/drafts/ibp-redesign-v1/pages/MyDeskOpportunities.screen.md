@@ -31,7 +31,7 @@ widgets: [tables/OpportunitiesPipelineTable]
 
 | Уровень крошек | Текст | Ссылка |
 |---|---|---|
-| 1 | Главная | `HomePage.html` |
+| 1 | Главная | `../../../host-app/pages/HomePage.html` |
 | 2 (текущий) | Pipeline: <вкладка> | — |
 
 ## 3. Пары во фронтенде
@@ -82,7 +82,7 @@ Page (Layout, nav--rail, screen--app)
 | Modal | ДС — `design-system/components/organisms/Modal/Modal.md` |
 | Toast | ДС — `design-system/components/molecules/Toast/Toast.md` |
 | SnackBar | ДС — `design-system/components/organisms/SnackBar/SnackBar.md` |
-| `OpportunitiesPipelineTable` | виджет концепта — `../widgets/tables/OpportunitiesPipelineTable/OpportunitiesPipelineTable.md` |
+| `OpportunitiesPipelineTable` | виджет концепта — `../../../clients-app/widgets/tables/OpportunitiesPipelineTable/OpportunitiesPipelineTable.md` |
 
 Параметры виджета на странице — атрибуты метки `<ds-include>`: `class` (место в сетке), `id`, `state`, `mode`.
 

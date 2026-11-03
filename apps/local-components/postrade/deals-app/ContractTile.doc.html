@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/tiles/ContractTile/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Договор — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/tiles/ContractTile/ContractTile.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Договор">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--tile" id="pg-stage">
+<!-- Локальный компонент «Договор» — тайл внутренней страницы «Договор и дополнительные соглашения».
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-variant — тип продукта: loan-ncl (НКЛ) | tranche | shares | options-repo |
+                    corporate-agreement | collaterals | pjsc-guarantee | pjsc-ncl (НКЛ с баланса ПАО) |
+                    compensation-payments. Состав полей по типу — общий словарь тайла «Договор и
+                    дополнительные соглашения» (data/loan-contract-fields.js, LOAN_CONTRACT_FIELDS);
+                    тип выставляет PostTileContract.render из view.variant.
+     data-state   — data | empty. Тайл ВСЕГДА показывает поля: договор не заполнен (empty) —
+                    те же поля, значения «—». Состояний «Заполнить» и «Не заполнено» у тайла нет.
+                    Состояния «Загрузка» и «Ошибка» на макете не нарисованы — не решено
+     data-mode    — режим прав: edit | view. Ставит страница: роль, статус сделки и погашение
+                    договора, не допускающие правку, дают view. Карандаш в шапке есть в разметке
+                    ТОЛЬКО в edit: в view PostTileContract.syncActions удаляет его из разметки
+                    (не прячет стилем). Статичный эталон ниже — edit, поэтому карандаш в нём есть;
+                    переключая data-mode снаружи (витрина), зовите syncActions(tile).
+     Разметка держит оба состояния сразу: сетка data и сетка empty (прочерки), нужную
+     показывает ContractTile.css по data-state. Поля в разметке — пример типа «НКЛ»; на странице
+     их заменяет PostTileContract.render.
+     «Документы по сделке» — всегда, в любом состоянии и режиме: событие loanaction на тайл,
+     detail.action = 'DOCS'. Стрелки «→» в шапке нет (она у тайла страницы договора).
+     Скрипты страницы — в таком порядке: data/loan-contract-fields.js (словарь полей, общий
+     с соседним тайлом), затем ContractTile.js.
+     Карандаш открывает окно «Договор» (скрим contract-scrim, виджет
+     InitialAndAdditionalAgreementsModal) по data-modal; окно вшивается страницей отдельной
+     меткой ds-include. В окне ввод, поэтому триггер с data-modal-guarded. -->
+<section class="tile lc-contract-tile" data-variant="loan-ncl" data-state="data" data-mode="edit" id="tile-contract" data-widget="ContractTile" data-widget-group="tiles" data-widget-src="../../../postrade/deals-app/widgets/tiles/ContractTile/ContractTile.html">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Договор</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать договор" data-modal="contract-scrim" data-modal-guarded><i data-icon="edit"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+    <div class="tile__rows lc-contract-tile__content">
+
+      <!-- Данные есть: поля типа в порядке паспорта; пустое значение — прочерк, поле с места не уходит -->
+      <div class="tile__grid lc-contract-tile__grid lc-contract-tile__grid--data">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер договора</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractNumber">1234567890</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата подписания</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractSignDate">12.09.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Плановая дата погашения</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="plannedRepaymentDate">12.09.2022</span></div>
+        </div>
+      </div>
+
+      <!-- Данных нет: те же поля, значения — прочерки (ответ 41) -->
+      <div class="tile__grid lc-contract-tile__grid lc-contract-tile__grid--empty">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер договора</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractNumber">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата подписания</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractSignDate">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Плановая дата погашения</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="plannedRepaymentDate">—</span></div>
+        </div>
+      </div>
+
+      <!-- Всегда: и с данными, и без, в edit и в view -->
+      <button type="button" class="btn btn--outline btn--s" data-lc-action="DOCS">
+        <i data-icon="attach"></i><span class="btn__label">Документы по сделке</span>
+      </button>
+
+    </div>
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>02.11.2026</b></span><span>Категория: <b>Общие</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
+  <h1>Договор</h1>
+  <p class="lead">Реквизиты договора на внутренней странице «Договор и дополнительные соглашения», правка договора в окне «Договор» и вход к документам по сделке</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tiles/ContractTile">apps/postrade/deals-app/widgets/tiles/ContractTile/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">new — пары во фронтенде нет, сверить с фронтендом</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница «Договор и дополнительные соглашения» — верхний тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/InitialAndAdditionalAgreements.preview.html">apps/postrade/deals-app/pages/InitialAndAdditionalAgreements.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="InitialAndAdditionalAgreementsModal.doc.html">Окно «Договор» (InitialAndAdditionalAgreementsModal)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="InitialAndAdditionalAgreementsTile.doc.html">Договор и дополнительные соглашения (InitialAndAdditionalAgreementsTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LoanAgreementStore — запись договора<br>правка разрешена; плановая дата погашения — из траншей договора; data/loan-contract-fields.js — общий словарь полей</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Варианты</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">loan-ncl<br>tranche<br>shares<br>options-repo<br>corporate-agreement<br>collaterals<br>pjsc-guarantee<br>pjsc-ncl<br>compensation-payments</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет дизайнера 26.10.2026 «Tile_Contract» и «Договор и дополнительные соглашения»<br>задача RE0041 (ответы человека 26.10.2026 и 27.10.2026, вопросы 38 и 41)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 02.11.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.001</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Тайл внутренней страницы «Договор и дополнительные соглашения». Показывает реквизиты договора своего типа продукта; в шапке справа — карандаш «Редактировать договор», он открывает окно «Договор»; под полями — кнопка «Документы по сделке». Стрелки «→» в шапке нет: она у тайла на странице договора, а здесь пользователь уже на внутренней странице.</p>
+<p class="desc">Тайл всегда показывает поля. Договор не заполнен — те же поля, значения «—» (ответ человека 27.10.2026, вопрос 41); кнопок «Заполнить» и строки «Не заполнено» здесь нет. Заполненный договор правится именно здесь (ответ человека 27.10.2026, вопрос 38): карандаш есть только в режиме <code class="tok">edit</code>, в просмотре его нет в разметке вовсе.</p>
+<p class="desc">Один компонент на девять типов продукта: тип задаётся <code class="tok">data-variant</code> на корне и <code class="tok">view.variant</code> в <code class="tok">render</code>. Состав полей — общий словарь тайла «Договор и дополнительные соглашения» (<code class="tok">data/loan-contract-fields.js</code>, глобал <code class="tok">LOAN_CONTRACT_FIELDS</code>), второго словаря нет; полей дополнительного соглашения у этого тайла нет.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Бизнес-смысл">
+<h2>Бизнес-смысл</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зачем существует</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Показывает на внутренней странице реквизиты договора (<a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%BD%D0%BA%D0%BB">НКЛ</a> и других типов продукта), даёт править заполненный договор и открыть документы по сделке. Зачем эти реквизиты нужны бизнесу — не решено (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто заполняет и когда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Номер и дату подписания вводит тот, у кого есть право на правку, вручную в окне «Договор». Плановая дата погашения не вводится: её даёт расчёт по траншам договора. Какие роли вправе править — не решено (27.10.2026): правила те же, что у инструментов и траншей в дереве продуктов (ответ человека 26.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто пользуется результатом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бизнес-правила</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правка недоступна, когда её не позволяет роль, статус сделки или договор погашен (ответ человека 26.10.2026). Плановая дата погашения договора займа — самая поздняя плановая дата погашения среди его траншей; нет траншей с датой — прочерк. У других типов продукта плановая дата берётся из инструментов и траншей, как считать — решится при сборке их страниц (ответ человека 26.10.2026). «Документы по сделке» открывает то же окно документов <a class="inl" href="../../../knowledge-base/glossary/index.html#%D1%8D%D0%BA%D0%B4">ЭКД</a>, что «Документы ЭКД по сделке» в тайле «Описание сделки» (ответ человека 26.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Источники: <code class="tok">docs/tasks/RE0041-nkl-loan-agreement.md</code> (ответы человека 26.10.2026: вопросы 22, 29, 30, 31; 27.10.2026: вопросы 38, 41); <code class="tok">apps/knowledge-base/glossary/terms/НКЛ.md</code>; макет дизайнера 26.10.2026 «Tile_Contract»</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Tile (заголовок «Договор»)
+├── шапка: IconButton edit «Редактировать договор» (только в edit; в view в разметке нет)
+└── тело
+    ├── сетка полей ReadOnlyField — колонок столько, сколько полей у типа
+    │   (data: значения; empty: те же поля, «—»)
+    └── Button outline S «Документы по сделке» (иконка attach) — всегда</code></pre>
+<p class="desc">Колонки: три у НКЛ, Транша, Корпдоговора, Обеспечений и НКЛ с баланса ПАО; пять у Акций/Долей; четыре у Опционов/РЕПО и Гарантии; две у Соглашения о комп. выплатах (как на макете, поля одной строкой). Тайл уже 640px — у типов с четырьмя и пятью полями три колонки; уже 420px — две колонки у всех, уже 220px — одна, порядок полей тот же. Перестроение по своей ширине (container query), не по ширине окна. Сколько колонок страницы занимает тайл — решает страница.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">обычный, шапка с одним действием справа, без стрелки «→»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ReadOnlyField</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">rof</code> с <code class="tok">ds-label--wrap</code>, значение одной строкой с усечением и тултипом; пустое значение — «—»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ibtn--neutral ibtn--m</code>, глиф <code class="tok">edit</code>, <code class="tok">aria-label</code> «Редактировать договор»; <code class="tok">data-modal=&quot;contract-scrim&quot;</code>, <code class="tok">data-modal-guarded</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">outline S «Документы по сделке» с глифом <code class="tok">attach</code> (скрепка; размер S — кнопка в контенте тайла)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Tile/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/components/molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tiles/ContractTile/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/ContractTile/ContractTile.css">ContractTile.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/ContractTile/ContractTile.html">ContractTile.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/ContractTile/ContractTile.js">ContractTile.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/ContractTile/ContractTile.md">ContractTile.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/ContractTile/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<p class="desc">Состав и порядок полей по типам — тот же словарь, что у тайла «Договор и дополнительные соглашения»: см. раздел «Поля» его паспорта (<code class="tok">widgets/tiles/InitialAndAdditionalAgreementsTile/InitialAndAdditionalAgreementsTile.md</code>), здесь не дублируется. Отличия: у этого тайла девять типов — вместо «Deprecated» есть «Соглашение о комп. выплатах» (<code class="tok">compensation-payments</code>: Номер договора · Дата подписания; в матрице макета только у этого тайла), и нет полей «Номер последнего ДС» и «Дата подписания ДС». Подписи — как на макете «Tile_Contract».</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.5fr) minmax(0,2.7fr) minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.5fr) minmax(0,2.7fr) minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Номер договора (<code class="tok">contractNumber</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">номер договора; у Гарантии вместо него «Номер гарантии» (<code class="tok">guaranteeNumber</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">view.data</code>; вводится в окне «Договор»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.5fr) minmax(0,2.7fr) minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дата подписания (<code class="tok">contractSignDate</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата подписания договора</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата, ISO в данных, на экране <code class="tok">ДД.ММ.ГГГГ</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">view.data</code>; вводится в окне «Договор»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.5fr) minmax(0,2.7fr) minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Плановая дата погашения (<code class="tok">plannedRepaymentDate</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у НКЛ — самая поздняя плановая дата погашения среди траншей; у НКЛ с баланса ПАО подпись «Дата погашения»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">view.plannedRepaymentDate</code> (стор: <code class="tok">plannedRepaymentDate()</code>); не вводится</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.5fr) minmax(0,2.7fr) minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дата поставки, Дата перехода прав собственности, Срок действия, Дата окончания, Номер гарантии, Дата заключения, Дата предоставления</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля типов Акции/Доли, Опционы/РЕПО, Обеспечения, Гарантия</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка или дата</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">view.data</code> по одноимённым ключам; источник значений не решён</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Порядок строк — порядок отображения. Незаполненное поле — «—» на своём месте, с места не уходит.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Режим прав приходит атрибутом <code class="tok">data-mode</code>, его ставит страница:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label"><code class="tok">data-mode</code></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что в тайле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля, карандаш в шапке (открывает окно «Договор»), «Документы по сделке»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля и «Документы по сделке»; карандаша в разметке нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Правку запрещают роль, статус сделки и погашение договора (ответ человека 26.10.2026): страница ставит <code class="tok">view</code> при любой из причин. Роли в прототипе не моделируются (вопрос 22 — открыт). «Документы по сделке» доступна всегда — исключения «правка недоступна, данных нет» у этого тайла нет, потому что поля показываются и без данных (ответ человека 27.10.2026, вопрос 41).</p>
+<p class="desc">Недоступное действие убирается из разметки, а не прячется стилем: <code class="tok">render</code> и <code class="tok">syncActions</code> удаляют <code class="tok">.tile__actions</code> с карандашом в <code class="tok">view</code> и создают заново в <code class="tok">edit</code> (с привязкой окна и иконки рантаймами ДС). Для витрины, где <code class="tok">data-mode</code> правят снаружи, после правки атрибута зовётся <code class="tok">PostTileContract.syncActions(tile)</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (27.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на макете не нарисовано</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля типа со значениями, «Документы по сделке», карандаш в <code class="tok">edit</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">договор есть, часть значений пуста — «—» на своих местах</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">те же поля, все значения «—»; «Документы по сделке» и карандаш (в <code class="tok">edit</code>) на месте. «Заполнить» и «Не заполнено» нет (ответ человека 27.10.2026, вопрос 41)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (27.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на макете не нарисовано</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (27.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карандаш в шапке</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карандаша в разметке нет, поля и «Документы по сделке» те же</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (27.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает страница</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.3fr) minmax(0,2.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.3fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тип продукта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-variant</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состав полей и число колонок по типу; девять типов, выбираются <code class="tok">data-variant</code> и <code class="tok">render</code> (<code class="tok">view.variant</code>)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Состояния виджета в витрине: данные × (edit, view) и пустой × (edit, view) — по <code class="tok">data-state</code> (<code class="tok">data</code> · <code class="tok">empty</code>) и <code class="tok">data-mode</code>; остальные типы — демо-сценарий витрины через <code class="tok">render</code>.</p>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: не решено (27.10.2026).</li><li>Обязательные поля внутри: см. «Поля».</li><li>Что показывает, когда обязательное не заполнено: «—» на месте поля.</li><li>Что отдаёт наружу (признак для экрана или формы): состояние <code class="tok">empty</code> / <code class="tok">data</code> на корне.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значение в одну строку усекается многоточием, полный текст — в тултипе (ReadOnlyField); подпись — до двух строк</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо: поля фиксированного состава</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ниже 640px типы с четырьмя и пятью полями — три колонки; ниже 420px — две, ниже 220px — одна; порядок полей тот же</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонок по числу полей типа, пустое место справа допустимо</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Карандаш в шапке (<code class="tok">edit</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">открывается окно «Договор» (рантайм Modal ДС, скрим <code class="tok">contract-scrim</code>, <code class="tok">data-modal-guarded</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Документы по сделке»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">событие <code class="tok">loanaction</code> с <code class="tok">detail.action = 'DOCS'</code> на тайл; страница открывает окно документов <a class="inl" href="../../../knowledge-base/glossary/index.html#%D1%8D%D0%BA%D0%B4">ЭКД</a> (то же, что «Документы ЭКД по сделке» в тайле «Описание сделки»)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,1.7fr) minmax(0,2.8fr) minmax(0,1.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,1.7fr) minmax(0,2.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Карандаш</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно «Договор» (<code class="tok">InitialAndAdditionalAgreementsModal</code>, скрим <code class="tok">contract-scrim</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Номер договора, Дата подписания; окно только для типа «НКЛ»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">После «Сохранить» запись договора обновляется, страница перерисовывает тайл по событию стора</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Заполнить» в тайле «Договор и дополнительные соглашения»</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Запись договора: номер и дата подписания; плановая дата погашения договора (по траншам). Поля Акций/Долей, Опционов/РЕПО, Обеспечений и Гарантии — состав и источник не решены. Имена методов и хуков API не придумываются: их выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-loan-agreements.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_LOAN_AGREEMENTS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">LoanContractRsDto</code> — <code class="tok">contractNumber</code>, <code class="tok">contractSignDate</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Source: invented (26.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/loan-agreement-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.LoanAgreementStore</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">get()</code>, <code class="tok">plannedRepaymentDate()</code>, <code class="tok">isEditable()</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">помощник прототипа</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по записи на каждый из 9 типов; значения полей сверх номера и даты подписания — выдуманные</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Source: invented (27.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Виджет сам стор не читает: страница отдаёт <code class="tok">view</code> в <code class="tok">render</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<p class="desc">Порядок скриптов на странице: сначала <code class="tok">data/loan-contract-fields.js</code> (общий словарь полей <code class="tok">LOAN_CONTRACT_FIELDS</code>), потом <code class="tok">ContractTile.js</code>; скрипт соседнего тайла не нужен. Нет глобала — <code class="tok">render</code> пишет сообщение в консоль и оставляет сетку пустой, не падает.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,2.3fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,2.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">col-12</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">место в сетке страницы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,2.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">tile-contract</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по нему страница находит тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,2.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data</code> · <code class="tok">empty</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние данных; после <code class="tok">render</code> его ставит <code class="tok">ContractTile.js</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,2.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code> · <code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">режим прав; ставит страница</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,2.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-variant</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loan-ncl</code> · <code class="tok">tranche</code> · <code class="tok">shares</code> · <code class="tok">options-repo</code> · <code class="tok">corporate-agreement</code> · <code class="tok">collaterals</code> · <code class="tok">pjsc-guarantee</code> · <code class="tok">pjsc-ncl</code> · <code class="tok">compensation-payments</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тип продукта; ставит <code class="tok">render</code> из <code class="tok">view.variant</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Контракт тайла — <code class="tok">PostTileContract.render(tile, view)</code>, где <code class="tok">view = { mode, variant, data, plannedRepaymentDate }</code>; <code class="tok">data === null</code> — состояние <code class="tok">empty</code>. Остальное API: <code class="tok">bind(tile)</code>, <code class="tok">syncActions(tile)</code>, <code class="tok">VARIANTS</code> (подписи типов). События <code class="tok">loanaction</code>: <code class="tok">DOCS</code>.</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tiles/ContractTile/ContractTile.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ContractTile</code> — пары во фронтенде нет, сверить с фронтендом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Стили раскладки и состояний</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">…/ContractTile.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поведение, события, карандаш по режиму</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">…/ContractTile.js</code> (<code class="tok">PostTileContract</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Общий словарь полей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/loan-contract-fields.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">один справочник полей на оба тайла</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно «Договор»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/InitialAndAdditionalAgreementsModal/</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сверить с фронтендом</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,1.1fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,1.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: «Документы по сделке» — скрепка на кнопке</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">скрепка — глиф <code class="tok">attach</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в ДС глиф скрепки называется <code class="tok">attach</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,1.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: в «Tile_Contract» только заполненные тайлы с карандашом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пустой договор — те же поля с «—»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответ человека 27.10.2026, вопрос 41</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li><b>Роли, правящие договор</b> — не решено (27.10.2026): правила те же, что у страницы сделки; сами роли в прототипе не моделируются (ответ человека 26.10.2026, вопрос 22).</li><li><b>Источник значений</b> полей Акций/Долей (Дата поставки, Дата перехода прав собственности), Опционов/РЕПО (Срок действия), Обеспечений (Дата окончания) и Гарантии (Номер гарантии, Дата заключения, Дата предоставления, Дата окончания): в записи договора их нет, в прототипе они приходят в <code class="tok">view.data</code> — не решено (27.10.2026).</li><li><b>Тип «Соглашение о комп. выплатах»</b> — на странице договора его нет, поля («Номер договора», «Дата подписания») списаны с макета «Tile_Contract»; откуда берётся плановая дата и нужна ли — не решено (27.10.2026).</li><li><b>Окна «Договор» для типов, кроме НКЛ</b> не делаются (ответ человека 26.10.2026, вопрос 31): карандаш у других типов открывает то же окно НКЛ — допущение (27.10.2026), не решено, что открывать.</li><li><b>Плановая дата погашения у типов, кроме договора займа</b> — как считать, не решено (27.10.2026; ответ человека 26.10.2026, вопрос 31). Допущение (27.10.2026): у «НКЛ с баланса ПАО» поле «Дата погашения» показывает ту же плановую дату погашения.</li><li><b>Тип «Deprecated»</b> в матрице этого тайла нет (девять типов макета «Tile_Contract»), в общем словаре он есть только для тайла страницы договора.</li><li><b>Непроработанные состояния</b> — «Загрузка», «Ошибка», «Обновление», «Нет права видеть»: на макете их нет (не решено, 27.10.2026).</li><li><b>Число колонок и пороги перестроения</b> (пять/четыре/три/две/одна колонка; 640, 420 и 220px) — допущение (27.10.2026): число колонок по макету «Tile_Contract», где поля одной строкой, пороги по образцу тайла «Договор и дополнительные соглашения»; ширину тайла на странице решает страница.</li><li><b>Бизнес-смысл</b> — не решено (27.10.2026): зачем бизнесу реквизиты договора в тайле и кто пользуется ими; обязательность номера и даты подписания.</li></ol>
+<p class="desc">Проверено: 27.10.2026</p>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/tiles/ContractTile/ContractTile.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">ContractTile.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/tiles/ContractTile/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/InitialAndAdditionalAgreements.html): окна и подчасти, которые открывает виджет. -->
+<!-- Связанный артефакт тайла «Договор и дополнительные соглашения»: окно «Договор».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Окно только для типа «НКЛ» (макет «Modal_Contract_&_AdditionalAgreement»):
+     два поля — «Номер договора» и «Дата подписания». «Плановой даты погашения» в окне
+     нет: её берёт готовой тайл (у НКЛ — самая поздняя среди траншей). Окна для других
+     типов продуктов не нарисованы и не делаются (решение человека 26.10.2026).
+
+     Значения в разметке — пример. Окно заполняет и сохраняет
+     InitialAndAdditionalAgreementsModal.js (PostModalInitialAndAdditionalAgreements):
+     на открытии читает LoanAgreementStore.get().contract, «Сохранить» проверяет дату и
+     зовёт LoanAgreementStore.setContract. Кнопка без data-modal-close: окно закрывает
+     скрипт, когда проверка прошла; с ошибкой окно остаётся открытым. Крестик и Esc
+     закрывают без сохранения, клик мимо окна не закрывает (триггеры стоят с
+     data-modal-guarded).
+
+     Раскладка: тело окна ДС — колонка с зазором, своего CSS нет; поля — во всю ширину.
+     Маска даты — ДД.ММ.ГГГГ (на макете ММ.ДД.ГГГГ — ошибка макета, решение человека
+     26.10.2026), календарь и маска — из коробки ДС (InputDate). Крестик очистки в
+     разметке нет намеренно: он живёт по значению, его рисует рантайм ds-input.js. -->
+
+<div class="modal-scrim" id="contract-scrim" hidden data-widget="InitialAndAdditionalAgreementsModal" data-widget-group="modals" data-widget-src="../../../postrade/deals-app/widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.html">
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="contract-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="contract-title">Договор</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="contract-number"><span class="ds-label__text">Номер договора</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="contract-number" name="contractNumber" autocomplete="off" value="1234567890">
+          </div>
+        </div>
+      </div>
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="contract-sign-date"><span class="ds-label__text">Дата подписания</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="contract-sign-date" name="contractSignDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off" value="01.01.2021">
+            <span class="inp__acts">
+              <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-contract-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-loan-agreements.js"></script>
+<script src="../../../postrade/deals-app/data/loan-agreement-store.js"></script>
+<script src="../../../postrade/deals-app/data/tranche-context.js"></script>
+<script src="../../../postrade/deals-app/data/instrument-context.js"></script>
+<script src="../../../postrade/deals-app/data/loan-contract-fields.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/ContractTile/ContractTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/AdditionalAgreementTile/AdditionalAgreementTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/AdditionalAgreementModal/AdditionalAgreementModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="ContractTile.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"ContractTile","type":"tile","base":"../..","hub":"../../../../index.html","states":["data","empty"],"modes":["edit"],"state":"data","mode":"edit","width":530,"scenario":true,"fixtures":{"_":"Демо-данные витрины: объект на состояние данных (ключи — значения data-state: data, empty; partial — договор заполнен частично) и long — те же данные с самыми длинными значениями. Объект — view для PostTileContract.render: data — LoanContractRsDto (даты ISO ГГГГ-ММ-ДД), plannedRepaymentDate — плановая дата погашения (в записи договора её нет: её даёт страница), variants — по записи на каждый из 9 типов тайла «Договор» (data-variant); у типов без плановой даты она не показывается. Режим (edit | view) задаёт контрол витрины, в данных его нет. Полей ДС у тайла нет. Состояний «Загрузка» и «Ошибка» нет: на макете их нет. Значения выдуманные, правдоподобной длины (27.10.2026). Источник значений полей сверх номера и даты подписания (поставка, переход прав, срок действия, даты обеспечения и гарантии) не решён — паспорт, «Открытые вопросы». Рисует эти данные сценарий демо функциями самого компонента.","plannedRepaymentDate":"2022-09-12","data":{"variant":"loan-ncl","data":{"contractNumber":"1234567890","contractSignDate":"2022-09-12"}},"variants":{"loan-ncl":{"data":{"contractNumber":"1234567890","contractSignDate":"2022-09-12"}},"tranche":{"data":{"contractNumber":"1234567890","contractSignDate":"2022-09-12"}},"shares":{"data":{"contractNumber":"1234567890","contractSignDate":"2022-09-12","deliveryDate":"2022-09-12","ownershipTransferDate":"2022-09-12"}},"options-repo":{"data":{"contractNumber":"1234567890","contractSignDate":"2022-09-12","validityTerm":"2022-09-12"}},"corporate-agreement":{"data":{"contractNumber":"1234567890","contractSignDate":"2022-09-12"}},"collaterals":{"data":{"contractNumber":"1234567890","contractSignDate":"2022-09-12","endDate":"2022-09-12"}},"pjsc-guarantee":{"data":{"guaranteeNumber":"1234567890","conclusionDate":"2022-09-12","provisionDate":"2022-09-12","endDate":"2022-09-12"}},"pjsc-ncl":{"data":{"contractNumber":"1234567890","contractSignDate":"2022-09-12"}},"compensation-payments":{"data":{"contractNumber":"1234567890","contractSignDate":"2022-09-12"}}},"partial":{"_":"Договор заполнен частично (номер есть, даты подписания нет) и нет плановой даты (у договора нет траншей с датой): поля на месте, значение — прочерк.","variant":"loan-ncl","data":{"contractNumber":"1234567890","contractSignDate":null},"plannedRepaymentDate":null},"empty":{"_":"Договор не заполнен (data: null): поля те же, все значения — «—»; «Заполнить» и «Не заполнено» у тайла нет, «Документы по сделке» есть.","variant":"loan-ncl","data":null,"plannedRepaymentDate":null},"long":{"_":"Самые длинные значения: номер договора и номер гарантии усекаются с тултипом.","variants":{"loan-ncl":{"data":{"contractNumber":"ДГ-2024/ПАО-0045678901-12345","contractSignDate":"2022-09-12"}},"pjsc-guarantee":{"data":{"guaranteeNumber":"ГАР-2024/ПАО-0045678901-12345","conclusionDate":"2022-09-12","provisionDate":"2022-09-12","endDate":"2022-09-12"}}}}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Договор» — тайл внутренней страницы «Договор и дополнительные соглашения».
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-variant — тип продукта: loan-ncl (НКЛ) | tranche | shares | options-repo |
+                    corporate-agreement | collaterals | pjsc-guarantee | pjsc-ncl (НКЛ с баланса ПАО) |
+                    compensation-payments. Состав полей по типу — общий словарь тайла «Договор и
+                    дополнительные соглашения» (data/loan-contract-fields.js, LOAN_CONTRACT_FIELDS);
+                    тип выставляет PostTileContract.render из view.variant.
+     data-state   — data | empty. Тайл ВСЕГДА показывает поля: договор не заполнен (empty) —
+                    те же поля, значения «—». Состояний «Заполнить» и «Не заполнено» у тайла нет.
+                    Состояния «Загрузка» и «Ошибка» на макете не нарисованы — не решено
+     data-mode    — режим прав: edit | view. Ставит страница: роль, статус сделки и погашение
+                    договора, не допускающие правку, дают view. Карандаш в шапке есть в разметке
+                    ТОЛЬКО в edit: в view PostTileContract.syncActions удаляет его из разметки
+                    (не прячет стилем). Статичный эталон ниже — edit, поэтому карандаш в нём есть;
+                    переключая data-mode снаружи (витрина), зовите syncActions(tile).
+     Разметка держит оба состояния сразу: сетка data и сетка empty (прочерки), нужную
+     показывает ContractTile.css по data-state. Поля в разметке — пример типа «НКЛ»; на странице
+     их заменяет PostTileContract.render.
+     «Документы по сделке» — всегда, в любом состоянии и режиме: событие loanaction на тайл,
+     detail.action = 'DOCS'. Стрелки «→» в шапке нет (она у тайла страницы договора).
+     Скрипты страницы — в таком порядке: data/loan-contract-fields.js (словарь полей, общий
+     с соседним тайлом), затем ContractTile.js.
+     Карандаш открывает окно «Договор» (скрим contract-scrim, виджет
+     InitialAndAdditionalAgreementsModal) по data-modal; окно вшивается страницей отдельной
+     меткой ds-include. В окне ввод, поэтому триггер с data-modal-guarded. -->
+<section class="tile lc-contract-tile" data-variant="loan-ncl" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Договор</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать договор" data-modal="contract-scrim" data-modal-guarded><i data-icon="edit"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+    <div class="tile__rows lc-contract-tile__content">
+
+      <!-- Данные есть: поля типа в порядке паспорта; пустое значение — прочерк, поле с места не уходит -->
+      <div class="tile__grid lc-contract-tile__grid lc-contract-tile__grid--data">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер договора</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractNumber">1234567890</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата подписания</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractSignDate">12.09.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Плановая дата погашения</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="plannedRepaymentDate">12.09.2022</span></div>
+        </div>
+      </div>
+
+      <!-- Данных нет: те же поля, значения — прочерки (ответ 41) -->
+      <div class="tile__grid lc-contract-tile__grid lc-contract-tile__grid--empty">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер договора</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractNumber">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата подписания</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractSignDate">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Плановая дата погашения</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="plannedRepaymentDate">—</span></div>
+        </div>
+      </div>
+
+      <!-- Всегда: и с данными, и без, в edit и в view -->
+      <button type="button" class="btn btn--outline btn--s" data-lc-action="DOCS">
+        <i data-icon="attach"></i><span class="btn__label">Документы по сделке</span>
+      </button>
+
+    </div>
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «Договор» (ContractTile).
+   Только внутренняя раскладка и показ своих блоков по состоянию.
+   Цвета, шрифты, отступы, радиусы, тени — токены ДС; своих значений здесь нет.
+   Состояния компонентов ДС отсюда не переопределяются.
+   Карандаш шапки в просмотре убирает из разметки скрипт (syncActions), не этот файл. */
+
+/* Перестроение — по СВОЕЙ ширине, а не по ширине окна: один и тот же тайл
+   стоит и на странице договора, и в витрине на любой ширине. */
+.lc-contract-tile { container-type: inline-size; }
+
+/* ── Поля: колонок столько, сколько полей у типа (макет «Tile_Contract»: поля
+   одной строкой). Колонки сжимаемые: длинная подпись переносится (ds-label--wrap),
+   длинное значение усекается с тултипом. ─────────────────────────────────── */
+.lc-contract-tile__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lc-contract-tile[data-variant="shares"] .lc-contract-tile__grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.lc-contract-tile[data-variant="options-repo"] .lc-contract-tile__grid,
+.lc-contract-tile[data-variant="pjsc-guarantee"] .lc-contract-tile__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.lc-contract-tile[data-variant="compensation-payments"] .lc-contract-tile__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* Кнопка в теле не растягивается на ширину тайла: колонка по левому краю */
+.lc-contract-tile__content { align-items: flex-start; }
+.lc-contract-tile__content > .lc-contract-tile__grid { align-self: stretch; }
+
+/* ── Что видно в каком состоянии ───────────────────────────────────── */
+/* База — «данные есть»; empty — та же сетка с прочерками. Правила с корнем, чтобы
+   перебить display сетки тайла. */
+.lc-contract-tile .lc-contract-tile__grid--empty { display: none; }
+.lc-contract-tile[data-state="empty"] .lc-contract-tile__grid--data { display: none; }
+.lc-contract-tile[data-state="empty"] .lc-contract-tile__grid--empty { display: grid; }
+
+/* ── Перестроение по своей ширине ──────────────────────────────────── */
+/* Типы с четырьмя и пятью полями ниже 640px — три колонки; ниже 420px у всех
+   типов две колонки, ниже 220px — одна, порядок полей тот же. */
+@container (max-width: 639px) {
+  .lc-contract-tile[data-variant="shares"] .lc-contract-tile__grid,
+  .lc-contract-tile[data-variant="options-repo"] .lc-contract-tile__grid,
+  .lc-contract-tile[data-variant="pjsc-guarantee"] .lc-contract-tile__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@container (max-width: 419px) {
+  .lc-contract-tile .lc-contract-tile__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container (max-width: 219px) {
+  .lc-contract-tile .lc-contract-tile__grid { grid-template-columns: minmax(0, 1fr); }
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   ContractTile.js — поля тайла «Договор» внутренней страницы «Договор и
+   дополнительные соглашения» по типу продукта и действия тайла.
+
+   Словарь полей ОДИН, общий с тайлом «Договор и дополнительные соглашения»:
+   data/loan-contract-fields.js (глобалы LOAN_CONTRACT_FIELDS, LOAN_CONTRACT_VARIANTS).
+   Файл подключается на странице раньше этого скрипта; скрипт соседнего тайла не нужен.
+   Нет словаря — в консоль уходит сообщение, сетка остаётся пустой, тайл не падает.
+
+   API:
+     PostTileContract.render(tile, view)
+       view = {
+         mode: 'edit' | 'view',             режим прав (иное — view)
+         variant: <ключ CONTRACT_VARIANTS>, иное — 'loan-ncl'
+         data: LoanAgreementStore.get().contract | null,
+                                            null — договор не заполнен (empty): поля те же, «—»
+         plannedRepaymentDate: ISO | null   плановая дата погашения, готовой от страницы
+       }
+       Рисует поля типа в обеих сетках (data и empty), ставит data-variant, data-mode
+       и data-state ('data' | 'empty'), зовёт syncActions и bind. Полей ДС у тайла нет.
+     PostTileContract.bind(tile)        — делегирование событий, один раз на тайл (зовётся из render)
+     PostTileContract.syncActions(tile) — привести карандаш шапки к data-mode: в edit
+       создать, если его нет; в view убрать из разметки вместе с .tile__actions.
+       Читает атрибут корня, поэтому годится и после правки data-mode снаружи (витрина).
+       «Документы по сделке» не трогает: она нужна во всех режимах.
+     PostTileContract.VARIANTS          — ключи типов и подписи (CONTRACT_VARIANTS общего скрипта)
+
+   События (всплывают от тайла, detail.action):
+     loanaction { action: 'DOCS' }  — «Документы по сделке»
+   Карандаш открывает окно «Договор» (data-modal="contract-scrim") рантаймом ДС,
+   события нет. Что делать по событию, решает страница.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var ISO = /^(\d{4})-(\d{2})-(\d{2})/;
+  var warned = false;
+
+  /* Общий словарь полей: data/loan-contract-fields.js. Нет его — одно сообщение в консоль. */
+  function dict() {
+    var f = window.LOAN_CONTRACT_FIELDS;
+    if (!f && !warned && window.console) {
+      warned = true;
+      console.error('PostTileContract: нет LOAN_CONTRACT_FIELDS. Подключите data/loan-contract-fields.js раньше ContractTile.js — словарь полей общий.');
+    }
+    return f || null;
+  }
+
+  function variants() {
+    return window.LOAN_CONTRACT_VARIANTS || {};
+  }
+
+  function variantOf(view) {
+    return view && variants()[view.variant] ? view.variant : 'loan-ncl';
+  }
+
+  function stateOf(view) {
+    return view && view.data ? 'data' : 'empty';
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* ISO 'ГГГГ-ММ-ДД' → 'ДД.ММ.ГГГГ'; иная строка остаётся как есть */
+  function fmtDate(v) {
+    var s = String(v == null ? '' : v).trim();
+    var m = ISO.exec(s);
+    return m ? m[3] + '.' + m[2] + '.' + m[1] : s;
+  }
+
+  function fieldHTML(label, key, value) {
+    return '<div class="rof">'
+      + '<span class="ds-label ds-label--wrap"><span class="ds-label__text">' + esc(label) + '</span></span>'
+      /* Прочерк — значение, а не подсказка, и своего цвета у него нет (ReadOnlyField 1.010). */
+      + '<div class="rof__row"><span class="rof__value" data-contract-field="' + key + '">'
+      + (value ? esc(value) : '—') + '</span></div>'
+      + '</div>';
+  }
+
+  /* Полей ДС у тайла «Договор» нет — только поля типа в порядке словаря */
+  function fieldsHTML(view) {
+    var d = dict();
+    if (!d) return '';
+    view = view || {};
+    var data = view.data || {};
+    return (d[variantOf(view)] || []).map(function (f) {
+      var raw = f.planned ? view.plannedRepaymentDate : data[f.key];
+      return fieldHTML(f.label, f.key, f.date ? fmtDate(raw) : String(raw == null ? '' : raw).trim());
+    }).join('');
+  }
+
+  var PENCIL = '<button type="button" class="ibtn ibtn--neutral ibtn--m"'
+    + ' aria-label="Редактировать договор" data-modal="contract-scrim" data-modal-guarded>'
+    + '<i data-icon="edit"></i></button>';
+
+  /* Недоступное действие убирается из разметки, а не прячется стилем (Л235): в view
+     карандаша нет вовсе, в edit он создаётся и привязывается рантаймами ДС. */
+  function syncActions(tile) {
+    if (!tile) return;
+    var edit = tile.getAttribute('data-mode') === 'edit';
+    var actions = tile.querySelector('.tile__header > .tile__actions');
+    if (!edit) {
+      if (actions && actions.parentNode) actions.parentNode.removeChild(actions);
+      return;
+    }
+    if (actions && actions.querySelector('[data-modal="contract-scrim"]')) return;
+    var header = tile.querySelector('.tile__header');
+    if (!header) return;
+    if (!actions) {
+      actions = document.createElement('div');
+      actions.className = 'tile__actions';
+      header.appendChild(actions);
+    }
+    actions.innerHTML = PENCIL;
+    if (window.dsIcons && window.dsIcons.apply) window.dsIcons.apply(actions);
+    var btn = actions.querySelector('[data-modal]');
+    if (btn && window.DSModal && window.DSModal.bind) window.DSModal.bind(btn);
+  }
+
+  /* «Документы по сделке» уходит со страницы: событие на сам тайл, делегированием.
+     Привязка один раз на тайл. */
+  function bind(tile) {
+    if (!tile || tile.__contractBound) return;
+    tile.__contractBound = true;
+    tile.addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('[data-lc-action]') : null;
+      if (!btn || !tile.contains(btn) || btn.disabled) return;
+      tile.dispatchEvent(new CustomEvent('loanaction', {
+        bubbles: true,
+        detail: { action: btn.getAttribute('data-lc-action') }
+      }));
+    });
+  }
+
+  function render(tile, view) {
+    if (!tile) return;
+    view = view || {};
+    var html = fieldsHTML(view);
+    Array.prototype.forEach.call(tile.querySelectorAll('.lc-contract-tile__grid'), function (g) {
+      g.innerHTML = html;
+    });
+    tile.setAttribute('data-variant', variantOf(view));
+    tile.setAttribute('data-mode', view.mode === 'edit' ? 'edit' : 'view');
+    tile.setAttribute('data-state', stateOf(view));
+    syncActions(tile);
+    bind(tile);
+  }
+
+  window.PostTileContract = {
+    render: render,
+    bind: bind,
+    syncActions: syncActions,
+    get VARIANTS() { return variants(); }
+  };
+})();
+</script>
+</body>
+</html>

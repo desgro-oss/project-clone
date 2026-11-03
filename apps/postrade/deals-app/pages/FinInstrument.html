@@ -32,7 +32,7 @@
   /* Заголовок секции «Общая информация» — на фоне страницы, как у страницы
      сделки (компонента «заголовок раздела» в ДС нет). */
   .gen { display: flex; flex-direction: column; gap: var(--space-12); }
-  .gen__title { margin: 0; font: var(--type-h5-strong); color: var(--text-primary); }
+  .gen__title { margin: 0; font: var(--type-h5-strong-smb); color: var(--text-primary); }
 
   /* Минимальная высота тайла — 200px, как на странице сделки (решение
      человека 21.09.2026): параметр раскладки, его задаёт страница. */
@@ -368,7 +368,7 @@
     return c.nodes.map(function (n) {
       var status = n.repaidAt
         ? '<div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i>'
-          + '<span class="prow__status-text">' + esc((DETAIL_LABELS.repaidAt || 'Фактическая дата погашения') + ' ' + fmtDate(n.repaidAt)) + '</span></div>'
+          + '<span class="prow__status-text">' + esc((DETAIL_LABELS.repaidAt || 'Дата фактического погашения') + ' ' + fmtDate(n.repaidAt)) + '</span></div>'
         : '';
       var meta = (n.details || []).length ? '<div class="prow__meta">' + n.details.map(metaItemHTML).join('') + '</div>' : '';
       return '<div class="prow"><div class="prow__main"><div class="prow__head">' + nodeTitleHTML(n) + '</div>'
@@ -500,7 +500,7 @@
           e.preventDefault();
           var id = link.getAttribute('data-fi-id');
           if (!id) return;
-          window.location.href = 'Tranche.html?id=' + encodeURIComponent(r.deal.id) + '&tr=' + encodeURIComponent(id);
+          window.location.href = 'Tranche.preview.html?id=' + encodeURIComponent(r.deal.id) + '&tr=' + encodeURIComponent(id);
         });
         document.getElementById('fi-edit').addEventListener('click', function () {
           if (window.PostModalFinInstrumentEdit) window.PostModalFinInstrumentEdit.open(r.id);

@@ -19,7 +19,7 @@
    --text-secondary, как на макете */
 .lc-fi-link .lc-fi-link__line {
   margin: 0;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
   overflow-wrap: anywhere;
 }

@@ -17,11 +17,24 @@
    InputText 1.010, Chip 1.015), после чего закрыли на уровне соглашения:
    корень компонента, объявивший `display`, объявляет и пару к нему. */
 .col-list[hidden],
-.col-item[hidden] { display: none; }
+.col-item[hidden],
+.col-opts[hidden] { display: none; }
+
+/* переключатели раздела над списком колонок (template[data-table-options]):
+   тот же шаг строк, что у списка колонок */
+.col-opts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.col-opt { padding: 8px 0; }
 
 /* описание «Выберите столбцы для отображения» — Body M, вторичный цвет */
 .col-desc {
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-secondary);
   margin: 0;
   text-wrap: pretty;

@@ -1,0 +1,108 @@
+<!-- Локальный компонент «Транши» (LoanNrlTranchesTile) — фрагмент страницы договора займа (НКЛ).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран (6 колонок из 12);
+     заголовок раздела «Транши» над тайлом рисует страница, не тайл.
+     data-state — состояние данных: loading | data | partial | empty
+                  Состояния «Ошибка» у тайла нет: дерево продуктов, откуда берутся транши,
+                  грузится вместе со страницей и своей ошибки не имеет
+     data-mode  — режим прав:       edit | view. Ставит страница: роль, статус сделки
+                  или погашенный договор, не допускающие правку, дают view
+     Разметка держит ВСЕ состояния сразу, показывает нужное LoanNrlTranchesTile.css по этим
+     двум атрибутам — так же, как тайлы «Сроки сделки» и «КНР».
+     Образец — состояние edit. Режим view рисует только PostTileLoanNrlTranches.render: строки
+     без слота действий (меню ⋮ не в разметке), слот шапки hidden, кнопки добавления disabled;
+     стилем view в образце не имитируется.
+     Строки траншей ниже — пример с макета. На странице их заменяет LoanNrlTranchesTile.js
+     (PostTileLoanNrlTranches.render) траншами договора из дерева продуктов; пока дерево
+     грузится, тайл стоит в loading. Окон правки у тайла нет: «Добавить транш» добавляет сразу,
+     «Погасить» и «Удалить» открывают окна дерева продуктов — всё это делает страница по событию
+     loanaction (ADD_TRANCHE, OPEN_TRANCHE, REPAY_TRANCHE, DELETE_TRANCHE). -->
+<section class="tile lc-loan-nrl-tranches-tile" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Транши</h3></div>
+    </div>
+    <!-- Действие шапки — только в edit и только когда транши есть (data, partial).
+         В просмотре его нет: слот скрыт атрибутом hidden, кнопка disabled (JS тайла).
+         Пустой тайл заполняют кнопкой в теле. -->
+    <div class="tile__actions">
+      <button type="button" class="btn btn--outline btn--xs" data-lntr-act="ADD_TRANCHE"><i data-icon="add"></i><span class="btn__label">Добавить транш</span></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- Транши есть: строки ProductRow, как в «Продуктах сделки» — номер и название ссылкой
+         на страницу транша, дата подписания договора и сумма лимита; справа меню ⋮.
+         Пункт «Удалить» выключается (aria-disabled="true", как в дереве продуктов), когда транш
+         удалить нельзя — view.tranches[].canRemove === false, например он прикреплён к ФИ;
+         в образце такой пункт у второго транша.
+         Дерево ProductRow: список строк — группа детей корня (зазор 8px, без отступа), поэтому
+         в обёртке одного узла без своей строки. В просмотре строки без слота действий
+         (LoanNrlTranchesTile.js, mode: 'view'). -->
+    <div class="lc-loan-nrl-tranches-tile__list">
+      <ul class="prow-tree">
+        <li class="prow-tree__node">
+          <ul class="prow-tree__group">
+            <li class="prow-tree__node" data-lntr-id="1027.d1.p1.i1.t1">
+              <div class="prow">
+                <div class="prow__main">
+                  <div class="prow__head"><a class="prow__title prow__title--link" href="#" data-lntr-act="OPEN_TRANCHE" data-lntr-id="1027.d1.p1.i1.t1">1.1.1.1. Транш</a></div>
+                  <div class="prow__meta">
+                    <span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span>
+                    <span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span>
+                  </div>
+                </div>
+                <div class="prow__actions">
+                  <span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="lntr-m-1027-d1-p1-i1-t1" data-menu-align="end"><i data-icon="more-dots"></i></button>
+                    <div id="lntr-m-1027-d1-p1-i1-t1" class="menu menu--floating" role="menu" hidden>
+                      <button type="button" class="menu__item" role="menuitem" data-lntr-act="REPAY_TRANCHE" data-lntr-id="1027.d1.p1.i1.t1"><span class="menu__item-label">Погасить</span></button>
+                      <button type="button" class="menu__item" role="menuitem" data-lntr-act="DELETE_TRANCHE" data-lntr-id="1027.d1.p1.i1.t1"><span class="menu__item-label">Удалить</span></button>
+                    </div></span>
+                </div>
+              </div>
+            </li>
+            <li class="prow-tree__node" data-lntr-id="1027.d1.p1.i1.t2">
+              <div class="prow">
+                <div class="prow__main">
+                  <div class="prow__head"><a class="prow__title prow__title--link" href="#" data-lntr-act="OPEN_TRANCHE" data-lntr-id="1027.d1.p1.i1.t2">1.1.1.2. Транш</a></div>
+                  <div class="prow__meta">
+                    <span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span>
+                    <span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span>
+                  </div>
+                </div>
+                <div class="prow__actions">
+                  <span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="lntr-m-1027-d1-p1-i1-t2" data-menu-align="end"><i data-icon="more-dots"></i></button>
+                    <div id="lntr-m-1027-d1-p1-i1-t2" class="menu menu--floating" role="menu" hidden>
+                      <button type="button" class="menu__item" role="menuitem" data-lntr-act="REPAY_TRANCHE" data-lntr-id="1027.d1.p1.i1.t2"><span class="menu__item-label">Погасить</span></button>
+                      <button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-lntr-act="DELETE_TRANCHE" data-lntr-id="1027.d1.p1.i1.t2"><span class="menu__item-label">Удалить</span></button>
+                    </div></span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Загрузка: две строки-заготовки в габаритах будущих (заголовок, значения) — раскладка
+         не прыгает после ответа. -->
+    <ul class="prow-tree lc-loan-nrl-tranches-tile__loading" aria-busy="true">
+      <li class="prow-tree__node">
+        <ul class="prow-tree__group">
+          <li class="prow-tree__node"><div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div></li>
+          <li class="prow-tree__node"><div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div></li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- Траншей нет, право на правку есть: кнопка без иконки (как на макете) -->
+    <div class="lc-loan-nrl-tranches-tile__fill">
+      <button type="button" class="btn btn--accent btn--s" data-lntr-act="ADD_TRANCHE"><span class="btn__label">Добавить транш</span></button>
+    </div>
+
+    <!-- Траншей нет, права нет: одна строка причины, действия нет -->
+    <p class="lc-loan-nrl-tranches-tile__empty">Не заполнено</p>
+
+  </div>
+</section>

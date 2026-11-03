@@ -57,7 +57,7 @@
 .lc-meetings__none,
 .lc-meetings__empty-text {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-secondary);
 }
 /* Пустой стейт по макету: иллюстрация (иконка календаря) и строка причины

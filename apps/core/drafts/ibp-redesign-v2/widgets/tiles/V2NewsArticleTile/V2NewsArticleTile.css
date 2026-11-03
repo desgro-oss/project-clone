@@ -1,0 +1,13 @@
+/* Локальный компонент V2NewsArticleTile — текст выбранной новости.
+   Тайл заполняет высоту панели сплиттера, прокручивается тело (.ds-scroll);
+   строка текста ограничена шириной для чтения. */
+.lc-v2-news-article-tile { flex: 1; min-height: 0; }
+.lc-v2-news-article-tile [hidden] { display: none; }
+.tile--headless > .lc-v2-news-article-tile__body { flex: 1; min-height: 0; overflow-y: auto; padding: var(--space-32) var(--space-24); }
+.lc-v2-news-article-tile__article { display: flex; flex-direction: column; gap: var(--space-16); max-width: 72ch; }
+.lc-v2-news-article-tile__title { margin: 0; font: var(--type-h5-strong-smb); color: var(--text-primary); }
+.lc-v2-news-article-tile__meta { display: flex; align-items: center; gap: var(--space-8); margin: 0; font: var(--type-body-xs-reg); color: var(--text-secondary); }
+.lc-v2-news-article-tile__source { color: var(--primary); text-transform: uppercase; }
+.lc-v2-news-article-tile__text { display: flex; flex-direction: column; gap: var(--space-20); }
+.lc-v2-news-article-tile__text p { margin: 0; font: var(--type-body-m-reg); color: var(--text-primary); }
+.lc-v2-news-article-tile__actions { display: flex; padding-top: var(--space-8); }

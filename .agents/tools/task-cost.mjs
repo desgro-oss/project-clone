@@ -29,6 +29,16 @@
        файлы, не менявшиеся с начала окна, не читаются. Имя папки проекта —
        корень проекта НА ЭТОЙ машине (sanitize ниже), а не на той, где писался
        журнал; его печатает `probe`.
+     zcode — CLI ZCode (RE0046): <дом>/.zcode/cli/rollout/model-io-<сессия>.jsonl,
+       субагенты — model-io-sess_subagent_<id>.jsonl рядом (копия с другой
+       машины — тем же путём от --home). Строка — завершённый запрос
+       (type "model_io"): startedAt, request.messages — весь разговор на момент
+       запроса (последнее сообщение — триггер: role "user" — человек, "tool" —
+       ответ инструмента), счётчик response.usage (inputTokens без кэша,
+       cacheReadTokens, cacheWriteTokens, outputTokens), вызовы —
+       response.toolCalls; ретрай (тот же requestId) считается один раз.
+       Каталога проекта у журнала нет: проект узнаётся по упоминанию корня
+       в тексте файла, как общий читатель.
      opencode — `opencode.db` (по умолчанию <дом>/.local/share/opencode/;
        другой путь — `--db`): v2 — `session_v2` + `session_message`, v1 —
        `session` + `message`; сессии — по `directory` = корень проекта.
@@ -58,7 +68,9 @@
 
    АКТИВНОЕ ВРЕМЯ: промежутки между соседними событиями сессии, кроме
    промежутков, которые кончаются сообщением человека (пауза между ходами), и
-   ожидания ответа на инструмент вопроса или одобрения (WAIT_TOOLS). Ожидание
+   ожидания ответа на инструмент вопроса или одобрения (WAIT_TOOLS), и
+   промежутков длиннее IDLE_MAX_MS (30 мин) без записей — это пауза, а не
+   работа: лимит запросов, сон машины (Л271). Ожидание
    подтверждения прав внутри хода от работы инструмента не отличить — оно
    входит. В opencode инструмент вопроса не вычитается: в журнале v2 его
    ожидание не отделено от шага. Несколько сессий — длина объединения их
@@ -107,6 +119,12 @@ const NOTE = 'Время — активное: без пауз между ход
   + 'с пределом окна модели. В «Итого» пик — максимум, а не сумма.';
 /* Инструменты, ответа на которые ждут от человека: вопрос и одобрение плана. */
 const WAIT_TOOLS = new Set(['AskUserQuestion', 'ExitPlanMode', 'question']);
+/* Самый длинный промежуток без единой записи, который ещё считается работой. Дольше —
+   пауза: лимит запросов, сон машины, ждали подтверждения прав. Служебная запись
+   (уведомление фонового субагента, `<task-notification>`) приходит как `user` без
+   человека, и промежуток до неё читался работой: 10 часов ожидания сброса лимита
+   вошли в Э2 RE0041 (Л271). Инструмент в обычной работе молчит минуты, не часы. */
+const IDLE_MAX_MS = 30 * 60000;
 
 /* ---------------- источник: журнал JSONL ---------------- */
 
@@ -245,6 +263,91 @@ function readJsonl(home, root, from, to, task, diag = newDiag()) {
 }
 
 const newDiag = () => ({ dirs: 0, files: 0, fresh: 0, recognized: 0, inWindow: 0, hit: 0, orphanSubs: 0, db: false, ocProject: 0, generic: 0, genericInWindow: 0 });
+
+/* ---------------- источник: zcode (rollout) ---------------- */
+
+/* ZCode пишет журнал запросов в <дом>/.zcode/cli/rollout/model-io-<сессия>.jsonl,
+   субагенты — model-io-sess_subagent_<id>.jsonl рядом. Каталога проекта у журнала
+   нет: система каждой строки называет рабочую папку, проект узнаётся по
+   упоминанию корня в тексте файла — как у общего читателя. */
+const zcodeDirs = (home) => {
+  const p = path.join(home, '.zcode', 'cli', 'rollout');
+  return existsSync(p) ? [p] : [];
+};
+
+/** Одна сессия zcode → { usage, events, waits, calls, hit, forms } (RE0046). */
+function parseZcode(text, task) {
+  /* requestId → последняя попытка: ретрай повторяет запрос, счётчик берётся один раз */
+  const byId = new Map();
+  let hit = !task;
+  const says = (s) => !hit && s && s.includes(task);
+  for (const line of text.split('\n')) {
+    if (!line.trim()) continue;
+    let e;
+    try { e = JSON.parse(line); } catch { continue; }
+    if (e.type !== 'model_io' || !e.response) continue;
+    const t = Date.parse(e.startedAt);
+    if (!Number.isFinite(t)) continue;
+    const done = Date.parse(e.completedAt);
+    const u = e.response.usage || {};
+    const tools = (e.response.toolCalls || []).map((c) => c && c.name).filter(Boolean);
+    const msgs = Array.isArray(e.request && e.request.messages) ? e.request.messages : [];
+    const last = msgs[msgs.length - 1] || null;
+    /* триггер запроса — последнее входящее сообщение: "user" — человек, "tool" — ответ инструмента */
+    const human = Boolean(last && last.role === 'user');
+    byId.set(e.requestId || 'l' + byId.size, {
+      t, done: Number.isFinite(done) ? done : t, human,
+      in: nz(u.inputTokens) + nz(u.cacheWriteTokens), cache: nz(u.cacheReadTokens), out: nz(u.outputTokens),
+      tools,
+    });
+    /* упоминание задачи: текст человека (триггер), текст ответа или аргументы
+       инструментов агента; вывод инструментов (role "tool") — не в счёт */
+    if (says(typeof last === 'object' ? JSON.stringify(last) : '') || says(e.response.text || '') || says(JSON.stringify(e.response.toolCalls || []))) hit = true;
+  }
+  const reqs = [...byId.values()].sort((a, b) => a.t - b.t);
+  const usage = [], events = [], waits = [], calls = [];
+  reqs.forEach((r, i) => {
+    usage.push({ t: r.t, in: r.in, cache: r.cache, out: r.out, peak: r.in + r.cache + r.out });
+    events.push({ t: r.t, human: r.human });
+    for (const n of r.tools) calls.push(r.t);
+    /* запрос с инструментом вопроса — дальше ждём человека до следующего запроса */
+    if (r.tools.some((n) => WAIT_TOOLS.has(n)) && reqs[i + 1]) waits.push([r.done, reqs[i + 1].t]);
+  });
+  return { usage, events, waits, calls, hit, forms: usage.length ? ['zcode.rollout'] : [] };
+}
+
+/** Каталог rollout → сессии; отбор и счётчики диагностики — как readJsonl. */
+function readZcode(home, root, from, to, task, diag = newDiag()) {
+  const sessions = [];
+  const needles = needlesOf(root);
+  for (const dir of zcodeDirs(home)) {
+    diag.dirs++;
+    const all = walk(dir);
+    diag.files += all.length;
+    const files = all.filter((f) => { try { return statSync(f).mtimeMs >= from; } catch { return false; } });
+    diag.fresh += files.length;
+    for (const file of files) {
+      const text = readFileSync(file, 'utf8');
+      const hay = process.platform === 'linux' ? text : text.toLowerCase();
+      if (!needles.some((n) => hay.includes(process.platform === 'linux' ? n : n.toLowerCase()))) continue;
+      const id = path.basename(file, '.jsonl');
+      const sub = id.includes('_subagent_');
+      const z = parseZcode(text, task);
+      const inWindow = z.usage.some((x) => x.t >= from && x.t <= to);
+      if (z.usage.length) diag.recognized++;
+      if (inWindow) diag.inWindow++;
+      /* родитель субагента в имени файла не виден: субагент в счёте только по
+         собственному упоминанию задачи (RE0046, вопрос №1) */
+      if (!z.hit) {
+        if (sub && inWindow) diag.orphanSubs++;
+        continue;
+      }
+      if (inWindow) diag.hit++;
+      sessions.push({ id, sub, src: 'zcode', ...z });
+    }
+  }
+  return sessions;
+}
 
 /* ---------------- источник: opencode ---------------- */
 
@@ -420,7 +523,7 @@ const needlesOf = (root) => [root, root.split(path.sep).join('/'), root.split(pa
 const under = (p, k) => (process.platform === 'linux' ? p.startsWith(k) : p.toLowerCase().startsWith(k.toLowerCase()));
 
 function readGeneric(home, root, from, to, task, diag = newDiag()) {
-  const skip = jsonlDirs(home, root);
+  const skip = [...jsonlDirs(home, root), ...zcodeDirs(home)];
   const needles = needlesOf(root);
   const sessions = [];
   let visited = 0;
@@ -461,7 +564,7 @@ function activeSpans(events, waits, from, to) {
   const spans = [];
   for (let i = 1; i < ev.length; i++) {
     const a = ev[i - 1], b = ev[i];
-    if (b.human || b.t <= a.t) continue;
+    if (b.human || b.t <= a.t || b.t - a.t > IDLE_MAX_MS) continue;
     let pieces = [[a.t, b.t]];
     for (const [s, e] of waits) pieces = pieces.flatMap(([x, y]) => (e <= x || s >= y ? [[x, y]] : [[x, Math.max(x, s)], [Math.min(y, e), y]].filter(([p, q]) => q > p)));
     spans.push(...pieces);
@@ -510,6 +613,7 @@ async function collect(opts, root, from, to, task) {
   diag.db = Boolean(opts.db && existsSync(opts.db));
   const sessions = [
     ...readJsonl(opts.home, root, from, to, task, diag),
+    ...readZcode(opts.home, root, from, to, task, diag),
     ...(await readOpencode(opts.db, root, from, to, task, diag)),
   ];
   const known = tally(sessions, from, to);
@@ -555,7 +659,7 @@ function diagnose(d, opts, from, to, task) {
 
 /** Строки «источники» и «запросов / вызовов» под строкой отчёта. */
 function extraLines(c) {
-  const names = { jsonl: 'журнал JSONL', opencode: 'opencode', generic: 'общий читатель' };
+  const names = { jsonl: 'журнал JSONL', zcode: 'zcode', opencode: 'opencode', generic: 'общий читатель' };
   const src = Object.entries(c.src).map(([k, n]) => names[k] + ' — файлов ' + n).join('; ') || 'нет';
   return [
     'источники: ' + src + (c.forms.size ? ' (форма: ' + [...c.forms].join(', ') + ')' : ''),
@@ -784,6 +888,8 @@ function probe(ctx, opts) {
   const known = jsonlDirs(opts.home, ctx.root);
   out.push('журнал JSONL: ' + (known.length ? known.length + ' каталог(ов) найдено' : 'нет'));
   out.push('ожидаемая папка журналов: ' + path.join(opts.home, '.<CLI>', 'projects', sanitize(ctx.root)) + ' (копию журналов класть под этим именем)');
+  const zdirs = zcodeDirs(opts.home);
+  out.push('zcode: ' + (zdirs.length ? 'журнал rollout есть — ' + zdirs.map((d) => path.relative(opts.home, d)).join(', ') : 'нет'));
   out.push('opencode: ' + (existsSync(opts.db) ? 'база есть' : 'базы нет'));
   const needles = [ctx.root, ctx.root.split(path.sep).join('/'), ctx.root.split(path.sep).join('\\\\'), sanitize(ctx.root)];
   const roots = [];
@@ -803,7 +909,7 @@ function probe(ctx, opts) {
       visited++;
       let st;
       try { st = statSync(p); } catch { continue; }
-      if (st.mtimeMs < since || known.some((k) => p.startsWith(k))) continue;
+      if (st.mtimeMs < since || [...known, ...zdirs].some((k) => p.startsWith(k))) continue;
       if (/\.(db|sqlite)$/i.test(e.name)) { if (/session|chat|history|agent/i.test(p)) found.set(p, { keys: ['(база SQLite — таблицы смотреть отдельно)'] }); continue; }
       let txt;
       try { txt = head(p); } catch { continue; }
@@ -991,12 +1097,56 @@ async function selftest() {
       r.ok && /\| окно \| 1 300 \| 6 300 \| 220 \| 7 820 \| 3 220 \| 5 мин \| 1 \|/.test(rs) && /журнал JSONL — файлов 2 \(форма: usageMetadata\.promptTokenCount\)/.test(rs)
       && /субагентов вне счёта: 1/.test(rs), rs.replace(/\n/g, ' / '));
 
+    /* ZCode (RE0046): rollout-журнал. Проект — по упоминанию корня в системе
+       строки; ретрай requestId — один раз (берётся последняя попытка); вопрос —
+       пауза; субагент — свой файл, в токенах, не во времени; чужой проект и
+       чужая задача — мимо. Значения придуманы по форме: в отчёте их нет. */
+    const home5 = path.join(s.root, '_home5');
+    const zroll = path.join(home5, '.zcode', 'cli', 'rollout');
+    const zline = (min, id, u, o = {}) => JSON.stringify({
+      type: 'model_io', requestId: id, attempt: o.attempt || 1, startedAt: at(min), completedAt: at(min + 1),
+      sessionId: o.sess || 'sess_z1', querySource: o.sub ? 'subagent' : 'main_turn',
+      request: { messages: o.msgs || [], body: { system: [{ type: 'text', text: 'рабочая папка: ' + (o.sys || s.root) }] } },
+      response: { usage: u, text: o.text || '', toolCalls: o.tools || [] },
+    });
+    const zU = (i, c, w, out) => ({ inputTokens: i, cacheReadTokens: c, cacheWriteTokens: w, outputTokens: out });
+    put(zroll, 'model-io-sess_z1.jsonl', [
+      zline(0, 'r1', zU(100, 1000, 10, 10), { msgs: [{ role: 'user', content: 'начинаем RE0099' }] }),
+      /* ретрай r2: попытка 1 (обрыв) и попытка 2 — счётчик один, вторая */
+      zline(2, 'r2', zU(1, 1, 0, 1), { attempt: 1, tools: [{ id: 't1', name: 'AskUserQuestion', input: {} }] }),
+      zline(2, 'r2', zU(200, 2000, 0, 20), { attempt: 2, msgs: [{ role: 'tool', content: 'ok' }], tools: [{ id: 't1', name: 'AskUserQuestion', input: {} }] }),
+      zline(12, 'r3', zU(300, 3000, 0, 30), { msgs: [{ role: 'tool', content: 'ответ человека' }], tools: [{ id: 't2', name: 'Read', input: {} }, { id: 't3', name: 'Bash', input: {} }] }),
+      zline(40, 'r4', zU(400, 4000, 0, 40), { msgs: [{ role: 'user', content: 'ещё' }] }),
+      zline(43, 'r5', zU(50, 0, 0, 5), { tools: [{ id: 't4', name: 'Bash', input: { command: 'ls' } }] }),
+    ].join('\n') + '\n');
+    put(zroll, 'model-io-sess_subagent_agent_zx.jsonl', [
+      zline(3, 's1', zU(100, 0, 0, 50), { sess: 'sess_subagent_agent_zx', sub: true, msgs: [{ role: 'user', content: 'задание про RE0099' }] }),
+    ].join('\n') + '\n');
+    put(zroll, 'model-io-sess_z2.jsonl', [zline(4, 'o1', zU(7777, 7777, 0, 7777), { sess: 'sess_z2', msgs: [{ role: 'user', content: 'другая задача' }] })].join('\n') + '\n');
+    put(zroll, 'model-io-sess_other.jsonl', [zline(5, 'x1', zU(9, 9, 0, 9), { sess: 'sess_other', sys: '/elsewhere', msgs: [{ role: 'user', content: 'RE0099' }] })].join('\n') + '\n');
+    const z = await collect({ home: home5, db: null }, s.root, T0, T0 + 100 * 60000, 'RE0099');
+    check('zcode: ретрай — один раз, вход с записью в кэш, субагент в токенах; чужая задача и чужой проект — мимо',
+      z.in === 100 + 10 + 200 + 300 + 400 + 50 + 100 && z.cache === 10000 && z.out === 155 && z.reqs === 6 && z.sessions === 1,
+      JSON.stringify({ in: z.in, cache: z.cache, out: z.out, reqs: z.reqs, sessions: z.sessions }));
+    check('zcode: пик — один запрос; вызовы инструментов; время без пауз и ожидания вопроса; общий читатель не включается',
+      z.peak === 4440 && z.calls === 4 && Math.round(z.ms / 60000) === 6 && z.src.zcode === 2 && !z.src.generic,
+      JSON.stringify({ peak: z.peak, calls: z.calls, min: z.ms / 60000, src: z.src }));
+    r = await run(s.ctx, ['report', 'RE0099', '--from', at(0), '--at', at(100), '--home', home5, '--db', path.join(s.root, 'none.db')]);
+    check('report по zcode: источник с формой zcode.rollout', r.ok && /zcode — файлов 2/.test(r.out.join('\n')) && r.out.join('\n').includes('zcode.rollout'), r.out.join(' / '));
+
     /* Вывод инструмента текстом (строка tool_result со строковым content) — не
        упоминание задачи (ревью RE0023 Р6): сессия о другом с таким выводом не в счёте. */
     const home6 = path.join(s.root, '_home6'), sess6 = path.join(home6, '.cli', 'projects', sanitize(s.root));
     put(sess6, 'o.jsonl', [human(1, 'другое'), asst(2, 'q1', U(5, 5, 5)), JSON.stringify({ type: 'tool_result', timestamp: at(3), message: { content: 'вывод: RE0099 в docs/index.md' } })].join('\n') + '\n');
     const six = await collect({ home: home6, db: null }, s.root, T0, T0 + 100 * 60000, 'RE0099');
     check('вывод инструмента текстом — не упоминание задачи', six.sessions === 0 && six.diag.inWindow === 1 && six.diag.hit === 0, JSON.stringify({ sessions: six.sessions, diag: six.diag }));
+
+    /* Пауза без записей дольше IDLE_MAX_MS, оборванная служебной записью (лимит запросов,
+       Л271), — не работа; короткий промежуток до такой записи остаётся работой. */
+    const pt = parseJsonl([asst(1, 'i1', U(1, 1, 1)), asst(5, 'i2', U(1, 1, 1)),
+      JSON.stringify({ type: 'user', timestamp: at(200), message: { content: '<task-notification>failed</task-notification>' } }),
+      asst(203, 'i3', U(1, 1, 1))].join('\n') + '\n', null);
+    check('пауза дольше 30 мин до служебной записи — не работа (Л271)', Math.round(activeMs(pt.events, [], T0, T0 + 300 * 60000) / 60000) === 7, Math.round(activeMs(pt.events, [], T0, T0 + 300 * 60000) / 60000) + ' мин');
 
     /* Время двух параллельных сессий — объединение промежутков, не сумма (Л234):
        c1 работает 0 → 5 мин, c2 — 2 → 8 мин; вместе 8 мин, а не 11. */

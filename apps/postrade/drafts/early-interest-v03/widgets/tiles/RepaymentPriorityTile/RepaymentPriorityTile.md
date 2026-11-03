@@ -36,7 +36,7 @@ knowledge: []
 Tile (заголовок «Приоритет погашения»)
 ├── шапка: IconButton edit «Изменить приоритет погашения» (только data-mode="edit")
 └── тело
-    └── ряд Entity S по горизонтали: номер приоритета в квадрате (entity__icon--neutral) + название вида
+    └── ряд Entity M по горизонтали: номер приоритета в квадрате (entity__icon--neutral) + название вида
 ```
 
 ## Компоненты (Components)
@@ -44,7 +44,7 @@ Tile (заголовок «Приоритет погашения»)
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
 | Tile | ДС — `design-system/components/organisms/Tile/Tile.md` | заголовок, действие шапки |
-| Entity | ДС — `design-system/components/organisms/Entity/Entity.md` | `entity--s`, ведущий `entity__icon--neutral` с номером; виды стоят в ряд (`grid-auto-flow: column`), название переносится по словам |
+| Entity | ДС — `design-system/components/organisms/Entity/Entity.md` | `entity` (размер M, иконка 40×40), подпись вида — Body M, не жирная (жирная подпись только у размера XL), ведущий `entity__icon--neutral` с номером; виды стоят в ряд (`grid-auto-flow: column`), название переносится по словам |
 | IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | `edit`, `ibtn--neutral ibtn--m` |
 
 ## Поля (Fields)

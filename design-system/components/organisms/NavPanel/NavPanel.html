@@ -32,7 +32,7 @@
 
   
   
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:76ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:76ch; text-wrap:pretty; }
 
   .row { display:flex; flex-wrap:wrap; align-items:flex-start; gap:40px; }
 
@@ -42,7 +42,7 @@
 
 /* ---------- playground: демо — в верхнюю панель, контролы — во вкладку «Конструктор» ---------- */
 .pg__stage { flex:1; min-height:0; width:100%; padding:32px; position:relative; overflow:auto; background: var(--bg-page); }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
 
   /* ---------- nav frame ---------- */
   .nav-frame { display:inline-flex; align-items:stretch; }
@@ -54,26 +54,26 @@
   .anat__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:28px; display:flex; justify-content:center; overflow:auto; }
   .anat__legend { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; counter-reset:a; }
   .anat__legend li { display:flex; gap:14px; align-items:flex-start; }
-  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center; }
-  .anat__legend li .t .k { font: var(--type-body-m-strong); color: var(--text-primary); }
+  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center; }
+  .anat__legend li .t .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
 
   /* ---------- modes ---------- */
   .modes { display:flex; gap:28px; flex-wrap:wrap; align-items:flex-start; }
   .mode-col { display:flex; flex-direction:column; gap:14px; }
   .mode-col__cap { max-width:240px; }
-  .mode-col__cap .k { font: var(--type-body-m-strong); color: var(--text-primary); display:block; }
-  .mode-col__cap .d { font: var(--type-body-s); color: var(--text-secondary); display:block; margin-top:3px; text-wrap:pretty; }
+  .mode-col__cap .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); display:block; }
+  .mode-col__cap .d { font: var(--type-body-s-reg); color: var(--text-secondary); display:block; margin-top:3px; text-wrap:pretty; }
 
   /* ---------- element variants ---------- */
   .vgrid { display:flex; flex-direction:column; gap:16px; }
   .vrow { display:flex; align-items:flex-start; gap:24px; padding:20px 22px; border:1px solid var(--border-light); border-radius:14px; background: var(--bg-tile); flex-wrap:wrap; }
   .vrow__cap { flex:none; width:200px; }
-  .vrow__cap .k { font: var(--type-body-m-strong); color: var(--text-primary); display:block; }
-  .vrow__cap .d { font: var(--type-body-s); color: var(--text-secondary); display:block; margin-top:3px; text-wrap:pretty; }
+  .vrow__cap .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); display:block; }
+  .vrow__cap .d { font: var(--type-body-s-reg); color: var(--text-secondary); display:block; margin-top:3px; text-wrap:pretty; }
   .vrow__demo { flex:1 1 340px; min-width:0; }
   .el-pair { display:flex; gap:24px; flex-wrap:wrap; }
   .el-col { display:flex; flex-direction:column; gap:8px; }
-  .el-tag { font: var(--type-body-xs); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; }
+  .el-tag { font: var(--type-body-xs-reg); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; }
   .el-demo { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; }
   .el-demo--rail { width:56px; }
   .el-demo--drawer { width:320px; }
@@ -83,8 +83,8 @@
 
   /* ---------- sizes / tables ---------- */
   .size-table, .dev-table, .ref-table { width:100%; border-collapse:collapse; }
-  .size-table th, .size-table td, .dev-table th, .dev-table td, .ref-table th, .ref-table td { text-align:left; padding:13px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); vertical-align:top; }
-  .size-table th, .dev-table th, .ref-table th { font: var(--type-body-s-strong); color: var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; font-size:12px; }
+  .size-table th, .size-table td, .dev-table th, .dev-table td, .ref-table th, .ref-table td { text-align:left; padding:13px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); vertical-align:top; }
+  .size-table th, .dev-table th, .ref-table th { font: var(--type-body-s-strong-smb); color: var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; font-size:12px; }
   .size-table tr:last-child td, .dev-table tr:last-child td, .ref-table tr:last-child td { border-bottom:none; }
   .size-table td.num, .dev-table td.rt-num { font-variant-numeric: tabular-nums; color: var(--text-secondary); }
   kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; color: var(--text-primary); background: var(--bg-table-default-focus); border:1px solid var(--border-primary); border-radius:var(--radius-xs); padding:1px 7px; }
@@ -93,7 +93,7 @@
   .states { display:grid; grid-template-columns: repeat(2, 1fr); gap:22px; }
   @media (max-width:760px){ .states { grid-template-columns: 1fr; } }
   .state-cell { display:flex; flex-direction:column; gap:12px; align-items:flex-start; padding:20px 22px; border:1px solid var(--border-light); border-radius:14px; background: var(--bg-tile); }
-  .state-desc { font: var(--type-body-s); color: var(--text-inactive); text-wrap:pretty; }
+  .state-desc { font: var(--type-body-s-reg); color: var(--text-inactive); text-wrap:pretty; }
   /* демонстрация hover (нельзя навести программно) */
   .state-cell .nav__item.is-hover { background: var(--bg-table-default-hover); color: var(--text-primary); }
 
@@ -101,25 +101,25 @@
   .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
   .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
-  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
-  .guide-card__body { padding:16px 20px 22px; font: var(--type-body-m); color: var(--text-primary); }
-  .guide-card__cap { padding:0 20px 20px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong-smb); padding:14px 20px 0; }
+  .guide-card__body { padding:16px 20px 22px; font: var(--type-body-m-reg); color: var(--text-primary); }
+  .guide-card__cap { padding:0 20px 20px; font: var(--type-body-xs-reg); color: var(--text-inactive); text-wrap:pretty; }
 
   /* ---------- colors ---------- */
   
   @media (max-width:900px){ .color-ref { grid-template-columns:1fr; } }
   
-  .cref-group > h3 { font: var(--type-h5-strong); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
+  .cref-group > h3 { font: var(--type-h5-strong-smb); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
   .cref-row { display:grid; grid-template-columns: 36px 1fr; gap:14px; align-items:center; padding:9px 22px; }
   .cref-sw .cf { position:absolute; inset:0; }
 
   /* ---------- developer handoff ---------- */
-  .subhead { font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px; }
+  .subhead { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0 0 16px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 
   .backlog { margin-top:90px; }
-  .backlog > h2 { font: var(--type-h4-strong); margin:0 0 8px; color: var(--text-primary); }
-  .backlog > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 24px; max-width:76ch; }
+  .backlog > h2 { font: var(--type-h4-strong-smb); margin:0 0 8px; color: var(--text-primary); }
+  .backlog > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 24px; max-width:76ch; }
 
 </style>
   <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
@@ -332,7 +332,7 @@
     <h2>Типографика</h2>
     <p class="desc">Три текстовых слоя панели на гарнитуре SB Sans Text.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.89fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.89fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Подпись пункта</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.89fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок блока</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.89fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Профиль: ФИО</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-strong</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-strong)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.89fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Профиль: должность / организация</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.89fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Тултип Rail</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.89fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.89fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Подпись пункта</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.89fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок блока</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.89fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Профиль: ФИО</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-strong-smb</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-strong-smb)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.89fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Профиль: должность / организация</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.89fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Тултип Rail</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
     <table id="typo-table" style="display:none"><tbody></tbody></table>
   </section>
@@ -686,7 +686,7 @@ DSNavPanel.setMode(navEl, 'drawer');   // 'rail' | 'drawer' | 'fixed'
   display: flex;
   align-items: flex-end;
   padding: 0 12px 6px;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
   white-space: nowrap;
   overflow: hidden;
@@ -734,7 +734,7 @@ DSNavPanel.setMode(navEl, 'drawer');   // 'rail' | 'drawer' | 'fixed'
 .nav__label {
   flex: 1 1 auto;
   min-width: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -754,7 +754,7 @@ DSNavPanel.setMode(navEl, 'drawer');   // 'rail' | 'drawer' | 'fixed'
 .nav__item[aria-current]:not([aria-current="false"]),
 .nav__item[aria-current]:not([aria-current="false"]):hover { background: var(--bg-table-default-focus); color: var(--text-primary); }
 .nav__item--selected .nav__label,
-.nav__item[aria-current]:not([aria-current="false"]) .nav__label { font: var(--type-body-m-strong); }
+.nav__item[aria-current]:not([aria-current="false"]) .nav__label { font: var(--type-body-m-strong-smb); }
 .nav__item--selected .nav__ico,
 .nav__item[aria-current]:not([aria-current="false"]) .nav__ico { color: var(--secondary-dark); }
 
@@ -802,7 +802,7 @@ DSNavPanel.setMode(navEl, 'drawer');   // 'rail' | 'drawer' | 'fixed'
   border-radius: var(--radius-m);
   background: var(--bg-hint);
   color: var(--text-on-dark);
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   box-shadow: var(--elevation-2);
   opacity: 0;
   visibility: hidden;
@@ -814,7 +814,7 @@ DSNavPanel.setMode(navEl, 'drawer');   // 'rail' | 'drawer' | 'fixed'
    показ (:hover) не задеваем */
 .nav--rail .nav__item--selected .nav__label,
 .nav--rail .nav__item[aria-current]:not([aria-current="false"]) .nav__label {
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
 }
 .nav--rail .nav__item:hover .nav__label,
 .nav--rail .nav__item:focus-visible .nav__label {
@@ -861,8 +861,8 @@ DSNavPanel.setMode(navEl, 'drawer');   // 'rail' | 'drawer' | 'fixed'
 }
 .nav__user:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
 .nav__user-text { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.nav__user-name { font: var(--type-body-s-strong); color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.nav__user-role { font: var(--type-body-xs); color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav__user-name { font: var(--type-body-s-strong-smb); color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav__user-role { font: var(--type-body-xs-reg); color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nav__logout { flex: none; }
 
 .nav--rail .nav__user-text,

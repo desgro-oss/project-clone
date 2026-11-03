@@ -15,6 +15,6 @@
 .lc-products { container-type: inline-size; }
 .lc-products__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-16); }
 .lc-products__grid:empty { display: none; }
-.lc-products__empty { font: var(--type-body-m); color: var(--text-secondary); margin: 0; }
+.lc-products__empty { font: var(--type-body-m-reg); color: var(--text-secondary); margin: 0; }
 .lc-products[data-variant="potential"] [data-pt-add-head] { display: none; }
 @container (max-width: 900px) { .lc-products__grid > [class*="colw-"] { grid-column: span var(--colw); } }

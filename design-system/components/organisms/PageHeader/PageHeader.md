@@ -31,7 +31,7 @@ PageHeader — заголовок страницы рабочей области
 ## Ключевые правила (исключения описываются индивидуально), всегда сверху, под Breadcrumbs. Один на страницу. Title = семантический h1 страницы. Не путать с TileHeader (заголовок плашки) и Modal_Top (шапка модалки).
 - **Анатомия** — `.phead` = `.phead__main` (колонка: `.phead__title-row` → `.phead__subtitle`) + `.phead__actions`. В title-row: `.phead__title-group` (неразрывная группа: `.phead__title-ico` опц. · `.phead__title` · `.phead__edit` опц.) · `.phead__chips` (опц.) · `.phead__return` (опц.).
 - **Варианты** — все части независимо опциональны (16 комбинаций Subtitle×Chips×Return×Actions); Dashboard=Yes → `.phead--dashboard` (белая подложка `--bg-tile`, радиус 8, паддинг 12/16) — дашборды и кейсы с заголовком на отдельной белой панели.
-- **Title** — токен `--type-h3-strong` (28/32), многострочный: усечения нет, длинный заголовок переносится по словам на нужное число строк. Иконка слева 24px `--text-inactive` — информационная. Edit — IconButton neutral S 24×24 (глиф `edit`), открывает модальное окно переименования (инлайн-редактирования нет).
+- **Title** — токен `--type-h3-strong-smb` (28/32), многострочный: усечения нет, длинный заголовок переносится по словам на нужное число строк. Иконка слева 24px `--text-inactive` — информационная. Edit — IconButton neutral S 24×24 (глиф `edit`), открывает модальное окно переименования (инлайн-редактирования нет).
 - **Chips** — Chip ReadOnly S **rounded** (`chip--rounded`): чипы заголовка — статусы, а статусы всегда скруглённые. Один или список. Стоят после Title/Edit.
 - **Return** — Button Outline XS с глифом `flip-backward`: возврат на уровень выше (из таблицы сделки — к списку сделок). Обычно одна; в редких кейсах больше.
 - **Subtitle** — Body S `--text-secondary`, три вида: просто текст, текст с иконкой (опц. 16 слева/справа, `--success`), или кастомный — встроенные мета-элементы `.phead__meta` (Body XS `--text-inactive`, иконка+текст), например «7 · Версия 12 (07.02.2021)».
@@ -39,7 +39,7 @@ PageHeader — заголовок страницы рабочей области
 - **Поведение** — адаптивность: <1024 второстепенные actions уходят в MenuButton, а чипы и Return переносятся отдельной строкой под Subtitle (`.phead__extras`); <720 — `.phead--stack` (actions вниз, на всю ширину). Title на любой ширине показывается целиком (перенос строк, без Tooltip). MenuButton открывает ContextMenu поверх страницы. Переполнение chips — чип-счётчик «+N».
 - **Состояния** — собственных нет; интерактивны только вложенные компоненты (Edit, Return, Actions, MenuButton, chip__info).
 - **Доступность** — Title = h1; Edit/MenuButton — aria-label; MenuButton — aria-haspopup="menu"/aria-expanded; Return — текст или aria-label с указанием куда ведёт; декоративные иконки aria-hidden.
-- **Типографика** — Title `--type-h3-strong`; Subtitle `--type-body-s`; мета `--type-body-xs`.
+- **Типографика** — Title `--type-h3-strong-smb`; Subtitle `--type-body-s-reg`; мета `--type-body-xs-reg`.
 - **Цвета** — Title `--text-primary`; иконка слева и мета `--text-inactive`; Subtitle `--text-secondary`; иконка сабтайтла/мета-ок `--success`; подложка Dashboard `--bg-tile`.
 
 ## DOM-анатомия
@@ -79,7 +79,7 @@ PageHeader — заголовок страницы рабочей области
 | `.phead__title-row` | строка частей заголовка, gap 8, min-height 40 (под кнопки Actions), wrap при переполнении, растёт под многострочный Title |
 | `.phead__title-group` | неразрывная группа IconLeft + Title + Edit, gap 8, padding-top 4, min-width:0 |
 | `.phead__title-ico` | иконка слева 24, `--text-inactive` |
-| `.phead__title` | h1, `--type-h3-strong`, многострочный (без усечения), min-width 120px |
+| `.phead__title` | h1, `--type-h3-strong-smb`, многострочный (без усечения), min-width 120px |
 | `.phead__edit` | слот IconButton neutral S (edit) |
 | `.phead__chips` | ряд Chip ReadOnly S rounded, gap 8 |
 | `.phead__return` | слот кнопки возврата (Outline XS) |

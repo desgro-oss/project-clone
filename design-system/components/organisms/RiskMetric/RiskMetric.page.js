@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ], () => state.popState, v => state.popState = v));
 
     const hint = document.createElement('p');
-    hint.style.cssText = 'font:var(--type-body-s); color:var(--text-inactive); margin:-8px 0 0;';
+    hint.style.cssText = 'font:var(--type-body-s-reg); color:var(--text-inactive); margin:-8px 0 0;';
     hint.textContent = 'Кликните по иконке-информеру в превью, чтобы открыть Popover_RiskMetric. Если нет ни зоны, ни рейтинга, ни риск-сегмента с профилем — информера нет и поповер не открывается.';
     controls.appendChild(hint);
 

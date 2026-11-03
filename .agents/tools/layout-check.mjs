@@ -62,6 +62,12 @@ const isDsScript = (abs) => {
   const k = L.kindOf(path.relative(DS, abs).split(path.sep).join('/'));
   return !!k && (k.kind === 'script' || k.kind === 'tool');
 };
+/* Загрузчик ДС проекта (`project.json → boot`: ds-config.js и ds-body.js) — не
+   скрипт экрана, а генерат boot-build.mjs, один на все страницы. Во входе
+   правил он шум: З11 на каждой странице считал склейку адреса ДС в его
+   `document.write` непрочитанными атрибутами (приёмка ibp-redesign-v2,
+   26.10.2026). Отсекается там же, где рантаймы ДС. */
+const BOOT_SCRIPTS = new Set(PRJ.bootAbs ? [PRJ.bootAbs.head, PRJ.bootAbs.body] : []);
 
 /* ---------------- токены ДС (источник истины — CSS основ и компонентов ДС) ---------------- */
 
@@ -90,6 +96,18 @@ const IBTN_GEOM = (() => {
 })();
 
 /* Весь CSS ДС одной строкой — вход Б44 (gap контейнеров компонентов). */
+/* Базовая палитра ДС — ступени `--<цвет>-<NNN>` из Colors.css, которых не
+   переопределяет ни одна тема (вход Б49). Тема меняет семантические токены
+   (--text-*, --bg-*, --st-*), а базовые одинаковы везде: `--cgrey-900` в
+   тёмной теме остаётся почти чёрным. */
+const BASE_PALETTE = (() => {
+  try {
+    const colors = readFileSync(path.join(DS, 'foundations/Colors/Colors.css'), 'utf8');
+    const themes = readFileSync(path.join(DS, 'foundations/Themes/Themes.css'), 'utf8');
+    const themed = new Set([...themes.matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]));
+    return new Set([...colors.matchAll(/^\s*(--[a-z-]+-(?:\d{2,3}|A\d{3}))\s*:/gm)].map((m) => m[1]).filter((t) => !themed.has(t)));
+  } catch (e) { return new Set(); }
+})();
 const DS_CSS_ALL = (() => { try { return L.styles().map((f) => readFileSync(L.abs(f), 'utf8')).join('\n'); } catch (e) { return ''; } })();
 
 /* Длина из CSS: «8px» или «var(--space-8)» (через токены ДС); остальное — 0. */
@@ -356,7 +374,10 @@ function parseTiles(html, opts = {}) {
      разбирались с пустым stackRanges — тайлы в стопке теряли признак inStack,
      их span читался с самого тайла (его там нет by design) и ряд давал
      ложный Б7 «= 0 ≠ 12». */
-  const stackRanges = tagRanges(html, /<div class="tile-stack[^"]*"/g, 'div');
+  /* `class` не обязан стоять первым атрибутом: ассемблер дописывает класс метки ds-include
+     в конец и переставляет атрибуты корня (`<div data-mode id class="tile-stack col-12">`) —
+     стопка из виджета иначе не находилась, и её тайлы читались как тайлы без ширины. */
+  const stackRanges = tagRanges(html, /<div\b[^>]*\sclass="(?:[^"]*\s)?tile-stack[^"]*"[^>]*>/g, 'div');
   /* Внесеточные блоки: ширина задана не колонками, а причиной в data-off-grid
      (санкционированное исключение из Spacing — «кастомный фиксированный размер
      … помеченный data-off-grid»). Тайл внутри такого блока колонок не имеет. */
@@ -547,6 +568,23 @@ function startPageDeclared(spec) {
   return end > 0 && lines.slice(1, end).some((l) => /^start_page:\s*["']?true["']?\s*(#.*)?$/.test(l));
 }
 
+/* Канон разделов спеки страницы модуля (RE0045) — заголовки «##» из того же
+   шаблона, по которому спеки пишутся: `.agents/skills/screen-spec/references/
+   template.md`. Копии списка нигде нет — как КТ2 паспортов виджетов читает
+   Component.md. Русская часть заголовка — без номера и английского имени в
+   скобках: номер нестрогий (якорь кросс-ссылок «раздел N»), скобки у старых
+   спек отсутствовать не обязаны. Не читается шаблон — это поломка харнеса,
+   а не «молчаливый пропуск» (класс Л48). */
+const RU_OF_HEADING = (h) => h.replace(/^\d+[а-я]?[.)]\s*/, '').replace(/\s*\([^)]*\)\s*$/, '').trim().toLowerCase();
+let CANON50 = null;
+function pageCanon() {
+  if (CANON50) return CANON50;
+  const src = readFileSync(path.join(ROOT, '.agents/skills/screen-spec/references/template.md'), 'utf8');
+  CANON50 = [...src.matchAll(/^## (.+)$/gm)].map((m) => RU_OF_HEADING(m[1]));
+  if (CANON50.length < 3) throw new Error('канон спек страниц: template.md дал меньше трёх разделов');
+  return CANON50;
+}
+
 /* ---------------- механика (Б-блокеры) ---------------- */
 
 function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pagePath)) {
@@ -597,6 +635,36 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      (`class="ibtn ibtn--neutral ibtn--m nav__burger"`) виден, атрибут,
      склеенный из кусков (`class="tc' + extra + '"`), — нет (Л70). */
   const markupInScripts = collectScriptMarkup(noComments);
+  /* Подключённые локальные скрипты страницы — второй вход тех же правил
+     (урок Л259). Виджет строит строки дерева и ячейки таблицы в своём
+     `widgets/<группа>/<Имя>/<Имя>.js`, а страница подключает его тегом: в
+     литералах инлайновых <script> этой разметки нет, и `.tc__twisty` с глифом
+     вниз проходил Б40 зелёным на двух экранах — правило есть, вход усечён.
+     Вход тот же, что у З12 и Б45: `<script src>` с локальным литеральным
+     адресом, без рантаймов ДС (разметка компонентов лежит в них по
+     устройству, и любой экран выглядел бы её автором) и без загрузчика ДС
+     (`BOOT_SCRIPTS`). Фрагмент <script> не несёт (СБ3) — скрипты виджетов
+     подключает страница, и они уже здесь. */
+  const linkedScripts = [];
+  if (pagePath) {
+    for (const m of raw.matchAll(/<script\b[^>]*\ssrc="([^"]+)"/gi)) {
+      const href = m[1];
+      if (/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(href) || !isLiteralAttr(href)) continue;
+      const abs = path.resolve(path.dirname(pagePath), href);
+      if (!existsSync(abs) || isDsScript(abs) || BOOT_SCRIPTS.has(abs)) continue;
+      linkedScripts.push({ href, src: readFileSync(abs, 'utf8') });
+    }
+  }
+  /* Разметка по источникам, пары [вид, текст]: `HTML` — статическая, `JS` —
+     литералы инлайновых <script> (позиция в позицию с экраном), дальше —
+     подключённые файлы под своими именами. Литералы файла достаются тем же
+     разбором `collectScriptMarkup`: строка находки — строка этого файла.
+     Правила анатомии JS-шаблонов берут весь список, а не одну пару
+     `html` / `markupInScripts`. */
+  const scriptSources = [['JS', markupInScripts], ...linkedScripts.map((l) => [path.basename(l.href), collectScriptMarkup('<script>' + l.src + '</script>')])];
+  const markupSources = [['HTML', html], ...scriptSources];
+  /* где найдено: строка экрана, а в подключённом скрипте — файл и строка в нём */
+  const foundAt = (kind, src, i) => (kind === 'HTML' || kind === 'JS' ? '' : kind + ', ') + 'строка ' + lineOf(src, i);
 
   /* Эталон — шаблон экрана ДС или образец скилла (определение одно, `isEtalon`
      в runlog.mjs) — не экран проекта: спутника-спеки у него нет по
@@ -662,6 +730,27 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
       : `Б34 литерала пути до ДС нет — ДС подключает загрузчик`);
   }
 
+  /* Б51 — старые имена типографики (RE0048). С Typography 2.000 рампа живёт
+     только в именах UI-kit (--type-h1-light, --type-body-m-reg,
+     .ds-h6-strong-smb, …); 19 старых токенов и классов удалены из
+     Typography.css вместе со ссылками. В экране это гарантированно битая
+     ссылка: токена нет — браузер молча возьмёт наследование, класса нет —
+     стиль не применится. Блокер (не WARN): у линтера ДС то же имя —
+     B20/WARN, здесь отсылка сломана насмерть. Комментарии не в счёт:
+     упоминание в пояснении ничего не подключает. */
+  {
+    const typoOld = /(?<![A-Za-z0-9-])(?:--type-(?:h1|h2|h3-strong|h3|h4-strong|h4|h5-strong|h5|h6-strong|h6|body-xl-strong|body-xl|body-l-strong|body-l|body-m-strong|body-m|body-s-strong|body-s|body-xs)|ds-(?:h1|h2|h3-strong|h3|h4-strong|h4|h5-strong|h5|h6-strong|h6|body-xl-strong|body-xl|body-l-strong|body-l|body-m-strong|body-m|body-s-strong|body-s|body-xs))(?![A-Za-z0-9-])/g;
+    /* комментарии маскируются пробелами (строки считаются): HTML — чтобы
+       пояснение фикстуры не было находкой, CSS — как у Б34 */
+    const code = noComments
+      .replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, ' '))
+      .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '));
+    const lines = [...code.matchAll(typoOld)].map((m) => lineOf(code, m.index));
+    ok(lines.length === 0, lines.length
+      ? `Б51 старые имена типографики на строках ${[...new Set(lines)].join(', ')}: удалены в Typography 2.000 — писать имена кита (--type-body-m-reg, .ds-h6-strong-smb, …)`
+      : `Б51 старых имён типографики нет`);
+  }
+
   /* Б2 иконки */
   ok(!/<svg[\s>]/.test(html), 'Б2 нет инлайн-<svg>');
   /* Значения атрибутов берутся из разметки СО скриптами — имя иконки в
@@ -711,18 +800,18 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      `design-system/`, до экранов приложений и до эталонов скиллов он не достаёт.
      Строка пользователя — ссылка на личный кабинет (NavPanel.md:125), не <div>:
      иначе футер панели недостижим с клавиатуры. */
-  const navSources = [html, markupInScripts];
-  if (navSources.some((s) => s.includes('class="nav '))) {
-    const hasPin = navSources.some((s) => /nav__pin/.test(s));
+  const navSources = markupSources;
+  if (navSources.some(([, s]) => s.includes('class="nav '))) {
+    const hasPin = navSources.some(([, s]) => /nav__pin/.test(s));
     ok(hasPin, hasPin
       ? 'Б31 анатомия NavPanel: .nav__pin на месте'
       : 'Б31 анатомия NavPanel: нет .nav__pin — в rail его прячет CSS, но в drawer/fixed взяться ему неоткуда');
     const badUser = [];
-    for (const src of navSources) {
+    for (const [kind, src] of navSources) {
       for (const m of src.matchAll(/<([a-zA-Z]+)[^>]*class="([^"]*)"/g)) {
         if (!isLiteralAttr(m[2])) continue;   // склейка — см. Б15 выше
         if (!m[2].split(/\s+/).includes('nav__user')) continue;
-        if (m[1].toLowerCase() !== 'a') badUser.push(`<${m[1]}> (строка ${lineOf(src, m.index)})`);
+        if (m[1].toLowerCase() !== 'a') badUser.push(`<${m[1]}> (${foundAt(kind, src, m.index)})`);
       }
     }
     if (badUser.length) {
@@ -740,15 +829,19 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      несколько — контейнер обязан быть. «Несколько» — две и больше в разметке
      или хотя бы одна в JS-шаблоне: шаблон строки рендерится циклом. Одиночная
      статическая строка (карточка объекта) правилу не подпадает. Классы берутся
-     и из разметки, и из литералов скриптов (вход `markupInScripts`, как у Б31). */
+     и из разметки, и из литералов скриптов (вход `scriptSources`, как у Б31). */
   const classTokens = (src) => [...src.matchAll(/class="([^"]*)"/g)].flatMap((m) => m[1].split(/[\s+]+/));
   const interStatic = classTokens(html).filter((c) => c === 'entity--interactive').length;
-  const interScript = classTokens(markupInScripts).filter((c) => c === 'entity--interactive').length;
+  /* по источникам: в каком скрипте шаблон строки — инлайновом или подключённом файле */
+  const interBySource = scriptSources
+    .map(([kind, s]) => [kind === 'JS' ? 'встроенный <script>' : kind, classTokens(s).filter((c) => c === 'entity--interactive').length])
+    .filter(([, n]) => n > 0);
+  const interScript = interBySource.reduce((n, [, k]) => n + k, 0);
   if (interStatic >= 2 || interScript >= 1) {
-    const hasEntityList = [html, markupInScripts].some((s) => classTokens(s).includes('entity-list'));
+    const hasEntityList = markupSources.some(([, s]) => classTokens(s).includes('entity-list'));
     ok(hasEntityList, hasEntityList
       ? 'Б33 интерактивные Entity собраны в .entity-list'
-      : `Б33 интерактивных Entity в разметке ${interStatic}, в JS-шаблонах ${interScript}, а .entity-list нет — подложка hover выносится на 8px (отрицательный margin компонента) и накроет соседнюю строку`);
+      : `Б33 интерактивных Entity в разметке ${interStatic}, в JS-шаблонах ${interScript}${interBySource.length ? ' (' + interBySource.map(([w, n]) => w + ': ' + n).join(', ') + ')' : ''}, а .entity-list нет — подложка hover выносится на 8px (отрицательный margin компонента) и накроет соседнюю строку`);
   }
 
   /* Б6 заголовок.
@@ -876,7 +969,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      (уроки Л28–Л30). Меряем не «стоит ли класс», а помещается ли текст.
 
      Эвристика та же, что у K1/K2.1: ~7px на символ для body-s (шрифт ячейки
-     .tc — --type-body-s 14/16). Запас 15% — при значении около порога
+     .tc — --type-body-s-reg 14/16). Запас 15% — при значении около порога
      выводим замечание, а не блокер (правило §9 «близко к порогу — проверить
      вручную»).
 
@@ -1085,15 +1178,15 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      спекой» без перечня — это сверка каждого компонента с его спекой, а не
      строковая проверка. */
   const sizedM = [];
-  /* Два входа: статическая разметка и разметка из JS-шаблонов. Один и тот же
-     узел попасть в оба не может — в `html` содержимое <script> погашено, —
-     поэтому двойного счёта нет. */
-  for (const src of [html, markupInScripts]) {
+  /* Два входа: статическая разметка и разметка из JS-шаблонов (инлайновых и
+     подключённых). Один и тот же узел попасть в оба не может — в `html`
+     содержимое <script> погашено, — поэтому двойного счёта нет. */
+  for (const [kind, src] of markupSources) {
     for (const hook of ['nav__burger', 'nav__pin', 'nav__logout']) {
       const rx = new RegExp('<button[^>]*class="([^"]*\\b' + hook + '\\b[^"]*)"', 'g');
       for (const m of src.matchAll(rx)) {
         if (!isLiteralAttr(m[1])) continue;   // атрибут разорван склейкой — не список классов (Л70)
-        if (!/\bibtn--m\b/.test(m[1])) sizedM.push(`.${hook} (строка ${lineOf(src, m.index)})`);
+        if (!/\bibtn--m\b/.test(m[1])) sizedM.push(`.${hook} (${foundAt(kind, src, m.index)})`);
       }
     }
   }
@@ -1154,16 +1247,22 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      присутствует по построению, и убрать его нельзя: на нём держится откат
      Л103. Доказывается мутацией настоящего экрана, как правила с входом-
      репозиторием (Л95, Л102). */
+  /* Вход — все JS-шаблоны, которые читают правила: инлайновые и подключённые
+     скрипты (Л259). Цена считается по тому же входу, иначе непрочитанное в
+     подключённом файле молчало бы (Л100). */
   {
-    const glued = [];
-    let total = 0;
-    for (const m of markupInScripts.matchAll(/([a-zA-Z][\w:-]*)="([^"]*)"/g)) {
-      total++;
-      if (!isLiteralAttr(m[2])) glued.push(lineOf(markupInScripts, m.index));
+    let glued = 0, total = 0;
+    const where = [];
+    for (const [kind, src] of scriptSources) {
+      const lines = new Set();
+      for (const m of src.matchAll(/([a-zA-Z][\w:-]*)="([^"]*)"/g)) {
+        total++;
+        if (!isLiteralAttr(m[2])) { glued++; lines.add(lineOf(src, m.index)); }
+      }
+      if (lines.size) where.push((kind === 'JS' ? 'строки ' : kind + ', строки ') + [...lines].sort((a, b) => a - b).join(', '));
     }
-    if (glued.length) {
-      const lines = [...new Set(glued)].sort((a, b) => a - b);
-      warn(`З11 атрибутов в JS-шаблонах не прочитано: ${glued.length} из ${total} (строки ${lines.join(', ')}) — значение собрано склейкой, правило отсеивает такой атрибут целиком`);
+    if (glued) {
+      warn(`З11 атрибутов в JS-шаблонах не прочитано: ${glued} из ${total} (${where.join('; ')}) — значение собрано склейкой, правило отсеивает такой атрибут целиком`);
     }
   }
 
@@ -1184,8 +1283,8 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
 
   /* Б36 — слоты сортировки/закрепления TableCell используют IconButton S.
      Одного th__sort недостаточно: без ibtn остаётся браузерная серая рамка.
-     Проверяются статическая разметка и подключённые JS-шаблоны. */
-  for (const [kind, source] of [['HTML', html], ['JS', markupInScripts]]) {
+     Проверяются статическая разметка и JS-шаблоны, инлайновые и подключённые. */
+  for (const [kind, source] of markupSources) {
     const visibleSource = source.replace(/<!--[\s\S]*?-->/g, '');
     for (const m of visibleSource.matchAll(/<button\b[^>]*class="([^"]*)"[^>]*>/g)) {
       if (!isLiteralAttr(m[1])) continue;
@@ -1200,7 +1299,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
 
   /* Б37 — data-kb-collapse принадлежит пункту Menu, а не IconButton
      шапки. Kanban восстанавливает колонку по триггеру открытия меню. */
-  for (const [kind, source] of [['HTML', html], ['JS', markupInScripts]]) {
+  for (const [kind, source] of markupSources) {
     const visibleSource = source.replace(/<!--[\s\S]*?-->/g, '');
     for (const m of visibleSource.matchAll(/<button\b[^>]*\bdata-kb-collapse(?=[\s=>])[^>]*>/g)) {
       const classes = /class="([^"]*)"/.exec(m[0]);
@@ -1214,7 +1313,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
   /* Б38 — значение TableSettings является CSS-селектором, не id.
      Проверяем разрешимые статикой случаи; сложные/динамические селекторы
      требуют прогона DOM. Пустой атрибут — штатный автопоиск таблицы. */
-  const tableSettingsMarkup = html + '\n' + markupInScripts;
+  const tableSettingsMarkup = markupSources.map(([, s]) => s).join('\n');
   for (const m of tableSettingsMarkup.matchAll(/<button\b[^>]*\bdata-table-settings="([^"]*)"[^>]*>/g)) {
     const selector = m[1];
     if (!selector || !isLiteralAttr(selector)) continue;
@@ -1231,7 +1330,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
 
   /* Б39 — текстовый слот SegmentControl не содержит ведущую иконку:
      внутри label глиф display:block оказывается над текстом. */
-  for (const [kind, source] of [['HTML', html], ['JS', markupInScripts]]) {
+  for (const [kind, source] of markupSources) {
     const visibleSource = source.replace(/<!--[\s\S]*?-->/g, '');
     for (const m of visibleSource.matchAll(/<span\b[^>]*class="(?:[^"]*\s)?segctrl__label(?:\s[^"]*)?"[^>]*>([\s\S]*?)<\/span>/g)) {
       const nestedIcon = /<i\b[^>]*\bdata-icon\s*=/.test(m[1]);
@@ -1244,8 +1343,10 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
   /* З2 — сортировка: активна не больше чем у одной колонки, и у кнопки
      сортировки есть непустой ключ. Пустой `data-sort` уходит в событие
      `sort`, и бэкенд получает запрос без поля сортировки. */
-  /* Б40 — TableCell поворачивает раскрытый twisty на 90°: базовый глиф вправо. */
-  for (const [kind, source] of [['HTML', html], ['JS', markupInScripts]]) {
+  /* Б40 — TableCell поворачивает раскрытый twisty на 90°: базовый глиф вправо.
+     Дерево обычно строит скрипт виджета, подключённый тегом, — вход правила
+     включает и его (Л259). */
+  for (const [kind, source] of markupSources) {
     const visibleSource = source.replace(/<!--[\s\S]*?-->/g, '');
     for (const m of visibleSource.matchAll(/<button\b[^>]*class="(?:[^"]*\s)?tc__twisty(?:\s[^"]*)?"[^>]*>([\s\S]*?)<\/button>/g)) {
       const icon = m[1].match(/\bdata-icon="([^"]+)"/);
@@ -1536,6 +1637,99 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
       ok(journal.length === 0, journal.length
         ? `Б32 в ${path.basename(spec)} разделы-журнал, строки ${journal.slice(0, 5).join(', ')}${journal.length > 5 ? ` и ещё ${journal.length - 5}` : ''} — спека описывает состояние экрана, история живёт в git`
         : 'Б32 спека описывает состояние — разделов-журнала нет');
+
+      /* Б50 — разделы «##» спеки страницы модуля — канон RE0045: 16 разделов,
+         одинаковых у всех страниц модулей, своё — «###» внутри. Читают спеку
+         агенты сборки, приёмки и фронтенда: каждый со своей структурой —
+         предсказуемого чтения нет. Граница — как у паспортов страниц
+         (RE0039): спеки `apps/<раздел>/<модуль>/pages/`; концепты drafts,
+         корневой хаб и эталоны скиллов — вне канона (решение человека
+         30.10.2026: структурированный паспорт — только у утверждённых страниц
+         проекта). Корпус: фикстуры `Б50@*.bad.html` изображают страницу
+         модуля — по пути они модулям не принадлежат, канон для них включает
+         префикс имени файла; прочие фикстуры (спеки-карлики без «##») Б50 не
+         проверяет и не краснеет на них. */
+      const relSpec50 = path.relative(ROOT, spec).replace(/\\/g, '/');
+      const module50 = relSpec50.startsWith('apps/') && /\/pages\//.test(relSpec50) && !/\/drafts\//.test(relSpec50);
+      const corpus50 = /^Б50@/.test(path.basename(spec));
+      if (module50 || corpus50) {
+        const want = pageCanon();
+        const got = [...readFileSync(spec, 'utf8').matchAll(/^## (.+)$/gm)].map((m) => RU_OF_HEADING(m[1]));
+        const missing = want.filter((w) => !got.includes(w));
+        const extra = [...new Set(got)].filter((g) => !want.includes(g));
+        const dup = [...new Set(got)].filter((g) => got.filter((x) => x === g).length > 1);
+        const orderOk = got.length === want.length && got.every((g, i) => g === want[i]);
+        const quo = (a) => a.map((s) => `«${s}»`).join(', ');
+        const why = [
+          missing.length ? `нет канонических — ${quo(missing)}` : '',
+          extra.length ? `раздел не в каноне — ${quo(extra)}` : '',
+          dup.length ? `раздел повторён — ${quo(dup)}` : '',
+          !missing.length && !extra.length && !dup.length && !orderOk ? 'состав тот же, порядок не канона' : '',
+        ].filter(Boolean);
+        ok(why.length === 0, why.length
+          ? `Б50 у ${path.basename(spec)} разделы «##» не по канону RE0045: ${why.join('; ')} — канон один для страниц модулей (references/template.md), своё — «###» внутри`
+          : `Б50 разделы «##» — канон RE0045 (${want.length} из references/template.md)`);
+      }
+
+      /* Б52 — список `widgets:` шапки спеки покрывает все метки `<ds-include>`
+         исходника страницы (и наоборот, лишних в списке нет). Приёмка сверяет
+         экран со спекой: списки разошлись с метками — сверка слепа, класс
+         повторился дважды за RE0049 (Э2, Э4) и оба раза дошёл до приёмки.
+         Вход — ИСХОДНИК страницы (`<Имя>.html` рядом со спекой): сенсор линтует
+         собранный preview, где меток уже нет; `file:` спеки указывает preview,
+         исходник — сосед без `.preview`. Зона — как у Б50: спеки страниц
+         модулей `apps/<раздел>/<модуль>/pages/` (drafts вне); корпус — префикс
+         `Б52@`. Список `components:` сенсор не сверяет: класс к классу ДС по
+         разметке не восстановить механически — остаётся на приёмке. */
+      const relSpec52 = relSpec50;
+      const module52 = relSpec52.startsWith('apps/') && /\/pages\//.test(relSpec52) && !/\/drafts\//.test(relSpec52);
+      const corpus52 = /^Б52@/.test(path.basename(spec));
+      if (module52 || corpus52) {
+        const fm52 = closed > 0 ? head.slice(1, closed) : [];
+        const fileM = fm52.map((l) => l.match(/^file:\s*(.+)$/)).find(Boolean);
+        const wM = fm52.map((l) => l.match(/^widgets:\s*(.+)$/)).find(Boolean);
+        const listed = wM && wM[1]
+          ? (wM[1].match(/\[([^\]]*)\]/)?.[1] ?? wM[1]).split(',').map((s) => s.trim().replace(/`/g, '')).filter(Boolean)
+          : [];
+        /* исходник: `file:` указывает собранный preview — исходник без `.preview`;
+           нет строки file: или файла по ней — правило молчит с печатной строкой
+           пропуска (молчаливого пропуска нет, process.md §9) */
+        let srcPath = null;
+        if (fileM) {
+          const fileV = fileM[1].trim().replace(/^["']|["']$/g, '').replace(/\\/g, '/');
+          const srcV = fileV.replace(/\.preview\.html$/i, '.html');
+          for (const c of [path.join(ROOT, srcV), path.join(path.dirname(spec), srcV)]) {
+            if (existsSync(c)) { srcPath = c; break; }
+          }
+        }
+        if (srcPath) {
+          const srcHtml = readFileSync(srcPath, 'utf8').replace(/<!--[\s\S]*?-->/g, '');
+          const marks = [...new Set([...srcHtml.matchAll(/<ds-include\b[^>]*?\ssrc\s*=\s*["']([^"']+)["']/gi)]
+            .map((m) => m[1].replace(/\\/g, '/').split('/widgets/').pop().replace(/\/[^/]+\.html$/i, '')))];
+          /* метка покрыта списком, если назван: сам путь, родитель (метка может
+             указывать на фрагмент виджета — CounterpartyCard внутри
+             InstrumentsCounterpartiesModal) или имя без префикса группы
+             (спеки пишут и `tiles/Foo`, и `Foo`) */
+          const base = (w) => w.split('/').pop();
+          const parent = (mark) => mark.split('/').slice(0, -1).join('/');
+          const covered = (mark) => listed.includes(mark)
+            || listed.some((w) => base(w) === base(mark))
+            || (parent(mark) && (listed.includes(parent(mark)) || listed.some((w) => base(w) === base(parent(mark)))));
+          const extra = listed.filter((w) => !marks.includes(w)
+            && !marks.some((m) => m.startsWith(w + '/'))
+            && !marks.some((m) => base(m) === base(w)));
+          const missing = marks.filter((m) => !covered(m));
+          const why = [
+            missing.length ? `нет в списке — ${missing.join(', ')}` : '',
+            extra.length ? `в списке лишние — ${extra.join(', ')}` : '',
+          ].filter(Boolean);
+          ok(why.length === 0, why.length
+            ? `Б52 у ${path.basename(spec)} список widgets: разошёлся с метками <ds-include> страницы ${path.basename(srcPath)}: ${why.join('; ')} — приёмка сверяет экран со спекой, расхождение шапки делает сверку слепой`
+            : `Б52 widgets: покрывает метки <ds-include> исходника (${marks.length})`);
+        } else {
+          ok(true, 'Б52 ПРОПУСК: у спеки нет строки file: с исходником страницы — сверять не с чем');
+        }
+      }
     }
   }
 
@@ -1556,21 +1750,23 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
       : 'К12 таблица реестра растянута по высоте (.screen--app + .dtable--fill)');
   }
 
-  /* К13 — ритм экрана-реестра (Layout ДС, инвариант «Вертикальный ритм
-     экрана-реестра — 12px»): шапка → табы/тулбар → таблица стоят через 12px,
-     и задаёт это сам экран строкой ритма для .screen__content в своём <style>.
-     Без неё каркас даёт 24px, и реестр рассыпается на отдельные блоки
-     (MS0016, «Лиды»: две пометки человека на скриншоте). Вход — тот же, что у
-     К12: таблица без тайлов на каркасе приложения (.screen--app). */
-  if (!isDocument && /class="(?:[^"]*\s)?dtable(?=[\s"])/.test(html) && !/class="(?:[^"]*\s)?tile(?=[\s"])/.test(html)
+  /* К13 — ритм экрана с таблицей (Layout ДС, инвариант «Вертикальный ритм
+     экрана с таблицей — 12px»): шапка → табы → тайлы над таблицей → тулбар →
+     таблица стоят через 12px, и задаёт это сам экран строкой ритма для
+     .screen__content в своём <style>. Без неё каркас даёт 24px, и страница
+     рассыпается на отдельные блоки (MS0016, «Лиды»: две пометки человека на
+     скриншоте; 28.10.2026 правило распространено на экраны с тайлами над
+     таблицей — «Досрочное погашение процентов»). Вход — таблица на каркасе
+     приложения (.screen--app); тайлы вход не отменяют. */
+  if (!isDocument && /class="(?:[^"]*\s)?dtable(?=[\s"])/.test(html)
       && /class="(?:[^"]*\s)?screen--app(?=[\s"])/.test(html)) {
     const ownCss = (html.match(/<style[\s>][\s\S]*?<\/style>/g) || []).join('\n');
     const rhythm = /\.screen__content\s*\{[^}]*\bgap\s*:\s*var\(--space-12\)/.test(ownCss);
     /* Замечание, а не блокер (решение человека 13.10.2026): на момент введения
        правило находило ещё три реестра postrade с зазором 16px, которые в этом
        заходе не правятся. Поднять до блокера — когда их приведут к ритму ДС. */
-    if (rhythm) ok(true, 'К13 ритм реестра 12px (.screen__content gap: --space-12)');
-    else warn('К13 реестр без ритма 12px: в <style> экрана нет .screen__content { gap: var(--space-12) } — шапка, тулбар и таблица стоят не через 12px, как требует Layout ДС');
+    if (rhythm) ok(true, 'К13 ритм экрана с таблицей 12px (.screen__content gap: --space-12)');
+    else warn('К13 экран с таблицей без ритма 12px: в <style> экрана нет .screen__content { gap: var(--space-12) } — шапка, табы, тайлы, тулбар и таблица стоят не через 12px, как требует Layout ДС');
   }
 
   /* Б42 — колонка выбора (`.th--select` / `.tc--select`) получает трек не уже
@@ -1651,7 +1847,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
       return 0;
     };
     const classesOf = (tag) => ((tag.match(/class="([^"]*)"/) || [])[1] || '').split(/\s+/).filter(Boolean);
-    for (const src of [html, markupInScripts]) {
+    for (const [, src] of markupSources) {
       for (const m of src.matchAll(/<(button|a)\b[^>]*\bclass="(?:[^"]*\s)?ibtn(?:\s[^"]*)?"[^>]*>/g)) {
         const end = src.indexOf('</' + m[1] + '>', m.index);
         if (end < 0) continue;
@@ -1714,8 +1910,8 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      недостижим, а разметка выглядит рабочей: страница компонента, на которую
      «вёл» родитель, оказалась недоступной из панели (20.09.2026, урок Л137).
 
-     Вход двойной — разметка и литералы скриптов: панели кита и страницы
-     сделки строятся JS-шаблоном (как у Б31 и Б33).
+     Вход двойной — разметка и литералы скриптов, инлайновых и подключённых:
+     панели кита и страницы сделки строятся JS-шаблоном (как у Б31 и Б33).
 
      «Не ссылка» — про адрес, а не про тег: пункт панели, родитель аккордеона
      тоже, — <a href="#"> из чит-шита. NavPanel оформляет пункт-ссылку; на
@@ -1724,20 +1920,20 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      сверяется здесь же. */
   const accHref = [];
   const itemTag = [];
-  for (const src of [html, markupInScripts]) {
+  for (const [kind, src] of markupSources) {
     for (const m of src.matchAll(/<a\b[^>]*>/gi)) {
       const tag = m[0];
       if (!/class="(?:[^"]*\s)?nav__item--acc(?=[\s"])/.test(tag)) continue;
       const href = (tag.match(/\shref="([^"]*)"/) || [])[1];
       if (href === undefined || href === '' || href === '#') continue;
       if (!isLiteralAttr(href)) continue;
-      accHref.push(`${href} (строка ${lineOf(src, m.index)})`);
+      accHref.push(`${href} (${foundAt(kind, src, m.index)})`);
     }
     for (const m of src.matchAll(/<([a-z][a-z0-9]*)\b[^>]*\sclass="(?:[^"]*\s)?nav__item(?:--[a-z-]+)?(?:\s[^"]*)?"[^>]*>/gi)) {
-      if (m[1].toLowerCase() !== 'a') itemTag.push(`<${m[1].toLowerCase()}> (строка ${lineOf(src, m.index)})`);
+      if (m[1].toLowerCase() !== 'a') itemTag.push(`<${m[1].toLowerCase()}> (${foundAt(kind, src, m.index)})`);
     }
   }
-  if (/nav__item/.test(html + markupInScripts)) {
+  if (markupSources.some(([, s]) => /nav__item/.test(s))) {
     const bad = [];
     if (accHref.length) bad.push(`у родителя аккордеона адрес ${accHref.join(', ')} — ds-nav-panel.js отменяет по нему переход; страница открывается под-пунктом, а не родителем`);
     if (itemTag.length) bad.push(`пункт панели — ${itemTag.join(', ')}, а не <a href="#"> из чит-шита: NavPanel оформляет пункт-ссылку, у другого тега остаётся вид браузера`);
@@ -1760,7 +1956,8 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
   const HOOK_BINDS = HOOK_BIND_ROWS.filter((h) => h.static).map((h) => [h.hook, h.bind, h.accepted]);
   if (pagePath) {
     const pageDir = path.dirname(pagePath);
-    /* Скрипты страницы: инлайновые и подключённые локальные, каждый ОТДЕЛЬНО.
+    /* Скрипты страницы: инлайновые и подключённые локальные (`linkedScripts`,
+       собраны выше — общий вход с правилами JS-шаблонов), каждый ОТДЕЛЬНО.
        Рантаймы ДС сюда не входят — в них хук и привязка лежат рядом по
        устройству, и любой экран выглядел бы связанным.
 
@@ -1770,16 +1967,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
        `innerHTML` зовёт `kit-nav.js`; в объединении это выглядело дефектом,
        которого нет. Вызов привязки при этом ищется по ВСЕМ скриптам страницы —
        связать поддерево может и соседний файл. */
-    const parts = [...raw.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map((m) => m[1]);
-    const linkedScripts = [];
-    for (const m of raw.matchAll(/<script\b[^>]*\ssrc="([^"]+)"/gi)) {
-      const href = m[1];
-      if (/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(href) || !isLiteralAttr(href)) continue;
-      const abs = path.resolve(pageDir, href);
-      if (!existsSync(abs) || isDsScript(abs)) continue;
-      parts.push(readFileSync(abs, 'utf8'));
-      linkedScripts.push({ href, src: parts[parts.length - 1] });
-    }
+    const parts = [...raw.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map((m) => m[1]).concat(linkedScripts.map((l) => l.src));
     const allSrc = parts.join('\n');
     const missed = new Map();
     for (const src of parts) {
@@ -1890,6 +2078,27 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
       }
     }
 
+    /* Б49 — цвет экрана из базовой палитры ДС (урок Л254). Базовые ступени
+       (`--cgrey-900`, `--indigo-50` …) темой не меняются: в тёмной теме
+       ibp-neo имя пользователя, цифры и заголовки тайлов главной остались
+       почти чёрными на тёмном, а чипы видов лида — светлыми пятнами. Цвет
+       текста и поверхностей — только семантические токены темы (--text-*,
+       --bg-*, --border-*, --st-*, --primary …). Вход — всё, что красит экран:
+       <style> и подключённые стили, атрибуты style разметки и JS-шаблонов,
+       локальные скрипты страницы (имя токена в данных, `'--pink-50'`, — тоже
+       употребление). Комментарии не считаются. */
+    if (BASE_PALETTE.size) {
+      const src = [screenCss, noComments.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ''), ...linkedScripts.map((l) => l.src)].join('\n').replace(/\/\*[\s\S]*?\*\//g, '');
+      const used = [...new Set([...src.matchAll(/--[a-z-]+-(?:\d{2,3}|A\d{3})(?![\w-])/g)].map((m) => m[0]))].filter((t) => BASE_PALETTE.has(t));
+      /* Концепт (`drafts/`) — черновик, допущения в нём разрешены (решение
+         человека 22.10.2026): там находка — WARN и строка в «Открытых
+         вопросах» спеки; в модуле — блокер. */
+      const draft = Boolean(pagePath) && /[\\/]drafts[\\/]/.test(pagePath);
+      const msg = `Б49 цвета из базовой палитры ДС, которые не меняются темой: ${used.slice(0, 8).join(', ')}${used.length > 8 ? ' и ещё ' + (used.length - 8) : ''} — в тёмной теме текст останется тёмным, плашка светлой; нужен семантический токен темы (--text-*, --bg-*, --st-* …)${draft ? '; в концепте — допущение, записать в спеку' : ''}`;
+      if (used.length && draft) warn(msg);
+      else ok(used.length === 0, used.length ? msg : 'Б49 цвета экрана — токены темы, базовой палитры нет');
+    }
+
     /* Б46 — относительная ссылка внутри экрана ведёт на существующий файл
        (RE0023, Э11 (г)). Реестр хаба сверяет только ссылки хаба; переход со
        страницы на страницу, сломанный переездом или копией, не видел никто —
@@ -1899,8 +2108,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
     const dead = [];
     const anchors = [
       ...[...html.matchAll(/<a\b[^>]*\shref="([^"]*)"/gi)].map((m) => [m[1], 'строка ' + lineOf(html, m.index)]),
-      ...[...collectScriptMarkup(noComments).matchAll(/<a\b[^>]*\shref="([^"]*)"/gi)].map((m) => [m[1], 'в скрипте']),
-      ...linkedScripts.flatMap((l) => [...collectScriptMarkup('<script>' + l.src + '</script>').matchAll(/<a\b[^>]*\shref="([^"]*)"/gi)].map((m) => [m[1], path.basename(l.href)])),
+      ...scriptSources.flatMap(([kind, s]) => [...s.matchAll(/<a\b[^>]*\shref="([^"]*)"/gi)].map((m) => [m[1], kind === 'JS' ? 'в скрипте' : kind])),
     ];
     for (const [href, at] of anchors) {
       const h = href.trim();

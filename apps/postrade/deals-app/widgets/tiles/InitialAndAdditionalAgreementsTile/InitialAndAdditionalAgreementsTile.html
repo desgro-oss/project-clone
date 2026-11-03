@@ -1,0 +1,105 @@
+<!-- Локальный компонент «Договор и дополнительные соглашения» — тайл страницы договора.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-variant — тип продукта: loan-ncl (НКЛ) | deprecated | tranche | shares |
+                    options-repo | corporate-agreement | collaterals | pjsc-guarantee |
+                    pjsc-ncl (НКЛ с баланса ПАО). Состав полей по типу — в
+                    data/loan-contract-fields.js (LOAN_CONTRACT_TILE_VARIANTS, LOAN_CONTRACT_FIELDS); разметка полей
+                    одна на все типы.
+     data-state   — состояние данных: loading | data | empty. Договор не заполнен —
+                    empty, заполнен — data (пустое поле договора в data — прочерк).
+                    Состояния «Ошибка» у тайла нет: на макете его нет
+     data-mode    — режим прав: edit | view. Ставит страница: роль, статус сделки и
+                    погашение договора, не допускающие правку, дают view
+     Разметка держит ВСЕ состояния сразу, показывает нужное
+     InitialAndAdditionalAgreementsTile.css по этим трём атрибутам.
+     Поля в разметке ниже — пример типа «НКЛ» с ДС. На странице их заменяет
+     InitialAndAdditionalAgreementsTile.js (PostTileInitialAndAdditionalAgreements.render):
+     поля типа, значения договора, плановая дата погашения (из траншей, не вводится),
+     номер и дата последнего ДС.
+     Действия, уходящие со страницы, тайл шлёт событием loanaction на себя
+     (detail.action): DOCS — «Документы по сделке», OPEN_CONTRACT — стрелка «→»
+     в шапке (внутренняя страница «Договор и дополнительные соглашения»).
+     «Заполнить» открывает окно «Договор» (contract-scrim) по data-modal; окно лежит
+     в конце body страницы и вшивается отдельной меткой ds-include. Окно с data-modal-guarded:
+     в нём ввод, клик мимо окна не должен его сбросить. -->
+<section class="tile lc-initial-and-additional-agreements-tile" data-variant="loan-ncl" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Договор и дополнительные соглашения</h3></div>
+    </div>
+    <!-- Стрелка «→» — только при заполненном договоре и в обоих режимах (на макете
+         в просмотре её нет — ошибка макета, решение человека 26.10.2026). Карандаша в шапке
+         нет: пустой тайл заполняют кнопкой в теле -->
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Открыть договор и дополнительные соглашения" data-lc-action="OPEN_CONTRACT"><i data-icon="arrow-right"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- Данные есть: поля типа и, если есть ДС, поля последнего ДС; под ними —
+         «Документы по сделке». Порядок полей постоянный, пустое значение — прочерк. -->
+    <div class="tile__rows lc-initial-and-additional-agreements-tile__content">
+      <div class="tile__grid lc-initial-and-additional-agreements-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер договора</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractNumber">1234567890</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата подписания</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractSignDate">12.09.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Плановая дата погашения</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="plannedRepaymentDate">12.09.2022</span></div>
+        </div>
+        <div class="rof lc-initial-and-additional-agreements-tile__agreement-first">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер последнего ДС</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="lastAgreementNumber">3-1234567890</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата подписания ДС</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="lastAgreementSignDate">12.09.2022</span></div>
+        </div>
+      </div>
+      <button type="button" class="btn btn--outline btn--s" data-lc-action="DOCS">
+        <i data-icon="attach"></i><span class="btn__label">Документы по сделке</span>
+      </button>
+    </div>
+
+    <!-- Загрузка: каркас в той же сетке — подпись и значение каждого поля в габаритах
+         строк (подпись 16px, значение 20px), чтобы раскладка не прыгнула после ответа -->
+    <div class="tile__grid lc-initial-and-additional-agreements-tile__grid lc-initial-and-additional-agreements-tile__loading" aria-busy="true">
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:80px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:80px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:80%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:80px" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Не заполнено, право на правку есть: «Заполнить» и «Документы по сделке» -->
+    <div class="tile__rows lc-initial-and-additional-agreements-tile__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="contract-scrim" data-modal-guarded>
+        <span class="btn__label">Заполнить</span>
+      </button>
+      <button type="button" class="btn btn--outline btn--s" data-lc-action="DOCS">
+        <i data-icon="attach"></i><span class="btn__label">Документы по сделке</span>
+      </button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действий нет (в том числе
+         «Документы по сделке»). В просмотре кнопки блока выше ещё и disabled —
+         ставит PostTileInitialAndAdditionalAgreements.render, не только CSS -->
+    <p class="lc-initial-and-additional-agreements-tile__empty">Не заполнено</p>
+
+  </div>
+</section>

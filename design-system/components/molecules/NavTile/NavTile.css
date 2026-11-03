@@ -76,7 +76,7 @@
 .ntile__links,
 .ntile__title-link { position: relative; z-index: 1; }
 .ntile__title {
-  font: var(--type-h4-strong);
+  font: var(--type-h4-strong-smb);
   color: var(--text-primary);
   margin: 0;
   max-width: 100%;
@@ -85,7 +85,7 @@
   white-space: nowrap;
 }
 .ntile__desc {
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-secondary);
   margin: 0;
   display: -webkit-box;

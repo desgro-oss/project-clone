@@ -35,7 +35,7 @@ window.MOCK_EMPLOYEE_PROFILE = {
   lastName: 'Ким',
   firstName: 'Анна',
   middleName: 'Сергеевна',
-  positionName: 'Аналитик ДИД',
+  positionName: 'Аналитик',
   deskName: 'Металлургия и машиностроение',
   groups: ['RD_BB'],
   phone: '+7 495 000-10-42',

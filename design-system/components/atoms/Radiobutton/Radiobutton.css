@@ -113,7 +113,7 @@
 
 /* ---------- content (label + helper) -------------------------------------- */
 .rb__content { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.rb__label  { font: var(--type-body-m);  color: var(--text-primary); }
+.rb__label  { font: var(--type-body-m-reg);  color: var(--text-primary); }
 /* Хелпер — общий компонент подкачки (не собственный класс), см. label-helper.css → .ds-helper */
 .rb--no-content .rb__content { display: none; }
 
@@ -133,7 +133,7 @@
    область вытягивается на всю высоту строки; выравнивание всегда по левому краю. */
 .rb-group { display: flex; flex-direction: column; }
 .rb-group__title {
-  font: var(--type-h6-strong);
+  font: var(--type-h6-strong-smb);
   color: var(--text-primary);
   margin: 0 0 4px;
   display: inline-flex;
@@ -153,7 +153,7 @@
 
 /* group-level error message (Body XS, error color) */
 .rb-group__error {
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--error);
   margin: 6px 0 0;
   display: inline-flex;

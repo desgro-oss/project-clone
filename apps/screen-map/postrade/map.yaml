@@ -30,11 +30,29 @@ nodes:
     page: Deal.preview.html?id=1024
     parent: portfolio
 
+  - id: loan-agreement
+    app: deals-app
+    title: Договор займа (НКЛ)
+    page: Instrument.preview.html?id=1027
+    parent: deal
+
+  - id: loan-agreements
+    app: deals-app
+    title: Договор и дополнительные соглашения
+    page: InitialAndAdditionalAgreements.preview.html?id=1027
+    parent: loan-agreement
+
+  - id: transfer-schemas
+    app: deals-app
+    title: Единая трансфертная ставка
+    page: TransferSchemas.preview.html?id=1027
+    parent: loan-agreement
+
   - id: tranche
     app: deals-app
     title: Транш
-    page: Tranche.html?id=1024&tr=1024.d1.p1.i1.t1
-    parent: deal
+    page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1
+    parent: loan-agreement
 
   - id: fin-metrics
     app: deals-app

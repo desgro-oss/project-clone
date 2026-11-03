@@ -1,0 +1,18 @@
+<!-- Локальный компонент «Лента новостей» — левая панель страницы NewsPage:
+     новости выбранной вкладки от новых к старым, выбранная подсвечена.
+     Строки рисует V2NewsListTile.js (LcNewsListTile.render); страница
+     вшивает фрагмент меткой <ds-include> и монтирует. -->
+<section class="tile tile--headless lc-v2-news-list-tile" data-state="data" data-mode="view" aria-label="Список новостей">
+  <div class="tile__body lc-v2-news-list-tile__body ds-scroll">
+    <!-- строки: кнопка на новость; выбранная — aria-current="true" -->
+    <div class="lc-v2-news-list-tile__list" data-news-list></div>
+    <!-- данных нет: во вкладке нет новостей за 3 месяца -->
+    <div class="es es--m" data-news-empty hidden>
+      <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+      <div class="es__body">
+        <p class="es__title">Новостей нет</p>
+        <p class="es__text">О клиентах этой вкладки за последние 3 месяца публикаций не было.</p>
+      </div>
+    </div>
+  </div>
+</section>

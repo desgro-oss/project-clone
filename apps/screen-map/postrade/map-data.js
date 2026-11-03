@@ -106,12 +106,45 @@
       "states": []
     },
     {
+      "id": "loan-agreement",
+      "app": "postrade/deals-app",
+      "title": "\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u0437\u0430\u0439\u043c\u0430 (\u041d\u041a\u041b)",
+      "page": "Instrument.preview.html?id=1027",
+      "href": "postrade/deals-app/pages/Instrument.preview.html?id=1027",
+      "parent": "deal",
+      "note": null,
+      "passport": "local-components/postrade/deals-app/Instrument.page.html",
+      "states": []
+    },
+    {
+      "id": "loan-agreements",
+      "app": "postrade/deals-app",
+      "title": "\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u0438 \u0434\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0435 \u0441\u043e\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u044f",
+      "page": "InitialAndAdditionalAgreements.preview.html?id=1027",
+      "href": "postrade/deals-app/pages/InitialAndAdditionalAgreements.preview.html?id=1027",
+      "parent": "loan-agreement",
+      "note": null,
+      "passport": "local-components/postrade/deals-app/InitialAndAdditionalAgreements.page.html",
+      "states": []
+    },
+    {
+      "id": "transfer-schemas",
+      "app": "postrade/deals-app",
+      "title": "\u0415\u0434\u0438\u043d\u0430\u044f \u0442\u0440\u0430\u043d\u0441\u0444\u0435\u0440\u0442\u043d\u0430\u044f \u0441\u0442\u0430\u0432\u043a\u0430",
+      "page": "TransferSchemas.preview.html?id=1027",
+      "href": "postrade/deals-app/pages/TransferSchemas.preview.html?id=1027",
+      "parent": "loan-agreement",
+      "note": null,
+      "passport": "local-components/postrade/deals-app/TransferSchemas.page.html",
+      "states": []
+    },
+    {
       "id": "tranche",
       "app": "postrade/deals-app",
       "title": "\u0422\u0440\u0430\u043d\u0448",
-      "page": "Tranche.html?id=1024&tr=1024.d1.p1.i1.t1",
-      "href": "postrade/deals-app/pages/Tranche.html?id=1024&tr=1024.d1.p1.i1.t1",
-      "parent": "deal",
+      "page": "Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1",
+      "href": "postrade/deals-app/pages/Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1",
+      "parent": "loan-agreement",
       "note": null,
       "passport": "local-components/postrade/deals-app/Tranche.page.html",
       "states": []

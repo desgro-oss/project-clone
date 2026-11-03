@@ -1,0 +1,8 @@
+{
+  "id": "funds-app",
+  "track": "product",
+  "title": "Фонды",
+  "desc": "Origination: список фондов, активы фонда, настройка таблицы",
+  "home": "pages/FundsPipeline.preview.html",
+  "icon": "funds"
+}

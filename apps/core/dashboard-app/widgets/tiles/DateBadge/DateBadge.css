@@ -10,17 +10,16 @@
   flex: none;
   color: var(--text-primary);
 }
+/* Обе строки — стиль ДС Body XS целиком, без своего веса и межстрочного */
 .lc-date__day {
-  font: var(--type-body-xs);
-  font-weight: var(--weight-semibold);
+  font: var(--type-body-xs-reg);
   font-variant-numeric: tabular-nums;
-  line-height: 1.2;
 }
 .lc-date__month {
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-secondary);
-  line-height: 1.2;
 }
 
-/* Вариант «день недели + дата»: ВТ / 13.10 — встречи в тайле главной */
+/* Вариант «день недели + дата»: ВТ / 13.10 — встречи в тайле главной.
+   Прописные — осознанное отклонение по макету (паспорт, «Осознанные отклонения») */
 .lc-date--weekday .lc-date__day { text-transform: uppercase; }

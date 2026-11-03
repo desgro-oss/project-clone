@@ -24,7 +24,7 @@
 
   /* section */
 
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
 
   
   .row { display:flex; flex-wrap:wrap; align-items:flex-start; gap:40px; }
@@ -40,9 +40,9 @@
       repeating-conic-gradient(#f2f5f5 0% 25%, #fbfcfc 0% 50%) 0 / 22px 22px; }
 
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
 
-  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+  .pg__code { margin-top:4px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* select control */
 
@@ -62,22 +62,22 @@
   .scell { display:flex; flex-direction:column; gap:12px; align-items:flex-start; }
   .scell .spl-static { width:100%; }
   .vcap { display:flex; align-items:baseline; gap:12px; }
-  .vcap__name { font: var(--type-body-m-strong); color: var(--text-primary); }
-  .vdesc { font: var(--type-body-s); color: var(--text-secondary); margin:0; text-wrap:pretty; }
+  .vcap__name { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
+  .vdesc { font: var(--type-body-s-reg); color: var(--text-secondary); margin:0; text-wrap:pretty; }
 
-  .readout { display:inline-flex; align-items:center; gap:8px; font: var(--type-body-s-strong); color: var(--text-secondary); }
+  .readout { display:inline-flex; align-items:center; gap:8px; font: var(--type-body-s-strong-smb); color: var(--text-secondary); }
   .readout b { font-variant-numeric: tabular-nums; color: var(--primary); }
 
   /* ---------- master / detail example ---------- */
-  .mdt { flex-direction:column; padding:0; font: var(--type-body-s); }
+  .mdt { flex-direction:column; padding:0; font: var(--type-body-s-reg); }
   .mdt__head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px 4px; }
-  .mdt__crumb { font: var(--type-body-s); color: var(--text-secondary); }
-  .mdt__title { font: var(--type-h5-strong); color: var(--text-primary); padding:2px 18px 10px; }
-  .mdt__filter { display:inline-flex; align-items:center; gap:6px; color: var(--primary); font: var(--type-body-s); padding:0 18px 12px; }
+  .mdt__crumb { font: var(--type-body-s-reg); color: var(--text-secondary); }
+  .mdt__title { font: var(--type-h5-strong-smb); color: var(--text-primary); padding:2px 18px 10px; }
+  .mdt__filter { display:inline-flex; align-items:center; gap:6px; color: var(--primary); font: var(--type-body-s-reg); padding:0 18px 12px; }
   .mdt__filter svg { width:15px; height:15px; }
   .mdt__table { padding:0 10px 10px; }
   .mdt__tr { display:grid; grid-template-columns: 84px 1.4fr 2fr; gap:10px; align-items:center; padding:9px 8px; border-radius:7px; }
-  .mdt__tr--head { color: var(--text-secondary); font: var(--type-body-s-strong); border-bottom:1px solid var(--border-light); border-radius:0; }
+  .mdt__tr--head { color: var(--text-secondary); font: var(--type-body-s-strong-smb); border-bottom:1px solid var(--border-light); border-radius:0; }
   .mdt__tr.is-active { background: var(--bg-table-default-focus); }
   .mdt__tr .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; color: var(--text-primary); }
   .mdt__tr .dim { color: var(--text-secondary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -85,34 +85,34 @@
 
   .mdd { flex-direction:column; padding:18px 22px; }
   .mdd__head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
-  .mdd__name { font: var(--type-h5-strong); color: var(--text-primary); display:inline-flex; align-items:center; gap:10px; }
-  .mdd__chip { font: var(--type-body-xs); color: var(--warning-dark); background: var(--warning-bg); border-radius:999px; padding:2px 9px; }
+  .mdd__name { font: var(--type-h5-strong-smb); color: var(--text-primary); display:inline-flex; align-items:center; gap:10px; }
+  .mdd__chip { font: var(--type-body-xs-reg); color: var(--warning-dark); background: var(--warning-bg); border-radius:999px; padding:2px 9px; }
   .mdd__tools { color: var(--text-inactive); display:inline-flex; gap:14px; }
   .mdd__tools svg { width:18px; height:18px; }
   .mdd__grid { display:grid; grid-template-columns:1fr 1fr; gap:18px 28px; }
   .mdd__f { display:flex; flex-direction:column; gap:3px; min-width:0; }
-  .mdd__k { font: var(--type-body-xs); color: var(--text-inactive); }
-  .mdd__v { font: var(--type-body-m); color: var(--text-primary); overflow:hidden; text-overflow:ellipsis; }
+  .mdd__k { font: var(--type-body-xs-reg); color: var(--text-inactive); }
+  .mdd__v { font: var(--type-body-m-reg); color: var(--text-primary); overflow:hidden; text-overflow:ellipsis; }
 
   /* ---------- do / don't ---------- */
   .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
   .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
-  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong-smb); padding:14px 20px 0; }
   .guide-card__body { padding:24px 20px; flex:1; display:flex; align-items:center; justify-content:center; min-height:160px; }
-  .guide-card__cap { padding:0 20px 20px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+  .guide-card__cap { padding:0 20px 20px; font: var(--type-body-xs-reg); color: var(--text-inactive); text-wrap:pretty; }
 
   /* ---------- token table ---------- */
   .tok-table { width:100%; border-collapse:collapse; }
-  .tok-table th, .tok-table td { text-align:left; padding:14px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); }
-  .tok-table th { font: var(--type-body-s-strong); color: var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; font-size:12px; }
+  .tok-table th, .tok-table td { text-align:left; padding:14px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); }
+  .tok-table th { font: var(--type-body-s-strong-smb); color: var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; font-size:12px; }
   .tok-table tr:last-child td { border-bottom:none; }
   .tok-table code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; color: var(--primary); }
   .tok-table .rt-num { font-variant-numeric: tabular-nums; color: var(--text-secondary); }
 
   @media (max-width:760px){ .color-ref { grid-template-columns:1fr; } }
   
-  .cref-group > h3 { font: var(--type-h5-strong); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
+  .cref-group > h3 { font: var(--type-h5-strong-smb); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
   .cref-row { display:grid; grid-template-columns: 36px 1fr auto; gap:14px; align-items:center; padding:9px 22px; }
   .cref-sw .cf { position:absolute; inset:0; }
 
@@ -203,9 +203,9 @@
       <div style="display:grid; grid-template-columns: minmax(280px,1fr) minmax(240px,360px); gap:40px; align-items:center;">
         <div style="background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:40px; display:flex; justify-content:center;" id="anat-diagram"></div>
         <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px;">
-          <li style="display:flex; gap:14px; align-items:flex-start;"><span style="flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center;">1</span><span><span style="font: var(--type-body-m-strong); color: var(--text-primary);">Зона захвата</span><span style="font: var(--type-body-s); color: var(--text-secondary);"> — 11px, курсор col-resize</span></span></li>
-          <li style="display:flex; gap:14px; align-items:flex-start;"><span style="flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center;">2</span><span><span style="font: var(--type-body-m-strong); color: var(--text-primary);">Линия</span><span style="font: var(--type-body-s); color: var(--text-secondary);"> — 1px, темнеет в Hover/Move</span></span></li>
-          <li style="display:flex; gap:14px; align-items:flex-start;"><span style="flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center;">3</span><span><span style="font: var(--type-body-m-strong); color: var(--text-primary);">Ручка-грип</span><span style="font: var(--type-body-s); color: var(--text-secondary);"> — точки-аффорданс по центру</span></span></li>
+          <li style="display:flex; gap:14px; align-items:flex-start;"><span style="flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center;">1</span><span><span style="font: var(--type-body-m-strong-smb); color: var(--text-primary);">Зона захвата</span><span style="font: var(--type-body-s-reg); color: var(--text-secondary);"> — 11px, курсор col-resize</span></span></li>
+          <li style="display:flex; gap:14px; align-items:flex-start;"><span style="flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center;">2</span><span><span style="font: var(--type-body-m-strong-smb); color: var(--text-primary);">Линия</span><span style="font: var(--type-body-s-reg); color: var(--text-secondary);"> — 1px, темнеет в Hover/Move</span></span></li>
+          <li style="display:flex; gap:14px; align-items:flex-start;"><span style="flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center;">3</span><span><span style="font: var(--type-body-m-strong-smb); color: var(--text-primary);">Ручка-грип</span><span style="font: var(--type-body-s-reg); color: var(--text-secondary);"> — точки-аффорданс по центру</span></span></li>
         </ul>
       </div>
     </div>
@@ -269,7 +269,7 @@
     <p class="desc">Сплиттер перемещается только по своей оси. Размеры панелей ограничены минимумом и максимумом (здесь 25% / 75%), чтобы ни одна панель не схлопнулась полностью. Перетащите разделитель — соотношение обновляется в реальном времени.</p>
     <div class="panel">
       <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:18px;">
-        <span style="font:var(--type-body-s-strong); color:var(--text-secondary);">Соотношение панелей</span>
+        <span style="font:var(--type-body-s-strong-smb); color:var(--text-secondary);">Соотношение панелей</span>
         <span class="readout">Лево / Право: <b id="behavior-read">50% / 50%</b></span>
       </div>
       <div id="behavior"></div>
@@ -616,7 +616,7 @@ body.spl-dragging-h * { cursor: row-resize !important; }
   background: var(--bg-tile); border:1px solid var(--border-light); border-radius:14px; overflow:hidden; }
 .splitpane--h { flex-direction:column; }
 .splitpane__panel { overflow:hidden; min-width:0; min-height:0; display:flex; }
-.splitpane__ph { margin:auto; font: var(--type-body-m); color: var(--text-inactive); padding:16px; }
+.splitpane__ph { margin:auto; font: var(--type-body-m-reg); color: var(--text-inactive); padding:16px; }
 .splitpane__a { background: var(--tertiary-light); }
 .splitpane__b { background: var(--bg-tile); }
 .splitpane--app { border-color: var(--border-primary); box-shadow: 0 10px 30px rgba(40,50,55,.08); }

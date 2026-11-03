@@ -229,6 +229,11 @@
 
 **Стерегут:** `theme-build --check` (генерат = источник; все роли и 119 имён; монотонность рамп; контраст; ibp-legacy = 119 значений Palette.css; base-light = Colors.css; JSON = зеркало) — шаг `ds-check --all` и гейта; `B16` — имена тем только в `foundations/Themes/`; `B17`/`ДС20` — служебный тег темы на страницах ДС.
 
+## Типографские темы
+Типографика — второе измерение тем рядом с цветами (RE0048): цветовая тема типографику не меняет, типографская цвет не меняет. Темы зашиты в `foundations/Typography/Typography.themes.js` (`window.DSTypography`, контракт `DSTheme`: get/set/list, `?typography=`, localStorage `ds.typography`, событие `ds:typographychange`): **base** («Базовая», без атрибута — как legacy у цветов) и **neo** («NEO», `data-typography="neo"` — трекинг `--type-ls: -0.02em` и `letter-spacing` на корне). Правила — `Typography.themes.css`, подключён в `ds.css` рядом с `Themes.css`.
+
+Атрибут до первой отрисовки ставят: `docs-kit/ds-theme-boot.js` (страницы ДС) и первый тег `apps/ds-config.js` (генерат `.agents/tools/boot-build.mjs` — после правки шаблона пересобрать и прогнать `--selftest`); на самих страницах выбор применяет `Typography.themes.js` из цепочки `ThemeBoot.js`. Новый текст ДС пишет `letter-spacing` только через `var(--type-ls)` или классы `.ds-*` — явный `letter-spacing: 0` отрезает текст от типографских тем.
+
 ## Проверка: чем гонять
 Всё проверяется локально, из терминала, обычным Node — внешних сервисов, шага сборки и браузера в этом флоу нет. Браузерная проверка живости `docs-split verify` удалена 13.09.2026: в контуре компании её нельзя выполнить, а гейт с недоступным шагом либо всегда красный, либо молча пропускает (класс урока Л37).
 

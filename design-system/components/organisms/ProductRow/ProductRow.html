@@ -30,10 +30,10 @@
 
 a{color:var(--link);} a:hover{color:var(--link-dark);}
 
-.section>p.desc{font:var(--type-body-m);color:var(--text-secondary);margin:0 0 28px;max-width:80ch;text-wrap:pretty;}
+.section>p.desc{font:var(--type-body-m-reg);color:var(--text-secondary);margin:0 0 28px;max-width:80ch;text-wrap:pretty;}
 .section h3+p.desc{margin-top:0;}
 
-.subhead{font:var(--type-body-m-strong);color:var(--text-primary);margin:32px 0 14px;}
+.subhead{font:var(--type-body-m-strong-smb);color:var(--text-primary);margin:32px 0 14px;}
 
 /* контролы конструктора (вкладка «Конструктор») */
 .ctl{display:flex;flex-direction:column;gap:10px;}
@@ -42,13 +42,13 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 /* демо в верхней панели */
 .prow-stage{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg-page);border:1px solid var(--border-light);border-radius:12px;padding:28px;min-height:200px;width:100%;}
 .prow-stage__card{width:100%;max-width:560px;background:var(--bg-tile);border:1px solid var(--border-light);border-radius:12px;padding:20px;}
-.ws-cap{font:var(--type-body-xs);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
+.ws-cap{font:var(--type-body-xs-reg);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
 /* примеры */
 .ex-card{background:var(--bg-tile);border:1px solid var(--border-light);border-radius:12px;padding:20px 24px;}
 .states-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:760px){.states-grid{grid-template-columns:1fr;}}
 .st-card{background:var(--bg-tile);border:1px solid var(--border-light);border-radius:12px;padding:16px 20px;display:flex;flex-direction:column;gap:12px;min-width:0;}
-.st-card__label{font:var(--type-body-xs);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;margin:0;}
+.st-card__label{font:var(--type-body-xs-reg);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;margin:0;}
 .st-card__label b{color:var(--text-secondary);}
 /* образцы для redline — вне экрана */
 .rl-sample{position:absolute;top:-9999px;left:0;width:520px;}
@@ -266,7 +266,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 <section class="section" id="typography" data-screen-label="Типографика">
   <h2>Типографика</h2>
   <p class="desc">Все текстовые слои — гарнитура <b>SB Sans Text</b>.</p>
-  <div class="panel" style="padding:0;overflow:hidden;"><div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок корневой строки</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-l-strong</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">18 / 24</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-l-strong)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Значение, единица</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Строка статуса</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div></div>
+  <div class="panel" style="padding:0;overflow:hidden;"><div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок корневой строки</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-l-strong-smb</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">18 / 24</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-l-strong-smb)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Значение, единица</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Строка статуса</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div></div>
 </section>
 
   <!-- 11. ЦВЕТА -->
@@ -334,7 +334,7 @@ on click(mark):
     <div class="panel">
       <p class="subhead" style="margin-top:0;">Сверено с макетом (30.09.2026)</p>
       <ul class="rules">
-        <li><b>Размеры</b> — сверены с макетом 30.09.2026: высота строки 48 / 72 / 92px, ряды содержимого через 4, от заголовка до действий 16 (было 8), кнопки через 8, пары значений через 16, иконка ↔ текст пары 8; заголовок корня — Body L Strong (<code class="tok">--type-body-l-strong</code>, было Body M Strong); рамка наведения — Active Primary макета, это <code class="tok">--primary</code>. Версия 1.001.</li>
+        <li><b>Размеры</b> — сверены с макетом 30.09.2026: высота строки 48 / 72 / 92px, ряды содержимого через 4, от заголовка до действий 16 (было 8), кнопки через 8, пары значений через 16, иконка ↔ текст пары 8; заголовок корня — Body L Strong (<code class="tok">--type-body-l-strong-smb</code>, было Body M Strong); рамка наведения — Active Primary макета, это <code class="tok">--primary</code>. Версия 1.001.</li>
       </ul>
       <p class="subhead">Решено без подтверждения</p>
       <ul class="rules">
@@ -660,13 +660,13 @@ button.prow__mark:hover { color: var(--secondary-dark); }
 .prow__title {
   min-width: 0;
   padding-block: var(--space-2);
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-primary);
   overflow-wrap: anywhere;
 }
 /* заголовок корня — Body L Strong: строка 24px, поля по высоте не нужны,
    корень остаётся 48px */
-.prow--root .prow__title { font: var(--type-body-l-strong); padding-block: 0; }
+.prow--root .prow__title { font: var(--type-body-l-strong-smb); padding-block: 0; }
 
 /* Заголовок-ссылка: у объекта есть своя страница. Кнопки в <a> не вкладываются —
    ссылкой становится заголовок, а его ::after растягивает зону клика на всю
@@ -701,7 +701,7 @@ a.prow__title { text-decoration: none; }
   gap: var(--space-4);
   min-width: 0;
   min-height: 16px;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
 }
 .prow__status > :is(svg, [data-icon]) { flex: none; width: 16px; height: 16px; color: var(--secondary); }
@@ -725,7 +725,7 @@ a.prow__title { text-decoration: none; }
   gap: var(--gap-icon-text);
   min-width: calc(20px + var(--gap-icon-text) + 10ch);
   min-height: 20px;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
 }
 .prow__meta-item > :is(svg, [data-icon]) { flex: none; width: 20px; height: 20px; color: var(--secondary); }

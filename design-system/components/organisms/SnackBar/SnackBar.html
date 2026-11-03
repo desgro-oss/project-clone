@@ -25,9 +25,9 @@
 
 a{color:var(--link);} a:hover{color:var(--link-dark);}
 
-.section>p.desc{font:var(--type-body-m);color:var(--text-secondary);margin:0 0 28px;max-width:80ch;text-wrap:pretty;}
+.section>p.desc{font:var(--type-body-m-reg);color:var(--text-secondary);margin:0 0 28px;max-width:80ch;text-wrap:pretty;}
 
-.subhead{font:var(--type-body-m-strong);color:var(--text-primary);margin:32px 0 14px;}
+.subhead{font:var(--type-body-m-strong-smb);color:var(--text-primary);margin:32px 0 14px;}
 
 /* playground: демо — в верхнюю панель сплиттера, контролы — во вкладку «Конструктор» */
 .pg__stage{flex:1;min-height:0;width:100%;display:flex;align-items:stretch;padding:24px 26px;min-width:0;}
@@ -39,15 +39,15 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 /* mock screen */
 .mock-screen{position:relative;border-radius:12px;border:1px solid var(--border-light);background:var(--bg-page);overflow:hidden;min-height:380px;display:flex;flex-direction:column;}
 .mock-topbar{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--bg-tile);border-bottom:1px solid var(--border-light);flex:none;}
-.mock-title{font:var(--type-body-m-strong);color:var(--text-primary);}
-.mock-time{font:var(--type-body-xs);color:var(--text-inactive);}
+.mock-title{font:var(--type-body-m-strong-smb);color:var(--text-primary);}
+.mock-time{font:var(--type-body-xs-reg);color:var(--text-inactive);}
 .mock-body{flex:1;padding:14px;}
 .mock-rows{display:flex;flex-direction:column;gap:8px;}
 .mock-row{height:11px;border-radius:var(--radius-xs);background:color-mix(in srgb,var(--swamp-400) 13%,transparent);}
 .mock-row:nth-child(2){width:88%;}.mock-row:nth-child(3){width:72%;}.mock-row:nth-child(4){width:82%;}.mock-row:nth-child(5){width:66%;}.mock-row:nth-child(6){width:79%;}
 .snack-demo-layer{position:absolute;top:14px;right:14px;width:272px;display:flex;flex-direction:column;gap:10px;pointer-events:none;z-index:10;}
 .snack-demo-layer .snack{pointer-events:all;}
-.ws-cap{font:var(--type-body-xs);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
+.ws-cap{font:var(--type-body-xs-reg);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
 /* anatomy */
 .anat{display:grid;grid-template-columns:1fr 280px;gap:40px;align-items:start;}
 @media(max-width:760px){.anat{grid-template-columns:1fr;}}
@@ -61,24 +61,24 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 /* states */
 .states-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
 @media(max-width:900px){.states-grid{grid-template-columns:repeat(2,1fr);}}
-.stg-label{font:var(--type-body-xs);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;text-align:center;margin-bottom:4px;}
+.stg-label{font:var(--type-body-xs-reg);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;text-align:center;margin-bottom:4px;}
 .states-sep{grid-column:1/-1;height:1px;background:var(--border-light);margin:4px 0;}
 .stack-demo{display:flex;flex-direction:column;gap:10px;max-width:320px;}
 /* ref table */
-.ref-table th,.ref-table td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--border-light);font:var(--type-body-m);color:var(--text-primary);vertical-align:middle;}
+.ref-table th,.ref-table td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--border-light);font:var(--type-body-m-reg);color:var(--text-primary);vertical-align:middle;}
 /* code blocks */
 /* guide */
 .guide{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:700px){.guide{grid-template-columns:1fr;}}
 .guide-card{border-radius:12px;overflow:hidden;border:1px solid var(--border-light);background:var(--bg-tile);}
-.guide-card__tag{font:var(--type-body-s-strong);padding:12px 18px 0;}
+.guide-card__tag{font:var(--type-body-s-strong-smb);padding:12px 18px 0;}
 .guide-card__body{padding:20px 18px;display:flex;justify-content:center;}
-.guide-card__cap{padding:0 18px 16px;font:var(--type-body-xs);color:var(--text-inactive);}
+.guide-card__cap{padding:0 18px 16px;font:var(--type-body-xs-reg);color:var(--text-inactive);}
 /* colors */
 @media(max-width:700px){.cref{grid-template-columns:1fr;}}
 
-.cref-group>h3{font:var(--type-body-m-strong);margin:0;padding:14px 18px;border-bottom:1px solid var(--border-light);color:var(--text-primary);}
-.cref-row{display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--border-light);font:var(--type-body-s);color:var(--text-secondary);}
+.cref-group>h3{font:var(--type-body-m-strong-smb);margin:0;padding:14px 18px;border-bottom:1px solid var(--border-light);color:var(--text-primary);}
+.cref-row{display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--border-light);font:var(--type-body-s-reg);color:var(--text-secondary);}
 /* off-screen sample for redline */
 .rl-sample{position:absolute;top:-9999px;left:0;width:320px;}
 
@@ -353,7 +353,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 
   <div style="margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;">
     <div>
-      <p style="font:var(--type-body-s);color:var(--text-inactive);margin:0 0 10px;">Стек: 3 снека (новый — сверху)</p>
+      <p style="font:var(--type-body-s-reg);color:var(--text-inactive);margin:0 0 10px;">Стек: 3 снека (новый — сверху)</p>
       <div class="stack-demo">
         <div class="snack snack--error" data-snack-tone="error" role="alert"><span class="snack__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span><div class="snack__body"><div class="snack__title">Ошибка</div><div class="snack__text">Сделка №3841 просрочена.</div></div><button class="snack__close" aria-label="Закрыть"><i data-icon="close"></i></button></div>
         <div class="snack snack--warning" data-snack-tone="warning" role="alert"><span class="snack__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span><div class="snack__body"><div class="snack__title">Внимание</div><div class="snack__text">Требуется согласование.</div></div><button class="snack__close" aria-label="Закрыть"><i data-icon="close"></i></button></div>
@@ -361,7 +361,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
       </div>
     </div>
     <div>
-      <p style="font:var(--type-body-s);color:var(--text-inactive);margin:0 0 10px;">Дедупликация — снек ×3</p>
+      <p style="font:var(--type-body-s-reg);color:var(--text-inactive);margin:0 0 10px;">Дедупликация — снек ×3</p>
       <div class="snack snack--error" data-snack-tone="error" role="alert">
         <span class="snack__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
         <div class="snack__body"><div class="snack__title">Ошибка <span class="snack__dupe">×3</span></div><div class="snack__text">Плановая дата подписания просрочена.</div></div>
@@ -392,7 +392,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     <h2>Типографика</h2>
     <p class="desc">Заголовок и текст набираются гарнитурой <b>SB Sans Text</b>; текст всегда на ступень мельче заголовка.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.76fr 1.08fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.76fr 1.08fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок (.snack__title)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.76fr 1.08fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Текст (.snack__text)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.76fr 1.08fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Счётчик дублей (.snack__dupe)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.76fr 1.08fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.76fr 1.08fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок (.snack__title)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.76fr 1.08fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Текст (.snack__text)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.76fr 1.08fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Счётчик дублей (.snack__dupe)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
     <table id="typo-table" style="display:none"><tbody></tbody></table>
   </section>
@@ -672,12 +672,12 @@ DSSnack.show({ tone: 'error', title: 'Ошибка', text: 'Плановая д�
 .snack__body { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-top: 1px; }
 
 /* заголовок: Body S, --text-primary */
-.snack__title { font: var(--type-body-s); color: var(--text-primary); line-height: 1.4; }
+.snack__title { font: var(--type-body-s-reg); color: var(--text-primary); line-height: 1.4; }
 
 /* счётчик дублей ×N */
 .snack__dupe {
   display: inline-flex; align-items: center; justify-content: center;
-  font: var(--type-body-xs); font-weight: 600; line-height: 1;
+  font: var(--type-body-xs-reg); font-weight: 600; line-height: 1;
   padding: 2px 6px; border-radius: var(--radius-pill); margin-left: 6px; vertical-align: middle;
 }
 .snack--info    .snack__dupe { color: var(--info-dark);    background: color-mix(in srgb, var(--info)    20%, transparent); }
@@ -686,7 +686,7 @@ DSSnack.show({ tone: 'error', title: 'Ошибка', text: 'Плановая д�
 .snack--success .snack__dupe { color: var(--success-dark); background: color-mix(in srgb, var(--success) 20%, transparent); }
 
 /* текст: Body XS, --text-secondary */
-.snack__text { font: var(--type-body-xs); color: var(--text-secondary); line-height: 1.5; text-wrap: pretty; }
+.snack__text { font: var(--type-body-xs-reg); color: var(--text-secondary); line-height: 1.5; text-wrap: pretty; }
 
 /* кнопки действий */
 .snack__buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
@@ -717,7 +717,7 @@ DSSnack.show({ tone: 'error', title: 'Ошибка', text: 'Плановая д�
   padding: 10px 10px 10px 16px;
   background: var(--bg-tile); border: 1px solid var(--border-light);
   border-radius: var(--radius-card); box-shadow: var(--elevation-2);
-  font: var(--type-body-s); color: var(--text-secondary);
+  font: var(--type-body-s-reg); color: var(--text-secondary);
   pointer-events: all; animation: snack-in .2s ease both;
 }
 .snack-more__count { font-weight: 600; color: var(--text-primary); }

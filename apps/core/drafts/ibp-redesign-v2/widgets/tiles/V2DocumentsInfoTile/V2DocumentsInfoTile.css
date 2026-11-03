@@ -13,4 +13,4 @@
 
 .lc-documents-info__content { gap: var(--space-12); }
 .lc-documents-info__content > .link { align-self: flex-start; }
-.lc-documents-info__empty { font: var(--type-body-m); color: var(--text-secondary); margin: 0; }
+.lc-documents-info__empty { font: var(--type-body-m-reg); color: var(--text-secondary); margin: 0; }

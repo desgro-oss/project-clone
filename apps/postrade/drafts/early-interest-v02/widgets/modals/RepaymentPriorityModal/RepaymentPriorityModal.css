@@ -5,8 +5,8 @@
 /* Строка приоритета — в рамке, номер в сером квадрате (макет «Modal_») */
 .lc-repay-order-modal .entity-list { display: flex; flex-direction: column; gap: var(--space-8); }
 .lc-repay-order-modal .entity { border: 1px solid var(--border-primary); border-radius: var(--radius-m); padding: var(--space-8) var(--space-12); }
-.lc-repay-order-modal__num { font: var(--type-body-s); color: var(--text-secondary); }
-.lc-repay-order-modal .entity__label { font: var(--type-body-m); }
+.lc-repay-order-modal__num { font: var(--type-body-s-reg); color: var(--text-secondary); }
+.lc-repay-order-modal .entity__label { font: var(--type-body-m-reg); }
 
 /* Правка — стрелки в строках, «Отменить» и «Сохранить»; просмотр — только «Закрыть» */
 .lc-repay-order-modal[data-mode="view"] .entity__actions,

@@ -141,7 +141,7 @@
 
 /* ---------- content (label + helper) -------------------------------------- */
 .cb__content { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.cb__label  { font: var(--type-body-m);  color: var(--text-primary); }
+.cb__label  { font: var(--type-body-m-reg);  color: var(--text-primary); }
 /* Хелпер — общий компонент подкачки (не собственный класс), см. label-helper.css → .ds-helper */
 .cb--no-content .cb__content { display: none; }
 
@@ -168,7 +168,7 @@
    stretches to the full row height; alignment is always to the left edge. */
 .cb-group { display: flex; flex-direction: column; }
 .cb-group__title {
-  font: var(--type-h6-strong);
+  font: var(--type-h6-strong-smb);
   color: var(--text-primary);
   margin: 0 0 4px;
   display: inline-flex;
@@ -181,7 +181,7 @@
 
 /* group-level error message (Body XS, error color) */
 .cb-group__error {
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--error);
   margin: 6px 0 0;
   display: inline-flex;

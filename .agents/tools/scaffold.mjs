@@ -403,7 +403,7 @@ const CASES = [
       const html = at(r, 'apps/postrade/lab-app/pages/Lab.html');
       if (!html.includes('<script src="../../../ds-config.js"></script>') || !html.includes('href="../../../../index.html"')) miss.push('пути модуля');
       const spec = at(r, 'apps/postrade/lab-app/pages/Lab.screen.md');
-      if (!spec.includes('\n## 8. Состояния (States)\n\n### Loading\n\n—') || !spec.includes('\nroute: не решено (01.02.2026)\n')) miss.push('разделы и шапка полного шаблона');
+      if (!spec.includes('\n## 10. Состояния (States)\n\n### Loading\n\n—') || !spec.includes('\nroute: не решено (01.02.2026)\n')) miss.push('разделы и шапка полного шаблона');
       if (/DealRegistry|Реестр сделок/.test(spec)) miss.push('пример шаблона в спеке');
       return miss;
     } },

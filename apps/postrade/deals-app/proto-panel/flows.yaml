@@ -2,7 +2,7 @@
 # Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
 # После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
 version: 1
-lastState: 53
+lastState: 74
 flows:
   - id: main
     title: Основной путь
@@ -481,3 +481,140 @@ flows:
           - click: '#fm-export'
           - click: '#fm-download-scrim [data-dl-submit]'
           - waitFor: '.snack--error'
+
+  - id: loan-agreement
+    title: Договор займа (НКЛ)
+    desc: Страница договора — состояния тайлов, режимы правки и транши (RE0041)
+    steps:
+      - state: 54
+        id: loan-full
+        title: Заполнено, правка доступна
+        page: Instrument.preview.html?id=1027
+        note: Все тайлы заполнены, два транша. ⋮ шапки — «Погасить», «Перенести»; у карточки транша — «Погасить», «Удалить».
+      - state: 55
+        id: loan-partial
+        title: Заполнено частично
+        page: Instrument.preview.html?id=1028
+        note: Договор и баланс заполнены, ЕТС и техническая информация — «Заполнить». ЕТС — «Заполнить →».
+      - state: 56
+        id: loan-empty
+        title: Данных нет
+        page: Instrument.preview.html?id=1026
+        note: Записи договора нет — в каждом тайле «Заполнить». Транши есть, они из дерева продуктов сделки.
+      - state: 57
+        id: loan-view-status
+        title: Просмотр по статусу сделки
+        page: Instrument.preview.html?id=1024
+        note: Статус сделки не допускает правку — карандашей и «Заполнить» нет, пункты меню ⋮ выключены. Стрелки «→» остались.
+      - state: 58
+        id: loan-view-empty
+        title: Просмотр, данных нет
+        page: Instrument.preview.html?id=1025
+        note: В каждом тайле «Не заполнено».
+      - state: 59
+        id: loan-repaid
+        title: Договор погашен
+        page: Instrument.preview.html?id=1030
+        note: Погашенный договор — просмотр; в меню ⋮ «Отменить погашение».
+      - state: 60
+        id: loan-add-tranche
+        title: Добавлен транш
+        page: Instrument.preview.html?id=1027
+        note: «+ Добавить транш» добавляет транш сразу, без окна; он же появляется в «Продуктах сделки».
+        do:
+          - click: '#tile-loan-tranches [data-lntr-act="ADD_TRANCHE"]'
+
+  - id: loan-agreements
+    title: Договор и дополнительные соглашения
+    desc: Внутренняя страница договора займа — тайл «Договор», список ДС, фильтр и окна (RE0041)
+    steps:
+      - state: 61
+        id: ia-full
+        title: Договор заполнен, четыре ДС
+        page: InitialAndAdditionalAgreements.preview.html?id=1027
+        note: Тайл «Договор» с карандашом, «Фильтр», четыре свёрнутые карточки ДС с карандашом и шевроном; «+ Новое соглашение» в шапке.
+      - state: 62
+        id: ia-no-agreements
+        title: Дополнительных соглашений нет
+        page: InitialAndAdditionalAgreements.preview.html?id=1028
+        note: Пустое состояние «Дополнительные соглашения отсутствуют» с кнопкой «Новое соглашение»; кнопки «Фильтр» нет.
+      - state: 63
+        id: ia-empty-contract
+        title: Договор не заполнен
+        page: InitialAndAdditionalAgreements.preview.html?id=1026
+        note: Тайл «Договор» показывает те же поля с «—»; карандаш открывает окно «Договор».
+      - state: 64
+        id: ia-view-status
+        title: Просмотр по статусу сделки
+        page: InitialAndAdditionalAgreements.preview.html?id=1024
+        note: Статус сделки не допускает правку — карандашей нет, «+ Новое соглашение» выключена, в пустом состоянии кнопки нет.
+      - state: 65
+        id: ia-repaid
+        title: Договор погашен
+        page: InitialAndAdditionalAgreements.preview.html?id=1030
+        note: Погашенный договор — просмотр; одна карточка ДС, шеврон работает, карандаша нет.
+      - state: 66
+        id: ia-expanded
+        title: Карточка ДС раскрыта
+        page: InitialAndAdditionalAgreements.preview.html?id=1027
+        note: Шеврон раскрывает карточку — в ней «Комментарий».
+        do:
+          - click: '#aa-list .lc-additional-agreement-tile .tile__toggle'
+      - state: 67
+        id: ia-new-agreement
+        title: Окно «Создание дополнительного соглашения»
+        page: InitialAndAdditionalAgreements.preview.html?id=1027
+        note: «+ Новое соглашение» открывает окно; номер подставлен следующий по порядку.
+        do:
+          - click: '#ia-new-btn'
+          - waitFor: '#agreement-scrim'
+      - state: 68
+        id: ia-filter
+        title: Окно «Фильтр»
+        page: InitialAndAdditionalAgreements.preview.html?id=1027
+        note: «Фильтр» открывает окно с разделами «Основная информация» и «Решение».
+        do:
+          - click: '#ia-filter [data-ia-filter-open]'
+          - waitFor: '#agreements-filter-scrim'
+
+  - id: transfer-schemas
+    title: Единая трансфертная ставка
+    desc: Внутренняя страница договора займа — процентные схемы ЕТС, окно схемы, истории и пустое состояние (RE0041)
+    steps:
+      - state: 69
+        id: ets-full
+        title: Пять схем, правка
+        page: TransferSchemas.preview.html?id=1027
+        note: Карточки схем от новых к старым — фиксированные и плавающие («КС+2%»), длинный комментарий обрезан; ⋮ карточки «Изменить» и «Удалить»; «+ Новая схема» и меню ⋮ в шапке.
+      - state: 70
+        id: ets-empty
+        title: Схем нет
+        page: TransferSchemas.preview.html?id=1028
+        note: Пустое состояние «Здесь пока ничего нет» с иллюстрацией и кнопкой «Новая схема».
+      - state: 71
+        id: ets-view
+        title: Просмотр по статусу сделки
+        page: TransferSchemas.preview.html?id=1024
+        note: Статус сделки не допускает правку — ⋮ у карточки нет, «+ Новая схема» выключена; меню шапки с историями доступно.
+      - state: 72
+        id: ets-repaid
+        title: Договор погашен
+        page: TransferSchemas.preview.html?id=1030
+        note: Погашенный договор — просмотр; одна схема без ⋮.
+      - state: 73
+        id: ets-new-scheme
+        title: Окно «Процентная схема»
+        page: TransferSchemas.preview.html?id=1027
+        note: «+ Новая схема» открывает пустое окно — рабочих дней 0, даты, комментарий, тип ставки.
+        do:
+          - click: '#ets-new-btn'
+          - waitFor: '#tschema-scrim'
+      - state: 74
+        id: ets-scheme-errors
+        title: Ошибки окна схемы
+        page: TransferSchemas.preview.html?id=1027
+        note: «Сохранить» без данных — Alert вверху окна со всеми сработавшими ошибками (ставка, даты).
+        do:
+          - click: '#ets-new-btn'
+          - waitFor: '#tschema-scrim'
+          - click: '#tschema-scrim [data-tschema-save]'

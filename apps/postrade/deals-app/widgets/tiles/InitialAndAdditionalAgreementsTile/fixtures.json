@@ -1,0 +1,64 @@
+{
+  "_": "Демо-данные витрины. variants — по записи на каждый из 9 типов тайла: data — значения полей типа (даты ISO ГГГГ-ММ-ДД), plannedRepaymentDate — плановая дата погашения (в записи договора её нет: её даёт страница, у НКЛ — самая поздняя среди траншей), у типов без плановой даты поле не показывается. lastAgreement — последнее ДС для состояний «есть ДС». long — те же данные с самыми длинными значениями (контрол «Длинные значения»). Значения выдуманные, правдоподобной длины. Источник значений полей, которых нет в записи договора (поставка, переход прав, срок действия, даты обеспечения и гарантии), не решён — паспорт, «Открытые вопросы». Рисует эти данные сценарий демо функциями самого компонента.",
+
+  "plannedRepaymentDate": "2022-09-12",
+
+  "lastAgreement": { "id": "AA-1", "seqNumber": 3, "signDate": "2022-09-12" },
+  "lastAgreementNumber": "3-1234567890",
+
+  "variants": {
+    "loan-ncl": {
+      "data": { "contractNumber": "1234567890", "contractSignDate": "2022-09-12" }
+    },
+    "deprecated": {
+      "data": { "contractNumber": "1234567890", "contractSignDate": "2022-09-12" }
+    },
+    "tranche": {
+      "data": { "contractNumber": "1234567890", "contractSignDate": "2022-09-12" }
+    },
+    "shares": {
+      "data": {
+        "contractNumber": "1234567890", "contractSignDate": "2022-09-12",
+        "deliveryDate": "2022-09-12", "ownershipTransferDate": "2022-09-12"
+      }
+    },
+    "options-repo": {
+      "data": { "contractNumber": "1234567890", "contractSignDate": "2022-09-12", "validityTerm": "2022-09-12" }
+    },
+    "corporate-agreement": {
+      "data": { "contractNumber": "1234567890", "contractSignDate": "2022-09-12" }
+    },
+    "collaterals": {
+      "data": { "contractNumber": "1234567890", "contractSignDate": "2022-09-12", "endDate": "2022-09-12" }
+    },
+    "pjsc-guarantee": {
+      "data": {
+        "guaranteeNumber": "1234567890", "conclusionDate": "2022-09-12",
+        "provisionDate": "2022-09-12", "endDate": "2022-09-12"
+      }
+    },
+    "pjsc-ncl": {
+      "data": { "contractNumber": "1234567890", "contractSignDate": "2022-09-12" }
+    }
+  },
+
+  "partial": {
+    "_": "Договор заполнен частично (номер есть, даты подписания нет) и нет плановой даты (у договора нет траншей с датой): поля на месте, значение — прочерк.",
+    "data": { "contractNumber": "1234567890", "contractSignDate": null },
+    "plannedRepaymentDate": null
+  },
+
+  "long": {
+    "_": "Самые длинные значения: номер договора и номер гарантии усекаются с тултипом, номер последнего ДС тоже.",
+    "lastAgreementNumber": "128-ДГ-2024/ПАО-0045678901-12345",
+    "variants": {
+      "loan-ncl": { "data": { "contractNumber": "ДГ-2024/ПАО-0045678901-12345", "contractSignDate": "2022-09-12" } },
+      "pjsc-guarantee": {
+        "data": {
+          "guaranteeNumber": "ГАР-2024/ПАО-0045678901-12345", "conclusionDate": "2022-09-12",
+          "provisionDate": "2022-09-12", "endDate": "2022-09-12"
+        }
+      }
+    }
+  }
+}

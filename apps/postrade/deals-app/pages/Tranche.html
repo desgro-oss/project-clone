@@ -14,10 +14,10 @@
   /* Секции страницы: заголовок на фоне страницы, не в тайле. Сворачиваемого
      заголовка раздела в ДС нет — см. Tranche.screen.md, «Открытые вопросы». */
   .tr-sec { display: flex; flex-direction: column; gap: var(--space-8); }
-  .tr-sec__title { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+  .tr-sec__title { margin: 0; font: var(--type-body-m-reg); color: var(--text-secondary); }
 
   /* Тайл без состава: строка «Заполнено» (состав на макете не показан) */
-  .tr-status { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+  .tr-status { margin: 0; font: var(--type-body-m-reg); color: var(--text-secondary); }
 
   /* Минимальная высота тайла — как на странице сделки (deals-app/Deal.html) */
   .screen__content .tile { min-height: 200px; }
@@ -53,69 +53,61 @@
 
     <main class="screen__content">
 
-      <!-- #sec:head ── Шапка страницы -->
+      <!-- #sec:head ── Шапка страницы: меню ⋮ «Погасить» / «Отменить погашение» -->
       <div class="phead">
         <div class="phead__main">
           <div class="phead__title-row">
             <div class="phead__title-group"><h1 class="phead__title" id="tr-title">Транш</h1></div>
           </div>
+          <!-- Подзаголовок — только у погашенного транша; заполняет экранный
+               скрипт из ProductTreeStore (образец — Deal.html, текст по строке
+               статуса дерева: PRODUCT_DETAIL_LABELS.repaidAt + дата). -->
+          <div class="phead__subtitle" id="tr-subtitle" hidden>
+            <span class="phead__subtitle-ico" aria-hidden="true"><i data-icon="check-circle-filled"></i></span>
+            <span id="tr-subtitle-text"></span>
+          </div>
         </div>
         <div class="phead__actions">
-          <button type="button" class="btn btn--outline btn--m"><i data-icon="calc"></i><span class="btn__label">Расчет ОС3</span></button>
-          <button type="button" class="btn btn--outline btn--m btn--icon-only" aria-label="Ещё действия" aria-haspopup="menu" aria-expanded="false"><i data-icon="more-dots"></i></button>
+          <button type="button" class="btn btn--outline btn--m"><i data-icon="calc"></i><span class="btn__label">Расчет ОСЗ</span></button>
+          <!-- Меню ⋮ погашения — по образцу Instrument.html: пункты из node.menu
+               узла транша ставит paintHeadMenu(); клики — делегированный слушатель. -->
+          <span class="menu-anchor">
+            <button type="button" class="btn btn--outline btn--m btn--icon-only" aria-label="Ещё действия" aria-haspopup="menu" aria-expanded="false" data-menu="tr-head-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+            <div id="tr-head-menu" class="menu menu--floating" role="menu" hidden></div>
+          </span>
         </div>
       </div>
 
       <!-- #sec:content ── Сводка по траншу -->
       <section class="tr-sec">
+        <!-- Заголовок секции — тип продукта из MOCK_TRANCHE.productCode. Разбор
+             замечания приёмки Э1 (RE0049, Э4): данные раздела «НКЛ» идут от
+             родительской НКЛ, но заголовок — тип продукта; у транша и родительской
+             НКЛ тип один («НКЛ»), противоречия с решением нет — источник не меняем. -->
         <h2 class="tr-sec__title" data-f="productCode">НКЛ</h2>
         <div class="tr-sum" data-off-grid="Сводка НКЛ: три равных тайла по 360px по макету, вне 12 колонок">
-        <section class="tile tile--headless">
-          <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr;">
-            <div class="rof"><span class="ds-label"><span class="ds-label__text">Контрагент</span></span><div class="rof__row"><span class="rof__value" data-f="counterpartyName"></span></div></div>
-          </div></div>
-        </section>
-        <section class="tile tile--headless">
-          <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr 1fr;">
-            <div class="rof"><span class="ds-label"><span class="ds-label__text">Баланс</span></span><div class="rof__row"><span class="rof__value" data-f="balanceCode"></span></div></div>
-            <div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><span class="rof__value" data-f="currencyCode"></span></div></div>
-          </div></div>
-        </section>
-        <section class="tile tile--headless">
-          <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr;">
-            <div class="rof"><span class="ds-label"><span class="ds-label__text">Общая сумма лимита</span></span><div class="rof__row"><span class="rof__value" data-f="totalLimitAmount"></span><span class="rof__affix" data-f="currencyCode"></span></div></div>
-          </div></div>
-        </section>
+        <!-- Сводка НКЛ — локальный компонент TrancheNrlSummaryTile, три экземпляра
+             одного фрагмента. Вариант (какой из тайлов) меткой не передаётся —
+             сборщик переносит только id/class/state/mode: ставит скрипт тайла
+             (PostTileTrancheNrlSummary.render) данными родительской НКЛ ниже.
+             Размер (360px) задаёт правило .tr-sum > .tile, класс на метке не нужен. -->
+        <ds-include src="../widgets/tiles/TrancheNrlSummaryTile/TrancheNrlSummaryTile.html" id="tile-tr-nrl-counterparty"></ds-include>
+        <ds-include src="../widgets/tiles/TrancheNrlSummaryTile/TrancheNrlSummaryTile.html" id="tile-tr-nrl-balance"></ds-include>
+        <ds-include src="../widgets/tiles/TrancheNrlSummaryTile/TrancheNrlSummaryTile.html" id="tile-tr-nrl-limit"></ds-include>
       </div>
       </section>
 
       <section class="tr-sec">
         <h2 class="tr-sec__title">Общая информация</h2>
         <div class="grid12">
-            <section class="tile col-6 colw-12">
-              <header class="tile__header">
-                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Договор и дополнительные соглашения</h3><span class="tile__title-add"><span class="chip chip--s chip--grey"><span class="chip__label">Демо</span></span></span></div></div>
-                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: Договор"><i data-icon="arrow-right"></i></button></div>
-              </header>
-              <div class="tile__body"><div class="tile__grid" style="grid-template-columns:repeat(3,1fr);">
-                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Номер договора</span></span><div class="rof__row"><span class="rof__value" data-f="contractNumber"></span></div></div>
-                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата подписания</span></span><div class="rof__row"><span class="rof__value" data-f="contractSignDate"></span></div></div>
-                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Плановая дата погашения</span></span><div class="rof__row"><span class="rof__value" data-f="plannedRepaymentDate"></span></div></div>
-                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Номер последнего ДС</span></span><div class="rof__row"><span class="rof__value" data-f="lastAmendmentNumber"></span></div></div>
-                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата подписания ДС</span></span><div class="rof__row"><span class="rof__value" data-f="lastAmendmentSignDate"></span></div></div>
-                </div>
-                <button type="button" class="btn btn--outline btn--s"><i data-icon="attach"></i><span class="btn__label">Документы по сделке</span></button></div>
-            </section>
-            <section class="tile col-3 colw-6">
-              <header class="tile__header">
-                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Валюта транша</h3><span class="tile__title-add"><span class="chip chip--s chip--grey"><span class="chip__label">Демо</span></span></span></div></div>
-                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать: Валюта транша"><i data-icon="edit"></i></button></div>
-              </header>
-              <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr;">
-                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><span class="rof__value" data-f="currencyCode"></span></div></div>
-                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Общая сумма лимита</span></span><div class="rof__row"><span class="rof__value" data-f="totalLimitAmount"></span><span class="rof__affix" data-f="currencyCode"></span></div></div>
-                </div></div>
-            </section>
+            <!-- «Договор и дополнительные соглашения» — локальный компонент
+                 InitialAndAdditionalAgreementsTile (RE0049, Э4). У транша свои
+                 договор и ДС (решение человека 02.11.2026): значения ставит
+                 renderContract() экранного скрипта из MOCK_TRANCHE.contract.
+                 Чип «Демо» снят вместе с инлайн-разметкой — тайл заведён
+                 локальным компонентом (решение человека 02.11.2026, вопрос 5). -->
+            <ds-include src="../widgets/tiles/InitialAndAdditionalAgreementsTile/InitialAndAdditionalAgreementsTile.html" class="col-6 colw-12" id="tile-tr-contract" state="loading" mode="edit"></ds-include>
+            <ds-include src="../widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.html" class="col-3 colw-6" id="tile-tr-loan-limits" mode="edit"></ds-include>
             <section class="tile col-3 colw-6">
               <header class="tile__header">
                 <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Связь с фондированием</h3><span class="tile__title-add"><span class="chip chip--s chip--grey"><span class="chip__label">Демо</span></span></span></div></div>
@@ -133,26 +125,12 @@
                 </div>
               </li></ul></div>
             </section>
-            <section class="tile col-3 colw-6">
-              <header class="tile__header">
-                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">ETC</h3><span class="tile__title-add"><span class="chip chip--s chip--grey"><span class="chip__label">Демо</span></span></span></div></div>
-                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: ETC"><i data-icon="arrow-right"></i></button></div>
-              </header>
-              <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr;">
-                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Фиксированная ставка</span></span><div class="rof__row"><span class="rof__value" data-f="fixedRatePercent"></span><span class="rof__affix" data-f="percent"></span></div></div>
-                </div></div>
-            </section>
-            <section class="tile col-3 colw-6">
-              <header class="tile__header">
-                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Техническая информация</h3><span class="tile__title-add"><span class="chip chip--s chip--grey"><span class="chip__label">Демо</span></span></span></div></div>
-                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать: Техническая информация"><i data-icon="edit"></i></button></div>
-              </header>
-              <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr;">
-                  <div class="rof"><span class="ds-label"><span class="ds-label__text">ГФО ID</span></span><div class="rof__row"><span class="rof__value" data-f="gfoId"></span></div></div>
-                  <div class="rof"><span class="ds-label"><span class="ds-label__text">ГФО ID фондирующего кредита</span></span><div class="rof__row"><span class="rof__value" data-f="gfoFundingCreditId"></span></div></div>
-                  <div class="rof"><span class="ds-label"><span class="ds-label__text">CRM ID продукта</span></span><div class="rof__row"><span class="rof__value" data-f="crmProductId"></span></div></div>
-                </div></div>
-            </section>
+            <!-- ЕТС и Техническая информация — общие локальные компоненты
+                 (RE0049, решение человека 02.11.2026): у транша свои значения,
+                 UI тот же, что у НКЛ; Техинфа — потребитель «tranche» (плюс
+                 «CRM ID продукта»), рендер и правка — в экранном скрипте ниже. -->
+            <ds-include src="../widgets/tiles/TransferRateTile/TransferRateTile.html" class="col-3 colw-6" id="tile-tr-transfer-rate" state="loading" mode="edit"></ds-include>
+            <ds-include src="../widgets/tiles/LoanExternalDataTile/LoanExternalDataTile.html" class="col-3 colw-6" id="tile-tr-loan-external-data" state="loading" mode="edit"></ds-include>
         </div>
       </section>
 
@@ -262,21 +240,48 @@
   </div>
 </div>
 
-<!-- #sec:modals ── модальных окон на странице пока нет -->
+<!-- #sec:modals ── окна правки «Валюта транша» и «Технической информации»
+     (потребитель Транш) и окно «Договор» — у кнопки «Заполнить» тайла
+     InitialAndAdditionalAgreementsTile хук data-modal="contract-scrim":
+     без скрима хук не связывается рантаймом (ЖВ5). -->
+<ds-include src="../widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.html"></ds-include>
+<ds-include src="../widgets/modals/LoanExternalDataModal/LoanExternalDataModal.html"></ds-include>
+<ds-include src="../widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.html"></ds-include>
+<!-- Окно погашения (RE0049, Э6): то же, что у НКЛ и «Продуктов сделки», —
+     открывается событием 'ptreeaction' (REPAY / UNDO_REPAY) из меню ⋮ шапки. -->
+<ds-include src="../widgets/modals/RepaymentModal/RepaymentModal.html"></ds-include>
 
 <script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
 <script src="../data/mock-deals.js"></script>
 <script src="../data/deal-status-model.js"></script>
 <script src="../data/deals-store.js"></script>
 <script src="../data/post-api.js"></script>
+<script src="../data/mock-counterparties.js"></script>
+<script src="../data/counterparties-store.js"></script>
 <script src="../data/mock-product-catalog.js"></script>
 <script src="../data/mock-fin-instruments.js"></script>
 <script src="../data/mock-deal-trees.js"></script>
 <script src="../data/product-tree-store.js"></script>
+<script src="../data/mock-loan-agreements.js"></script>
+<script src="../data/loan-agreement-store.js"></script>
 <script src="../data/tranche-context.js"></script>
 <script src="../data/tranche-data.js"></script>
+<script src="../data/loan-contract-fields.js"></script>
+<script src="../widgets/tiles/TrancheNrlSummaryTile/TrancheNrlSummaryTile.js"></script>
+<script src="../widgets/tiles/TransferRateTile/TransferRateTile.js"></script>
+<script src="../widgets/tiles/LoanExternalDataTile/LoanExternalDataTile.js"></script>
+<script src="../widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.js"></script>
+<script src="../widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.js"></script>
+<script src="../widgets/modals/LoanExternalDataModal/LoanExternalDataModal.js"></script>
+<script src="../widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.js"></script>
+<script src="../widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../widgets/tiles/InitialAndAdditionalAgreementsTile/InitialAndAdditionalAgreementsTile.js"></script>
 <script>
 /* Экранный скрипт: меню по каталогу ролей и демо-данные транша в поля с data-f.
+   Сводка НКЛ (раздел «НКЛ») — виджет TrancheNrlSummaryTile, значения из записи
+   родительского договора (renderNrl ниже), а не из MOCK_TRANCHE. «Договор и
+   дополнительные соглашения» — виджет InitialAndAdditionalAgreementsTile, данные
+   ТРАНША из MOCK_TRANCHE.contract (renderContract ниже).
    Форматирование — только при выводе: суммы «1 000 000,00», даты ДД.ММ.ГГГГ. */
 (function () {
   'use strict';
@@ -328,25 +333,11 @@
   function fill() {
     var t = window.MOCK_TRANCHE;
     var values = {
-      contractNumber: t.contract.contractNumber,
-      contractSignDate: date(t.contract.contractSignDate),
-      plannedRepaymentDate: date(t.contract.plannedRepaymentDate),
-      lastAmendmentNumber: t.contract.lastAmendmentNumber,
-      lastAmendmentSignDate: date(t.contract.lastAmendmentSignDate),
-      counterpartyName: t.counterpartyName,
-      balanceCode: t.balanceCode,
-      currencyCode: t.currencyCode,
-      totalLimitAmount: money(t.totalLimitAmount),
       fundingTrancheName: t.fundingLink.fundingTrancheName,
       fundingDate: date(t.fundingLink.fundingDate),
       fundingAmount: money(t.fundingLink.fundingAmount),
       fundingCurrencyCode: t.fundingLink.currencyCode,
       productCode: t.productCode,
-      fixedRatePercent: String(t.fixedRatePercent),
-      percent: '%',
-      gfoId: t.gfoId,
-      gfoFundingCreditId: t.gfoFundingCreditId,
-      crmProductId: t.crmProductId,
       nextPaymentAmount: money(t.nextPaymentAmount),
       nextPaymentCurrencyCode: t.nextPaymentCurrencyCode,
       nextPaymentDate: date(t.nextPaymentDate),
@@ -374,21 +365,216 @@
     /* Deal.preview.html, а не Deal.html: страница сделки модульная — тайлы
        вшивает ассемблер (.agents/tools/assemble.mjs), Deal.html — источник с метками. */
     var dealHref = 'Deal.preview.html' + ctx.dealQuery;
+    /* страница договора займа — Instrument.preview.html (модульная, как страница сделки) */
+    var insHref = 'Instrument.preview.html' + ctx.dealQuery + '&ins=' + encodeURIComponent(ctx.instrument.id);
     window.TrancheContext.paintCrumbs(document.querySelector('[data-breadcrumbs]'), [
       null,
       { href: 'Portfolio.html' },
       { text: ctx.dealLabel, href: dealHref },
-      { text: ctx.parentLabel, href: dealHref },
+      { text: ctx.parentLabel, href: insHref },
       { text: title }
     ]);
   }
 
+  /* Сводка НКЛ (виджет TrancheNrlSummaryTile ×3): параметры РОДИТЕЛЬСКОГО
+     договора займа, не транша (решение человека 02.11.2026). Запись договора
+     открывается по контексту (TrancheContext.resolve → ctx.instrument), значения
+     — LoanAgreementStore: counterparty() и balanceCurrency. До отрисовки ждём
+     готовность сторов — иначе потеряются сохранённые правки договора. */
+  function renderNrl(ctx) {
+    var LAS = window.LoanAgreementStore;
+    var T = window.PostTileTrancheNrlSummary;
+    if (!LAS || !T) return;
+    Promise.all([
+      LAS.ready,
+      window.CounterpartiesStore ? window.CounterpartiesStore.ready : Promise.resolve()
+    ]).then(function () {
+      LAS.use(ctx.openedId, ctx.instrument.id);
+      var view = {
+        counterparty: LAS.counterparty(),
+        balanceCurrency: (LAS.get() || {}).balanceCurrency
+      };
+      T.VARIANTS.forEach(function (variant) {
+        T.render(document.getElementById('tile-tr-nrl-' + variant), Object.assign({ variant: variant }, view));
+      });
+    });
+  }
+
+  /* «Договор и дополнительные соглашения» (InitialAndAdditionalAgreementsTile):
+     у транша свои договор и ДС (решение человека 02.11.2026) — данные ТРАНША
+     из MOCK_TRANCHE.contract (у НКЛ — LoanAgreementStore). Даты тайл форматирует
+     сам (ISO → ДД.ММ.ГГГГ), номер и дата последнего ДС передаются ключами
+     lastAgreement / lastAgreementNumber. События loanaction (DOCS,
+     OPEN_CONTRACT) страница транша пока не слушает: внутренних страниц договора
+     у транша нет (стрелка — как у остальных тайлов-стрелок раздела). */
+  var contractView = null;
+
+  function renderContract() {
+    var T = window.PostTileInitialAndAdditionalAgreements;
+    var t = window.MOCK_TRANCHE;
+    if (!T || !t || !t.contract || !contractView) return;
+    T.render(document.getElementById('tile-tr-contract'), {
+      mode: 'edit',
+      variant: 'tranche',
+      data: contractView,
+      plannedRepaymentDate: t.contract.plannedRepaymentDate,
+      lastAgreement: { signDate: t.contract.lastAmendmentSignDate },
+      lastAgreementNumber: t.contract.lastAmendmentNumber
+    });
+  }
+
+  /* Окно «Договор» (contract-scrim): у окна авто-бинд на LoanAgreementStore —
+     на странице транша он писал бы в договор РОДИТЕЛЬСКОЙ НКЛ. Биндим со своей
+     сессией до DOMContentLoaded (как у окна «Технической информации»): авто-бинд
+     вернёт уже созданный api и стор НКЛ не подставит. Правка живёт в сессии
+     страницы — отдельного стора транша нет. В демо договор заполнен, кнопка
+     «Заполнить» (состояние empty) скрыта. */
+  function initContract() {
+    var c = window.MOCK_TRANCHE.contract;
+    contractView = { contractNumber: c.contractNumber, contractSignDate: c.contractSignDate };
+    renderContract();
+    if (window.PostModalInitialAndAdditionalAgreements) {
+      window.PostModalInitialAndAdditionalAgreements.bind(null, {
+        get: function () { return contractView; },
+        save: function (v) { contractView = v; renderContract(); }
+      });
+    }
+  }
+
+  /* «Валюта транша» (виджет TrancheLoanLimitsTile + окно TrancheLoanLimitsModal):
+     валюта и сумма лимита ТРАНША, а не договора. Источник — MOCK_TRANCHE;
+     отдельного стора транша нет, поэтому правка окна живёт в сессии страницы
+     (паспорт виджета, «Данные»). Обычно валюта транша равна валюте НКЛ, но не
+     всегда — поле заполняется вручную (решение человека 02.11.2026). */
+  var loanLimitsView = null;
+
+  function renderLoanLimits() {
+    var T = window.PostTileTrancheLoanLimits;
+    if (!T || !loanLimitsView) return;
+    T.render(document.getElementById('tile-tr-loan-limits'), { mode: 'edit', data: loanLimitsView });
+  }
+
+  function initLoanLimits() {
+    var t = window.MOCK_TRANCHE;
+    loanLimitsView = { currencyCode: t.currencyCode, totalLimitAmount: t.totalLimitAmount };
+    renderLoanLimits();
+    if (window.PostModalTrancheLoanLimits) {
+      window.PostModalTrancheLoanLimits.bind(null, {
+        get: function () { return loanLimitsView; },
+        save: function (v) { loanLimitsView = v; renderLoanLimits(); },
+        editable: function () { return true; }
+      });
+    }
+  }
+
+  /* ЕТС (TransferRateTile): ЕТС у транша свои (решение человека 02.11.2026),
+     UI тот же, что у НКЛ. В демо — фиксированная ставка из MOCK_TRANCHE.
+     Событие loanaction (OPEN_ETS) страница транша пока не слушает: страницы
+     ЕТС у транша нет (стрелка — как у остальных тайлов-стрелок раздела). */
+  function renderEts() {
+    var T = window.PostTileTransferRate;
+    var t = window.MOCK_TRANCHE;
+    if (!T || !t) return;
+    T.render(document.getElementById('tile-tr-transfer-rate'), {
+      mode: 'edit',
+      rate: { kind: 'FIXED', percent: t.fixedRatePercent, isCurrent: true }
+    });
+  }
+
+  /* «Техническая информация» (LoanExternalDataTile, потребитель «tranche»):
+     общая Техинфа НКЛ и транша (решение человека 02.11.2026); у транша плюс
+     поле «CRM ID продукта». Окно (tech-scrim) биндим со своим источником:
+     правка живёт в сессии страницы, отдельного стора транша нет; НКЛ-стор
+     окна не задеваем. bind до DOMContentLoaded — авто-бинд окна вернёт
+     уже созданный api и стор НКЛ не подставит. */
+  var techView = null;
+
+  function renderTech() {
+    var T = window.PostTileLoanExternalData;
+    if (!T || !techView) return;
+    T.render(document.getElementById('tile-tr-loan-external-data'),
+             { mode: 'edit', consumer: 'tranche', data: techView });
+  }
+
+  function initTech() {
+    var t = window.MOCK_TRANCHE;
+    techView = { gfoId: t.gfoId, gfoFundingCreditId: t.gfoFundingCreditId, crmProductId: t.crmProductId };
+    renderTech();
+    if (window.PostModalLoanExternalData) {
+      window.PostModalLoanExternalData.bind(null, {
+        consumer: 'tranche',
+        get: function () { return techView; },
+        save: function (v) { techView = v; renderTech(); }
+      });
+    }
+  }
+
+  /* Погашение транша (RE0049, Э6) — механика страницы НКЛ (Instrument.html):
+     меню ⋮ из node.menu узла транша (ProductTreeStore), пункт «Погасить» /
+     «Отменить погашение» открывает RepaymentModal событием 'ptreeaction';
+     запись repaidAt — в сторе при подтверждении в окне (окно зовёт
+     ProductTreeStore.commit). Сабхедер шапки — только у погашенного. */
+  var headCtx = null;
+
+  function paintHeadMenu() {
+    if (!headCtx) return;
+    var node = window.ProductTreeStore.node(headCtx.tranche.id);
+    /* как у НКЛ: «Удалить» в меню шапки не показывается; когда сделка не
+       редактируется — пункты выключены разметкой (урок Л267) */
+    var editable = window.DealsStore.isEditable(headCtx.deal);
+    var items = (node && node.menu ? node.menu : []).filter(function (m) { return m.action !== 'DELETE'; });
+    document.getElementById('tr-head-menu').innerHTML = items.map(function (m) {
+      return '<button type="button" class="menu__item" role="menuitem" data-tr-act="' + m.action + '"'
+        + (editable ? '' : ' disabled aria-disabled="true"') + '><span class="menu__item-label">' + m.label + '</span></button>';
+    }).join('');
+  }
+
+  function paintHeadSubtitle() {
+    if (!headCtx) return;
+    var node = window.ProductTreeStore.node(headCtx.tranche.id);
+    var repaid = !!(node && node.repaidAt);
+    var box = document.getElementById('tr-subtitle');
+    box.hidden = !repaid;
+    if (!repaid) return;
+    var label = (window.PRODUCT_DETAIL_LABELS || {}).repaidAt || 'Дата фактического погашения';
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(node.repaidAt || '');
+    document.getElementById('tr-subtitle-text').textContent = label + (m ? ' ' + m[3] + '.' + m[2] + '.' + m[1] : '');
+  }
+
+  function paintHeadState() {
+    paintHeadMenu();
+    paintHeadSubtitle();
+    if (window.DSMenu && window.DSMenu.bindAll) window.DSMenu.bindAll(document);
+  }
+
+  /* Пункты меню рантайм держит в общем слое — ловим клик по атрибуту (Л88);
+     «Погасить» и «Отменить погашение» — окна дерева продуктов, слушают
+     'ptreeaction' (emitTree — как на странице НКЛ). */
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest('[data-tr-act]');
+    if (!el || el.disabled || !headCtx) return;
+    document.dispatchEvent(new CustomEvent('ptreeaction', {
+      detail: { action: el.getAttribute('data-tr-act'), id: headCtx.tranche.id, node: window.ProductTreeStore.node(headCtx.tranche.id) }
+    }));
+  });
+
   /* Дерево продуктов подтягивает сохранённые правки (ProductTreeStore.ready) —
      номер и название транша читаются после него. */
-  buildNav(); fill();
+  buildNav(); fill(); initContract(); initLoanLimits(); initTech();
   window.ProductTreeStore.ready.then(function () {
     var ctx = window.TrancheContext.resolve(location.search);
     if (ctx) head(ctx);
+    if (ctx) renderNrl(ctx);
+    renderEts();
+    /* шапка: меню ⋮ и сабхедер погашения — после того, как дерево открыто
+       (TrancheContext.resolve открывает его по сделке адреса); перерисовка —
+       после подтверждения в окне погашения (store.on('commit'), как на
+       странице НКЛ). */
+    if (ctx) {
+      headCtx = ctx;
+      paintHeadState();
+      window.ProductTreeStore.on('commit', paintHeadState);
+    }
     if (window.dsIcons) window.dsIcons.apply(document);
   });
   if (window.dsIcons) window.dsIcons.apply(document);

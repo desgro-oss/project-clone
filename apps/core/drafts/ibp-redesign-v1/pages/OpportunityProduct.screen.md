@@ -31,7 +31,7 @@ widgets: [tiles/ProductClientTiles]
 
 | Уровень крошек | Текст | Ссылка |
 |---|---|---|
-| 1 | Главная | `HomePage.html` |
+| 1 | Главная | `../../../host-app/pages/HomePage.html` |
 | 2 | <Раздел>: <Вкладка> | реестр источника |
 | 3 | Сделка <ID>.<Проект> | `Opportunity.preview.html?…` |
 | 4 (текущий) | Продукт: <название> | — |

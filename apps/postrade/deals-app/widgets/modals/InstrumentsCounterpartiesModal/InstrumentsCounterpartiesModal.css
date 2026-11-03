@@ -50,7 +50,7 @@
   flex-direction: column;
   gap: var(--space-16);
 }
-.lc-knrm__col > .ds-h6-strong { margin-right: var(--space-16); }
+.lc-knrm__col > .ds-h6-strong-smb { margin-right: var(--space-16); }
 
 /* Прокручиваемые области колонок. overflow-y, бегунок и место под него
    (scrollbar-gutter: stable) даёт .ds-scroll из ДС, он же запрещает
@@ -71,7 +71,7 @@
    Modal 1.015 оно 16px): карточки и заголовок кончаются вровень с кнопками
    подвала, бегунок колонки — в поле окна (замечание человека 10.10.2026). */
 .lc-knrm__col:last-child { margin-right: calc(-1 * var(--space-8)); }
-.lc-knrm__col:last-child > .ds-h6-strong { margin-right: var(--space-8); }
+.lc-knrm__col:last-child > .ds-h6-strong-smb { margin-right: var(--space-8); }
 .lc-knrm__col:last-child > .lc-knrm__drop { padding-right: 0; }
 
 /* ── Колонка формы ──────────────────────────────────────────────────── */
@@ -93,7 +93,7 @@
    найдено» (InstrumentsCounterpartiesModal.js). */
 .lc-knrm__hint {
   margin: 0;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
 }
 .lc-knrm__drop:has(.lc-knrm__card) .lc-knrm__hint { display: none; }
@@ -112,3 +112,11 @@
 .lc-knrm__close { display: none; }
 .lc-knrm[data-mode="view"] .lc-knrm__close { display: inline-flex; }
 .lc-knrm[data-mode="view"] [data-knr-save] { display: none; }
+
+/* ── Вариант «Контрагент» (data-variant="instrument", страница договора) ── */
+/* Выбор одного контрагента договора вместо отметки КНР: чекбокс «КНР» в этом
+   варианте не показывается (отметок КНР нет, состав КНР не меняется), а вместо
+   него у участника сделки стоит Radiobutton ДС — его рисует скрипт окна. Без
+   атрибута ни одно правило ниже не действует: окно КНР остаётся как было. */
+.lc-knrm[data-variant="instrument"] .lc-knrm__knr { display: none; }
+.lc-knrm__pick { margin-top: var(--space-12); align-self: flex-start; }

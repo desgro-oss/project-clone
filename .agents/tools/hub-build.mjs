@@ -78,6 +78,7 @@ const DS_FIELDS = ['id', 'title', 'desc', 'icon'];
 const KIT_FIELDS = ['id', 'title', 'desc', 'icon'];
 const KB_FIELDS = ['id', 'section', 'title', 'desc', 'icon'];
 const MAP_FIELDS = ['id', 'section', 'title', 'desc', 'icon', 'after'];
+const HOME_FIELDS = ['id', 'section', 'role', 'title', 'desc', 'icon'];
 
 const js = (v) => (v === null ? 'null' : "'" + String(v).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n') + "'");
 
@@ -141,6 +142,22 @@ export function collect(P) {
     }
   }
   const tracks = P.tracks.filter((t) => t.id && t.hubGroup);
+  /* Главные ролей (project.json → roleHomes, решение человека 29.10.2026):
+     первой строкой колонки «Проекты» раздела `section`, перед приложениями;
+     href — главная модуля roleHomes.app с ?role=, root — этот модуль. Раздел
+     строки хаб берёт из поля section (страница лежит в другом разделе). */
+  const RH = P.roleHomes;
+  if (RH) {
+    const shGroup = (P.tracks.find((t) => t.id === 'product') || {}).hubGroup;
+    if (!existsSync(path.join(P.root, RH.pageRel))) defects.push('ХБ4 project.json → roleHomes — нет страницы ' + RH.pageRel);
+    else {
+      for (const h of RH.entries) {
+        const miss = HOME_FIELDS.filter((f) => typeof h[f] !== 'string' || !h[f].trim());
+        if (miss.length || !shGroup) { defects.push('ХБ4 project.json → roleHomes.entries — ' + (miss.length ? 'нет полей: ' + miss.join(', ') : 'нет трека product — колонки для главной')); continue; }
+        entries.push({ id: h.id, group: shGroup, title: h.title, desc: h.desc, href: h.href, root: RH.root, icon: h.icon, section: h.section });
+      }
+    }
+  }
   const byTrack = new Map(tracks.map((t) => [t.id, []]));
   /* Приложение — каталог с app.json на любой глубине apps/: разделы
      (модули `<раздел>/<имя>-app/`, концепты `<раздел>/drafts/<имя>/`). */
@@ -232,6 +249,8 @@ export function render(P, entries, specs = []) {
     '              пользователя в футере на хаб;',
     '     icon   — имя глифа из ' + P.ds + '/' + DSP.layout().specOf('Icons') + ';',
     "     shelf  — необязательное, только у приложений: 'actual' | 'archive' — полка в разделе концептов;",
+    ...(P.roleHomes ? ['     section — необязательное: раздел строки, когда страница лежит в другом разделе (главная роли —',
+      '              project.json → roleHomes: первой строкой колонки проектов раздела, href с ?role=);'] : []),
     '     concept, version — необязательные, только вместе, только у приложений: название концепта',
     '              и подпись версии; записи с одним concept — одна плитка-аккордеон на хабе.',
     '',
@@ -240,8 +259,8 @@ export function render(P, entries, specs = []) {
     '   stage (подпись версии, необязательно), date (необязательно), href (страница спеки от корня),',
     '   root (каталог приложения со спеками). */',
   ].join('\n');
-  const OPTIONAL = ['shelf', 'concept', 'version'];
-  const body = entries.map((e) => '  {\n' + ['id', 'group', 'title', 'desc', 'href', 'root', 'icon', 'shelf', 'concept', 'version']
+  const OPTIONAL = ['shelf', 'concept', 'version', 'section'];
+  const body = entries.map((e) => '  {\n' + ['id', 'group', 'title', 'desc', 'href', 'root', 'icon', 'shelf', 'concept', 'version', 'section']
     .filter((k) => !OPTIONAL.includes(k) || e[k])
     .map((k) => '    ' + k + ': ' + js(e[k])).join(',\n') + '\n  }').join(',\n');
   const specBody = specs.map((e) => '  {\n' + ['id', 'title', 'module', 'version', 'stage', 'date', 'href', 'root']

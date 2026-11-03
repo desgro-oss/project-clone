@@ -81,7 +81,7 @@
 }
 .lc-navigator__label {
   min-width: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-primary);
   overflow-wrap: anywhere;
 }
@@ -100,7 +100,7 @@
 }
 .lc-navigator__group-title {
   margin: 0;
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-secondary);
 }
 .lc-navigator__group .lc-navigator__steps {
@@ -133,7 +133,7 @@
 }
 .lc-navigator__status {
   margin: 0;
-  font: var(--type-body-m-strong);
+  font: var(--type-body-m-strong-smb);
   color: var(--text-primary);
 }
 

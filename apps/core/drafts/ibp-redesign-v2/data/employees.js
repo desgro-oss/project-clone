@@ -16,7 +16,9 @@
  * @property {string} initials         инициалы для аватара
  * @property {string} position         должность
  * @property {string} roleCode         роль в командах (ANALYST | DIRECTOR | VP | REGIONAL_DIRECTOR | KM)
- * @property {string} [deskId]         деск сотрудника; известен для демо-пользователя из ТЗ MS0014 §3, остальные связи не заданы
+ * @property {string} [deskId]         деск сотрудника; у демо-пользователя — из ТЗ MS0014 §3; аналитики-коллеги
+ *                                      03882 и 05204 поставлены на тот же деск для вкладки лидов «Проекты моего
+ *                                      деска» (invented 26.10.2026); остальные связи не заданы
  */
 
 /**
@@ -31,8 +33,8 @@ window.EMPLOYEE_ROLE_LABELS = { ANALYST: 'Аналитик', DIRECTOR: 'Дире
 /** @type {EmployeeRsDto[]} */
 window.MOCK_EMPLOYEES = [
   { id: '04127', fullName: 'Ким Александр Сергеевич', initials: 'КА', position: 'Аналитик ДИД', roleCode: 'ANALYST', deskId: 'D-SMB-NR6' },
-  { id: '03882', fullName: 'Лебедев Олег Николаевич', initials: 'ЛО', position: 'Аналитик ДИД', roleCode: 'ANALYST' },
-  { id: '05204', fullName: 'Ежова Дарья Андреевна', initials: 'ЕД', position: 'Аналитик ДИД', roleCode: 'ANALYST' },
+  { id: '03882', fullName: 'Лебедев Олег Николаевич', initials: 'ЛО', position: 'Аналитик ДИД', roleCode: 'ANALYST', deskId: 'D-SMB-NR6' },
+  { id: '05204', fullName: 'Ежова Дарья Андреевна', initials: 'ЕД', position: 'Аналитик ДИД', roleCode: 'ANALYST', deskId: 'D-SMB-NR6' },
   { id: '02940', fullName: 'Соколов Дмитрий Викторович', initials: 'СД', position: 'Директор', roleCode: 'DIRECTOR' },
   { id: '02941', fullName: 'Юсупова Лейла Тимерьяновна', initials: 'ЮЛ', position: 'Директор', roleCode: 'DIRECTOR' },
   { id: '01855', fullName: 'Ветрова Марина Игоревна', initials: 'ВМ', position: 'Vice President', roleCode: 'VP' },

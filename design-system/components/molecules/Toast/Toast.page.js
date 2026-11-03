@@ -559,7 +559,7 @@
       ['Размер спиннера', csSp ? px(csSp.width) : '—', '--toast-icon'],
       ['Толщина обводки спиннера', csSp ? px(csSp.borderTopWidth) : '—', 'border 2px'],
       ['Размер статус-иконки', csIc ? px(csIc.width) : '—', '--toast-icon'],
-      ['Типографика текста (кегль / интерлиньяж)', Math.round(parseFloat(csMsg.fontSize)) + ' / ' + Math.round(parseFloat(csMsg.lineHeight)) + ' px', '--type-body-s'],
+      ['Типографика текста (кегль / интерлиньяж)', Math.round(parseFloat(csMsg.fontSize)) + ' / ' + Math.round(parseFloat(csMsg.lineHeight)) + ' px', '--type-body-s-reg'],
       ['Макс. ширина (стек)', stackMaxW, '--toast-maxw'],
     ];
     tbody.innerHTML = rows.map(r =>

@@ -1,0 +1,24 @@
+<!-- Локальный компонент «Новость» — правая панель страницы NewsPage:
+     заголовок, дата · источник, полный текст по абзацам и «Смотреть
+     источник». Содержимое рисует V2NewsArticleTile.js
+     (LcNewsArticleTile.render). -->
+<section class="tile tile--headless lc-v2-news-article-tile" data-state="data" data-mode="view" aria-labelledby="lc-news-article-title">
+  <div class="tile__body lc-v2-news-article-tile__body ds-scroll">
+    <article class="lc-v2-news-article-tile__article" data-news-article>
+      <h2 class="lc-v2-news-article-tile__title" id="lc-news-article-title" data-news-title></h2>
+      <p class="lc-v2-news-article-tile__meta"><time data-news-date></time><span aria-hidden="true">·</span><span class="lc-v2-news-article-tile__source" data-news-source></span></p>
+      <div class="lc-v2-news-article-tile__text" data-news-body></div>
+      <div class="lc-v2-news-article-tile__actions">
+        <a class="btn btn--outline btn--s" data-news-link target="_blank" rel="noopener noreferrer"><span class="btn__label">Смотреть источник</span><i data-icon="link-external"></i></a>
+      </div>
+    </article>
+    <!-- новость не выбрана: вкладка без новостей -->
+    <div class="es es--m" data-news-none hidden>
+      <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+      <div class="es__body">
+        <p class="es__title">Новость не выбрана</p>
+        <p class="es__text">Выберите новость в списке слева.</p>
+      </div>
+    </div>
+  </div>
+</section>

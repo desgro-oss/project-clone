@@ -21,8 +21,8 @@ const POP_CONTENT = {
     wrap.innerHTML = rows.map(r => `
       <div style="display:flex; align-items:center; gap:10px;">
         <span style="width:8px;height:8px;border-radius:50%;background:${r[0]};flex:none;"></span>
-        <span style="font:var(--type-body-s); color:var(--text-secondary); flex:1 1 auto;">${r[1]}</span>
-        <span style="font:var(--type-body-s-strong); color:var(--text-primary);">${r[2]}</span>
+        <span style="font:var(--type-body-s-reg); color:var(--text-secondary); flex:1 1 auto;">${r[1]}</span>
+        <span style="font:var(--type-body-s-strong-smb); color:var(--text-primary);">${r[2]}</span>
       </div>`).join('');
     return wrap;
   },
@@ -45,16 +45,16 @@ const POP_CONTENT = {
     wrap.style.cssText = 'display:flex; flex-direction:column; gap:10px;';
     wrap.innerHTML = `
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <span style="font:var(--type-body-m-strong); color:var(--text-primary);">ДК-2025-4471</span>
+        <span style="font:var(--type-body-m-strong-smb); color:var(--text-primary);">ДК-2025-4471</span>
         <span class="chip chip--s"><span class="chip__label">В работе</span></span>
       </div>
       <div style="display:flex; flex-direction:column; gap:4px;">
-        <span style="font:var(--type-body-s); color:var(--text-inactive);">Сумма</span>
-        <span style="font:var(--type-body-m-strong); color:var(--text-primary); font-variant-numeric:tabular-nums;">2 500 000 000,00 RUB</span>
+        <span style="font:var(--type-body-s-reg); color:var(--text-inactive);">Сумма</span>
+        <span style="font:var(--type-body-m-strong-smb); color:var(--text-primary); font-variant-numeric:tabular-nums;">2 500 000 000,00 RUB</span>
       </div>
       <div style="display:flex; flex-direction:column; gap:4px;">
-        <span style="font:var(--type-body-s); color:var(--text-inactive);">Контрагент</span>
-        <span style="font:var(--type-body-m); color:var(--text-primary);">ООО «Северная верфь»</span>
+        <span style="font:var(--type-body-s-reg); color:var(--text-inactive);">Контрагент</span>
+        <span style="font:var(--type-body-m-reg); color:var(--text-primary);">ООО «Северная верфь»</span>
       </div>`;
     return wrap;
   },
@@ -63,10 +63,10 @@ const POP_CONTENT = {
     wrap.className = 'mtable';
     const rows = [['Выдача','01.02.2026','120 000 000'],['Погашение','01.03.2026','12 500 000']];
     wrap.innerHTML = `
-      <div style="display:grid; grid-template-columns:1.2fr 1fr 1fr; padding:9px 0; font:var(--type-body-s-strong); color:var(--text-secondary);">
+      <div style="display:grid; grid-template-columns:1.2fr 1fr 1fr; padding:9px 0; font:var(--type-body-s-strong-smb); color:var(--text-secondary);">
         <span>Операция</span><span>Дата</span><span style="text-align:right;">Сумма</span>
       </div>
-      ${rows.map(r => `<div style="display:grid; grid-template-columns:1.2fr 1fr 1fr; padding:9px 0; border-top:1px solid var(--border-light); font:var(--type-body-m); color:var(--text-primary);">
+      ${rows.map(r => `<div style="display:grid; grid-template-columns:1.2fr 1fr 1fr; padding:9px 0; border-top:1px solid var(--border-light); font:var(--type-body-m-reg); color:var(--text-primary);">
         <span>${r[0]}</span><span style="color:var(--text-secondary);">${r[1]}</span><span style="text-align:right; font-variant-numeric:tabular-nums;">${r[2]}</span>
       </div>`).join('')}`;
     return wrap;
@@ -84,7 +84,7 @@ const POP_CONTENT = {
     wrap.setAttribute('role', 'alert');
     wrap.style.cssText = 'display:flex; gap:10px; align-items:flex-start;';
     wrap.innerHTML = `<span style="flex:none; width:20px; height:20px; color:var(--error);"><i data-icon="alert-circle"></i></span>
-      <p style="margin:0; font:var(--type-body-s); color:var(--text-primary);">Не удалось загрузить данные. Проверьте соединение и попробуйте ещё раз.</p>`;
+      <p style="margin:0; font:var(--type-body-s-reg); color:var(--text-primary);">Не удалось загрузить данные. Проверьте соединение и попробуйте ещё раз.</p>`;
     return wrap;
   },
   scroll() {
@@ -93,7 +93,7 @@ const POP_CONTENT = {
     for (let i = 1; i <= 8; i++) {
       const row = document.createElement('div');
       row.style.cssText = 'display:flex; justify-content:space-between; gap:10px; padding-bottom:12px; border-bottom:1px solid var(--border-light);';
-      row.innerHTML = `<span style="font:var(--type-body-s); color:var(--text-secondary);">Пункт ${i}</span><span style="font:var(--type-body-s-strong); color:var(--text-primary);">${(i * 12.5).toFixed(1)}%</span>`;
+      row.innerHTML = `<span style="font:var(--type-body-s-reg); color:var(--text-secondary);">Пункт ${i}</span><span style="font:var(--type-body-s-strong-smb); color:var(--text-primary);">${(i * 12.5).toFixed(1)}%</span>`;
       wrap.appendChild(row);
     }
     return wrap;
@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
       head.style.borderBottom = 'none';
       const card = document.createElement('div');
       card.style.cssText = 'border:1px solid var(--border-light); border-radius: var(--pop-radius); overflow:hidden; background:var(--bg-tile); width:280px;';
-      const cap = document.createElement('div'); cap.style.cssText = 'padding:12px 16px; border-top:1px solid var(--border-light); font:var(--type-body-xs); color:var(--text-inactive);'; cap.textContent = v.cap;
+      const cap = document.createElement('div'); cap.style.cssText = 'padding:12px 16px; border-top:1px solid var(--border-light); font:var(--type-body-xs-reg); color:var(--text-inactive);'; cap.textContent = v.cap;
       card.appendChild(head); card.appendChild(cap);
       host.appendChild(card);
     });

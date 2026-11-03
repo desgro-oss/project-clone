@@ -31,7 +31,7 @@ widgets: [tables/SimpleSettingsTable, tiles/SimpleSettingsTile]
 
 | Уровень крошек | Текст | Ссылка |
 |---|---|---|
-| 1 | Главная | `HomePage.html` |
+| 1 | Главная | `../../../host-app/pages/HomePage.html` |
 | 2 | Администрирование | `AdminPage.preview.html` |
 | 3 (текущий) | Статусы задач | — |
 

@@ -16,7 +16,7 @@
 
 .albar-host{container-type:inline-size;container-name:albar}
 
-.albar{display:flex;flex-direction:column;gap:8px;max-width:var(--albar-max-w,600px);font:var(--type-body-s);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.albar{display:flex;flex-direction:column;gap:8px;max-width:var(--albar-max-w,600px);font:var(--type-body-s-reg);color:var(--text-primary);font-variant-numeric:tabular-nums}
 
 /* ---------- шапка ---------- */
 /* Порядок шапки: подпись → предупреждение → итог. Иконка-предупреждение стоит
@@ -25,11 +25,11 @@
    1.003: до этого подпись тянулась (flex:1), и иконка уезжала к итогу. */
 .albar__head{display:flex;align-items:baseline;justify-content:flex-start;gap:8px}
 .albar__titles{display:flex;flex-direction:column;gap:2px;min-width:0;flex:0 1 auto}
-.albar__label{font:var(--type-body-xs);color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.albar__sublabel{font:var(--type-body-xs);color:var(--text-inactive);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.albar__total{display:flex;align-items:baseline;gap:4px;flex:0 0 auto;margin-left:auto;padding-left:8px;white-space:nowrap;font:var(--type-body-m-strong);color:var(--text-primary)}
-.albar__unit{font:var(--type-body-xs);color:var(--text-inactive)}
-.albar__total--empty{font:var(--type-body-m);color:var(--text-inactive)}
+.albar__label{font:var(--type-body-xs-reg);color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.albar__sublabel{font:var(--type-body-xs-reg);color:var(--text-inactive);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.albar__total{display:flex;align-items:baseline;gap:4px;flex:0 0 auto;margin-left:auto;padding-left:8px;white-space:nowrap;font:var(--type-body-m-strong-smb);color:var(--text-primary)}
+.albar__unit{font:var(--type-body-xs-reg);color:var(--text-inactive)}
+.albar__total--empty{font:var(--type-body-m-reg);color:var(--text-inactive)}
 .albar__warn{display:inline-flex;align-items:center;align-self:center;flex:0 0 auto;color:var(--warning)}
 .albar__warn :is(svg,[data-icon]){width:16px;height:16px}
 
@@ -63,10 +63,10 @@
 .albar[data-hover] .albar__seg.is-active,.albar[data-hover] .albar__row.is-active{opacity:1}
 
 /* ---------- служебные состояния ---------- */
-.albar__empty{font:var(--type-body-s);color:var(--text-inactive)}
+.albar__empty{font:var(--type-body-s-reg);color:var(--text-inactive)}
 .albar__calc{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 16px;border-radius:var(--radius-control);background:var(--bg-page);text-align:center}
-.albar__calc-title{font:var(--type-body-s);color:var(--text-primary)}
-.albar__calc-sub{font:var(--type-body-xs);color:var(--text-secondary)}
+.albar__calc-title{font:var(--type-body-s-reg);color:var(--text-primary)}
+.albar__calc-sub{font:var(--type-body-xs-reg);color:var(--text-secondary)}
 .albar__foot .alert{width:100%}
 
 /* скелетон загрузки */
@@ -83,9 +83,9 @@
 /* ---------- контейнерные запросы ---------- */
 /* Средний — 320–480px: компактнее шрифты; доли колонок те же 50/20/30 */
 @container albar (max-width:480px){
-  .albar{font:var(--type-body-xs)}
-  .albar__total{font:var(--type-body-s-strong)}
-  .albar__total--empty{font:var(--type-body-s)}
+  .albar{font:var(--type-body-xs-reg)}
+  .albar__total{font:var(--type-body-s-strong-smb)}
+  .albar__total--empty{font:var(--type-body-s-reg)}
 }
 /* Узкий — <320px: колонка процентов скрыта, строка в два ряда */
 @container albar (max-width:320px){

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Единая трансфертная ставка — IBP</title>
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  /* Пустое состояние — по центру свободной области под шапкой, как на макете */
+  .ets-empty { display: flex; justify-content: center; padding-top: var(--space-64); }
+</style>
+<link rel="stylesheet" href="../widgets/tiles/TransferSchemaTile/TransferSchemaTile.css">
+<link rel="stylesheet" href="../widgets/modals/TransferSchemaModal/TransferSchemaModal.css">
+<link rel="stylesheet" href="../widgets/modals/TransferRateHistoryModal/TransferRateHistoryModal.css">
+</head>
+<body>
+
+<div class="nav-layout">
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="MainPage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="Portfolio.html">Текущий портфель ДИД</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Сделка</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Договор займа</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Единая трансфертная ставка</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- #sec:head ── Шапка: «В инструмент» — обратно на страницу договора займа; «Новая схема» в
+           просмотре выключена разметкой; меню ⋮ с историями доступно и в просмотре (справка) -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Единая трансфертная ставка</h1></div>
+            <span class="phead__return">
+              <button type="button" class="btn btn--outline btn--xs" id="ets-back-btn"><i data-icon="flip-backward"></i><span class="btn__label">В инструмент</span></button>
+            </span>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <button type="button" class="btn btn--accent btn--m" id="ets-new-btn" data-ets-act="NEW"><i data-icon="add"></i><span class="btn__label">Новая схема</span></button>
+          <span class="menu-anchor">
+            <button type="button" class="btn btn--outline btn--m btn--icon-only" aria-label="Ещё действия" aria-haspopup="menu" aria-expanded="false" data-menu="ets-head-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+            <div id="ets-head-menu" class="menu menu--floating" role="menu" hidden>
+              <button type="button" class="menu__item" role="menuitem" data-ets-act="HISTORY_BASE_INDEX"><span class="menu__item-label">История БИ</span></button>
+              <button type="button" class="menu__item" role="menuitem" data-ets-act="HISTORY_RATE"><span class="menu__item-label">История ставок</span></button>
+            </div>
+          </span>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Карточки процентных схем стопкой; без схем — пустое состояние -->
+      <div class="grid12">
+        <!-- Локальный компонент «Процентная схема ЕТС» — карточка схемы в списке страницы
+     «Единая трансфертная ставка». Вшивается общим сборщиком (.agents/tools/assemble.mjs)
+     по метке ds-include; на странице карточки рисует TransferSchemaTile.js
+     (PostTileTransferSchema.renderList) в этот контейнер. Здесь только разметка: место в
+     колонках задаёт экран (метка с class="col-12").
+     Фрагмент — эталон: четыре карточки в порядке «правка есть × плавающая, с комментарием»,
+     «правка есть × фиксированная, без комментария», «просмотр × плавающая, без комментария»,
+     «просмотр × фиксированная, с комментарием». Карточки стоят стопкой (.tile-stack).
+     data-mode — режим прав: edit | view. Ставит страница: роль, статус сделки и погашение
+                 договора, не допускающие правку, дают view. Меню ⋮ — только в edit: в
+                 просмотре его нет в разметке вовсе, не скрыто и не выключено.
+     «Ставка» — формула схемы: «4%», «7,5%», «КС+2%». Расчёта на сегодня здесь нет.
+     «Комментарий» — одна строка с усечением и тултипом (ReadOnlyField); пусто — «—».
+     Действия меню — событие loanaction { action: 'EDIT_SCHEME' | 'REMOVE_SCHEME', id } на карточку. -->
+<div data-mode="edit" id="ets-list" class="tile-stack col-12" data-widget="TransferSchemaTile" data-widget-group="tiles" data-widget-src="../widgets/tiles/TransferSchemaTile/TransferSchemaTile.html">
+  <!-- 1. правка есть · плавающая · комментарий -->
+  <section class="tile lc-transfer-schema-tile" data-scheme-id="ts-1" data-mode="edit">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title" data-scheme-field="period">01.01.2021—31.12.2021</h3></div>
+      </div>
+      <div class="tile__actions">
+        <span class="menu-anchor">
+          <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия со схемой" data-menu="lts-m-ts-1" data-menu-align="end">
+            <i data-icon="more-dots"></i>
+          </button>
+          <div id="lts-m-ts-1" class="menu menu--floating" role="menu" hidden>
+            <button type="button" class="menu__item" role="menuitem" data-lc-action="EDIT_SCHEME"><span class="menu__item-label">Изменить</span></button>
+            <button type="button" class="menu__item" role="menuitem" data-lc-action="REMOVE_SCHEME"><span class="menu__item-label">Удалить</span></button>
+          </div>
+        </span>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-transfer-schema-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Рабочих дней до применения БИ</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="baseIndexLagWorkDays">2</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ставка</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="rate">КС+2%</span></div>
+        </div>
+        <div class="rof lc-transfer-schema-tile__comment">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+          <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-scheme-field="comment">Очень длинный текст комментария в одну строку Очень длинный текст комментария в одну строку Очень длинный текст комментария в одну строку Очень длинный текст комментария в одну строку</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. правка есть · фиксированная · без комментария -->
+  <section class="tile lc-transfer-schema-tile" data-scheme-id="ts-2" data-mode="edit">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title" data-scheme-field="period">01.01.2022—31.12.2022</h3></div>
+      </div>
+      <div class="tile__actions">
+        <span class="menu-anchor">
+          <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия со схемой" data-menu="lts-m-ts-2" data-menu-align="end">
+            <i data-icon="more-dots"></i>
+          </button>
+          <div id="lts-m-ts-2" class="menu menu--floating" role="menu" hidden>
+            <button type="button" class="menu__item" role="menuitem" data-lc-action="EDIT_SCHEME"><span class="menu__item-label">Изменить</span></button>
+            <button type="button" class="menu__item" role="menuitem" data-lc-action="REMOVE_SCHEME"><span class="menu__item-label">Удалить</span></button>
+          </div>
+        </span>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-transfer-schema-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Рабочих дней до применения БИ</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="baseIndexLagWorkDays">3</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ставка</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="rate">7,5%</span></div>
+        </div>
+        <div class="rof lc-transfer-schema-tile__comment">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+          <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-scheme-field="comment">—</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. просмотр · плавающая · без комментария: меню ⋮ в разметке нет -->
+  <section class="tile lc-transfer-schema-tile" data-scheme-id="ts-3" data-mode="view">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title" data-scheme-field="period">01.01.2023—31.12.2023</h3></div>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-transfer-schema-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Рабочих дней до применения БИ</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="baseIndexLagWorkDays">2</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ставка</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="rate">КС+2%</span></div>
+        </div>
+        <div class="rof lc-transfer-schema-tile__comment">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+          <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-scheme-field="comment">—</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. просмотр · фиксированная · комментарий: меню ⋮ в разметке нет -->
+  <section class="tile lc-transfer-schema-tile" data-scheme-id="ts-4" data-mode="view">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title" data-scheme-field="period">01.01.2024—31.12.2024</h3></div>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-transfer-schema-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Рабочих дней до применения БИ</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="baseIndexLagWorkDays">0</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ставка</span></span>
+          <div class="rof__row"><span class="rof__value" data-scheme-field="rate">4%</span></div>
+        </div>
+        <div class="rof lc-transfer-schema-tile__comment">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+          <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-scheme-field="comment">Ставка согласована на год вперёд</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+      </div>
+
+      <!-- пусто: схем у договора нет. Кнопку рисует скрипт страницы только при праве на правку —
+           в просмотре её нет в разметке (Л235) -->
+      <div class="ets-empty" id="ets-empty-wrap" hidden>
+        <div class="es es--l" id="ets-empty" role="status" aria-live="polite">
+          <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+          <div class="es__body">
+            <p class="es__title">Здесь пока ничего нет</p>
+          </div>
+          <div class="es__actions" id="ets-empty-actions"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── Окна страницы. Схему и подтверждение удаления открывает страница вызовом
+     PostModalTransferSchema.open / .confirmRemove, истории — PostModalTransferRateHistory.open
+     и PostModalBaseTransferIndexHistory.open из меню ⋮ шапки. -->
+<!-- Окно «Процентная схема» страницы «Единая трансфертная ставка»: создание и правка
+     схемы и подтверждение удаления. Артефакт тайла-карточки схемы (TransferSchemaTile) и
+     шапки страницы: окно открывает страница PostModalTransferSchema.open({ id? }) —
+     «Новая схема» в шапке (без id) или «Изменить» в меню ⋮ карточки (с id); удаление —
+     пункт «Удалить» меню ⋮ карточки, страница зовёт PostModalTransferSchema.confirmRemove(id).
+     Фрагмент вшивается ассемблером отдельной меткой ds-include в конец страницы.
+
+     В файле два соседних скрима (как у окна ДС: ассемблер переносит атрибуты метки только
+     на первый корень):
+     1) tschema-scrim — окно «Процентная схема». Заголовок и при создании, и при правке один;
+        «Удалить» в подвале нет (макет «Новая процентная схема ЕТС»): удаление запускает
+        страница. Состояния макета — одно окно: пустое, фиксированная ставка, плавающая
+        ставка, ошибка; значения полей и показ полей ставки ставит TransferSchemaModal.js при
+        каждом открытии (примеры значений — в fixtures.json). В разметке — пустое состояние:
+        тип ставки не выбран, поля ставки скрыты атрибутом hidden;
+     2) tschema-delete-scrim — подтверждение удаления. Отдельный скрим-сосед (вложенный
+        скрим внутри основного унаследовал бы его hidden); как у транша и ДС: «Подтвердите
+        действие», «Отменить» и «Подтвердить» в тоне error.
+
+     Раскладка полей — сетка в двенадцать колонок: строка 1 — «Рабочих дней до применения
+     БИ», «Дата начала», «Дата окончания» поровну, по четыре колонки (решение человека
+     02.11.2026); «Комментарий» — на всю ширину; «Тип ставки» — шесть колонок, правее —
+     «Ставка» (фиксированная) или «Базовый индекс (БИ)» и «Спред» (плавающая, по три).
+     Ширина окна — modal--w5 (747 px): на одну ступень шире макета (решение человека
+     02.11.2026). Подпись «Рабочих дней до применения БИ» переносится на две строки
+     (ds-label--wrap), при фактическом усечении — тултип с полным текстом
+     (data-tooltip-truncated="only").
+
+     Отличие от макета (решение человека 26.10.2026, ответ 7): маска даты ДД.ММ.ГГГГ вместо
+     ММ.ДД.ГГГГ.
+
+     Списки «Тип ставки» и «Базовый индекс (БИ)» пусты в разметке: опции собирает скрипт из
+     справочников LOAN_RATE_TYPE_LABELS и LOAN_BASE_INDEX_LABELS. Крестик очистки в разметке
+     нет намеренно: он живёт по значению, его рисует рантайм поля. «Сохранить» без
+     data-modal-close: окно закрывает скрипт, когда проверка прошла. Клик по скриму не
+     закрывает окно с вводом. Алерт уровня окна (.modal__alert) скрыт, пока ошибок нет;
+     строки с текстами ошибок скрипт кладёт в [data-tschema-alert-list]. -->
+
+<div class="modal-scrim" id="tschema-scrim" hidden data-widget="TransferSchemaModal" data-widget-group="modals" data-widget-src="../widgets/modals/TransferSchemaModal/TransferSchemaModal.html">
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="tschema-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="tschema-title">Процентная схема</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" data-tschema-alert hidden>
+      <div class="alert alert--error alert--m alert--flush" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body" data-tschema-alert-list></div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <div class="lc-transfer-schema-modal__grid">
+
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__third">
+          <label class="ds-label ds-label--wrap" for="tschema-lag"><span class="ds-label__text" data-tooltip="Рабочих дней до применения БИ" data-tooltip-truncated="only">Рабочих дней до применения БИ</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="tschema-lag" name="baseIndexLagWorkDays" inputmode="numeric" autocomplete="off" value="0">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__third">
+          <label class="ds-label" for="tschema-start-date"><span class="ds-label__text">Дата начала</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="tschema-start-date" name="startDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+              <span class="inp__acts">
+                <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__third">
+          <label class="ds-label" for="tschema-end-date"><span class="ds-label__text">Дата окончания</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="tschema-end-date" name="endDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+              <span class="inp__acts">
+                <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth inp--multiline lc-transfer-schema-modal__wide">
+          <label class="ds-label" for="tschema-comment"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field">
+            <textarea class="inp__control" id="tschema-comment" name="comment" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__type">
+          <label class="ds-label" for="tschema-rate-type"><span class="ds-label__text">Тип ставки</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="tschema-rate-type-list">
+              <input class="inp__control" id="tschema-rate-type" name="rateTypeCode" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="tschema-rate-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <!-- Фиксированная ставка: «Ставка». Плавающая: «Базовый индекс (БИ)» и «Спред».
+             Лишнее для выбранного типа скрыто атрибутом hidden, а не стилем. -->
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__rate" data-tschema-rate="FIXED" hidden>
+          <label class="ds-label" for="tschema-fixed-rate"><span class="ds-label__text">Ставка</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="tschema-fixed-rate" name="fixedRatePercent" inputmode="decimal" autocomplete="off">
+              <span class="inp__postfix">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__rate" data-tschema-rate="FLOATING" hidden>
+          <label class="ds-label" for="tschema-base-index"><span class="ds-label__text">Базовый индекс (БИ)</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="tschema-base-index-list">
+              <input class="inp__control" id="tschema-base-index" name="baseIndexCode" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="tschema-base-index-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth lc-transfer-schema-modal__rate" data-tschema-rate="FLOATING" hidden>
+          <label class="ds-label" for="tschema-spread"><span class="ds-label__text">Спред</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="tschema-spread" name="spreadPercent" inputmode="decimal" autocomplete="off">
+              <span class="inp__postfix">%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-tschema-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<div class="modal-scrim modal-scrim--nested" id="tschema-delete-scrim" hidden>
+  <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="tschema-delete-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="tschema-delete-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="ds-body-m-reg">Удаление процентной схемы</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-tschema-confirm="cancel"><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--error btn--m" data-tschema-confirm="ok"><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Окно «История изменения ставок» страницы «Единая трансфертная ставка» (TransferSchemas).
+     Фрагмент вшивается ассемблером меткой ds-include — скрим лежит в конце body.
+     Таблица: шапка в разметке, строки и пагинацию рисует TransferRateHistoryModal.js
+     (PostModalTransferRateHistory.open / bind). Состояние «Нет данных» — .dtable__empty под
+     шапкой (макет); пока скрипт не отдал строки, видно оно. -->
+
+<div class="modal-scrim" id="transfer-rate-history-scrim" hidden data-widget="TransferRateHistoryModal" data-widget-group="modals" data-widget-src="../widgets/modals/TransferRateHistoryModal/TransferRateHistoryModal.html">
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="transfer-rate-history-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="transfer-rate-history-title">История изменения ставок</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="dtable dtable--fill">
+        <div class="dtable__body">
+          <div class="tbl" data-table data-trh-table>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 144px 144px minmax(96px,1fr) 8px">
+              <div class="th th--separator"></div>
+              <div class="th" aria-sort="none"><span class="th__label" data-grab>Дата начала</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="startDate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th" aria-sort="none"><span class="th__label" data-grab>Дата оконч.</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="endDate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right" aria-sort="none"><span class="th__label" data-grab>ЕТС, %</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="ratePercent" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+            <!-- строки данных рисует скрипт (по странице, 50 по умолчанию) -->
+          </div>
+          <!-- данных нет: только текст по центру тела, шапка остаётся (макет) -->
+          <div class="dtable__empty" data-trh-empty>
+            <p class="dtable__empty-title">Нет данных</p>
+          </div>
+        </div>
+        <!-- пагинация: только когда есть строки; рисует DSPagination.footer -->
+        <div class="dtable__footer" data-trh-footer hidden></div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Связанный артефакт страницы «Единая трансфертная ставка»: окно «История изменения базового индекса».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать в конце body.
+
+     Окно-справка: одна таблица (Table ДС) с колонками «Дата изменения», «Базовый индекс (БИ)»,
+     «Значение, %» и кнопка «Закрыть» в подвале; правки в окне нет, поэтому оно доступно и в режиме
+     просмотра. Строки, сортировку и пагинацию ведёт BaseTransferIndexHistoryModal.js
+     (PostModalBaseTransferIndexHistory): на открытии читает LoanAgreementStore.baseIndexHistory().
+
+     В разметке — пустое состояние: шапка таблицы и «Нет данных» под ней (макет, верхнее окно).
+     Строки и пагинацию скрипт дописывает на открытии; для пустого списка пагинации нет.
+     Окно закрывают крестик, «Закрыть», Esc и клик мимо окна (полей ввода в нём нет).
+
+     Ширина modal--w5 — 747px, как окно на макете. Своего CSS у окна нет. -->
+
+<div class="modal-scrim" id="bih-scrim" data-state="empty" hidden data-widget="BaseTransferIndexHistoryModal" data-widget-group="modals" data-widget-src="../widgets/modals/BaseTransferIndexHistoryModal/BaseTransferIndexHistoryModal.html">
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="bih-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="bih-title">История изменения базового индекса</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl" data-table>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(120px,1fr) minmax(120px,1fr) minmax(120px,1fr) 8px;">
+              <div class="th th--separator"></div>
+              <div class="th" data-col="changeDate" aria-sort="none"><span class="th__label">Дата изменения</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="changeDate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th" data-col="baseIndexCode" aria-sort="none"><span class="th__label">Базовый индекс (БИ)</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="baseIndexCode" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right" data-col="valuePercent" aria-sort="none"><span class="th__label">Значение, %</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="valuePercent" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+          </div>
+          <!-- данных нет: скрипт показывает блок, когда в списке нет строк, и прячет, когда они есть -->
+          <div class="dtable__empty" data-bih-empty><p class="dtable__empty-title">Нет данных</p></div>
+        </div>
+        <!-- пагинация: колонтитул строит DSPagination.footer, когда строки есть -->
+        <div class="dtable__footer" data-bih-footer hidden></div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
+<script src="../data/deals-store.js"></script>
+<script src="../data/mock-counterparties.js"></script>
+<script src="../data/post-api.js"></script>
+<script src="../data/counterparties-store.js"></script>
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/mock-fin-instruments.js"></script>
+<script src="../data/mock-deal-trees.js"></script>
+<script src="../data/product-tree-store.js"></script>
+<script src="../data/mock-loan-agreements.js"></script>
+<script src="../data/loan-agreement-store.js"></script>
+<script src="../data/tranche-context.js"></script>
+<script src="../data/instrument-context.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../widgets/tiles/TransferSchemaTile/TransferSchemaTile.js"></script>
+<script src="../widgets/modals/TransferSchemaModal/TransferSchemaModal.js"></script>
+<script src="../widgets/modals/TransferRateHistoryModal/TransferRateHistoryModal.js"></script>
+<script src="../widgets/modals/BaseTransferIndexHistoryModal/BaseTransferIndexHistoryModal.js"></script>
+<script>
+/* Экранный скрипт: меню по каталогу ролей, список процентных схем ЕТС, пустое состояние, окна схемы
+   и историй, тосты. Данные — LoanAgreementStore (запись договора); режим правки —
+   LoanAgreementStore.isEditable(): статус сделки и погашение договора.
+   Адрес: TransferSchemas.html?id=<сделка>&ins=<id узла договора>. */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'current-portfolio';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../index.html" aria-label="Хаб проектов"';
+
+  function ic(name) { return '<i data-icon="' + name + '"></i>'; }
+
+  function itemHTML(it) {
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="#"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span></a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+      + '</div><div class="nav__list">'
+      + '<a class="nav__item" href="MainPage.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    IBPHome.itemsFor(role).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>' + (window.IBPHome && window.IBPHome.footerHTML
+      ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">'
+        + '<a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">'
+        + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+        + '<span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span>'
+        + '<span class="nav__user-role">' + role + '</span></span></a>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>'
+        + '</div>');
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  }
+
+  var LAS = window.LoanAgreementStore;
+  var cps = window.CounterpartiesStore;
+  var ctx = null;
+
+  /* Страницы собирает ассемблер: соседние — Instrument.preview.html и т. п. */
+  var isPreview = /\.preview\.html$/.test(window.location.pathname);
+  function sibling(name) { return name + (isPreview ? '.preview.html' : '.html'); }
+
+  function $(id) { return document.getElementById(id); }
+  function show(el, on) { if (el) el.hidden = !on; }
+
+  var TOASTS = {
+    add: 'Новая процентная схема добавлена',
+    update: 'Процентная схема изменена',
+    remove: 'Процентная схема удалена'
+  };
+
+  function paintHead(editable) {
+    var node = LAS.instrument();
+    var label = node ? node.number + ' ' + node.name : ctx.instrumentLabel;
+    document.title = 'Единая трансфертная ставка — IBP';
+    window.InstrumentContext.paintCrumbs(document.querySelector('[data-breadcrumbs]'), [
+      null, { href: 'Portfolio.html' }, { text: ctx.dealLabel, href: sibling('Deal') + ctx.dealQuery },
+      { text: label, href: sibling('Instrument') + ctx.instrumentQuery }, null
+    ]);
+    /* «Новая схема» в шапке в просмотре выключена разметкой */
+    var btn = $('ets-new-btn');
+    btn.disabled = !editable;
+    if (editable) btn.removeAttribute('aria-disabled'); else btn.setAttribute('aria-disabled', 'true');
+  }
+
+  function paint() {
+    if (!ctx) return;
+    var editable = LAS.isEditable();
+    var mode = editable ? 'edit' : 'view';
+    var items = LAS.schemes();
+    paintHead(editable);
+
+    window.PostTileTransferSchema.renderList($('ets-list'), { mode: mode, items: items });
+    show($('ets-list'), items.length > 0);
+
+    show($('ets-empty-wrap'), items.length === 0);
+    /* кнопки «Новая схема» в пустом состоянии в просмотре нет в разметке */
+    $('ets-empty-actions').innerHTML = editable
+      ? '<button type="button" class="btn btn--accent btn--m" data-ets-act="NEW"><i data-icon="add"></i><span class="btn__label">Новая схема</span></button>'
+      : '';
+    show($('ets-empty-actions'), editable);
+
+    if (window.dsIcons) window.dsIcons.apply(document);
+    if (window.DSMenu && window.DSMenu.bindAll) window.DSMenu.bindAll(document);
+  }
+
+  function openScheme(id) {
+    if (!LAS.isEditable() || !window.PostModalTransferSchema) return;
+    window.PostModalTransferSchema.open(id ? { id: id } : {});
+  }
+
+  /* Действия тайла: карточка шлёт 'loanaction', что делать — знает страница. */
+  document.addEventListener('loanaction', function (e) {
+    var d = e.detail || {};
+    if (!ctx) return;
+    switch (d.action) {
+      case 'EDIT_SCHEME': openScheme(d.id); break;
+      case 'REMOVE_SCHEME':
+        if (LAS.isEditable() && window.PostModalTransferSchema) window.PostModalTransferSchema.confirmRemove(d.id);
+        break;
+    }
+  });
+
+  /* «Новая схема» (шапка и пустое состояние), пункты меню ⋮ шапки */
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest('[data-ets-act]');
+    if (!el || el.disabled || !ctx) return;
+    switch (el.getAttribute('data-ets-act')) {
+      case 'NEW': openScheme(null); break;
+      case 'HISTORY_RATE':
+        if (window.PostModalTransferRateHistory) window.PostModalTransferRateHistory.open();
+        break;
+      case 'HISTORY_BASE_INDEX':
+        if (window.PostModalBaseTransferIndexHistory) window.PostModalBaseTransferIndexHistory.open();
+        break;
+    }
+  });
+
+  /* Окно схемы сохранило или удалило схему — тост */
+  document.addEventListener('transferschemasaved', function (e) {
+    var d = e.detail || {};
+    if (window.DSToast && TOASTS[d.kind]) window.DSToast.show({ message: TOASTS[d.kind], kind: 'bar', tone: 'success' });
+  });
+
+  $('ets-back-btn').addEventListener('click', function () {
+    if (ctx) window.location.href = sibling('Instrument') + ctx.instrumentQuery;
+  });
+
+  function init() {
+    ctx = window.InstrumentContext.resolve(window.location.search);
+    if (!ctx) {
+      document.querySelector('.phead__title').textContent = 'Договор займа не найден';
+      return null;
+    }
+    return cps.use(ctx.openedId).then(function () {
+      LAS.use(ctx.openedId, ctx.instrument.id);
+      /* перерисовка: запись договора (схемы), статус сделки */
+      LAS.on('change', paint);
+      window.DealsStore.on('change', paint);
+      paint();
+    });
+  }
+
+  buildNav();
+  Promise.all([window.ProductTreeStore.ready, LAS.ready, cps.ready]).then(init);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

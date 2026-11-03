@@ -1,0 +1,80 @@
+<!-- Локальный компонент «Договор» — тайл внутренней страницы «Договор и дополнительные соглашения».
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-variant — тип продукта: loan-ncl (НКЛ) | tranche | shares | options-repo |
+                    corporate-agreement | collaterals | pjsc-guarantee | pjsc-ncl (НКЛ с баланса ПАО) |
+                    compensation-payments. Состав полей по типу — общий словарь тайла «Договор и
+                    дополнительные соглашения» (data/loan-contract-fields.js, LOAN_CONTRACT_FIELDS);
+                    тип выставляет PostTileContract.render из view.variant.
+     data-state   — data | empty. Тайл ВСЕГДА показывает поля: договор не заполнен (empty) —
+                    те же поля, значения «—». Состояний «Заполнить» и «Не заполнено» у тайла нет.
+                    Состояния «Загрузка» и «Ошибка» на макете не нарисованы — не решено
+     data-mode    — режим прав: edit | view. Ставит страница: роль, статус сделки и погашение
+                    договора, не допускающие правку, дают view. Карандаш в шапке есть в разметке
+                    ТОЛЬКО в edit: в view PostTileContract.syncActions удаляет его из разметки
+                    (не прячет стилем). Статичный эталон ниже — edit, поэтому карандаш в нём есть;
+                    переключая data-mode снаружи (витрина), зовите syncActions(tile).
+     Разметка держит оба состояния сразу: сетка data и сетка empty (прочерки), нужную
+     показывает ContractTile.css по data-state. Поля в разметке — пример типа «НКЛ»; на странице
+     их заменяет PostTileContract.render.
+     «Документы по сделке» — всегда, в любом состоянии и режиме: событие loanaction на тайл,
+     detail.action = 'DOCS'. Стрелки «→» в шапке нет (она у тайла страницы договора).
+     Скрипты страницы — в таком порядке: data/loan-contract-fields.js (словарь полей, общий
+     с соседним тайлом), затем ContractTile.js.
+     Карандаш открывает окно «Договор» (скрим contract-scrim, виджет
+     InitialAndAdditionalAgreementsModal) по data-modal; окно вшивается страницей отдельной
+     меткой ds-include. В окне ввод, поэтому триггер с data-modal-guarded. -->
+<section class="tile lc-contract-tile" data-variant="loan-ncl" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Договор</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать договор" data-modal="contract-scrim" data-modal-guarded><i data-icon="edit"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+    <div class="tile__rows lc-contract-tile__content">
+
+      <!-- Данные есть: поля типа в порядке паспорта; пустое значение — прочерк, поле с места не уходит -->
+      <div class="tile__grid lc-contract-tile__grid lc-contract-tile__grid--data">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер договора</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractNumber">1234567890</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата подписания</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractSignDate">12.09.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Плановая дата погашения</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="plannedRepaymentDate">12.09.2022</span></div>
+        </div>
+      </div>
+
+      <!-- Данных нет: те же поля, значения — прочерки (ответ 41) -->
+      <div class="tile__grid lc-contract-tile__grid lc-contract-tile__grid--empty">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер договора</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractNumber">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата подписания</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="contractSignDate">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Плановая дата погашения</span></span>
+          <div class="rof__row"><span class="rof__value" data-contract-field="plannedRepaymentDate">—</span></div>
+        </div>
+      </div>
+
+      <!-- Всегда: и с данными, и без, в edit и в view -->
+      <button type="button" class="btn btn--outline btn--s" data-lc-action="DOCS">
+        <i data-icon="attach"></i><span class="btn__label">Документы по сделке</span>
+      </button>
+
+    </div>
+  </div>
+</section>

@@ -5,6 +5,13 @@
    ГК «Цветы»). Истории нет: значения правдоподобные и детерминированные
    (Source: invented (10.10.2026)), без Math.random.
 
+   MOCK_CLIENTS — портфель аналитика: с ними связаны сделки, лиды, встречи и
+   задачи, и это стартовый набор «Моих клиентов». MOCK_BASE_CLIENTS — остальная
+   база клиентов банка для «Поиска клиентов» (238 клиентов в 30 холдингах,
+   Source: invented (26.10.2026)): вместе с портфелем — 250 клиентов, пять
+   страниц реестра. У каждого клиента приоритет: максимальный, высокий,
+   средний или низкий.
+
    Герой демо — ООО «Ромашка» (ГК «Цветы»): у него полные цели, кредиты,
    финансовые показатели и ГигаСправка; у остальных поля заполняются
    фабрикой mkClient по умолчанию, чтобы каждая вкладка страницы клиента
@@ -35,6 +42,23 @@
  * @property {boolean} keyClient         «Ключевой клиент»
  * @property {boolean} goalsFixed        «Цели зафиксированы»
  * @property {boolean} residentRf        «Резидент РФ»
+ * @property {PriorityCode} priorityCode приоритет — наш рейтинг клиента по набору параметров: MAX · HIGH ·
+ *                                       MEDIUM · LOW, подписи — PRIORITY_LABELS (решение пользователя 26.10.2026,
+ *                                       заменил AI score); как считается — не решено (26.10.2026)
+ * @property {'A'|'B'|'C'|'D'} priorityClass «Приоритет A–D» — вторая строка «Приоритет» БТ «Поиск клиентов» (21.10.2026)
+ * @property {string} holdingGcmId       ГКМ холдинга (employeeId)
+ * @property {string} sponsor            спонсор — кто ведёт повестку с ЛПРом от лица ТБ
+ * @property {'GREEN'|'YELLOW'|'RED'|'BLACK'} problemZone зона проблемности по цветам; чёрная — из описания
+ *                                       задачи MS0017, остальные цвета — допущение (26.10.2026)
+ * @property {number} revenueFns         выручка по данным ФНС, млн RUB (период не решён — БТ)
+ * @property {number} ebitdaFok          EBITDA по данным ФОК (форма SB0140), млн RUB (период не решён — БТ)
+ * @property {number} debtFok            долг по данным ФОК (форма SB0121), млн RUB
+ * @property {number} netDebtFok         чистый долг по данным ФОК (форма SB0121), млн RUB
+ * @property {number} oszSber            ОСЗ в Сбере, млн RUB
+ * @property {number} chod2025           ЧОД 2025, млн RUB
+ * @property {number} chod2026           ЧОД 2026, млн RUB
+ * @property {number} didPortfolio       портфель в ДИДе, млн RUB
+ * @property {number} didPipeline        Pipeline в ДИДе, млн RUB
  * @property {number|null} headerCounter счётчик с ⓘ в шапке (смысл неизвестен, вопрос 8)
  * @property {string} industry           отрасль
  * @property {string} macro              макроотрасль
@@ -164,6 +188,33 @@
     return [PERSON_POOL[a], PERSON_POOL[b], PERSON_POOL[c]];
   }
 
+  /* Атрибуты «Поиска клиентов» (БТ от 21.10.2026). Source: invented (26.10.2026):
+     значения выводятся из CRM ID детерминированно — у клиента они одни и те же
+     при каждом открытии; герой и портфель их не переопределяют. */
+  var SPONSORS = ['Баринов Сергей Олегович', 'Чернова Ирина Викторовна', 'Ахметов Ринат Ильдарович', 'Сазонова Ольга Павловна', 'Голиков Андрей Юрьевич', 'Федотова Мария Сергеевна'];
+  function idHash(id) {
+    var h = 7;
+    String(id).split('').forEach(function (ch) { h = (h * 31 + ch.charCodeAt(0)) % 1000003; });
+    return h;
+  }
+  function searchAttrs(o, revenue) {
+    var h = idHash(o.id);
+    var rev = revenue * 10 + h % 700;
+    var ebitda = Math.round(rev * (0.1 + (h % 13) / 100));
+    var debt = Math.round(ebitda * (1 + (h % 31) / 10));
+    var osz = Math.round(debt * (0.4 + (h % 5) / 10));
+    var chod25 = Math.round(osz * 0.04 + h % 30);
+    return {
+      priorityClass: o.priorityClass || 'ABCD'.charAt(Math.floor(h / 7) % 4),
+      holdingGcmId: o.holdingGcmId || (h % 3 ? '04630' : '04711'),
+      sponsor: o.sponsor || SPONSORS[h % SPONSORS.length],
+      problemZone: o.problemZone || ['GREEN', 'GREEN', 'GREEN', 'GREEN', 'GREEN', 'YELLOW', 'YELLOW', 'YELLOW', 'RED', 'BLACK'][Math.floor(h / 3) % 10],
+      revenueFns: rev, ebitdaFok: ebitda, debtFok: debt, netDebtFok: Math.round(debt * (0.7 + (h % 3) / 10)),
+      oszSber: osz, chod2025: chod25, chod2026: Math.round(chod25 * (0.85 + (h % 31) / 100)),
+      didPortfolio: Math.round(osz * 0.6), didPipeline: h % 4 ? Math.round(rev * (h % 7) / 100) : 0
+    };
+  }
+
   /* Фабрика: заполняет блоки клиента ДИА-данными по умолчанию, чтобы любая
      вкладка страницы клиента была непустой; герой и избранные клиенты
      переопределяют поля поверх. */
@@ -178,6 +229,7 @@
       growthCompany: !!o.growthCompany, didGrowthCompany: !!o.didGrowthCompany, topClient: !!o.topClient,
       keyClient: !!o.keyClient, goalsFixed: o.goalsFixed !== undefined ? !!o.goalsFixed : true,
       residentRf: true, headerCounter: o.headerCounter !== undefined ? o.headerCounter : 26,
+      priorityCode: o.priorityCode || 'LOW',
       industry: o.industry, macro: o.macro, sub: o.sub, segment: o.segment || 'Крупный бизнес',
       terBank: o.terBank || 'CA', gosb: o.gosb || '8634',
       gcmId: o.gcmId || '04630',
@@ -324,6 +376,8 @@
       dcmPipeline: o.dcmPipeline || [],
       ecmPipeline: o.ecmPipeline || []
     };
+    var extra = searchAttrs(o, revenue);
+    Object.keys(extra).forEach(function (k) { c[k] = extra[k]; });
     return c;
   }
 
@@ -339,7 +393,7 @@
     industry: 'Сельское хозяйство', macro: 'Агропромышленный комплекс', sub: 'Цветоводство',
     segment: 'Крупный бизнес', terBank: 'CA', gosb: '8634', gcmId: '04630',
     addedAt: '2021-06-14', lastActivityAt: '2026-10-09',
-    inQuarterPlan: true, responsibleAnalystId: '04127', seed: 42, revenue: 346,
+    inQuarterPlan: true, responsibleAnalystId: '04127', seed: 42, revenue: 346, priorityCode: 'MAX',
     comments: [
       { authorId: '04127', time: '14:20', date: '2026-10-08', text: 'Проведён страт. диалог по инвестиционной программе: клиент подтверждает потребность в финансировании второй очереди тепличного комплекса до конца Q1 2027.', system: false },
       { authorId: '02940', time: '10:05', date: '2026-09-30', text: 'Согласованы условия проработки с ДКК. Подготовить расчёт структуры к 20.10.', system: false },
@@ -558,14 +612,14 @@
     legalAddress: '125212, г. Москва, Ленинградское шоссе, д. 39, стр. 1, этаж 4, помещ. II',
     growthCompany: true, didGrowthCompany: true, quarterChip: 'Q3 2026',
     industry: 'Сельское хозяйство', macro: 'Агропромышленный комплекс', sub: 'Растениеводство',
-    terBank: 'CA', gosb: '8634', seed: 31, revenue: 214, inQuarterPlan: true
+    terBank: 'CA', gosb: '8634', seed: 31, revenue: 214, priorityCode: 'MAX', inQuarterPlan: true
   });
   var siren = mkClient({
     id: '3000012347', name: 'ООО «Сирень»', fullName: 'Общество с ограниченной ответственностью «Сирень»',
     holdingId: 'H-1', holdingName: 'ГК «Цветы»', inn: '5024113302', ogrn: '1175024011544',
     legalAddress: '141014, Московская обл., г. Мытищи, Волковское шоссе, д. 5, стр. 1',
     industry: 'Сельское хозяйство', macro: 'Агропромышленный комплекс', sub: 'Цветоводство',
-    terBank: 'CA', gosb: '8634', seed: 17, revenue: 96, topClient: false
+    terBank: 'CA', gosb: '8634', seed: 17, revenue: 96, priorityCode: 'MEDIUM', topClient: false
   });
 
   /* ── ГК «АгроСоюз» ─────────────────────────────────────────────────── */
@@ -575,21 +629,21 @@
     legalAddress: '620144, Свердловская обл., г. Екатеринбург, ул. Малышева, д. 51, оф. 902',
     didGrowthCompany: true, topClient: true, industry: 'Производство пищевых продуктов',
     macro: 'Агропромышленный комплекс', sub: 'Мукомольные изделия', terBank: 'SZB', gosb: '5228',
-    seed: 55, revenue: 421, gcmId: '04711', inQuarterPlan: true
+    seed: 55, revenue: 421, priorityCode: 'MAX', gcmId: '04711', inQuarterPlan: true
   });
   var niva = mkClient({
     id: '3000020012', name: 'ООО «Нива-Центр»', fullName: 'Общество с ограниченной ответственностью «Нива-Центр»',
     holdingId: 'H-2', holdingName: 'ГК «АгроСоюз»', inn: '6652334462', ogrn: '1166654043322',
     legalAddress: '620144, Свердловская обл., г. Екатеринбург, ул. Малышева, д. 51, оф. 904',
     industry: 'Производство пищевых продуктов', macro: 'Агропромышленный комплекс', sub: 'Кондитерские изделия',
-    terBank: 'SZB', gosb: '5228', seed: 28, revenue: 178
+    terBank: 'SZB', gosb: '5228', seed: 28, revenue: 178, priorityCode: 'HIGH'
   });
   var kolos = mkClient({
     id: '3000020013', name: 'ООО «Колос»', fullName: 'Общество с ограниченной ответственностью «Колос»',
     holdingId: 'H-2', holdingName: 'ГК «АгроСоюз»', inn: '6652334479', ogrn: '1176654054433',
     legalAddress: '620017, Свердловская обл., г. Екатеринбург, пр-т Космонавтов, д. 38, лит. Б',
     industry: 'Сельское хозяйство', macro: 'Агропромышленный комплекс', sub: 'Растениеводство',
-    terBank: 'SZB', gosb: '5228', seed: 12, revenue: 84, segment: 'Средний бизнес'
+    terBank: 'SZB', gosb: '5228', seed: 12, revenue: 84, priorityCode: 'LOW', segment: 'Средний бизнес'
   });
 
   /* ── ГК «ТехноМир» ─────────────────────────────────────────────────── */
@@ -598,21 +652,21 @@
     holdingId: 'H-3', holdingName: 'ГК «ТехноМир»', inn: '7814001122', ogrn: '1147847005566',
     legalAddress: '194100, г. Санкт-Петербург, Лесной пр-т, д. 63, лит. А, пом. 7-Н',
     growthCompany: true, industry: 'Машиностроение', macro: 'Промышленность', sub: 'Комплектующие',
-    terBank: 'SZB', gosb: '9013', seed: 37, revenue: 268, gcmId: '04711'
+    terBank: 'SZB', gosb: '9013', seed: 37, revenue: 268, priorityCode: 'HIGH', gcmId: '04711'
   });
   var tehmash = mkClient({
     id: '3000031005', name: 'АО «ТехноМаш»', fullName: 'Акционерное общество «ТехноМаш»',
     holdingId: 'H-3', holdingName: 'ГК «ТехноМир»', inn: '7814001139', ogrn: '1157847066778',
     legalAddress: '194100, г. Санкт-Петербург, Лесной пр-т, д. 63, лит. Б',
     didGrowthCompany: true, topClient: true, industry: 'Машиностроение', macro: 'Промышленность',
-    sub: 'Приборостроение', terBank: 'SZB', gosb: '9013', seed: 63, revenue: 512, inQuarterPlan: true
+    sub: 'Приборостроение', terBank: 'SZB', gosb: '9013', seed: 63, revenue: 512, priorityCode: 'MAX', inQuarterPlan: true
   });
   var mikro = mkClient({
     id: '3000031006', name: 'ООО «МикроПрибор»', fullName: 'Общество с ограниченной ответственностью «МикроПрибор»',
     holdingId: 'H-3', holdingName: 'ГК «ТехноМир»', inn: '7814001146', ogrn: '1167847078899',
     legalAddress: '195279, г. Санкт-Петербург, ш. Революции, д. 69, к. 2, лит. Е',
     industry: 'Машиностроение', macro: 'Промышленность', sub: 'Приборостроение',
-    terBank: 'SZB', gosb: '9013', seed: 9, revenue: 61, segment: 'Средний бизнес'
+    terBank: 'SZB', gosb: '9013', seed: 9, revenue: 61, priorityCode: 'LOW', segment: 'Средний бизнес'
   });
 
   /* ── ГК «ЛесТрейд» ─────────────────────────────────────────────────── */
@@ -622,14 +676,14 @@
     legalAddress: '603005, г. Нижний Новгород, ул. Нижегородская, д. 12, оф. 301',
     growthCompany: true, didGrowthCompany: true, industry: 'Лесозаготовка',
     macro: 'Лесопромышленный комплекс', sub: 'Пиломатериалы', terBank: 'PVB', gosb: '7121',
-    seed: 44, revenue: 305, gcmId: '04711', inQuarterPlan: true
+    seed: 44, revenue: 305, priorityCode: 'HIGH', gcmId: '04711', inQuarterPlan: true
   });
   var lestrade = mkClient({
     id: '3000042008', name: 'ООО «ЛесТрейд Логистика»', fullName: 'Общество с ограниченной ответственностью «ЛесТрейд Логистика»',
     holdingId: 'H-4', holdingName: 'ГК «ЛесТрейд»', inn: '5262003318', ogrn: '1195262022344',
     legalAddress: '603005, г. Нижний Новгород, ул. Нижегородская, д. 12, оф. 305',
     industry: 'Лесозаготовка', macro: 'Лесопромышленный комплекс', sub: 'Целлюлоза',
-    terBank: 'PVB', gosb: '7121', seed: 21, revenue: 142
+    terBank: 'PVB', gosb: '7121', seed: 21, revenue: 142, priorityCode: 'MEDIUM'
   });
 
   /* ── ГК «СтройИндустрия» ───────────────────────────────────────────── */
@@ -638,9 +692,95 @@
     holdingId: 'H-5', holdingName: 'ГК «СтройИндустрия»', inn: '6321045530', ogrn: '1206321023455',
     legalAddress: '432072, Ульяновская обл., г. Ульяновск, Московское шоссе, д. 92, корп. 5',
     industry: 'Производство стройматериалов', macro: 'Строительство', sub: 'Бетон и ЖБИ',
-    terBank: 'SRB', gosb: '4402', seed: 26, revenue: 187
+    terBank: 'SRB', gosb: '4402', seed: 26, revenue: 187, priorityCode: 'MEDIUM'
   });
 
   /** @type {ClientRsDto[]} */
   window.MOCK_CLIENTS = [romashka, landysh, siren, zarya, niva, kolos, promteh, tehmash, mikro, severles, lestrade, betonmix];
+
+  /* ── База клиентов банка: «Поиск клиентов» ─────────────────────────────
+     Остальные клиенты банка — те, кого аналитик ещё не отметил своими.
+     Холдинг — по основе названия, отрасль — по профилю, регион — по кругу;
+     флаги и приоритет — генератор с постоянным зерном: база одна и та же при
+     каждом открытии. Карточка любого клиента непустая — та же фабрика. */
+  var BASE_STEMS = ['Кедр', 'Рябина', 'Дубрава', 'Ольха', 'Клевер', 'Подсолнух', 'Василёк', 'Берёза', 'Калина', 'Ясень',
+    'Липа', 'Можжевельник', 'Черёмуха', 'Багульник', 'Вереск', 'Шиповник', 'Боярышник', 'Брусника', 'Морошка', 'Зверобой',
+    'Пихта', 'Лиственница', 'Осока', 'Чабрец', 'Медуница', 'Камыш', 'Ковыль', 'Клюква', 'Орешник', 'Тальник'];
+  var BASE_PROFILES = [
+    { suffix: 'Агро', industry: 'Сельское хозяйство', macro: 'Агропромышленный комплекс', sub: 'Растениеводство' },
+    { suffix: 'Продукт', industry: 'Производство пищевых продуктов', macro: 'Агропромышленный комплекс', sub: 'Мукомольные изделия' },
+    { suffix: 'Маш', industry: 'Машиностроение', macro: 'Промышленность', sub: 'Комплектующие' },
+    { suffix: 'Прибор', industry: 'Машиностроение', macro: 'Промышленность', sub: 'Приборостроение' },
+    { suffix: 'Лес', industry: 'Лесозаготовка', macro: 'Лесопромышленный комплекс', sub: 'Пиломатериалы' },
+    { suffix: 'Строй', industry: 'Производство стройматериалов', macro: 'Строительство', sub: 'Бетон и ЖБИ' },
+    { suffix: 'Девелопмент', industry: 'Девелопмент', macro: 'Строительство', sub: 'Жилая недвижимость' },
+    { suffix: 'Логистик', industry: 'Транспорт и логистика', macro: 'Транспорт', sub: 'Грузоперевозки' },
+    { suffix: 'Хим', industry: 'Химическая промышленность', macro: 'Промышленность', sub: 'Удобрения' },
+    { suffix: 'Металл', industry: 'Металлургия', macro: 'Металлургия', sub: 'Металлопрокат' },
+    { suffix: 'Энерго', industry: 'Энергетика', macro: 'ТЭК', sub: 'Генерация' },
+    { suffix: 'Трейд', industry: 'Оптовая торговля', macro: 'Торговля', sub: 'Дистрибуция' }
+  ];
+  var BASE_REGIONS = [
+    { terBank: 'CA', gosb: '8634', inn: '77', address: '115114, г. Москва, Дербеневская наб., д. ' },
+    { terBank: 'CA', gosb: '9040', inn: '50', address: '143402, Московская обл., г. Красногорск, ул. Ленина, д. ' },
+    { terBank: 'SZB', gosb: '9055', inn: '78', address: '196084, г. Санкт-Петербург, Московский пр-т, д. ' },
+    { terBank: 'SZB', gosb: '8626', inn: '39', address: '236022, г. Калининград, Ленинский пр-т, д. ' },
+    { terBank: 'PVB', gosb: '7121', inn: '52', address: '603000, г. Нижний Новгород, ул. Большая Покровская, д. ' },
+    { terBank: 'SRB', gosb: '4402', inn: '73', address: '432017, Ульяновская обл., г. Ульяновск, ул. Гончарова, д. ' },
+    { terBank: 'SB', gosb: '8047', inn: '54', address: '630099, г. Новосибирск, ул. Советская, д. ' },
+    { terBank: 'DB', gosb: '9070', inn: '27', address: '680000, Хабаровский край, г. Хабаровск, ул. Муравьёва-Амурского, д. ' }
+  ];
+  var BASE_FORMS = [['ООО', 'Общество с ограниченной ответственностью'], ['АО', 'Акционерное общество'], ['ПАО', 'Публичное акционерное общество']];
+  var BASE_DESKS = ['D-CIB-MSK', 'D-CIB-REG', 'D-SMB-IND', 'D-SMB-NR6'];
+
+  /* Генератор с постоянным зерном (mulberry32): числа «случайные», но одни и те же. */
+  function seeded(state) {
+    return function () {
+      state = (state + 0x6D2B79F5) | 0;
+      var t = Math.imul(state ^ (state >>> 15), 1 | state);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  /* Доли приоритетов базы: максимальный ~15%, высокий ~25%, средний ~30%, низкий ~30% */
+  function priorityOf(r) { return r >= 0.85 ? 'MAX' : r >= 0.6 ? 'HIGH' : r >= 0.3 ? 'MEDIUM' : 'LOW'; }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+  var rnd = seeded(20261026);
+  var baseClients = [];
+  for (var i = 0; i < 238; i++) {
+    var stem = BASE_STEMS[i % BASE_STEMS.length];
+    var prof = BASE_PROFILES[Math.floor(i / BASE_STEMS.length) % BASE_PROFILES.length];
+    var reg = BASE_REGIONS[(i * 5 + Math.floor(i / BASE_STEMS.length)) % BASE_REGIONS.length];
+    var r = rnd();
+    var form = r < 0.7 ? BASE_FORMS[0] : (r < 0.95 ? BASE_FORMS[1] : BASE_FORMS[2]);
+    var title = '«' + stem + '-' + prof.suffix + '»';
+    var analyst = i % 2 ? '05204' : '03882';
+    baseClients.push(mkClient({
+      id: String(3100100000 + i * 137), name: form[0] + ' ' + title, fullName: form[1] + ' ' + title,
+      holdingId: 'H-B' + (i % BASE_STEMS.length + 1), holdingName: 'ГК «' + stem + '»',
+      inn: reg.inn + String(30000000 + i * 104729).slice(-8),
+      ogrn: '1' + (15 + i % 9) + reg.inn + String(10000000 + i * 7919).slice(-8),
+      legalAddress: reg.address + (10 + (i * 7) % 90) + ', оф. ' + (100 + (i * 13) % 400),
+      quarterChip: ['Q2 2026', 'Q3 2026', 'Q4 2026'][i % 3],
+      growthCompany: rnd() < 0.18, didGrowthCompany: rnd() < 0.1, topClient: rnd() < 0.06, goalsFixed: rnd() < 0.4,
+      industry: prof.industry, macro: prof.macro, sub: prof.sub,
+      segment: rnd() < 0.62 ? 'Крупный бизнес' : 'Средний бизнес',
+      terBank: reg.terBank, gosb: reg.gosb, gcmId: i % 2 ? '04711' : '04630',
+      team: [
+        { employeeId: analyst, roleCode: 'ANALYST' },
+        { employeeId: i % 3 ? '02940' : '02941', roleCode: 'DIRECTOR' },
+        { employeeId: '01855', roleCode: 'VP' },
+        { employeeId: '01203', roleCode: 'REGIONAL_DIRECTOR' }
+      ],
+      desks: [{ deskId: BASE_DESKS[i % BASE_DESKS.length], roleCode: 'ANALYST' }, { deskId: 'D-DID-CTR', roleCode: 'DIRECTOR' }],
+      addedAt: (2019 + i % 7) + '-' + pad2(1 + i % 12) + '-' + pad2(1 + (i * 3) % 28),
+      lastActivityAt: '2026-' + pad2(1 + i % 10) + '-' + pad2(1 + (i * 5) % 28),
+      responsibleAnalystId: analyst, seed: 8 + (i * 11) % 60,
+      priorityCode: priorityOf(rnd())
+    }));
+  }
+
+  /** @type {ClientRsDto[]} */
+  window.MOCK_BASE_CLIENTS = baseClients;
 })();

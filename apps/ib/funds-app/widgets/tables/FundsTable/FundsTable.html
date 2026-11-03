@@ -1,0 +1,97 @@
+<!-- Локальный компонент «Список фондов» (FundsTable) страницы «Фонды» (FundsPipeline).
+     Пара во фронтенде — widgets/tables/FundsTable (+ ui/EmptyFundsPreview).
+     Карточка — сама таблица ДС (.dtable --fill) с тулбаром без заголовка (решение
+     человека 30.10.2026): слева — слот фильтров (data-fundstable-filters: страница
+     ставит туда виджет FundsFilters через FundsTable.placeFilters), справа —
+     шестерёнка «Настроить колонки» (ibtn neutral M, глиф settings; хук ДС
+     data-table-settings — стандартное окно TableSettings строит рантайм ДС из колонок
+     шапки; таблицу находит по .dtable). В «Загрузке» кнопка disabled.
+     Фрагмент показан в состоянии «Загрузка»: шапка таблицы и строки-скелетоны, пока
+     страница не передала фонды. Строки, пустые состояния и «Ничего не найдено» рисует
+     FundsTable.js: FundsTable.init(корень, { funds }). Вшивается меткой ds-include. -->
+<div class="dtable dtable--fill lc-funds-table" data-state="loading" aria-busy="true">
+  <div class="dtable__toolbar lc-funds-table__toolbar">
+    <div class="dtable__toolbar-left lc-funds-table__filters" data-fundstable-filters></div>
+    <div class="dtable__toolbar-right" data-fundstable-tools>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-table-settings aria-label="Настроить колонки" disabled><i data-icon="settings"></i></button>
+    </div>
+  </div>
+  <div class="dtable__body">
+    <div class="tbl" data-table data-sort-rows data-fundstable-tbl>
+      <div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(441px,441fr) minmax(403px,403fr) minmax(453px,453fr) 160px 140px 148px 575px 575px 52px minmax(8px,1fr)">
+        <div class="th th--separator"></div>
+        <div class="th"><span class="th__label">Название фонда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th"><span class="th__label">Псевдоним</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th"><span class="th__label">Бенефициар</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th"><span class="th__label">Приоритет</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th th--right"><span class="th__label">Активов</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th"><span class="th__label">Контактные лица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th"><span class="th__label">Комментарий</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th th--actions th--pinned" data-col="actions"><span class="th__label">Действия</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+        <div class="th th--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px minmax(441px,441fr) minmax(403px,403fr) minmax(453px,453fr) 160px 140px 148px 575px 575px 52px minmax(8px,1fr)">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--center tc--pinned"></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px minmax(441px,441fr) minmax(403px,403fr) minmax(453px,453fr) 160px 140px 148px 575px 575px 52px minmax(8px,1fr)">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--center tc--pinned"></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px minmax(441px,441fr) minmax(403px,403fr) minmax(453px,453fr) 160px 140px 148px 575px 575px 52px minmax(8px,1fr)">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--numbers tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--skeleton" aria-busy="true"><span class="sk-line sk-line--caption" style="--sk-w:60%"></span></div>
+        <div class="tc tc--center tc--pinned"></div>
+        <div class="tc tc--separator"></div>
+      </div>
+    </div>
+    <!-- Данных нет (фондов нет вовсе): EmptyState L, одно действие «Добавить фонд»
+         (data-fund-add — окно AddFundEntityFromUcpModal открывает страница). Импорта
+         у Руководителя IB нет — ни кнопки, ни упоминания в тексте (решение 30.10.2026);
+         текст — допущение 30.10.2026. -->
+    <div class="es es--l" data-fundstable-empty hidden>
+      <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+      <div class="es__body">
+        <p class="es__title">Здесь пока ничего нет</p>
+        <p class="es__text">Добавьте первый фонд, чтобы начать работу со списком</p>
+      </div>
+      <div class="es__actions">
+        <button type="button" class="btn btn--accent btn--m" data-fund-add><i data-icon="add"></i><span class="btn__label">Добавить фонд</span></button>
+      </div>
+    </div>
+    <!-- Ничего не найдено по фильтрам: текст — допущение 30.10.2026 (макета нет) -->
+    <div class="es es--l" data-fundstable-notfound role="status" aria-live="polite" hidden>
+      <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+      <div class="es__body">
+        <p class="es__title">Ничего не найдено</p>
+        <p class="es__text">Измените условия поиска или фильтры</p>
+      </div>
+    </div>
+  </div>
+</div>

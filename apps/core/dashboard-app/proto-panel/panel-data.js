@@ -4,7 +4,7 @@ window.ProtoPanelData = {
   "format": 1,
   "app": {
     "id": "dashboard-app",
-    "title": "\u0414\u0430\u0448\u0431\u043e\u0440\u0434 \u0410\u043d\u0430\u043b\u0438\u0442\u0438\u043a\u0430"
+    "title": "\u0413\u043b\u0430\u0432\u043d\u0430\u044f - \u0410\u043d\u0430\u043b\u0438\u0442\u0438\u043a (\u0414\u0430\u0448\u0431\u043e\u0440\u0434)"
   },
   "sources": {
     "flows": "ff08d319",

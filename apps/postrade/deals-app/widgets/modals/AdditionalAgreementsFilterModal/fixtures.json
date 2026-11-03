@@ -1,0 +1,30 @@
+{
+  "_": "Демо-данные витрины окна «Фильтр» списка дополнительных соглашений: объект на состояние (ключи — виды заполнения окна). В каждом filter — текущий применённый фильтр в формате аргумента LoanAgreementStore.agreements(): number, signFrom, signTo, changeTypeCode, keyChangeCodes[], decisionNumber, decisionFrom, decisionTo, approvalLevelCodes[]; даты — ISO, пустое поле — ключа нет. empty — пустой фильтр {} (окно пустое, счётчики скрыты, «Очистить фильтр» выключена), data — заполнены все поля (макет: на кадре счётчик 9 — демо-значение), partial — заполнен один раздел, invalidDate — в filter стоит не-ISO дата «31.02.2021»: окно показывает её как есть, «Сохранить» отклоняет её ошибкой формата даты (окно остаётся открытым). Окно заполняется тем же способом, что при открытии на странице: PostModalAdditionalAgreementsFilter.bind(scrim).fill(filter). Значения выдуманные.",
+  "empty": { "filter": {} },
+  "data": {
+    "filter": {
+      "number": "4-1234567890",
+      "signFrom": "2021-01-01",
+      "signTo": "2021-12-31",
+      "changeTypeCode": "FINANCIAL_AND_NON_FINANCIAL",
+      "keyChangeCodes": ["PRINCIPAL_REPAYMENT_SCHEDULE", "EARLY_REPAYMENT_TERMS", "OTHER"],
+      "decisionNumber": "R-2021-17",
+      "decisionFrom": "2021-01-01",
+      "decisionTo": "2021-12-31",
+      "approvalLevelCodes": ["FOUR_EYES", "KPKI_TB", "KPA_TB"]
+    }
+  },
+  "partial": {
+    "filter": {
+      "signFrom": "2022-01-01",
+      "changeTypeCode": "FINANCIAL",
+      "approvalLevelCodes": ["SIX_EYES_PPR"]
+    }
+  },
+  "invalidDate": {
+    "filter": {
+      "number": "4-1234567890",
+      "signFrom": "31.02.2021"
+    }
+  }
+}

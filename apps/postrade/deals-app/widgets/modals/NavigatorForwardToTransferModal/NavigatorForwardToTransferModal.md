@@ -68,7 +68,7 @@ Modal modal--w3 (442px)
 | InputDate | ДС | M; календарь — кнопка «Открыть календарь», крестик очистки рисует рантайм по значению |
 | IconButton | ДС | крестик шапки `ibtn--neutral ibtn--l` |
 | Buttons | ДС | «Сохранить» `btn--accent btn--m` |
-| Typography | ДС | текст — `--type-body-m`, `--text-secondary`, как в окне погашения инструмента |
+| Typography | ДС | текст — `--type-body-m-reg`, `--text-secondary`, как в окне погашения инструмента |
 
 ## Поля (Fields)
 

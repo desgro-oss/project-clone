@@ -46,7 +46,7 @@
   font-weight: var(--weight-semibold);
   font-size: var(--av-font);
   line-height: 1;
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   user-select: none;
   -webkit-user-select: none;
 }
@@ -83,6 +83,28 @@
 /* ---------- tone (entity / accent fill) ----------------------------------- */
 .av--accent  { background: color-mix(in srgb, var(--primary) 14%, var(--mgrey-50)); color: var(--primary-dark); }
 .av--accent .av__icon { color: var(--primary-dark); }
+
+/* ---------- tonal fills — рампы палитры статусов, как у Chip ------------ *
+   Фон — самый светлый шаг рампы (--st-<рампа>-light), текст и иконка —
+   тёмный (--st-<рампа>-dark). Светлый шаг полупрозрачный (16%), поэтому он
+   кладётся поверх непрозрачного --bg-tile: в группе аватар не просвечивает
+   соседа под собой, а цвет не зависит от фона строки (hover, выделение).
+   Без модификатора — нейтральная «болотная» подложка, как раньше.
+   Автоокраска по data-av-tones — рантайм Avatar.js. */
+.av--green   { background: linear-gradient(var(--st-green-light), var(--st-green-light)), var(--bg-tile);       color: var(--st-green-dark); }
+.av--lblue   { background: linear-gradient(var(--st-blue-light), var(--st-blue-light)), var(--bg-tile);         color: var(--st-blue-dark); }
+.av--orange  { background: linear-gradient(var(--st-orange-light), var(--st-orange-light)), var(--bg-tile);     color: var(--st-orange-dark); }
+.av--red     { background: linear-gradient(var(--st-red-light), var(--st-red-light)), var(--bg-tile);           color: var(--st-red-dark); }
+.av--dpurple { background: linear-gradient(var(--st-dpurple-light), var(--st-dpurple-light)), var(--bg-tile);   color: var(--st-dpurple-dark); }
+.av--grey    { background: linear-gradient(var(--st-grey-light), var(--st-grey-light)), var(--bg-tile);         color: var(--st-grey-dark); }
+.av--primary { background: linear-gradient(var(--st-primary-light), var(--st-primary-light)), var(--bg-tile);   color: var(--st-primary-dark); }
+.av--green .av__icon   { color: var(--st-green-dark); }
+.av--lblue .av__icon   { color: var(--st-blue-dark); }
+.av--orange .av__icon  { color: var(--st-orange-dark); }
+.av--red .av__icon     { color: var(--st-red-dark); }
+.av--dpurple .av__icon { color: var(--st-dpurple-dark); }
+.av--grey .av__icon    { color: var(--st-grey-dark); }
+.av--primary .av__icon { color: var(--st-primary-dark); }
 
 /* ---------- interactive (links to a profile) ------------------------------ */
 .av--button { cursor: pointer; padding: 0; appearance: none; -webkit-appearance: none; transition: box-shadow .15s ease, filter .15s ease; }

@@ -1,0 +1,53 @@
+<div class="lc-funds-filters" data-state="data" data-mode="view" role="group" aria-label="Фильтры списка фондов">
+  <!-- Ряд фильтров в тулбаре таблицы «Список фондов» (решение человека 30.10.2026: фильтры —
+       внутри таблицы, своей карточки нет). Три поля размера S (32px): тип и приоритет — одной
+       ширины, по самому длинному значению (data-ff-fit; поиск — не шире их двух вместе; ширины считает
+       FundsFilters.js по подписям справочника). Тип и приоритет — множественный выбор:
+       список с чекбоксами, выбранное — сводкой «Первое, +N». Опции строит FundsFilters.init из
+       справочников страницы; когда фондов нет, FundsFilters.setDisabled выключает все три поля. -->
+
+  <!-- smartSearch: InputText S с иконкой поиска и информером. Подсказка — своя разметка
+       Tooltip ДС (.tip внутри .tip-anchor): текст и строки атрибутов через <br>.
+       id тултипа и aria-describedby у информера ставит DSTooltip.bind в FundsFilters.init —
+       так у каждой копии виджета (витрина) свой тултип. -->
+  <div class="inp inp--s lc-funds-filters__search" data-ff-field="smartSearch">
+    <div class="inp__field">
+      <span class="inp__lead"><i data-icon="search"></i></span>
+      <input class="inp__control" type="text" placeholder="по атрибутам фонда..." aria-label="Поиск по атрибутам фонда" autocomplete="off">
+      <span class="inp__acts">
+        <span class="tip-anchor">
+          <button type="button" class="inp__act inp__act--static" aria-label="Подсказка" data-ff-tip><i data-icon="info-circle"></i></button>
+          <span class="tip tip--main tip--top tip--center tip--floating" role="tooltip">Поиск записей осуществляется по атрибутам:<br>•&nbsp;Название Фонда<br>•&nbsp;Псевдоним<br>•&nbsp;Бенефициар<br>•&nbsp;ИНН Фонда<span class="tip__arrow"></span></span>
+        </span>
+        <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+      </span>
+    </div>
+  </div>
+
+  <!-- typeCodes: InputAutocomplete S — сводка «PE, +1» (.inp__summary; вариант S ДС — только
+       сводкой), список с чекбоксами. Сводку вставляет FundsFilters.js перед полем ввода. -->
+  <div class="inp inp--s" data-ff-field="typeCodes" data-ff-fit>
+    <div class="inp__field">
+      <input class="inp__control" type="text" placeholder="Все типы" aria-label="Тип фонда" autocomplete="off">
+      <span class="inp__acts">
+        <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+        <button type="button" class="inp__act inp__act--chev" aria-label="Показать список типов"><i data-icon="chevron-down"></i></button>
+      </span>
+    </div>
+    <div class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true" aria-label="Типы фондов"></div>
+  </div>
+
+  <!-- priorityCodes: InputAutocomplete S — как тип: несколько приоритетов, чекбоксы, сводка
+       (решение человека 30.10.2026: «там можно выбрать несколько значений») -->
+  <div class="inp inp--s" data-ff-field="priorityCodes" data-ff-fit>
+    <div class="inp__field">
+      <input class="inp__control" type="text" placeholder="Все приоритеты" aria-label="Приоритет фонда" autocomplete="off">
+      <span class="inp__acts">
+        <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+        <button type="button" class="inp__act inp__act--chev" aria-label="Показать список приоритетов"><i data-icon="chevron-down"></i></button>
+      </span>
+    </div>
+    <div class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true" aria-label="Приоритеты фондов"></div>
+  </div>
+
+</div>

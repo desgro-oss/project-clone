@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Добавить фонд — поиск в базах — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.css">
+<link rel="stylesheet" href="../../../ib/funds-app/widgets/modals/EditFundModal/EditFundModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Добавить фонд — поиск в базах">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- AddFundEntityFromUcpModal — «Добавить фонд», шаг 1: поиск в базе фондов и в ЕПК.
+     Макеты «Add fund / Step 01 — Search empty · Search result A · Search result B ·
+     Empty search result». Открывает его кнопка «Добавить фонд» страницы «Фонды»;
+     окно открывает скрипт окна: AddFundEntityFromUcpModal.open(scrimId, opts).
+
+     Состояние окна — data-state на .modal (свои значения, как у окон модуля postrade):
+       idle    — поиск не выполнялся: справа иллюстрация и подсказка;
+       loading — поиск идёт: скелетоны карточек и деталей;
+       data    — найдено: колонки «Найдено» и детали выбранной карточки;
+       empty   — ничего не найдено: строка причины и «Новый фонд»;
+       error   — поиск не выполнен: Alert ошибки с «Повторить» в колонке результатов.
+     Что выбрано — data-detail на .modal: fund (детали фонда) | client (детали клиента ЕПК).
+     Карточки результатов и детали рисует скрипт окна; ниже — пример по макету A. -->
+<div hidden id="addFundEntityFromUcpModal" class="modal-scrim modal-scrim--inline" data-widget="AddFundEntityFromUcpModal" data-widget-group="modals" data-widget-src="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.html">
+  <div class="modal modal--w9 lc-afe" role="dialog" aria-modal="true" aria-labelledby="afe-title" data-state="data" data-detail="fund">
+    <header class="modal__head">
+      <h2 class="modal__title" id="afe-title">Добавить фонд</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert">
+      <div class="alert alert--info alert--m alert--flush" role="status" aria-live="polite">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">В соответствии с распоряжением № 524/3-Р от 08.04.2022 вся информация об американских клиентах скрыта для использования. Все российские юридические лица есть в базе юр. лиц Сбера (ЕПК).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body modal__body--flush">
+      <div class="lc-afe__grid">
+
+        <!-- 1. Параметры поиска. Enter в любом поле — тот же поиск (submit формы) -->
+        <form class="lc-afe__col lc-afe__params" data-afe-form novalidate>
+          <h3 class="ds-h6-strong-smb">Параметры поиска</h3>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-name"><span class="ds-label__text">Название</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-name" name="name" autocomplete="off" value="Интеррос"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-inn"><span class="ds-label__text">ИНН</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-inn" name="inn" inputmode="numeric" autocomplete="off" value="0765"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-ogrn"><span class="ds-label__text">ОГРН</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-ogrn" name="ogrn" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-kpp"><span class="ds-label__text">КПП</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-kpp" name="kpp" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-kio"><span class="ds-label__text">КИО</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-kio" name="kio" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <label class="cb">
+            <input type="checkbox" class="cb__input" name="hideNoCrm" checked>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Скрывать клиентов без CRM ID</span></span>
+          </label>
+          <button type="submit" class="btn btn--outline btn--m btn--fullwidth" data-afe-search><span class="btn__label">Поиск</span></button>
+        </form>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <!-- 2а. Поиск не выполнялся (idle): иллюстрация и подсказка на месте двух колонок -->
+        <div class="lc-afe__col lc-afe__wide lc-afe__idle">
+          <div class="es es--m">
+            <span class="illu es__illu" data-illu="possible-deals" aria-hidden="true"></span>
+            <div class="es__body">
+              <p class="es__text">Проверьте наличие фонда или актива в базах Сбера.<br>При отсутствии подходящих результатов создайте новую запись.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2б. Ничего не найдено (empty): строка причины и действие -->
+        <div class="lc-afe__col lc-afe__wide lc-afe__notfound" role="status" aria-live="polite">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <p class="ds-body-m-reg lc-afe__note">По вашему запросу результатов не найдено. Вы можете создать новую запись.</p>
+          <div><button type="button" class="btn btn--outline btn--m" data-afe-create><i data-icon="add"></i><span class="btn__label">Новый фонд</span></button></div>
+        </div>
+
+        <!-- 2в. Ошибка поиска (error): Alert в колонке результатов, повтор запроса -->
+        <div class="lc-afe__col lc-afe__wide lc-afe__error">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <div class="alert alert--error alert--m" role="alert" aria-live="assertive">
+            <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+            <div class="alert__body">
+              <p class="alert__text" data-afe-error-text>Не удалось выполнить поиск. Попробуйте ещё раз.</p>
+              <div class="alert__buttons">
+                <button type="button" class="btn btn--outline btn--xs btn--error" data-afe-retry><span class="btn__label">Повторить</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Найдено (data) и загрузка (loading) -->
+        <div class="lc-afe__col lc-afe__results">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <div class="lc-afe__loading" aria-busy="true">
+            <span class="sk-block sk-block--rounded lc-afe__sk-card" aria-hidden="true"></span>
+            <span class="sk-block sk-block--rounded lc-afe__sk-card" aria-hidden="true"></span>
+            <span class="sk-block sk-block--rounded lc-afe__sk-card" aria-hidden="true"></span>
+          </div>
+          <div class="lc-afe__list" role="radiogroup" aria-label="Найденные записи" data-afe-list
+               data-off-grid="Карточки результатов поиска: ширину задаёт колонка «Найдено» окна, а не сетка страницы">
+            <section class="lc-afe__group" data-afe-group="funds">
+              <p class="ds-body-xs-reg lc-afe__group-title">В базе фондов</p>
+              <div class="lc-afe__cards" data-afe-cards="funds">
+                <article class="tile tile--card lc-afe__card" role="radio" aria-checked="true" tabindex="0" data-afe-kind="fund" data-afe-id="fnd-001">
+                  <header class="tile__header">
+                    <div class="tile__header-main">
+                      <div class="tile__title-row">
+                        <span class="tile__title-icon" aria-hidden="true"><i data-icon="factory-01"></i></span>
+                        <h4 class="tile__title">Интеррос</h4>
+                      </div>
+                      <p class="tile__subtitle">PE</p>
+                    </div>
+                  </header>
+                </article>
+                <article class="tile tile--card lc-afe__card" role="radio" aria-checked="false" tabindex="-1" data-afe-kind="fund" data-afe-id="fnd-008">
+                  <header class="tile__header">
+                    <div class="tile__header-main">
+                      <div class="tile__title-row">
+                        <span class="tile__title-icon" aria-hidden="true"><i data-icon="factory-01"></i></span>
+                        <h4 class="tile__title">Это пример фонда не из ЕПК</h4>
+                        <span class="tile__title-add tile__title-add--icon tile__title-add--warning" tabindex="0" role="img" aria-label="Клиент не привязан к базе юр. лиц Сбера (ЕПК)." data-tooltip="Клиент не привязан к базе юр. лиц Сбера (ЕПК)." data-tooltip-multiline="yes"><i data-icon="alert-triangle-filled"></i></span>
+                      </div>
+                      <p class="tile__subtitle">PE</p>
+                    </div>
+                  </header>
+                </article>
+              </div>
+            </section>
+            <section class="lc-afe__group" data-afe-group="clients">
+              <div class="lc-afe__group-head">
+                <p class="ds-body-xs-reg lc-afe__group-title">В базе юр. лиц Сбера (ЕПК)</p>
+                <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Юр. лица из этого списка не добавлены в базу фондов" data-tooltip="Юр. лица из этого списка не добавлены в базу фондов" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button>
+              </div>
+              <div class="lc-afe__cards" data-afe-cards="clients">
+                <article class="tile tile--card lc-afe__card" role="radio" aria-checked="false" tabindex="-1" data-afe-kind="client" data-afe-id="pty-3001">
+                  <header class="tile__header">
+                    <div class="tile__header-main">
+                      <div class="tile__title-row">
+                        <span class="tile__title-icon" aria-hidden="true"><i data-icon="building-03"></i></span>
+                        <h4 class="tile__title">ИП «Интер О.С.»</h4>
+                      </div>
+                      <p class="tile__subtitle">Юридическое лицо · Резидент</p>
+                    </div>
+                  </header>
+                  <div class="tile__body">
+                    <dl class="lc-afe__kv">
+                      <dt>ИНН</dt><dd>076543834</dd>
+                      <dt>КПП</dt><dd>33432423423</dd>
+                      <dt>КПП КН</dt><dd>7788994455</dd>
+                      <dt>ОГРН</dt><dd>076543834</dd>
+                      <dt>CRM ID</dt><dd>1-1V9D55</dd>
+                    </dl>
+                  </div>
+                </article>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div class="dvd dvd--v lc-afe__dvd-detail" role="separator" aria-orientation="vertical"></div>
+
+        <!-- 4. Детали выбранного (data): фонд или клиент ЕПК -->
+        <div class="lc-afe__col lc-afe__detail" aria-live="polite">
+          <div class="lc-afe__loading" aria-busy="true">
+            <div class="sk-group">
+              <span class="sk-line sk-line--title" style="--sk-w:40%" aria-hidden="true"></span>
+              <span class="sk-line" style="--sk-w:72%" aria-hidden="true"></span>
+              <span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span>
+              <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <!-- 4а. Фонд из базы фондов (макет A) -->
+          <div class="lc-afe__info lc-afe__info--fund" data-afe-fund>
+            <div class="lc-afe__info-head">
+              <h3 class="ds-h6-strong-smb" data-afe-f="title">Интеррос</h3>
+              <a class="btn btn--outline btn--xs" href="#" data-afe-f="link"><span class="btn__label">Страница фонда</span><i data-icon="arrow-right"></i></a>
+            </div>
+            <!-- только у фонда без partyId; «Привязать» — воркфлоу не делается (решение 30.10.2026) -->
+            <div class="alert alert--warning alert--m alert--row" role="status" data-afe-unbound hidden>
+              <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+              <div class="alert__body">
+                <p class="alert__text">Клиент не привязан к базе юр. лиц Сбера (ЕПК).</p>
+                <div class="alert__buttons">
+                  <button type="button" class="btn btn--outline btn--xs btn--warning" data-afe-bind><span class="btn__label">Привязать</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="lc-afe__fields">
+              <div class="rof lc-afe__full">
+                <span class="ds-label"><span class="ds-label__text">Название</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="name">Интеррос</span></div>
+              </div>
+              <div class="rof lc-afe__full">
+                <span class="ds-label"><span class="ds-label__text">Бенефициар</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="beneficiaries">Владимир Потанин</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Объем инвестиций, млрд RUB</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="investmentVolume">987,65</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Приоритет</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="priority">Высокий</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ИНН</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="inn">7706419639</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">КПП</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="kpp">1157746316598</span></div>
+              </div>
+              <div class="rof lc-afe__full">
+                <span class="ds-label"><span class="ds-label__text">Ключевые отрасли</span></span>
+                <div class="rof__row">
+                  <div class="rof__value rof__value--chips">
+                    <div class="chiplist chiplist--s" data-afe-f="keyIndustries">
+                      <span class="chip chip--s"><span class="chip__label">Металлы и руды</span></span>
+                      <span class="chip chip--s"><span class="chip__label">Информационно-технологические услуги</span></span>
+                      <span class="chip chip--s"><span class="chip__label">Банки</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4б. Клиент из ЕПК (макет B) -->
+          <div class="lc-afe__info lc-afe__info--client" data-afe-client>
+            <div class="lc-afe__info-head">
+              <h3 class="ds-h6-strong-smb" data-afe-c="title">ИП «Интер О.С.»</h3>
+              <a class="btn btn--outline btn--xs" href="#" data-afe-c="link"><span class="btn__label">Страница клиента</span><i data-icon="arrow-right"></i></a>
+            </div>
+            <div class="lc-afe__fields lc-afe__fields--single">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Полное наименование</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="fullName">ОТКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО "Интеррос"</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Тип клиента</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="clientTypeName">Юридическое лицо</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование холдинга</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="holdingName">ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "РОМАШКА-ПРОМОКАШКА-ХОЛДИНГ"</span></div>
+              </div>
+              <div class="lc-afe__team">
+                <h4 class="ds-body-m-strong-smb">Команда клиента</h4>
+                <p class="ds-body-m-reg" data-afe-c="teamEmpty" hidden>—</p>
+                <div class="dtable" data-afe-c="team">
+                  <div class="dtable__body">
+                    <div class="tbl" data-table data-sort-rows>
+                      <div class="tbl__row tbl__row--head lc-afe__team-row">
+                        <div class="th th--separator"></div>
+                        <div class="th" aria-sort="none" data-col="employeeNumber"><span class="th__label">Табельный номер</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="employeeNumber" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                        <div class="th" aria-sort="none" data-col="fio"><span class="th__label">ФИО</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="fio" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                        <div class="th" aria-sort="none" data-col="role"><span class="th__label">Роль</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="role" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                        <div class="th th--separator"></div>
+                      </div>
+                      <div class="tbl__row lc-afe__team-row" data-afe-team-row>
+                        <div class="tc tc--separator"></div>
+                        <div class="tc" data-col="employeeNumber"><span class="tc__row"><span class="tc__text tc__text--truncate">18181811</span></span></div>
+                        <div class="tc" data-col="fio"><span class="tc__row"><span class="tc__text tc__text--truncate">Иванов Иван Иванович</span></span></div>
+                        <div class="tc" data-col="role"><span class="tc__row"><span class="tc__text tc__text--truncate">Клиентский менеджер</span></span></div>
+                        <div class="tc tc--separator"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование подотрасли</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="subIndustryName">Производство железной руды</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование отрасли</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="industryName">Металлургическая и горнодобывающая промышленность</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование сегмента</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="segmentName">Крупнейшие</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <!-- доступна только при выбранном клиенте ЕПК (урок Л235: запрет — атрибутом disabled) -->
+        <button type="button" class="btn btn--accent btn--m" data-afe-next disabled><span class="btn__label">Продолжить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>30.10.2026</b></span><span>Категория: <b>Фонды</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты IB</a> · ib/funds-app</p>
+  <h1>Добавить фонд — поиск в базах</h1>
+  <p class="lead">Найти фонд в базе фондов и в ЕПК перед добавлением</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/ib/funds-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal">apps/ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ib/funds-app/src/features/modals/AddFundEntityFromUcpModal (обёртка над UcpClientSearchModal из @sber-ibp/ib-common-lib-fe)</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница «Фонды» (FundsPipeline) — скрим в конце страницы, id addFundEntityFromUcpModal</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../ib/funds-app/pages/FundsPipeline.preview.html">apps/ib/funds-app/pages/FundsPipeline.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="EditFundModal.doc.html">Форма фонда (EditFundModal)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="FundsTable.doc.html">Список фондов (FundsTable)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="FundsTable.doc.html">Кнопка «Добавить фонд» в шапке страницы «Фонды» и в пустом состоянии списка фондов (FundsTable)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Задача MS0020<br>этап Э2 (макеты «Add fund / Step 01 — Search empty, Search result A, Search result B, Empty search result»; решения человека 30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 30.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.001</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Первый шаг добавления фонда. Прежде чем завести фонд, пользователь проверяет, нет ли его уже в базе фондов IB и есть ли такое юр. лицо в <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B5%D0%BF%D0%BA">ЕПК</a>. Слева — параметры поиска (Название, ИНН, ОГРН, КПП, КИО и «Скрывать клиентов без CRM ID»), по «Поиску» средняя колонка «Найдено» показывает две группы карточек: «В базе фондов» и «В базе юр. лиц Сбера (ЕПК)». Выбранная карточка раскрывается справа деталями.</p>
+<ul class="bullets"><li>Выбран <b>фонд</b> — фонд уже заведён: добавлять нечего, «Продолжить» выключена. У фонда без связи с ЕПК (<code class="tok">partyId: null</code>) — предупреждение «Клиент не привязан к базе юр. лиц Сбера (ЕПК).» с кнопкой «Привязать».</li><li>Выбран <b>клиент ЕПК</b> — «Продолжить» включена и передаёт клиента в окно фонда (EditFundModal, режим «добавить из ЕПК»).</li><li><b>Ничего не найдено</b> — «Новый фонд» открывает окно нового фонда (не из ЕПК) с названием из поля «Название».</li></ul>
+<p class="desc">Над колонками — Alert уровня окна про распоряжение № 524/3-Р: часть клиентов в ЕПК скрыта.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Бизнес-смысл">
+<h2>Бизнес-смысл</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зачем существует</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не дать завести фонд дважды и привязать новый фонд к юр. лицу из <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B5%D0%BF%D0%BA">ЕПК</a>, если оно там есть</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто заполняет и когда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пользователь IB при добавлении фонда — вручную; роль — не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто пользуется результатом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно фонда (EditFundModal) — получает выбранного клиента ЕПК или название нового фонда</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бизнес-правила</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по распоряжению № 524/3-Р от 08.04.2022 информация об американских клиентах скрыта; все российские юр. лица есть в ЕПК (текст Alert макета); фонд, уже заведённый в базе, повторно не добавляется («Продолжить» выключена)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Источники: макеты «Add fund / Step 01» (30.10.2026); фронтенд <code class="tok">features/modals/AddFundEntityFromUcpModal.tsx</code> («Продолжить» — <code class="tok">disabled={isEmpty(legalEntity)}</code>, создание фонда — <code class="tok">isCustomFund: true</code>).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Modal w9 (скрим #addFundEntityFromUcpModal, .modal.lc-afe[data-state][data-detail])
+├── шапка: «Добавить фонд» + крестик
+├── modal__alert: Alert info flush — распоряжение № 524/3-Р
+├── тело (flush), сетка колонок 1 · разделитель · 1 · разделитель · 2
+│   ├── «Параметры поиска» (form): InputText ×5 · Checkbox · Button outline M «Поиск» на всю ширину
+│   ├── Divider vertical
+│   ├── idle: EmptyState M (иллюстрация possible-deals + текст) — на месте двух колонок
+│   ├── empty: «Найдено» + строка причины + Button outline «Новый фонд»
+│   ├── error: «Найдено» + Alert error с «Повторить»
+│   ├── «Найдено» (radiogroup)
+│   │   ├── «В базе фондов»: Card ×N (иконка, название, типы, ⚠ без ЕПК)
+│   │   └── «В базе юр. лиц Сбера (ЕПК)» + IconButton ⓘ (тултип): Card ×N (реквизиты)
+│   ├── Divider vertical
+│   └── детали
+│       ├── фонд: заголовок + «Страница фонда →» · Alert warning row «Привязать» · ReadOnlyField ×6 + чипы отраслей
+│       └── клиент: заголовок + «Страница клиента →» · ReadOnlyField ×3 · «Команда клиента» Table · ReadOnlyField ×3
+└── подвал справа: «Отменить» (transparent) · «Продолжить» (accent, disabled)</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w9</code> (1358px — макет 1366), <code class="tok">modal__alert</code>, <code class="tok">modal__body--flush</code>; защита скрима — сама (есть поля ввода)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">info M <code class="tok">alert--flush</code> уровня окна; warning M <code class="tok">alert--row</code> + <code class="tok">btn--outline btn--xs btn--warning</code> «Привязать»; error M + <code class="tok">btn--error</code> «Повторить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">inp--m</code> ×5, крестик очистки — рантайм <code class="tok">Inputs.js</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Checkbox</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Скрывать клиентов без CRM ID», включён по умолчанию</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Поиск» outline M <code class="tok">btn--fullwidth</code> (<code class="tok">btn--loading</code> в загрузке); «Новый фонд» outline M с <code class="tok">add</code>; «Страница фонда/клиента» <code class="tok">a.btn--outline.btn--xs</code> с <code class="tok">arrow-right</code> справа; подвал transparent M + accent M</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">neutral S <code class="tok">info-circle</code> с тултипом у группы ЕПК</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Divider</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">dvd--v</code> между колонками</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">EmptyState · Illustrations</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">es--m</code>, иллюстрация <code class="tok">possible-deals</code> (стопка документов с лупой — ближайшая к макету), только текст</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile (Card)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">tile--card</code> с <code class="tok">role=&quot;radio&quot;</code> / <code class="tok">aria-checked</code> — выбор подложкой и рамкой Card; <code class="tok">tile__title-icon</code> (фонд <code class="tok">factory-01</code>, юр. лицо <code class="tok">building-03</code>, холдинг <code class="tok">building-01</code>); <code class="tok">tile__title-add--icon --warning</code> ⚠ с тултипом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ReadOnlyField</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значение текстом и чипами (<code class="tok">rof__value--chips</code>, <code class="tok">chiplist--s</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Chip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">chip--s</code> без тона — ключевые отрасли</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Table · TableCell</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">dtable</code> без тулбара, <code class="tok">tbl[data-table][data-sort-rows]</code>, сортировка трёх колонок, усечение с тултипом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tooltip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-tooltip</code> + <code class="tok">data-tooltip-multiline</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">sk-block--rounded</code> карточек, <code class="tok">sk-group</code> деталей</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/components/molecules/Alert/Alert.html">Alert</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputText/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/components/atoms/Checkbox/Checkbox.html">Checkbox</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/atoms/Divider/Divider.html">Divider</a> · <a class="inl" href="../../../../design-system/components/molecules/EmptyState/EmptyState.html">EmptyState</a> · <a class="inl" href="../../../../design-system/foundations/Illustrations/Illustrations.html">Illustrations</a> · <a class="inl" href="../../../../design-system/components/organisms/Tile/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/components/molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a> · <a class="inl" href="../../../../design-system/components/atoms/Chip/Chip.html">Chip</a> · <a class="inl" href="../../../../design-system/components/organisms/Table/Table.html">Table</a> · <a class="inl" href="../../../../design-system/components/organisms/TableCell/TableCell.html">TableCell</a> · <a class="inl" href="../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a> · <a class="inl" href="../../../../design-system/components/atoms/Skeleton/Skeleton.html">Skeleton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.css">AddFundEntityFromUcpModal.css</a> · <a class="inl" href="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.html">AddFundEntityFromUcpModal.html</a> · <a class="inl" href="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.js">AddFundEntityFromUcpModal.js</a> · <a class="inl" href="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.kit.scenario.mjs">AddFundEntityFromUcpModal.kit.scenario.mjs</a> · <a class="inl" href="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.md">AddFundEntityFromUcpModal.md</a> · <a class="inl" href="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<h3 class="kit-md__h3">Параметры поиска</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Название</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">название фонда или юр. лица</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ввод; <code class="tok">prefill.name</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ИНН</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ИНН</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка цифр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ввод; <code class="tok">prefill.inn</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ОГРН</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ОГРН</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка цифр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ввод; <code class="tok">prefill.ogrn</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">КПП</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">КПП</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка цифр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ввод; <code class="tok">prefill.kpp</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">КИО</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">КИО</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка цифр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ввод; <code class="tok">prefill.kio</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Скрывать клиентов без CRM ID</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фильтр группы ЕПК</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">флаг, по умолчанию да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ввод</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Карточка фонда (FundItemDto)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">name</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заголовок</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundItemDto.name</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">types[].name</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подзаголовок</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки через запятую</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundItemDto.types</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет, «—»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">⚠</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фонд без связи с ЕПК</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">признак</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">partyId == null</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Карточка клиента ЕПК (UcpClientDto)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,2.4fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,2.4fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">shortName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заголовок</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">UcpClientDto.shortName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,2.4fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">clientTypeName</code> · <code class="tok">residencyName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подзаголовок через « · »</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">UcpClientDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет — пропускается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,2.4fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">inn</code>, <code class="tok">kpp</code>, <code class="tok">kppKn</code>, <code class="tok">ogrn</code>, <code class="tok">crmId</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">реквизиты ИНН · КПП · КПП КН · ОГРН · CRM ID</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">UcpClientDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет — пустые строки не выводятся (у холдинга — только CRM ID, как в макете)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Детали фонда</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">name</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Название</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundItemDto.name</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">keyBeneficiaries[].displayName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бенефициар</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки через запятую</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundItemDto.keyBeneficiaries</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет, «—»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">investmentVolume</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Объем инвестиций</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, млрд RUB (подпись по правилу ДС Б26, решение человека 30.10.2026 «пока как в ДС»), 2 знака</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundItemDto.investmentVolume</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет, «—»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">priority.name</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Приоритет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">справочник</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundItemDto.priority</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет, «—»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">inn</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ИНН</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundItemDto.inn</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет, «—»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">kpp</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">КПП</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundItemDto.kpp</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет, «—»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">keyIndustries[].name</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ключевые отрасли</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чипы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundItemDto.keyIndustries</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет, «—»</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Детали клиента ЕПК</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fullName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полное наименование</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">UcpClientDto.fullName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">clientTypeName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тип клиента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">UcpClientDto.clientTypeName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">holdingName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Наименование холдинга</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">UcpClientDto.holdingName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет, «—»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">team[]</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Команда клиента: табельный номер, ФИО, роль</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">таблица</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">UcpClientDto.team</code> (UcpTeamMemberDto)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет — «—» вместо таблицы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">subIndustryName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Наименование подотрасли</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">UcpClientDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет, «—»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">industryName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Наименование отрасли</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">UcpClientDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет, «—»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">segmentName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Наименование сегмента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">UcpClientDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет, «—»</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Порядок строк — порядок отображения. Имя поля — как в описании типа демо-данных. Незаполненное поле — прочерк на своём месте, с места не уходит.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.6fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.6fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Руководитель IB (<code class="tok">director_ib</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026): в прототипе окно открывается всем</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Во фронтенде добавление фонда — право <code class="tok">createFund</code> (кнопка «Добавить фонд»); матрица ролей — не решено (30.10.2026). Оси <code class="tok">data-mode</code> у окна нет: окно — поиск, правки в нём нет.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state=&quot;loading&quot;</code>: «Поиск» <code class="tok">btn--loading</code>, в колонке «Найдено» три скелетона карточек, в деталях — скелетон строк; параметры поиска на месте</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state=&quot;data&quot;</code>: колонки «Найдено» и детали; выбрана первая карточка (макеты A и B)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пустые поля деталей — «—» на своём месте; у карточки клиента пустые реквизиты не выводятся, у карточки без реквизитов нет тела; пустая группа результатов скрыта целиком</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state=&quot;empty&quot;</code>: «Найдено», строка «По вашему запросу результатов не найдено. Вы можете создать новую запись.» и «Новый фонд» (макет); окно широкое — строка слева вверху, без иллюстрации, как в макете</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state=&quot;error&quot;</code>: в колонке результатов Alert error «Не удалось выполнить поиск. Попробуйте ещё раз.» и «Повторить» — текст допущение (30.10.2026), макета нет; параметры поиска работают</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо: повторный поиск — та же «Загрузка»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо: оси прав нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо: оси прав нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает страница: кнопки «Добавить фонд» нет — окно не открывается</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Пустая ячейка «Вид» — непроработанное состояние, а не отсутствие состояния.</p>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поиск не выполнялся (<code class="tok">idle</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно открыто без <code class="tok">search: true</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">справа на месте двух колонок EmptyState M: иллюстрация и «Проверьте наличие фонда или актива в базах Сбера. При отсутствии подходящих результатов создайте новую запись.» (макет Search empty)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выбран фонд (<code class="tok">data-detail=&quot;fund&quot;</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клик по карточке «В базе фондов»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">детали фонда; «Продолжить» <code class="tok">disabled</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выбран клиент ЕПК (<code class="tok">data-detail=&quot;client&quot;</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клик по карточке «В базе юр. лиц Сбера (ЕПК)»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">детали клиента; «Продолжить» доступна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фонд не привязан к ЕПК</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у выбранного фонда <code class="tok">partyId: null</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">⚠ на карточке (тултип) и Alert warning «Клиент не привязан к базе юр. лиц Сбера (ЕПК).» + «Привязать» над полями</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Продолжить» выключена</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ничего не выбрано или выбран фонд</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">атрибут <code class="tok">disabled</code> (урок Л235)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет.</li><li>Обязательные поля внутри: нет; хотя бы одно поле поиска должно быть заполнено — пустой запрос поиск не запускает (допущение 30.10.2026, вопрос 3).</li><li>Что показывает, когда обязательное не заполнено: ничего — окно остаётся в прежнем состоянии.</li><li>Что отдаёт наружу (признак для экрана или формы): <code class="tok">onNext(client)</code> — выбранный клиент ЕПК; <code class="tok">onCreateFund({ name })</code> — название для нового фонда.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значения ReadOnlyField переносятся; заголовок карточки — Card (перенос до 2 строк по ДС Tile); реквизиты карточки переносятся по символам; ячейки команды — усечение с тултипом (TableCell)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточки идут столбиком, прокручивается тело окна (Modal: до 80vh, дальше скролл тела); команда клиента — все строки в таблице</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тело уже 900px (узкий вьюпорт: Modal ограничивает окно <code class="tok">100vw − 48px</code>) — колонки встают друг под другом, вертикальные разделители скрыты</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">шаг w9; колонки 1 : 1 : 2</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<h3 class="kit-md__h3">Поиск</h3>
+<ul class="bullets"><li>«Поиск» или Enter в любом поле → поиск по базам. Подстрока без учёта регистра; запись найдена, если совпало хотя бы одно заполненное поле (ИЛИ) — допущение 30.10.2026, вопрос 2.</li><li>База фондов: «Название» — по <code class="tok">name</code> и <code class="tok">alias</code>, ИНН — по <code class="tok">inn</code>, КПП — по <code class="tok">kpp</code>; ОГРН и КИО у фонда нет.</li><li>ЕПК: «Название» — по <code class="tok">shortName</code> и <code class="tok">fullName</code>, ИНН, ОГРН, КПП, КИО — по своим полям. Клиенты, уже заведённые фондом (их <code class="tok">partyId</code> есть у фонда), в группу не попадают — по тултипу «Юр. лица из этого списка не добавлены в базу фондов». «Скрывать клиентов без CRM ID» убирает <code class="tok">crmId: null</code>.</li><li>Нашлось → <code class="tok">data</code> и выбрана первая карточка (фонд, если есть); не нашлось ничего → <code class="tok">empty</code>; все поля пусты → ничего не происходит.</li></ul>
+<h3 class="kit-md__h3">Выбор карточки</h3>
+<p class="desc">Карточки — один <code class="tok">role=&quot;radiogroup&quot;</code> на обе группы: выбрана всегда одна. Клик, Enter или Пробел — выбор; стрелки — соседняя карточка.</p>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Продолжить» (выбран клиент ЕПК)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно EditFundModal (<code class="tok">mode: 'create', source: 'ucp'</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">форма фонда с данными клиента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно поиска закрыто, <code class="tok">onNext(client)</code>; связывает страница</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Новый фонд» (ничего не найдено)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно EditFundModal (<code class="tok">mode: 'create', source: 'custom'</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">форма нового фонда, название из поля «Название»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно поиска закрыто, <code class="tok">onCreateFund({ name })</code>; связывает страница</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Отменить», крестик, Esc</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно закрыто без последствий, фокус — на «Добавить фонд»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Привязать»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">воркфлоу привязки к ЕПК</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">воркфлоу не делается (решение 30.10.2026): кнопка без обработчика</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пункт меню фонда «Связать с базой ЕПК»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Страница фонда →», «Страница клиента →»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">переход на экран</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">href=&quot;#&quot;</code>: страницы фонда и клиента не делаются (решение 30.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Поиск по базе фондов и по ЕПК по параметрам Название, ИНН, ОГРН, КПП, КИО и флагу «без CRM ID» (во фронтенде — <code class="tok">ClientsApi.useLazySearchClientUcpQuery</code>, детали клиента — <code class="tok">getClientByPartyIdQuery</code>, команда — <code class="tok">EmployeesApi.useSearchEmployeeFioOrPnMutation</code>); поиск по базе фондов в обёртке фронтенда не виден — не решено (30.10.2026), вопрос 1. Поля — раздел «Поля».</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,1.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/funds.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_FUNDS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">FundItemDto[] (+ <code class="tok">investmentVolume</code>, <code class="tok">keyIndustries</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">моки фронтенда; две новых — invented (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/funds.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_UCP_CLIENTS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">UcpClientDto[]</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ClientUcpDto и ClientDetailsTile фронтенда, часть — invented (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значения полей поиска и выбор по состояниям, <code class="tok">long</code> — свои базы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code> скрима</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">addFundEntityFromUcpModal</code> (по умолчанию)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">скрим для <code class="tok">open(scrimId, …)</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code> на <code class="tok">.modal</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">idle</code> · <code class="tok">loading</code> · <code class="tok">data</code> · <code class="tok">empty</code> · <code class="tok">error</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ставит скрипт окна, страница не задаёт</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Скрипт окна</h3>
+<p class="desc"><code class="tok">AddFundEntityFromUcpModal.js</code>, глобальный <code class="tok">window.AddFundEntityFromUcpModal</code>; подключается после <code class="tok">ds-body.js</code>:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Функция</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что делает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">open(scrimId, { funds, clients, prefill?, search?, onNext, onCreateFund })</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">рисует и открывает окно <code class="tok">DSModal.open(scrim, { keep: true })</code>, возвращает api DSModal; <code class="tok">prefill: { name, inn, ogrn, kpp, kio }</code>; <code class="tok">search: true</code> — сразу поиск</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">render(scrimOrId, opts)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же без открытия (витрина)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">search(scrimOrId)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поиск по полям окна; <code class="tok">false</code> — пустой запрос</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">select(scrimOrId, 'fund' \| 'client', id)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбрать карточку (<code class="tok">objectId</code> / <code class="tok">partyId</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">setState(scrimOrId, 'loading' \| 'error', message?)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">показать загрузку или ошибку (витрина)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Обработчики вешаются один раз на скрим; после перерисовки карточек и деталей скрипт сам зовёт <code class="tok">dsIcons.apply</code>, <code class="tok">DSTooltip.bindAll</code> и <code class="tok">DSTable.wire(...).rowsChanged()</code>.</p>
+<p class="desc">Проверка без браузера — <code class="tok">AddFundEntityFromUcpModal.kit.scenario.mjs</code> (поиск, группы, CRM ID, выбор, «Продолжить», «Новый фонд», загрузка, ошибка) на странице витрины через <code class="tok">page-run.mjs --scenario</code>.</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">features/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поиск, карточки, детали</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">AddFundEntityFromUcpModal.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">UcpClientSearchModal</code> (<code class="tok">@sber-ibp/ib-common-lib-fe</code>) — кода в <code class="tok">tmp/funds-app</code> нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">демо-данные</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/funds.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ClientsApi</code>, <code class="tok">EmployeesApi</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фронтенд: в режиме create слева в подвале кнопка «Create fund» (transparent, <code class="tok">Add</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопки в подвале нет; «Новый фонд» — только в состоянии «ничего не найдено»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">так в макетах (решение: где макет и фронтенд расходятся — по макету)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: подзаголовок карточки фонда «Юридическое лицо»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подзаголовок — типы фонда (<code class="tok">types</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в FundItemDto нет поля «вид лица», а фонд бывает семейным офисом и холдингом; вопрос 5</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: группа «В базе фонов»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«В базе фондов»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">опечатка макета</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: чипы отраслей в разных тонах (серый, фиолетовый, оранжевый)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чипы без тона</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правила выбора тона по отрасли нет; вопрос 6</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: тултип «Юр. лица из этого списка не добавлены в базу фондов» стоит у ⚠ карточки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тултип — у ⓘ заголовка группы ЕПК; у ⚠ фонда — «Клиент не привязан к базе юр. лиц Сбера (ЕПК).»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по смыслу текст про список ЕПК, а ⚠ — про фонд без связи с ЕПК; вопрос 4</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Карточка Card: реквизиты «подпись — значение» в строку</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">своя раскладка <code class="tok">dl</code> на токенах (Body S)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">плотного инлайнового ReadOnlyField в ДС нет (так же у карточки контрагента модуля postrade)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Оси <code class="tok">data-state</code> локальных компонентов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">своё значение <code class="tok">idle</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние «поиск не выполнялся» не сводится к осям данных (как <code class="tok">choose</code>/<code class="tok">preview</code> у окон модуля postrade)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.5fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ищет ли окно и по базе фондов? Обёртка фронтенда ищет только в ЕПК (<code class="tok">UcpClientSearchModal</code>), макет показывает обе группы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение 30.10.2026: обе группы, как в макете</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Как сочетаются параметры поиска — И или ИЛИ; по каким полям ищет «Название»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение 30.10.2026: ИЛИ, подстрока; макет A («Интеррос» + «0765») иначе не получается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">3</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Что делать при пустом запросе — подсказка, ошибка поля или ничего</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение 30.10.2026: ничего</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">4</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">У какого значка тултип «Юр. лица из этого списка не добавлены в базу фондов» — ⓘ группы ЕПК или ⚠ карточки фонда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение 30.10.2026: ⓘ группы ЕПК</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">5</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Подзаголовок карточки фонда — «Юридическое лицо» для всех или типы фонда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение 30.10.2026: типы фонда</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">6</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тон чипов «Ключевые отрасли»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение 30.10.2026: без тона</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">7</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Текст ошибки поиска и вид загрузки — макетов нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение 30.10.2026: Alert error с «Повторить», скелетоны карточек</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">8</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Что выбрано сразу после поиска</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение 30.10.2026: первая карточка (фонд, если есть) — как в макете A</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">9</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Иконки карточек (фонд, юр. лицо, холдинг)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">допущение 30.10.2026: <code class="tok">factory-01</code>, <code class="tok">building-03</code>, <code class="tok">building-01</code> — ближайшие к макету в Icons.md</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">AddFundEntityFromUcpModal.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/ib/funds-app/pages/FundsPipeline.html): окна и подчасти, которые открывает виджет. -->
+<!-- Локальный компонент «Форма фонда» (EditFundModal) — окно добавления фонда из ЕПК,
+     создания нового фонда и редактирования фонда (макеты «Add-Edit-funds», 30.10.2026).
+     Вшивается в конец страницы меткой ds-include; страница связывает скриптом:
+     EditFundModal.open('editFundModal', { mode, source, client, fund, name, priorities, onSave }).
+     Заголовок, подписи кнопок, значения полей, выключенные поля, ряд ИНН | КПП и
+     предупреждение ЕПК ставит скрипт окна по варианту (паспорт, variants).
+     Состояние данных — data-state на .modal: data · partial · loading · updating. -->
+<div class="modal-scrim" hidden id="editFundModal" data-widget="EditFundModal" data-widget-group="modals" data-widget-src="../../../ib/funds-app/widgets/modals/EditFundModal/EditFundModal.html">
+  <div class="modal modal--w5 lc-edit-fund-modal" role="dialog" aria-modal="true" aria-labelledby="efm-title" data-state="data" data-variant="add-ucp">
+    <header class="modal__head">
+      <h2 class="modal__title" id="efm-title" data-efm-title>Добавить фонд</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <!-- фонд не из ЕПК (вариант edit-custom): предупреждение уровня окна; «Привязать» —
+         воркфлоу не делается (решение 30.10.2026), обработчика у кнопки нет -->
+    <div class="modal__alert" data-efm-ucp-alert hidden>
+      <div class="alert alert--warning alert--m alert--row alert--flush" role="status">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Клиент не привязан к базе юр. лиц Сбера (ЕПК).</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--warning" data-efm-link-ucp><span class="btn__label">Привязать</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <!-- fieldset — для состояния «Обновление»: правило Modal «поля в <fieldset disabled>» -->
+      <fieldset class="lc-edit-fund-modal__fields" aria-labelledby="efm-title" data-efm-fields>
+
+        <div class="inp inp--m inp--disabled" data-efm-field="name">
+          <label class="ds-label ds-label--disabled" for="efm-name"><span class="ds-label__text">Название фонда</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-name" type="text" autocomplete="off" disabled value="ИП «Интер О.С.»">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m" data-efm-field="alias">
+          <label class="ds-label" for="efm-alias"><span class="ds-label__text">Псевдоним</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-alias" type="text" autocomplete="off" value="Большой перспективный фонд">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m" data-efm-field="beneficiaries">
+          <label class="ds-label" for="efm-beneficiaries"><span class="ds-label__text">Бенефициар</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-beneficiaries" type="text" autocomplete="off" value="Иванов Сергей Петрович">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--multiline" data-efm-field="comment">
+          <label class="ds-label" for="efm-comment"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <textarea class="inp__control" id="efm-comment" rows="2">Текст комментария</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ИНН | КПП — только у фонда из ЕПК, всегда выключены -->
+        <div class="lc-edit-fund-modal__row" data-efm-requisites>
+          <div class="inp inp--m inp--disabled" data-efm-field="inn">
+            <label class="ds-label ds-label--disabled" for="efm-inn"><span class="ds-label__text">ИНН</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="efm-inn" type="text" autocomplete="off" disabled value="7706419639">
+              </div>
+            </div>
+          </div>
+          <div class="inp inp--m inp--disabled" data-efm-field="kpp">
+            <label class="ds-label ds-label--disabled" for="efm-kpp"><span class="ds-label__text">КПП</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="efm-kpp" type="text" autocomplete="off" disabled value="1157746314274">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Приоритет — одиночный выбор, половина ширины; список заполняет скрипт окна -->
+        <div class="lc-edit-fund-modal__row">
+          <div class="inp inp--m" data-efm-field="priorityCode">
+            <label class="ds-label" for="efm-priority"><span class="ds-label__text">Приоритет</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="efm-priority-list">
+                <input class="inp__control" id="efm-priority" type="text" autocomplete="off" value="Высокий">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button>
+                  <button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button>
+                </span>
+              </div>
+            </div>
+            <div id="efm-priority-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-label="Приоритет фонда" data-efm-priority-list>
+              <button type="button" class="ddl__item" role="option" aria-selected="true" data-code="HIGH"><span class="ddl__item-body"><span class="ddl__item-label">Высокий</span></span></button>
+              <button type="button" class="ddl__item" role="option" aria-selected="false" data-code="MEDIUM"><span class="ddl__item-body"><span class="ddl__item-label">Средний</span></span></button>
+              <button type="button" class="ddl__item" role="option" aria-selected="false" data-code="LOW"><span class="ddl__item-body"><span class="ddl__item-label">Низкий</span></span></button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close data-efm-cancel><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-efm-save><span class="btn__label" data-efm-save-label>Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<script src="../../../ib/funds-app/data/funds.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../ib/funds-app/widgets/tables/FundsFilters/FundsFilters.js"></script>
+<script src="../../../ib/funds-app/widgets/tables/FundsTable/FundsTable.js"></script>
+<script src="../../../ib/funds-app/widgets/tables/AssetsTable/AssetsTable.js"></script>
+<script src="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.js"></script>
+<script src="../../../ib/funds-app/widgets/modals/EditFundModal/EditFundModal.js"></script>
+<script src="../../../ib/funds-app/widgets/modals/DeleteFundModal/DeleteFundModal.js"></script>
+<script src="AddFundEntityFromUcpModal.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"AddFundEntityFromUcpModal","type":"modal","base":"../..","hub":"../../../../index.html","states":["loading","data","empty","error","idle"],"modes":[],"state":"data","mode":null,"width":null,"scenario":true,"fixtures":{"_":"Демо-данные конструктора витрины для окна «Добавить фонд — поиск в базах». Базы фондов и ЕПК — MOCK_FUNDS и MOCK_UCP_CLIENTS из data/funds.js страницы «Фонды»; здесь — что ввести в поля поиска и что выбрать (по макетам «Add fund / Step 01»). long — свои короткие базы с самыми длинными значениями. Рисует сценарий демо функциями окна (AddFundEntityFromUcpModal.render / search / select / setState).","idle":{"prefill":{}},"loading":{"prefill":{"name":"Интеррос","inn":"0765"}},"data":{"prefill":{"name":"Интеррос","inn":"0765"},"select":{"fund":"fnd-001","client":"pty-3001"}},"partial":{"prefill":{"name":"Интер","kpp":"7802","hideNoCrm":false},"select":{"fund":"fnd-001","client":"pty-3003"}},"empty":{"prefill":{"name":"Андромеда"}},"error":{"prefill":{"name":"Интеррос","inn":"0765"},"message":"Не удалось выполнить поиск: база юр. лиц Сбера (ЕПК) не отвечает. Попробуйте ещё раз."},"long":{"prefill":{"name":"Восток"},"select":{"fund":"fnd-901","client":"pty-9901"},"funds":[{"objectId":"fnd-901","name":"Восток Инвестиции Управление Альтернативными Активами (ранее Baring Vostok Capital Partners)","alias":"Восток Инвестиции — BVCP","inn":"770655964512","kpp":"770601001","partyId":null,"keyBeneficiaries":[{"displayName":"Институциональные инвесторы"},{"displayName":"Международная финансовая корпорация"},{"displayName":"Европейский банк реконструкции и развития"}],"types":[{"code":"PE","name":"PE"},{"code":"PE_VC","name":"PE / VC"},{"code":"HOLDING","name":"Холдинг"}],"priority":{"code":"MEDIUM","name":"Средний"},"aumAssetsCount":14,"contacts":[],"comment":null,"investmentVolume":12345.67,"keyIndustries":[{"code":"METALS_MINING","name":"Металлы и руды"},{"code":"IT_SERVICES","name":"Информационно-технологические услуги"},{"code":"TELECOM","name":"Телекоммуникационные услуги"},{"code":"BANKS","name":"Банки"},{"code":"REAL_ESTATE","name":"Управление и девелопмент коммерческой недвижимости"}]}],"clients":[{"partyId":"pty-9901","shortName":"ООО «Восточная горно-металлургическая управляющая компания»","fullName":"ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ВОСТОЧНАЯ ГОРНО-МЕТАЛЛУРГИЧЕСКАЯ УПРАВЛЯЮЩАЯ КОМПАНИЯ ПО РАЗВИТИЮ МЕСТОРОЖДЕНИЙ\"","clientKind":"LEGAL","clientTypeName":"Юридическое лицо","residencyName":"Нерезидент","inn":"770655964599","kpp":"770601001","kppKn":"997750001","ogrn":"1027700132195","kio":"10567","crmId":"1-1V9D55-ZXQ","holdingName":"ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО \"ГОРНО-МЕТАЛЛУРГИЧЕСКИЙ ХОЛДИНГ ВОСТОЧНОЙ СИБИРИ И ДАЛЬНЕГО ВОСТОКА\"","team":[{"employeeNumber":"18181811","fio":"Константинопольский Александр Владимирович","role":"Старший банкир конгломерата по металлургии и горнодобыче"},{"employeeNumber":"18181812","fio":"Петров Иван Иванович","role":"Клиентский менеджер"}],"subIndustryName":"Добыча и обогащение руд цветных и драгоценных металлов","industryName":"Металлургическая и горнодобывающая промышленность","segmentName":"Крупнейшие"},{"partyId":"pty-9902","shortName":"Восточный холдинг","fullName":"Восточный холдинг","clientKind":"HOLDING","clientTypeName":"Холдинг","residencyName":null,"inn":null,"kpp":null,"kppKn":null,"ogrn":null,"kio":null,"crmId":"1-1SKTO4YD","holdingName":null,"team":[],"subIndustryName":null,"industryName":null,"segmentName":null}]}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- AddFundEntityFromUcpModal — «Добавить фонд», шаг 1: поиск в базе фондов и в ЕПК.
+     Макеты «Add fund / Step 01 — Search empty · Search result A · Search result B ·
+     Empty search result». Открывает его кнопка «Добавить фонд» страницы «Фонды»;
+     окно открывает скрипт окна: AddFundEntityFromUcpModal.open(scrimId, opts).
+
+     Состояние окна — data-state на .modal (свои значения, как у окон модуля postrade):
+       idle    — поиск не выполнялся: справа иллюстрация и подсказка;
+       loading — поиск идёт: скелетоны карточек и деталей;
+       data    — найдено: колонки «Найдено» и детали выбранной карточки;
+       empty   — ничего не найдено: строка причины и «Новый фонд»;
+       error   — поиск не выполнен: Alert ошибки с «Повторить» в колонке результатов.
+     Что выбрано — data-detail на .modal: fund (детали фонда) | client (детали клиента ЕПК).
+     Карточки результатов и детали рисует скрипт окна; ниже — пример по макету A. -->
+<div class="modal-scrim" id="addFundEntityFromUcpModal" hidden>
+  <div class="modal modal--w9 lc-afe" role="dialog" aria-modal="true" aria-labelledby="afe-title" data-state="data" data-detail="fund">
+    <header class="modal__head">
+      <h2 class="modal__title" id="afe-title">Добавить фонд</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert">
+      <div class="alert alert--info alert--m alert--flush" role="status" aria-live="polite">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">В соответствии с распоряжением № 524/3-Р от 08.04.2022 вся информация об американских клиентах скрыта для использования. Все российские юридические лица есть в базе юр. лиц Сбера (ЕПК).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body modal__body--flush">
+      <div class="lc-afe__grid">
+
+        <!-- 1. Параметры поиска. Enter в любом поле — тот же поиск (submit формы) -->
+        <form class="lc-afe__col lc-afe__params" data-afe-form novalidate>
+          <h3 class="ds-h6-strong-smb">Параметры поиска</h3>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-name"><span class="ds-label__text">Название</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-name" name="name" autocomplete="off" value="Интеррос"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-inn"><span class="ds-label__text">ИНН</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-inn" name="inn" inputmode="numeric" autocomplete="off" value="0765"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-ogrn"><span class="ds-label__text">ОГРН</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-ogrn" name="ogrn" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-kpp"><span class="ds-label__text">КПП</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-kpp" name="kpp" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-kio"><span class="ds-label__text">КИО</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-kio" name="kio" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <label class="cb">
+            <input type="checkbox" class="cb__input" name="hideNoCrm" checked>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Скрывать клиентов без CRM ID</span></span>
+          </label>
+          <button type="submit" class="btn btn--outline btn--m btn--fullwidth" data-afe-search><span class="btn__label">Поиск</span></button>
+        </form>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <!-- 2а. Поиск не выполнялся (idle): иллюстрация и подсказка на месте двух колонок -->
+        <div class="lc-afe__col lc-afe__wide lc-afe__idle">
+          <div class="es es--m">
+            <span class="illu es__illu" data-illu="possible-deals" aria-hidden="true"></span>
+            <div class="es__body">
+              <p class="es__text">Проверьте наличие фонда или актива в базах Сбера.<br>При отсутствии подходящих результатов создайте новую запись.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2б. Ничего не найдено (empty): строка причины и действие -->
+        <div class="lc-afe__col lc-afe__wide lc-afe__notfound" role="status" aria-live="polite">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <p class="ds-body-m-reg lc-afe__note">По вашему запросу результатов не найдено. Вы можете создать новую запись.</p>
+          <div><button type="button" class="btn btn--outline btn--m" data-afe-create><i data-icon="add"></i><span class="btn__label">Новый фонд</span></button></div>
+        </div>
+
+        <!-- 2в. Ошибка поиска (error): Alert в колонке результатов, повтор запроса -->
+        <div class="lc-afe__col lc-afe__wide lc-afe__error">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <div class="alert alert--error alert--m" role="alert" aria-live="assertive">
+            <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+            <div class="alert__body">
+              <p class="alert__text" data-afe-error-text>Не удалось выполнить поиск. Попробуйте ещё раз.</p>
+              <div class="alert__buttons">
+                <button type="button" class="btn btn--outline btn--xs btn--error" data-afe-retry><span class="btn__label">Повторить</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Найдено (data) и загрузка (loading) -->
+        <div class="lc-afe__col lc-afe__results">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <div class="lc-afe__loading" aria-busy="true">
+            <span class="sk-block sk-block--rounded lc-afe__sk-card" aria-hidden="true"></span>
+            <span class="sk-block sk-block--rounded lc-afe__sk-card" aria-hidden="true"></span>
+            <span class="sk-block sk-block--rounded lc-afe__sk-card" aria-hidden="true"></span>
+          </div>
+          <div class="lc-afe__list" role="radiogroup" aria-label="Найденные записи" data-afe-list
+               data-off-grid="Карточки результатов поиска: ширину задаёт колонка «Найдено» окна, а не сетка страницы">
+            <section class="lc-afe__group" data-afe-group="funds">
+              <p class="ds-body-xs-reg lc-afe__group-title">В базе фондов</p>
+              <div class="lc-afe__cards" data-afe-cards="funds">
+                <article class="tile tile--card lc-afe__card" role="radio" aria-checked="true" tabindex="0" data-afe-kind="fund" data-afe-id="fnd-001">
+                  <header class="tile__header">
+                    <div class="tile__header-main">
+                      <div class="tile__title-row">
+                        <span class="tile__title-icon" aria-hidden="true"><i data-icon="factory-01"></i></span>
+                        <h4 class="tile__title">Интеррос</h4>
+                      </div>
+                      <p class="tile__subtitle">PE</p>
+                    </div>
+                  </header>
+                </article>
+                <article class="tile tile--card lc-afe__card" role="radio" aria-checked="false" tabindex="-1" data-afe-kind="fund" data-afe-id="fnd-008">
+                  <header class="tile__header">
+                    <div class="tile__header-main">
+                      <div class="tile__title-row">
+                        <span class="tile__title-icon" aria-hidden="true"><i data-icon="factory-01"></i></span>
+                        <h4 class="tile__title">Это пример фонда не из ЕПК</h4>
+                        <span class="tile__title-add tile__title-add--icon tile__title-add--warning" tabindex="0" role="img" aria-label="Клиент не привязан к базе юр. лиц Сбера (ЕПК)." data-tooltip="Клиент не привязан к базе юр. лиц Сбера (ЕПК)." data-tooltip-multiline="yes"><i data-icon="alert-triangle-filled"></i></span>
+                      </div>
+                      <p class="tile__subtitle">PE</p>
+                    </div>
+                  </header>
+                </article>
+              </div>
+            </section>
+            <section class="lc-afe__group" data-afe-group="clients">
+              <div class="lc-afe__group-head">
+                <p class="ds-body-xs-reg lc-afe__group-title">В базе юр. лиц Сбера (ЕПК)</p>
+                <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Юр. лица из этого списка не добавлены в базу фондов" data-tooltip="Юр. лица из этого списка не добавлены в базу фондов" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button>
+              </div>
+              <div class="lc-afe__cards" data-afe-cards="clients">
+                <article class="tile tile--card lc-afe__card" role="radio" aria-checked="false" tabindex="-1" data-afe-kind="client" data-afe-id="pty-3001">
+                  <header class="tile__header">
+                    <div class="tile__header-main">
+                      <div class="tile__title-row">
+                        <span class="tile__title-icon" aria-hidden="true"><i data-icon="building-03"></i></span>
+                        <h4 class="tile__title">ИП «Интер О.С.»</h4>
+                      </div>
+                      <p class="tile__subtitle">Юридическое лицо · Резидент</p>
+                    </div>
+                  </header>
+                  <div class="tile__body">
+                    <dl class="lc-afe__kv">
+                      <dt>ИНН</dt><dd>076543834</dd>
+                      <dt>КПП</dt><dd>33432423423</dd>
+                      <dt>КПП КН</dt><dd>7788994455</dd>
+                      <dt>ОГРН</dt><dd>076543834</dd>
+                      <dt>CRM ID</dt><dd>1-1V9D55</dd>
+                    </dl>
+                  </div>
+                </article>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div class="dvd dvd--v lc-afe__dvd-detail" role="separator" aria-orientation="vertical"></div>
+
+        <!-- 4. Детали выбранного (data): фонд или клиент ЕПК -->
+        <div class="lc-afe__col lc-afe__detail" aria-live="polite">
+          <div class="lc-afe__loading" aria-busy="true">
+            <div class="sk-group">
+              <span class="sk-line sk-line--title" style="--sk-w:40%" aria-hidden="true"></span>
+              <span class="sk-line" style="--sk-w:72%" aria-hidden="true"></span>
+              <span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span>
+              <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <!-- 4а. Фонд из базы фондов (макет A) -->
+          <div class="lc-afe__info lc-afe__info--fund" data-afe-fund>
+            <div class="lc-afe__info-head">
+              <h3 class="ds-h6-strong-smb" data-afe-f="title">Интеррос</h3>
+              <a class="btn btn--outline btn--xs" href="#" data-afe-f="link"><span class="btn__label">Страница фонда</span><i data-icon="arrow-right"></i></a>
+            </div>
+            <!-- только у фонда без partyId; «Привязать» — воркфлоу не делается (решение 30.10.2026) -->
+            <div class="alert alert--warning alert--m alert--row" role="status" data-afe-unbound hidden>
+              <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+              <div class="alert__body">
+                <p class="alert__text">Клиент не привязан к базе юр. лиц Сбера (ЕПК).</p>
+                <div class="alert__buttons">
+                  <button type="button" class="btn btn--outline btn--xs btn--warning" data-afe-bind><span class="btn__label">Привязать</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="lc-afe__fields">
+              <div class="rof lc-afe__full">
+                <span class="ds-label"><span class="ds-label__text">Название</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="name">Интеррос</span></div>
+              </div>
+              <div class="rof lc-afe__full">
+                <span class="ds-label"><span class="ds-label__text">Бенефициар</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="beneficiaries">Владимир Потанин</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Объем инвестиций, млрд RUB</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="investmentVolume">987,65</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Приоритет</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="priority">Высокий</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ИНН</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="inn">7706419639</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">КПП</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="kpp">1157746316598</span></div>
+              </div>
+              <div class="rof lc-afe__full">
+                <span class="ds-label"><span class="ds-label__text">Ключевые отрасли</span></span>
+                <div class="rof__row">
+                  <div class="rof__value rof__value--chips">
+                    <div class="chiplist chiplist--s" data-afe-f="keyIndustries">
+                      <span class="chip chip--s"><span class="chip__label">Металлы и руды</span></span>
+                      <span class="chip chip--s"><span class="chip__label">Информационно-технологические услуги</span></span>
+                      <span class="chip chip--s"><span class="chip__label">Банки</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4б. Клиент из ЕПК (макет B) -->
+          <div class="lc-afe__info lc-afe__info--client" data-afe-client>
+            <div class="lc-afe__info-head">
+              <h3 class="ds-h6-strong-smb" data-afe-c="title">ИП «Интер О.С.»</h3>
+              <a class="btn btn--outline btn--xs" href="#" data-afe-c="link"><span class="btn__label">Страница клиента</span><i data-icon="arrow-right"></i></a>
+            </div>
+            <div class="lc-afe__fields lc-afe__fields--single">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Полное наименование</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="fullName">ОТКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО "Интеррос"</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Тип клиента</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="clientTypeName">Юридическое лицо</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование холдинга</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="holdingName">ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "РОМАШКА-ПРОМОКАШКА-ХОЛДИНГ"</span></div>
+              </div>
+              <div class="lc-afe__team">
+                <h4 class="ds-body-m-strong-smb">Команда клиента</h4>
+                <p class="ds-body-m-reg" data-afe-c="teamEmpty" hidden>—</p>
+                <div class="dtable" data-afe-c="team">
+                  <div class="dtable__body">
+                    <div class="tbl" data-table data-sort-rows>
+                      <div class="tbl__row tbl__row--head lc-afe__team-row">
+                        <div class="th th--separator"></div>
+                        <div class="th" aria-sort="none" data-col="employeeNumber"><span class="th__label">Табельный номер</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="employeeNumber" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                        <div class="th" aria-sort="none" data-col="fio"><span class="th__label">ФИО</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="fio" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                        <div class="th" aria-sort="none" data-col="role"><span class="th__label">Роль</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="role" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                        <div class="th th--separator"></div>
+                      </div>
+                      <div class="tbl__row lc-afe__team-row" data-afe-team-row>
+                        <div class="tc tc--separator"></div>
+                        <div class="tc" data-col="employeeNumber"><span class="tc__row"><span class="tc__text tc__text--truncate">18181811</span></span></div>
+                        <div class="tc" data-col="fio"><span class="tc__row"><span class="tc__text tc__text--truncate">Иванов Иван Иванович</span></span></div>
+                        <div class="tc" data-col="role"><span class="tc__row"><span class="tc__text tc__text--truncate">Клиентский менеджер</span></span></div>
+                        <div class="tc tc--separator"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование подотрасли</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="subIndustryName">Производство железной руды</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование отрасли</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="industryName">Металлургическая и горнодобывающая промышленность</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование сегмента</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="segmentName">Крупнейшие</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <!-- доступна только при выбранном клиенте ЕПК (урок Л235: запрет — атрибутом disabled) -->
+        <button type="button" class="btn btn--accent btn--m" data-afe-next disabled><span class="btn__label">Продолжить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент AddFundEntityFromUcpModal («Добавить фонд», шаг 1 — поиск).
+   Только внутренняя раскладка тела окна и показ своих блоков по состоянию.
+   Геометрия окна — Modal ДС (modal--w9, тело modal__body--flush), карточки — Card
+   (tile--card), поля — InputText и ReadOnlyField, разделители — Divider. Цвета,
+   шрифты, отступы — токены ДС; своих значений здесь нет. Состояния компонентов ДС
+   отсюда не переопределяются. */
+
+/* ── Раскладка: колонки тела ─────────────────────────────────────────────
+   Пропорции — по макету (340 · 333 · 690 на 1366): параметры 1, найдено 1,
+   детали 2. Разделители — Divider ДС (dvd--v) отдельными треками. */
+.lc-afe__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 2fr);
+}
+.lc-afe__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+  padding: var(--space-16) var(--space-24) var(--space-24);
+}
+.lc-afe__params { grid-column: 1; }
+.lc-afe__results { grid-column: 3; padding-left: var(--space-16); padding-right: var(--space-16); }
+.lc-afe__dvd-detail { grid-column: 4; }
+.lc-afe__detail { grid-column: 5; }
+/* idle, empty, error — один блок на месте двух правых колонок */
+.lc-afe__wide { grid-column: 3 / -1; padding-left: var(--space-16); }
+
+.lc-afe__idle { justify-content: center; align-items: center; }
+.lc-afe__note { color: var(--text-secondary); }
+
+/* ── Колонка «Найдено»: группы и карточки ──────────────────────────────── */
+.lc-afe__list { display: flex; flex-direction: column; gap: var(--space-16); }
+.lc-afe__group { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-afe__group-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
+.lc-afe__group-title { color: var(--text-secondary); }
+.lc-afe__cards { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-afe__card { cursor: pointer; }
+
+/* Реквизиты карточки клиента: подпись ↔ значение в одну строку. Плотного
+   инлайнового ReadOnlyField в ДС нет — он ставит подпись над значением (как у
+   карточки контрагента модуля postrade). */
+.lc-afe__kv {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--space-4) var(--space-16);
+  margin: 0;
+}
+.lc-afe__kv dt { font: var(--type-body-s-reg); color: var(--text-inactive); }
+.lc-afe__kv dd { font: var(--type-body-s-reg); color: var(--text-secondary); margin: 0; overflow-wrap: anywhere; }
+
+.lc-afe__loading { display: none; flex-direction: column; gap: var(--space-8); }
+.lc-afe__sk-card { --sk-w: 100%; --sk-h: var(--space-64); }
+
+/* ── Колонка деталей ───────────────────────────────────────────────────── */
+.lc-afe__info { display: none; flex-direction: column; gap: var(--space-16); }
+.lc-afe__info-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-16); }
+.lc-afe__info-head > .btn { flex: none; }
+.lc-afe__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
+.lc-afe__fields--single { grid-template-columns: minmax(0, 1fr); }
+.lc-afe__full { grid-column: 1 / -1; }
+.lc-afe__team { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-afe__team-row { grid-template-columns: var(--space-8) minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1.6fr) var(--space-8); }
+
+/* ── Что видно в каком состоянии (data-state на .modal) ──────────────────
+   idle — подсказка; loading — скелетоны в колонках результатов и деталей;
+   data — найдено; empty — ничего не найдено; error — ошибка поиска. */
+.lc-afe__idle,
+.lc-afe__notfound,
+.lc-afe__error,
+.lc-afe__results,
+.lc-afe__dvd-detail,
+.lc-afe__detail { display: none; }
+
+.lc-afe[data-state="idle"] .lc-afe__idle,
+.lc-afe[data-state="empty"] .lc-afe__notfound,
+.lc-afe[data-state="error"] .lc-afe__error,
+.lc-afe[data-state="data"] .lc-afe__results,
+.lc-afe[data-state="data"] .lc-afe__detail,
+.lc-afe[data-state="loading"] .lc-afe__results,
+.lc-afe[data-state="loading"] .lc-afe__detail,
+.lc-afe[data-state="loading"] .lc-afe__loading { display: flex; }
+.lc-afe[data-state="data"] .lc-afe__dvd-detail,
+.lc-afe[data-state="loading"] .lc-afe__dvd-detail { display: block; }
+
+.lc-afe[data-state="loading"] .lc-afe__list { display: none; }
+
+/* Детали — по тому, что выбрано (data-detail на .modal) */
+.lc-afe[data-state="data"][data-detail="fund"] .lc-afe__info--fund,
+.lc-afe[data-state="data"][data-detail="client"] .lc-afe__info--client { display: flex; }
+
+/* Пустая группа результатов прячется атрибутом hidden (правило ДС): в базе фондов
+   могло не найтись ничего, а в ЕПК — найтись, и наоборот. */
+
+/* Узкое окно (вьюпорт уже шага w9 — Modal ограничивает ширину calc(100vw − 48px)):
+   колонки встают друг под другом, вертикальные разделители не нужны. Перестроение —
+   по ширине тела окна, а не вьюпорта. */
+.lc-afe .modal__body { container-type: inline-size; }
+@container (max-width: 900px) {
+  .lc-afe__grid { grid-template-columns: minmax(0, 1fr); }
+  .lc-afe__grid > * { grid-column: 1; }
+  .lc-afe[data-state] .lc-afe__grid > .dvd--v { display: none; }
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   AddFundEntityFromUcpModal.js — «Добавить фонд», шаг 1: поиск в базе фондов и в ЕПК.
+
+   Пара во фронтенде — features/modals/AddFundEntityFromUcpModal (обёртка над
+   UcpClientSearchModal общей библиотеки). Подключается страницей после ds-body.js.
+
+   API — window.AddFundEntityFromUcpModal:
+     open(scrimId, opts) → api DSModal — нарисовать и открыть окно
+       (DSModal.open(scrim, { keep: true }));
+       opts = {
+         funds:   FundItemDto[]   — база фондов (MOCK_FUNDS),
+         clients: UcpClientDto[]  — база юр. лиц ЕПК (MOCK_UCP_CLIENTS),
+         prefill?: { name, inn, ogrn, kpp, kio } — значения полей поиска,
+         search?: boolean         — сразу выполнить поиск по prefill,
+         onNext(client)           — «Продолжить» (выбран клиент ЕПК), окно закрыто,
+         onCreateFund({ name })   — «Новый фонд» (ничего не найдено), окно закрыто;
+                                    name — значение поля «Название»
+       }
+     render(scrimOrId, opts)       — то же без открытия (витрина, копии состояний)
+     search(scrimOrId)             — выполнить поиск по полям окна
+     select(scrimOrId, kind, id)   — выбрать карточку: kind 'fund' | 'client'
+     setState(scrimOrId, state, message?) — показать loading | error (витрина);
+                                    message — текст ошибки
+
+   Состояние — data-state на .modal: idle · loading · data · empty · error;
+   выбранное — data-detail на .modal: fund | client.
+
+   Правила поиска (допущение 30.10.2026, вопрос 2 паспорта): подстрока без учёта
+   регистра; запись найдена, если совпало хотя бы одно заполненное поле (ИЛИ).
+   Фонды — название или псевдоним по «Названию», ИНН и КПП по своим полям.
+   Клиенты ЕПК — краткое или полное наименование по «Названию», ИНН, ОГРН, КПП,
+   КИО по своим полям; клиенты, уже заведённые фондом (partyId фонда), в список
+   ЕПК не попадают; «Скрывать клиентов без CRM ID» убирает клиентов с crmId: null.
+   Пустой запрос (все поля пусты) поиск не запускает.
+   После поиска выбрана первая карточка (фонд, если найден, иначе клиент).
+   «Продолжить» доступна только при выбранном клиенте ЕПК (disabled, урок Л235).
+   «Привязать» и ссылки «Страница фонда/клиента» — без обработчика (решение 30.10.2026).
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var DASH = '—';
+  var FIELDS = ['name', 'inn', 'ogrn', 'kpp', 'kio'];
+
+  function $(root, sel) { return root.querySelector(sel); }
+  function $(root, sel) { return Array.prototype.slice.call(root.querySelectorAll(sel)); }
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function val(v) { return v == null || v === '' ? DASH : String(v); }
+  function scrimOf(x) { return typeof x === 'string' ? document.getElementById(x) : x; }
+  function modalOf(scrim) { return scrim && (scrim.classList.contains('lc-afe') ? scrim : $(scrim, '.lc-afe')); }
+  function ctxOf(scrim) {
+    if (!scrim.__afe) scrim.__afe = { funds: [], clients: [], onNext: null, onCreateFund: null, found: { funds: [], clients: [] }, sel: null };
+    return scrim.__afe;
+  }
+  function num(v) {
+    if (v == null || v === '') return DASH;
+    return Number(v).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  /* ---------- поля поиска ---------- */
+  function readQuery(scrim) {
+    var form = $(scrim, '[data-afe-form]');
+    var q = {};
+    FIELDS.forEach(function (k) { q[k] = String((form.elements[k] && form.elements[k].value) || '').trim().toLowerCase(); });
+    q.hideNoCrm = !!(form.elements.hideNoCrm && form.elements.hideNoCrm.checked);
+    return q;
+  }
+  function writePrefill(scrim, p) {
+    var form = $(scrim, '[data-afe-form]');
+    p = p || {};
+    FIELDS.forEach(function (k) { if (form.elements[k]) form.elements[k].value = p[k] == null ? '' : p[k]; });
+    if (form.elements.hideNoCrm) form.elements.hideNoCrm.checked = p.hideNoCrm == null ? true : !!p.hideNoCrm;
+    if (window.DSInput) window.DSInput.syncAll(form);
+  }
+  function has(v, q) { return !!q && String(v == null ? '' : v).toLowerCase().indexOf(q) >= 0; }
+
+  function match(ctx, q) {
+    var empty = FIELDS.every(function (k) { return !q[k]; });
+    if (empty) return null;
+    var funds = ctx.funds.filter(function (f) {
+      return has(f.name, q.name) || has(f.alias, q.name) || has(f.inn, q.inn) || has(f.kpp, q.kpp);
+    });
+    var inFunds = {};
+    ctx.funds.forEach(function (f) { if (f.partyId) inFunds[f.partyId] = true; });
+    var clients = ctx.clients.filter(function (c) {
+      if (inFunds[c.partyId]) return false;
+      if (q.hideNoCrm && !c.crmId) return false;
+      return has(c.shortName, q.name) || has(c.fullName, q.name) || has(c.inn, q.inn) ||
+        has(c.ogrn, q.ogrn) || has(c.kpp, q.kpp) || has(c.kio, q.kio);
+    });
+    return { funds: funds, clients: clients };
+  }
+
+  /* ---------- карточки результатов ---------- */
+  function fundCard(f) {
+    var types = (f.types || []).map(function (t) { return t.name; }).join(', ');
+    var warn = f.partyId ? '' :
+      '<span class="tile__title-add tile__title-add--icon tile__title-add--warning" tabindex="0" role="img"' +
+      ' aria-label="Клиент не привязан к базе юр. лиц Сбера (ЕПК)." data-tooltip="Клиент не привязан к базе юр. лиц Сбера (ЕПК)."' +
+      ' data-tooltip-multiline="yes"><i data-icon="alert-triangle-filled"></i></span>';
+    return '<article class="tile tile--card lc-afe__card" role="radio" aria-checked="false" tabindex="-1" data-afe-kind="fund" data-afe-id="' + esc(f.objectId) + '">' +
+      '<header class="tile__header"><div class="tile__header-main"><div class="tile__title-row">' +
+      '<span class="tile__title-icon" aria-hidden="true"><i data-icon="factory-01"></i></span>' +
+      '<h4 class="tile__title">' + esc(f.name) + '</h4>' + warn + '</div>' +
+      '<p class="tile__subtitle">' + esc(types || DASH) + '</p></div></header></article>';
+  }
+  var KV = [['ИНН', 'inn'], ['КПП', 'kpp'], ['КПП КН', 'kppKn'], ['ОГРН', 'ogrn'], ['CRM ID', 'crmId']];
+  function clientCard(c) {
+    var sub = [c.clientTypeName, c.residencyName].filter(Boolean).join(' · ');
+    var kv = KV.filter(function (p) { return c[p[1]]; }).map(function (p) {
+      return '<dt>' + p[0] + '</dt><dd>' + esc(c[p[1]]) + '</dd>';
+    }).join('');
+    return '<article class="tile tile--card lc-afe__card" role="radio" aria-checked="false" tabindex="-1" data-afe-kind="client" data-afe-id="' + esc(c.partyId) + '">' +
+      '<header class="tile__header"><div class="tile__header-main"><div class="tile__title-row">' +
+      '<span class="tile__title-icon" aria-hidden="true"><i data-icon="' + (c.clientKind === 'HOLDING' ? 'building-01' : 'building-03') + '"></i></span>' +
+      '<h4 class="tile__title">' + esc(c.shortName) + '</h4></div>' +
+      (sub ? '<p class="tile__subtitle">' + esc(sub) + '</p>' : '') + '</div></header>' +
+      (kv ? '<div class="tile__body"><dl class="lc-afe__kv">' + kv + '</dl></div>' : '') + '</article>';
+  }
+
+  function rebind(scope) {
+    if (window.dsIcons) window.dsIcons.apply(scope);
+    if (window.DSTooltip) window.DSTooltip.bindAll(scope);
+  }
+
+  /* ---------- детали ---------- */
+  function setText(root, attr, key, text) {
+    var el = $(root, '[' + attr + '="' + key + '"]');
+    if (el) el.textContent = text;
+  }
+  function paintFund(scrim, f) {
+    var box = $(scrim, '[data-afe-fund]');
+    setText(box, 'data-afe-f', 'title', f.name);
+    setText(box, 'data-afe-f', 'name', val(f.name));
+    setText(box, 'data-afe-f', 'beneficiaries', val((f.keyBeneficiaries || []).map(function (b) { return b.displayName; }).join(', ')));
+    setText(box, 'data-afe-f', 'investmentVolume', num(f.investmentVolume));
+    setText(box, 'data-afe-f', 'priority', val(f.priority && f.priority.name));
+    setText(box, 'data-afe-f', 'inn', val(f.inn));
+    setText(box, 'data-afe-f', 'kpp', val(f.kpp));
+    var chips = $(box, '[data-afe-f="keyIndustries"]');
+    var list = f.keyIndustries || [];
+    chips.innerHTML = list.length ? list.map(function (i) {
+      return '<span class="chip chip--s"><span class="chip__label">' + esc(i.name) + '</span></span>';
+    }).join('') : '<span class="rof__value">' + DASH + '</span>';
+    $(box, '[data-afe-unbound]').hidden = !!f.partyId;
+  }
+  function paintClient(scrim, c) {
+    var box = $(scrim, '[data-afe-client]');
+    setText(box, 'data-afe-c', 'title', c.shortName);
+    ['fullName', 'clientTypeName', 'holdingName', 'subIndustryName', 'industryName', 'segmentName'].forEach(function (k) {
+      setText(box, 'data-afe-c', k, val(c[k]));
+    });
+    var team = c.team || [];
+    var table = $(box, '[data-afe-c="team"]');
+    $(box, '[data-afe-c="teamEmpty"]').hidden = team.length > 0;
+    table.hidden = team.length === 0;
+    var tbl = $(table, '.tbl');
+    $(tbl, '[data-afe-team-row]').forEach(function (r) { r.remove(); });
+    tbl.insertAdjacentHTML('beforeend', team.map(function (m) {
+      return '<div class="tbl__row lc-afe__team-row" data-afe-team-row><div class="tc tc--separator"></div>' +
+        ['employeeNumber', 'fio', 'role'].map(function (k) {
+          return '<div class="tc" data-col="' + k + '"><span class="tc__row"><span class="tc__text tc__text--truncate">' + esc(val(m[k])) + '</span></span></div>';
+        }).join('') + '<div class="tc tc--separator"></div></div>';
+    }).join(''));
+    if (window.DSTable) { var api = window.DSTable.wire(tbl); if (api && api.rowsChanged) api.rowsChanged(); }
+  }
+
+  /* ---------- выбор ---------- */
+  function select(scrimOrId, kind, id) {
+    var scrim = scrimOf(scrimOrId), modal = modalOf(scrim), ctx = ctxOf(scrim);
+    var item = null;
+    if (kind === 'fund') item = ctx.found.funds.filter(function (f) { return f.objectId === id; })[0];
+    if (kind === 'client') item = ctx.found.clients.filter(function (c) { return c.partyId === id; })[0];
+    if (!item) return;
+    ctx.sel = { kind: kind, id: id, item: item };
+    $(scrim, '.lc-afe__card').forEach(function (card) {
+      var on = card.getAttribute('data-afe-kind') === kind && card.getAttribute('data-afe-id') === id;
+      card.setAttribute('aria-checked', on ? 'true' : 'false');
+      card.setAttribute('tabindex', on ? '0' : '-1');
+    });
+    if (kind === 'fund') paintFund(scrim, item); else paintClient(scrim, item);
+    modal.setAttribute('data-detail', kind);
+    $(scrim, '[data-afe-next]').disabled = kind !== 'client';
+    rebind($(scrim, '.lc-afe__detail'));
+  }
+
+  /* ---------- состояния ---------- */
+  function setState(scrimOrId, state, message) {
+    var scrim = scrimOf(scrimOrId), modal = modalOf(scrim);
+    modal.setAttribute('data-state', state);
+    var btn = $(scrim, '[data-afe-search]');
+    btn.classList.toggle('btn--loading', state === 'loading');
+    if (state === 'loading') btn.setAttribute('aria-busy', 'true'); else btn.removeAttribute('aria-busy');
+    if (state === 'error' && message) $(scrim, '[data-afe-error-text]').textContent = message;
+    if (state !== 'data') {
+      ctxOf(scrim).sel = null;
+      $(scrim, '[data-afe-next]').disabled = true;
+    }
+  }
+
+  function showResults(scrim, found) {
+    var ctx = ctxOf(scrim);
+    ctx.found = found;
+    if (!found.funds.length && !found.clients.length) { setState(scrim, 'empty'); return; }
+    var fBox = $(scrim, '[data-afe-cards="funds"]'), cBox = $(scrim, '[data-afe-cards="clients"]');
+    fBox.innerHTML = found.funds.map(fundCard).join('');
+    cBox.innerHTML = found.clients.map(clientCard).join('');
+    $(scrim, '[data-afe-group="funds"]').hidden = !found.funds.length;
+    $(scrim, '[data-afe-group="clients"]').hidden = !found.clients.length;
+    rebind($(scrim, '[data-afe-list]'));
+    setState(scrim, 'data');
+    if (found.funds.length) select(scrim, 'fund', found.funds[0].objectId);
+    else select(scrim, 'client', found.clients[0].partyId);
+  }
+
+  function search(scrimOrId) {
+    var scrim = scrimOf(scrimOrId), ctx = ctxOf(scrim);
+    var found = match(ctx, readQuery(scrim));
+    if (!found) return false;
+    showResults(scrim, found);
+    return true;
+  }
+
+  /* ---------- закрытие ---------- */
+  function close(scrim) {
+    if (scrim.__afeApi && scrim.__afeApi.close) scrim.__afeApi.close(true);
+    else if (window.DSModal && window.DSModal.current() && window.DSModal.current().scrim === scrim) window.DSModal.closeTop(true);
+  }
+
+  /* ---------- обработчики (один раз на скрим) ---------- */
+  function wire(scrim) {
+    if (scrim.__afeWired) return;
+    scrim.__afeWired = true;
+    var form = $(scrim, '[data-afe-form]');
+    form.addEventListener('submit', function (e) { e.preventDefault(); search(scrim); });
+
+    scrim.addEventListener('click', function (e) {
+      var t = e.target;
+      var card = t.closest('.lc-afe__card');
+      if (card && scrim.contains(card)) { select(scrim, card.getAttribute('data-afe-kind'), card.getAttribute('data-afe-id')); return; }
+      if (t.closest('[data-afe-retry]')) { search(scrim); return; }
+      var next = t.closest('[data-afe-next]');
+      if (next && !next.disabled) {
+        var ctx = ctxOf(scrim), sel = ctx.sel;
+        if (!sel || sel.kind !== 'client') return;
+        close(scrim);
+        if (ctx.onNext) ctx.onNext(sel.item);
+        return;
+      }
+      if (t.closest('[data-afe-create]')) {
+        var c = ctxOf(scrim), name = String(form.elements.name.value || '').trim();
+        close(scrim);
+        if (c.onCreateFund) c.onCreateFund({ name: name });
+      }
+    });
+
+    /* Клавиатура карточек: Enter/Пробел — выбор, стрелки — соседняя карточка */
+    scrim.addEventListener('keydown', function (e) {
+      var card = e.target.closest && e.target.closest('.lc-afe__card');
+      if (!card || e.target !== card) return;
+      var cards = $(scrim, '.lc-afe__card').filter(function (x) { return !x.closest('[hidden]'); });
+      var i = cards.indexOf(card), to = null;
+      if (e.key === 'Enter' || e.key === ' ') to = card;
+      else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') to = cards[Math.min(i + 1, cards.length - 1)];
+      else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') to = cards[Math.max(i - 1, 0)];
+      if (!to) return;
+      e.preventDefault();
+      select(scrim, to.getAttribute('data-afe-kind'), to.getAttribute('data-afe-id'));
+      to.focus();
+    });
+  }
+
+  /* ---------- открытие ---------- */
+  function render(scrimOrId, opts) {
+    var scrim = scrimOf(scrimOrId);
+    if (!scrim) return null;
+    opts = opts || {};
+    var ctx = ctxOf(scrim);
+    ctx.funds = opts.funds || window.MOCK_FUNDS || [];
+    ctx.clients = opts.clients || window.MOCK_UCP_CLIENTS || [];
+    ctx.onNext = opts.onNext || null;
+    ctx.onCreateFund = opts.onCreateFund || null;
+    ctx.found = { funds: [], clients: [] };
+    wire(scrim);
+    writePrefill(scrim, opts.prefill);
+    setState(scrim, 'idle');
+    if (opts.search) search(scrim);
+    return scrim;
+  }
+
+  function open(scrimId, opts) {
+    var scrim = render(scrimId, opts);
+    if (!scrim || !window.DSModal) return null;
+    scrim.__afeApi = window.DSModal.open(scrim, { keep: true });
+    return scrim.__afeApi;
+  }
+
+  window.AddFundEntityFromUcpModal = { open: open, render: render, search: search, select: select, setState: setState };
+})();
+</script>
+</body>
+</html>

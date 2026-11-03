@@ -1,0 +1,10 @@
+{
+  "_": "Демо-данные витрины. options — валюта ФИ транша; example — заполненная форма (даты ISO, части по ключам FinMetricsStore.rasParts()).",
+
+  "options": { "currencyCode": "RUB" },
+  "example": {
+    "startDate": "2025-03-31", "endDate": "2025-04-01",
+    "parts": { "currentInterest": 100000, "currentInterestCap": 100000, "capitalizedInterest": 100000, "capitalizedInterestCap": 100000, "deferredInterest": 100000, "deferredInterestCap": 100000 },
+    "comment": "Текст комментария"
+  }
+}

@@ -1,0 +1,34 @@
+/* Локальный компонент EditFundModal — «Форма фонда».
+   Только внутренняя раскладка полей; механика окна, полей, списка, предупреждения,
+   скелетона и сохранения — Modal, InputText, InputAutocomplete, DropdownList,
+   Alert, Skeleton, Buttons ДС. Цвета, шрифты, отступы — токены ДС.
+   Состояния компонентов ДС отсюда не переопределяются. */
+
+/* fieldset держит поля для состояния «Обновление» (<fieldset disabled>, правило
+   Modal); браузерные рамка и отступы fieldset сбрасываются, зазор между полями —
+   тот же, что у тела окна. */
+.lc-edit-fund-modal__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--modal-body-gap);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* Ряд из двух полей: ИНН | КПП; «Приоритет» — в первой половине ряда (макет). */
+.lc-edit-fund-modal__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+/* Состояния данных (data-state на .modal). База — «Данные есть» и «Заполнено
+   частично»: та же разметка, пустое поле остаётся на месте пустым.
+   «Загрузка» и «Обновление» переводит в классы ДС скрипт окна
+   (EditFundModal.mirror): скелетон .sk-surface на полях, .modal--saving,
+   fieldset disabled, .btn--loading у основной кнопки. Здесь — только то, чего
+   классами ДС не сказать: в загрузке не видно предупреждения ЕПК (вариант фонда
+   ещё не известен). */
+.lc-edit-fund-modal[data-state="loading"] [data-efm-ucp-alert] { display: none; }

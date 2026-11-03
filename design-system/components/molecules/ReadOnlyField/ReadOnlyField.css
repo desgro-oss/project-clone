@@ -99,14 +99,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-inactive);
 }
 
 /* ---------- value ------------------------------------------------------------ */
 .rof__value {
   min-width: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
 }
 /* text/chips values (span/div) get the default body colour; an anchor value
    (type=link) must keep the Link component's own accent/hover colours
@@ -116,7 +116,7 @@ span.rof__value,
 div.rof__value {
   color: var(--text-primary);
 }
-a.rof__value.link { font: var(--type-body-m); }
+a.rof__value.link { font: var(--type-body-m-reg); }
 
 /* semantic colour — for signed deltas / rates (text values only) */
 span.rof__value.rof__value--positive,

@@ -18,11 +18,110 @@ window.IBPKit = {
     "Общие",
     "Сделка",
     "Финансовые отчеты сделки",
+    "НКЛ",
     "Транш",
     "Расчет FV",
     "Другое"
   ],
   "components": [
+    {
+      "id": "AdditionalAgreementModal",
+      "name": "Окно «Дополнительное соглашение»",
+      "category": "Общие",
+      "purpose": "Создать, изменить или удалить дополнительное соглашение (ДС) к договору займа (НКЛ) на внутренней странице «Договор и дополнительные соглашения»",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/AdditionalAgreementModal.doc.html",
+      "owner": "AdditionalAgreementTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "27.10.2026"
+    },
+    {
+      "id": "AdditionalAgreementsFilterModal",
+      "name": "Фильтр дополнительных соглашений",
+      "category": "Общие",
+      "purpose": "Отобрать дополнительные соглашения в списке страницы «Договор и дополнительные соглашения» по реквизитам ДС и сведениям о решении",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/AdditionalAgreementsFilterModal.doc.html",
+      "owner": "InitialAndAdditionalAgreementsTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "02.11.2026"
+    },
+    {
+      "id": "AdditionalAgreementTile",
+      "name": "Дополнительное соглашение",
+      "category": "Общие",
+      "purpose": "Карточка дополнительного соглашения договора займа в списке на странице «Договор и дополнительные соглашения»: реквизиты ДС и решения КО, комментарий в раскрытой части, вход в правку",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/AdditionalAgreementTile.doc.html",
+      "owner": "InitialAndAdditionalAgreementsTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "02.11.2026"
+    },
+    {
+      "id": "BalanceAndCurrencyModal",
+      "name": "Модальное окно «Баланс и валюта»",
+      "category": "НКЛ",
+      "purpose": "Ввести баланс, валюту и общую сумму лимита договора займа",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/BalanceAndCurrencyModal.doc.html",
+      "owner": "BalanceAndCurrencyTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "27.10.2026"
+    },
+    {
+      "id": "BalanceAndCurrencyTile",
+      "name": "Баланс и валюта",
+      "category": "НКЛ",
+      "purpose": "Баланс, валюта и общая сумма лимита договора займа и точка входа в их ввод",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/BalanceAndCurrencyTile.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "1.000",
+      "updated": "27.10.2026"
+    },
+    {
+      "id": "BaseTransferIndexHistoryModal",
+      "name": "История изменения базового индекса",
+      "category": "Общие",
+      "purpose": "Показать таблицу истории изменения базового индекса (БИ) с сортировкой и пагинацией",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/BaseTransferIndexHistoryModal.doc.html",
+      "owner": "TransferRateTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "02.11.2026"
+    },
+    {
+      "id": "ContractTile",
+      "name": "Договор",
+      "category": "Общие",
+      "purpose": "Реквизиты договора на внутренней странице «Договор и дополнительные соглашения», правка договора в окне «Договор» и вход к документам по сделке",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/ContractTile.doc.html",
+      "owner": "InitialAndAdditionalAgreementsTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "02.11.2026"
+    },
     {
       "id": "CounterpartiesEcmModal",
       "name": "Модальное окно «Документы по сделке»",
@@ -35,7 +134,7 @@ window.IBPKit = {
       "owner": "DealDescriptionTile",
       "stub": false,
       "version": "1.002",
-      "updated": "23.10.2026"
+      "updated": "02.11.2026"
     },
     {
       "id": "CounterpartiesTile",
@@ -48,8 +147,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/CounterpartiesTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "0.010",
-      "updated": "23.10.2026"
+      "version": "0.011",
+      "updated": "27.10.2026"
     },
     {
       "id": "CounterpartyCard",
@@ -216,8 +315,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/DealProductTreeTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.005",
-      "updated": "23.10.2026"
+      "version": "1.007",
+      "updated": "03.11.2026"
     },
     {
       "id": "DealProjectInformationModal",
@@ -356,8 +455,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/FinInstrumentCard.doc.html",
       "owner": "FinInstrumentsTile",
       "stub": false,
-      "version": "1.003",
-      "updated": "23.10.2026"
+      "version": "1.004",
+      "updated": "03.11.2026"
     },
     {
       "id": "FinInstrumentsTile",
@@ -370,8 +469,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/FinInstrumentsTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.008",
-      "updated": "23.10.2026"
+      "version": "1.009",
+      "updated": "03.11.2026"
     },
     {
       "id": "FixationHistoryTable",
@@ -416,6 +515,34 @@ window.IBPKit = {
       "updated": "23.10.2026"
     },
     {
+      "id": "InitialAndAdditionalAgreementsModal",
+      "name": "Окно «Договор»",
+      "category": "Общие",
+      "purpose": "Ввести номер и дату подписания договора займа (НКЛ) из тайла «Договор и дополнительные соглашения»",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/InitialAndAdditionalAgreementsModal.doc.html",
+      "owner": "InitialAndAdditionalAgreementsTile",
+      "stub": false,
+      "version": "1.001",
+      "updated": "27.10.2026"
+    },
+    {
+      "id": "InitialAndAdditionalAgreementsTile",
+      "name": "Договор и дополнительные соглашения",
+      "category": "Общие",
+      "purpose": "Реквизиты договора и последнего дополнительного соглашения на странице договора, вход в окно «Договор» и на страницу «Договор и дополнительные соглашения»",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/InitialAndAdditionalAgreementsTile.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "1.001",
+      "updated": "02.11.2026"
+    },
+    {
       "id": "InstrumentsCounterpartiesModal",
       "name": "Модальное окно контрагентов",
       "category": "Сделка",
@@ -426,8 +553,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/InstrumentsCounterpartiesModal.doc.html",
       "owner": "CounterpartiesTile",
       "stub": false,
-      "version": "0.008",
-      "updated": "23.10.2026"
+      "version": "0.009",
+      "updated": "27.10.2026"
     },
     {
       "id": "InstrumentsModal",
@@ -484,6 +611,48 @@ window.IBPKit = {
       "stub": false,
       "version": "1.001",
       "updated": "23.10.2026"
+    },
+    {
+      "id": "LoanExternalDataModal",
+      "name": "Модальное окно технической информации",
+      "category": "Общие",
+      "purpose": "Ввести идентификаторы сущности-хозяина — ГФО ID, ГФО ID фондирующего кредита и (у транша) CRM ID продукта",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/LoanExternalDataModal.doc.html",
+      "owner": "LoanExternalDataTile",
+      "stub": false,
+      "version": "1.001",
+      "updated": "02.11.2026"
+    },
+    {
+      "id": "LoanExternalDataTile",
+      "name": "Техническая информация",
+      "category": "Общие",
+      "purpose": "Идентификаторы сущности-хозяина — ГФО ID, ГФО ID фондирующего кредита и (у транша) CRM ID продукта — и вход в их правку",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/LoanExternalDataTile.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "1.001",
+      "updated": "02.11.2026"
+    },
+    {
+      "id": "LoanNrlTranchesTile",
+      "name": "Транши",
+      "category": "НКЛ",
+      "purpose": "Список траншей договора займа (НКЛ) из дерева продуктов сделки со входом на страницу транша и действиями добавить, погасить, удалить",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/LoanNrlTranchesTile.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "1.002",
+      "updated": "03.11.2026"
     },
     {
       "id": "Navigator",
@@ -553,7 +722,7 @@ window.IBPKit = {
       "owner": "Navigator",
       "stub": false,
       "version": "1.000",
-      "updated": "23.10.2026"
+      "updated": "03.11.2026"
     },
     {
       "id": "NavigatorForwardToTransferModal",
@@ -636,8 +805,106 @@ window.IBPKit = {
       "doc": "postrade/deals-app/RepaymentModal.doc.html",
       "owner": "DealProductTreeTile",
       "stub": false,
+      "version": "1.001",
+      "updated": "03.11.2026"
+    },
+    {
+      "id": "TrancheLoanLimitsModal",
+      "name": "Окно «Валюта транша»",
+      "category": "Транш",
+      "purpose": "Вручную задать валюту и сумму лимита транша",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/TrancheLoanLimitsModal.doc.html",
+      "owner": "TrancheLoanLimitsTile",
+      "stub": false,
+      "version": "0.001",
+      "updated": "02.11.2026"
+    },
+    {
+      "id": "TrancheLoanLimitsTile",
+      "name": "Валюта транша",
+      "category": "Транш",
+      "purpose": "Показать валюту и общую сумму лимита транша и дать точку входа в ручную правку",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/TrancheLoanLimitsTile.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "0.002",
+      "updated": "02.11.2026"
+    },
+    {
+      "id": "TrancheNrlSummaryTile",
+      "name": "Сводка НКЛ",
+      "category": "Транш",
+      "purpose": "Показать на странице транша параметры родительского договора займа ([[НКЛ]]) — контрагента с рейтингом, баланс и валюту, общую сумму лимита",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/TrancheNrlSummaryTile.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "0.001",
+      "updated": "02.11.2026"
+    },
+    {
+      "id": "TransferRateHistoryModal",
+      "name": "История изменения ставок",
+      "category": "Общие",
+      "purpose": "Показать справочно историю ставок ЕТС договора займа таблицей «период — ставка» с сортировкой и пагинацией",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/TransferRateHistoryModal.doc.html",
+      "owner": "TransferRateTile",
+      "stub": false,
       "version": "1.000",
-      "updated": "23.10.2026"
+      "updated": "02.11.2026"
+    },
+    {
+      "id": "TransferRateTile",
+      "name": "ЕТС",
+      "category": "Общие",
+      "purpose": "Ставка договора займа на сегодня — фиксированная или плавающая — и вход на страницу «Единая трансфертная ставка»",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/TransferRateTile.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "1.000",
+      "updated": "02.11.2026"
+    },
+    {
+      "id": "TransferSchemaModal",
+      "name": "Окно «Процентная схема»",
+      "category": "Общие",
+      "purpose": "Создать или изменить процентную схему ЕТС договора займа (НКЛ) и подтвердить её удаление на странице «Единая трансфертная ставка»",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/TransferSchemaModal.doc.html",
+      "owner": "TransferSchemaTile",
+      "stub": false,
+      "version": "1.001",
+      "updated": "02.11.2026"
+    },
+    {
+      "id": "TransferSchemaTile",
+      "name": "Процентная схема ЕТС",
+      "category": "Общие",
+      "purpose": "Карточка процентной схемы ЕТС договора займа: период, рабочих дней до применения БИ, ставка (формулой), комментарий; меню «Изменить» и «Удалить» только с правом",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/TransferSchemaTile.doc.html",
+      "owner": "TransferRateTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "02.11.2026"
     },
     {
       "id": "CreateFairValueCalculationModal",

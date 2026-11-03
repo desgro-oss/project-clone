@@ -1,0 +1,79 @@
+<!-- Локальный компонент «Баланс и валюта» — фрагмент страницы договора займа (НКЛ).
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-state — состояние данных: loading | data | partial | empty
+     data-mode  — режим прав:       edit | view. Ставит страница: роль, статус сделки
+                  или погашенный договор дают view
+     Разметка держит ВСЕ состояния сразу, показывает нужное BalanceAndCurrencyTile.css
+     по этим двум атрибутам — так же, как тайл «Сроки сделки».
+     Значения ниже — пример с макета. На странице их заменяет BalanceAndCurrencyTile.js
+     (PostTileBalanceAndCurrency.render) разделом balanceCurrency записи договора.
+     Окно правки — BalanceAndCurrencyModal, скрим bal-scrim; лежит в конце страницы
+     отдельной меткой. Событий loanaction у тайла нет: карандаш и «Заполнить» открывают
+     окно рантаймом ДС по data-modal.
+     В просмотре кнопки с data-modal (карандаш и «Заполнить») выключает разметкой —
+     disabled — render из JS; CSS их только прячет. -->
+<section class="tile lc-balance-currency" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Баланс и валюта</h3></div>
+    </div>
+    <!-- Действие шапки показывается только в edit и только когда значения есть
+         (data, partial); пустой тайл заполняют кнопкой в теле. В просмотре кнопка
+         disabled (ставит BalanceAndCurrencyTile.js), CSS её прячет. -->
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать" data-modal="bal-scrim"><i data-icon="edit"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- Значения: «Баланс» и «Валюта» в две колонки, «Общая сумма лимита» — на всю
+         ширину ниже. Порядок постоянный; пустое значение — прочерк, поле с места не
+         уходит. Лейбл переносится до двух строк, если колонка уже подписи. -->
+    <div class="tile__grid lc-balance-currency__grid">
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Баланс</span></span>
+        <div class="rof__row"><span class="rof__value" data-bal-field="balanceCode">SBIL</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Валюта</span></span>
+        <div class="rof__row"><span class="rof__value" data-bal-field="currencyCode">RUB</span></div>
+      </div>
+      <div class="rof tile__grid-full">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Общая сумма лимита</span></span>
+        <div class="rof__row"><span class="rof__value" data-bal-field="totalLimitAmount">123&nbsp;456&nbsp;789,00</span></div>
+      </div>
+    </div>
+
+    <!-- Загрузка: каркас в той же сетке — подпись и значение каждого поля в
+         габаритах строк (подпись 16px, значение 20px), чтобы раскладка не прыгнула
+         после ответа. -->
+    <div class="tile__grid lc-balance-currency__grid lc-balance-currency__loading" aria-busy="true">
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:48%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:56px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:48%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:40px" aria-hidden="true"></span>
+      </div>
+      <div class="rof tile__grid-full">
+        <span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:112px" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Не заполнено, право на правку есть -->
+    <div class="lc-balance-currency__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="bal-scrim">
+        <span class="btn__label">Заполнить</span>
+      </button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действия нет -->
+    <p class="lc-balance-currency__empty">Не заполнено</p>
+
+  </div>
+</section>

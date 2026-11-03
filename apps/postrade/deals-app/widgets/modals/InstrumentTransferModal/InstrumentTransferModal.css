@@ -8,7 +8,7 @@
    человека 30.09.2026, 28). Корень окна — .lc-transfer: правила — внутри него. */
 .lc-transfer .lc-transfer__text {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-secondary);
 }
 

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<!-- ФИКСТУРА сенсора layout-check: ИСХОДНИК страницы модуля для правила Б52.
+     Сама сенсором не линтуется: с неразвёрнутыми <ds-include> страница уходит
+     в пропуск «шаблон-исходник» (проверять собранный preview). Файл читает
+     правило Б52 через строку file: спутника (Б52@spec-head.bad.screen.md и
+     _spec-head.ok.screen.md): список widgets: спеки сверяется с метками здесь.
+     Две метки: tiles/FooTile и modals/FooModal — у плохой спеки в списке
+     только первая, у хорошей обе. -->
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Фикстура Б52 — исходник — IBP</title>
+</head>
+<body>
+  <ds-include src="../widgets/tiles/FooTile/FooTile.html" id="fx-tile"></ds-include>
+  <ds-include src="../widgets/modals/FooModal/FooModal.html" id="fx-modal"></ds-include>
+</body>
+</html>

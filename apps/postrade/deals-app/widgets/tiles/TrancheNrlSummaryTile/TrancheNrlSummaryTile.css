@@ -1,0 +1,28 @@
+/* Локальный компонент TrancheNrlSummaryTile («Сводка НКЛ») — хедлесс-тайл
+   раздела «НКЛ» страницы транша.
+   Только внутренняя раскладка и показ своего варианта. Цвета, шрифты, отступы,
+   радиусы, тени — токены ДС; своих значений здесь нет. Состояния компонентов
+   ДС отсюда не переопределяются.
+   Состояние у компонента одно — «данные есть» (решение человека 02.11.2026):
+   правил по data-state здесь нет. Вариант переключает data-variant на корне
+   (ставит страница — PostTileTrancheNrlSummary.render / setVariant, или
+   сценарий демо витрины); этот атрибут генератор витрины не видит, поэтому
+   оси конструктора собирает сценарий TrancheNrlSummaryTile.demo.js. */
+
+/* Виден только выбранный вариант. Сетка каждого — как в инлайн-разметке
+   страницы транша до вшивания: «Контрагент» и «Общая сумма лимита» — одна
+   колонка, «Баланс и валюта» — две. */
+.lc-tranche-nrl-summary-tile__grid { display: none; }
+.lc-tranche-nrl-summary-tile[data-variant="counterparty"] .lc-tranche-nrl-summary-tile__grid--counterparty,
+.lc-tranche-nrl-summary-tile[data-variant="balance"] .lc-tranche-nrl-summary-tile__grid--balance,
+.lc-tranche-nrl-summary-tile[data-variant="limit"] .lc-tranche-nrl-summary-tile__grid--limit { display: grid; }
+
+.lc-tranche-nrl-summary-tile__grid--counterparty,
+.lc-tranche-nrl-summary-tile__grid--limit { grid-template-columns: minmax(0, 1fr); }
+.lc-tranche-nrl-summary-tile__grid--balance { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* Пара «наименование ↔ риск-метрика»: чип у правого края поля, как в строке
+   тайла «Контрагенты» (вариант instrument). Длинное наименование усекается
+   многоточием (усечение и тултип полного текста — рантайм ReadOnlyField,
+   DSTooltip.truncated), чип с места не уходит. */
+.lc-tranche-nrl-summary-tile__metric { flex: none; margin-left: auto; }

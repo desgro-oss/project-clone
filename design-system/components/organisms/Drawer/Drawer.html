@@ -37,10 +37,10 @@
 <style>
 /* Раскладка страницы документации. Токены ДС, своих значений нет. */
 a{color:var(--link);} a:hover{color:var(--link-dark);}
-.section>p.desc{font:var(--type-body-m);color:var(--text-secondary);margin:0 0 28px;max-width:82ch;text-wrap:pretty;}
-.subhead{font:var(--type-body-m-strong);color:var(--text-primary);margin:32px 0 14px;}
+.section>p.desc{font:var(--type-body-m-reg);color:var(--text-secondary);margin:0 0 28px;max-width:82ch;text-wrap:pretty;}
+.subhead{font:var(--type-body-m-strong-smb);color:var(--text-primary);margin:32px 0 14px;}
 .tk{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--text-secondary);background:var(--bg-table-default-focus);padding:var(--space-2) var(--space-6);border-radius:var(--radius-s);display:inline-block;}
-.crit{margin:0 0 28px;padding-left:22px;font:var(--type-body-m);color:var(--text-secondary);max-width:82ch;}
+.crit{margin:0 0 28px;padding-left:22px;font:var(--type-body-m-reg);color:var(--text-secondary);max-width:82ch;}
 .crit li{margin-bottom:8px;text-wrap:pretty;}
 
 /* демо в верхней панели сплиттера: слева список, справа встроенная панель */
@@ -48,7 +48,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 .dw-scene{flex:1;display:flex;gap:var(--space-16);min-height:0;min-width:0;}
 .dw-scene__list{flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--space-12);overflow:auto;}
 .dw-row--active{border-color:var(--primary);background:var(--primary-bg);}
-.ws-cap{font:var(--type-body-xs);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
+.ws-cap{font:var(--type-body-xs-reg);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
 
 /* анатомия: нумерованные маркеры на живом образце + легенда */
 .anat{display:flex;flex-direction:column;gap:28px;}
@@ -60,18 +60,18 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 @media(max-width:860px){.anat__legend{grid-template-columns:minmax(0,1fr);}}
 .anat__legend li{display:flex;gap:12px;align-items:flex-start;}
 .anat__legend .n{width:22px;height:22px;border-radius:var(--radius-circle);background:var(--primary);color:var(--text-on-dark);font:600 12px/22px var(--font-text),sans-serif;display:flex;align-items:center;justify-content:center;flex:none;margin-top:2px;}
-.anat__legend .d{font:var(--type-body-s);color:var(--text-secondary);text-wrap:pretty;min-width:0;}
+.anat__legend .d{font:var(--type-body-s-reg);color:var(--text-secondary);text-wrap:pretty;min-width:0;}
 .anat__legend .d b{color:var(--text-primary);}
 
 /* сравнительные карточки «когда что» */
 .guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
 .guide-card{background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-2xl);padding:20px 24px;display:flex;flex-direction:column;gap:8px;}
-.guide-card__tag{font:var(--type-body-xs);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
-.guide-card__body{font:var(--type-body-s);color:var(--text-secondary);text-wrap:pretty;}
+.guide-card__tag{font:var(--type-body-xs-reg);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
+.guide-card__body{font:var(--type-body-s-reg);color:var(--text-secondary);text-wrap:pretty;}
 .guide-card__body b{color:var(--text-primary);}
 .pm{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;}
-.pm h4{font:var(--type-body-m-strong);color:var(--text-primary);margin:0 0 8px;}
-.pm ul{margin:0;padding-left:20px;font:var(--type-body-m);color:var(--text-secondary);}
+.pm h4{font:var(--type-body-m-strong-smb);color:var(--text-primary);margin:0 0 8px;}
+.pm ul{margin:0;padding-left:20px;font:var(--type-body-m-reg);color:var(--text-secondary);}
 .pm li{margin-bottom:8px;text-wrap:pretty;}
 </style>
 <script src="../../../docs-kit/ds-theme-boot.js"></script>
@@ -287,10 +287,10 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 <section class="section" id="type" data-screen-label="Типографика">
   <h2>Типографика</h2>
   <ul class="crit">
-    <li><b>Заголовок панели</b> — <span class="tk">--type-h5-strong</span>. У Modal на этом месте <span class="tk">--type-h4-strong</span>, и разница не случайна: панель уже окна, а её заголовок соседствует с путём — вместе они образуют блок, в котором h4 перевесил бы.</li>
-    <li><b>Путь</b> — <span class="tk">--type-body-xs</span>, тон <span class="tk">--text-inactive</span>. Служебная строка: нужна, когда её ищут, и не мешает, когда читают заголовок.</li>
-    <li><b>Заголовок секции</b> — <span class="tk">--type-body-s-strong</span>. Не заголовочная шкала: секция — это группировка внутри одного объекта, а не отдельная сущность.</li>
-    <li><b>Тело</b> — <span class="tk">--type-body-m</span>. Подписи и значения задаёт ReadOnlyField, панель их не переопределяет.</li>
+    <li><b>Заголовок панели</b> — <span class="tk">--type-h5-strong-smb</span>. У Modal на этом месте <span class="tk">--type-h4-strong-smb</span>, и разница не случайна: панель уже окна, а её заголовок соседствует с путём — вместе они образуют блок, в котором h4 перевесил бы.</li>
+    <li><b>Путь</b> — <span class="tk">--type-body-xs-reg</span>, тон <span class="tk">--text-inactive</span>. Служебная строка: нужна, когда её ищут, и не мешает, когда читают заголовок.</li>
+    <li><b>Заголовок секции</b> — <span class="tk">--type-body-s-strong-smb</span>. Не заголовочная шкала: секция — это группировка внутри одного объекта, а не отдельная сущность.</li>
+    <li><b>Тело</b> — <span class="tk">--type-body-m-reg</span>. Подписи и значения задаёт ReadOnlyField, панель их не переопределяет.</li>
   </ul>
 </section>
 
@@ -613,13 +613,13 @@ window.DS_SPLIT_SWITCH_LABELS = {
   flex-wrap: wrap;
   min-width: 0;
   margin: 0;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
 }
 .drawer__path :is(svg, [data-icon]) { width: 14px; height: 14px; flex: none; }
 .drawer__title {
   margin: 0;
-  font: var(--type-h5-strong);
+  font: var(--type-h5-strong-smb);
   color: var(--text-primary);
   text-wrap: pretty;   /* заголовок переносится, а не обрезается */
 }
@@ -650,7 +650,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   display: flex;
   flex-direction: column;
   gap: var(--drawer-body-gap);
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-primary);
 }
 /* Полоса прокрутки тела — как у .ds-scroll (Layout): только бегунок 8px,
@@ -718,7 +718,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
 }
 .drawer__sectitle {
   margin: 0;
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-primary);
 }
 /* действие секции уезжает вправо — «Добавить поле», «Изменить» */

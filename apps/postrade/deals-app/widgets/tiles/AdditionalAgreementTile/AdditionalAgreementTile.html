@@ -1,0 +1,268 @@
+<!-- Локальный компонент «Дополнительное соглашение» — карточка ДС в списке страницы
+     «Договор и дополнительные соглашения». Вшивается общим сборщиком
+     (.agents/tools/assemble.mjs) по метке ds-include; на странице карточки рисует
+     AdditionalAgreementTile.js (PostTileAdditionalAgreement.renderList) в этот контейнер.
+     Здесь только разметка: место в колонках задаёт экран (метка с class="col-12").
+     Фрагмент — эталон состояний: четыре карточки как на макете «Tile_AdditionalAgreement»,
+     в таком порядке: правка есть × свёрнута / развёрнута, правки нет × свёрнута / развёрнута.
+     data-mode — режим прав: edit | view. Ставит страница: роль, статус сделки и погашение
+                 договора, не допускающие правку, дают view. Карандаш — только в edit: в
+                 просмотре его нет в разметке (на макете «правка недоступна» карандаш
+                 нарисован — ошибка макета, решение человека 26.10.2026).
+     Шеврон есть всегда. Свёрнутую карточку держит класс tile--collapsed на корне,
+     сворачивает рантайм ДС (Tile.js): нужен на странице.
+     Поля всегда видны, «Комментарий» — в сворачиваемой части (.tile__collapsible).
+     Незаполненное — прочерк на своём месте. Карточки стоят стопкой (.tile-stack).
+     Действие карандаша — событие loanaction { action: 'EDIT_AGREEMENT', id } на карточку. -->
+<div class="tile-stack" data-mode="edit">
+  <!-- 1. правка есть · свёрнута -->
+  <section class="tile tile--accordion lc-additional-agreement-tile tile--collapsed" data-agreement-id="aa-1" data-mode="edit">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title">№ 4-1234567890 от 01.10.2023</h3></div>
+      </div>
+      <div class="tile__actions">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать соглашение" data-lc-action="EDIT_AGREEMENT">
+          <i data-icon="edit"></i>
+        </button>
+        <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="aat-aa-1-comment" aria-label="Развернуть">
+          <span class="tile__chevron"><i data-icon="chevron-up"></i></span>
+        </button>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-additional-agreement-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Тип изменения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="changeType">Финансовое и нефинансовое</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата решения</span></span>
+          <div class="rof__row"><span class="rof__value" data-agreement-field="decisionDate">01.01.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер решения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="decisionNumber">1234567890</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Уровень одобрения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="approvalLevel">КПКИ ГОСБ</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ключевые изменения</span></span>
+          <div class="rof__row">
+            <div class="rof__value rof__value--chips" data-agreement-field="keyChanges">
+              <div class="chiplist chiplist--s">
+                <span class="chip chip--xs"><span class="chip__label">График погашения основного долга</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tile__collapsible" id="aat-aa-1-comment">
+      <div class="tile__body">
+        <div class="tile__grid">
+          <div class="rof tile__grid-full">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+            <div class="rof__row">
+              <span class="rof__value" data-agreement-field="comment">Изменён график погашения основного долга: платежи перенесены на конец квартала, срок договора не меняется. Решение коллегиального органа принято без замечаний; новая редакция графика приложена к соглашению.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 2. правка есть · развёрнута -->
+  <section class="tile tile--accordion lc-additional-agreement-tile" data-agreement-id="aa-2" data-mode="edit">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title">№ 4-1234567890 от 01.10.2023</h3></div>
+      </div>
+      <div class="tile__actions">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать соглашение" data-lc-action="EDIT_AGREEMENT">
+          <i data-icon="edit"></i>
+        </button>
+        <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="true" aria-controls="aat-aa-2-comment" aria-label="Свернуть">
+          <span class="tile__chevron"><i data-icon="chevron-up"></i></span>
+        </button>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-additional-agreement-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Тип изменения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="changeType">Финансовое и нефинансовое</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата решения</span></span>
+          <div class="rof__row"><span class="rof__value" data-agreement-field="decisionDate">01.01.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер решения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="decisionNumber">1234567890</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Уровень одобрения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="approvalLevel">КПКИ ГОСБ</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ключевые изменения</span></span>
+          <div class="rof__row">
+            <div class="rof__value rof__value--chips" data-agreement-field="keyChanges">
+              <div class="chiplist chiplist--s">
+                <span class="chip chip--xs"><span class="chip__label">График погашения основного долга</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tile__collapsible" id="aat-aa-2-comment">
+      <div class="tile__body">
+        <div class="tile__grid">
+          <div class="rof tile__grid-full">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+            <div class="rof__row">
+              <span class="rof__value" data-agreement-field="comment">Изменён график погашения основного долга: платежи перенесены на конец квартала, срок договора не меняется. Решение коллегиального органа принято без замечаний; новая редакция графика приложена к соглашению.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 3. правки нет · свёрнута -->
+  <section class="tile tile--accordion lc-additional-agreement-tile tile--collapsed" data-agreement-id="aa-3" data-mode="view">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title">№ 4-1234567890 от 01.10.2023</h3></div>
+      </div>
+      <div class="tile__actions">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="aat-aa-3-comment" aria-label="Развернуть">
+          <span class="tile__chevron"><i data-icon="chevron-up"></i></span>
+        </button>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-additional-agreement-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Тип изменения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="changeType">Финансовое и нефинансовое</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата решения</span></span>
+          <div class="rof__row"><span class="rof__value" data-agreement-field="decisionDate">01.01.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер решения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="decisionNumber">1234567890</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Уровень одобрения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="approvalLevel">КПКИ ГОСБ</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ключевые изменения</span></span>
+          <div class="rof__row">
+            <div class="rof__value rof__value--chips" data-agreement-field="keyChanges">
+              <div class="chiplist chiplist--s">
+                <span class="chip chip--xs"><span class="chip__label">График погашения основного долга</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tile__collapsible" id="aat-aa-3-comment">
+      <div class="tile__body">
+        <div class="tile__grid">
+          <div class="rof tile__grid-full">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+            <div class="rof__row">
+              <span class="rof__value" data-agreement-field="comment">Изменён график погашения основного долга: платежи перенесены на конец квартала, срок договора не меняется. Решение коллегиального органа принято без замечаний; новая редакция графика приложена к соглашению.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 4. правки нет · развёрнута -->
+  <section class="tile tile--accordion lc-additional-agreement-tile" data-agreement-id="aa-4" data-mode="view">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title">№ 4-1234567890 от 01.10.2023</h3></div>
+      </div>
+      <div class="tile__actions">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="true" aria-controls="aat-aa-4-comment" aria-label="Свернуть">
+          <span class="tile__chevron"><i data-icon="chevron-up"></i></span>
+        </button>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="tile__grid lc-additional-agreement-tile__grid">
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Тип изменения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="changeType">Финансовое и нефинансовое</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дата решения</span></span>
+          <div class="rof__row"><span class="rof__value" data-agreement-field="decisionDate">01.01.2022</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Номер решения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="decisionNumber">1234567890</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Уровень одобрения</span></span>
+          <div class="rof__row">
+            <span class="rof__value rof__value--clamp-1" data-agreement-field="approvalLevel">КПКИ ГОСБ</span>
+          </div>
+        </div>
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Ключевые изменения</span></span>
+          <div class="rof__row">
+            <div class="rof__value rof__value--chips" data-agreement-field="keyChanges">
+              <div class="chiplist chiplist--s">
+                <span class="chip chip--xs"><span class="chip__label">График погашения основного долга</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tile__collapsible" id="aat-aa-4-comment">
+      <div class="tile__body">
+        <div class="tile__grid">
+          <div class="rof tile__grid-full">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий</span></span>
+            <div class="rof__row">
+              <span class="rof__value" data-agreement-field="comment">Изменён график погашения основного долга: платежи перенесены на конец квартала, срок договора не меняется. Решение коллегиального органа принято без замечаний; новая редакция графика приложена к соглашению.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

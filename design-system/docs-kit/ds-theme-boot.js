@@ -8,7 +8,9 @@
    `data-theme` на <html> из `?theme=` или сохранённого выбора
    (`localStorage`, ключ `ds.theme`), затем подключает
    `foundations/Themes/Themes.css` и `Themes.pages.css` (второй — только
-   страницам ДС, на экраны не попадает).
+   страницам ДС, на экраны не попадает). Там же — атрибут типографской
+   темы `data-typography` (`?typography=` или `ds.typography`, RE0048)
+   и её CSS `foundations/Typography/Typography.themes.css`.
 
    Порядок в <head>: тег ставится ПОСЛЕДНИМ, после `<style>` страницы.
    `document.write` вставляет CSS тем и рантайм на его место — генерат идёт
@@ -49,6 +51,19 @@
   if (theme && theme !== LEGACY && theme !== 'ibp-legacy') root.setAttribute('data-theme', theme);
   else root.removeAttribute('data-theme');
 
+  /* Типографская тема (RE0048): атрибут до первой отрисовки, «base» и
+     неизвестный id — без атрибута (базовая типографика). */
+  function typoFromUrl() {
+    var m = /[?&]typography=([^&#]*)/.exec(window.location.search || '');
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+  function typoFromStore() {
+    try { return window.localStorage.getItem('ds.typography'); } catch (e) { return null; }
+  }
+  var typo = (typoFromUrl() || typoFromStore() || '').toLowerCase();
+  if (typo === 'neo') root.setAttribute('data-typography', 'neo');
+  else root.removeAttribute('data-typography');
+
   /* Эти зависимости раньше добирало окно Themes.js. Их используют и
      сами doc-страницы, поэтому удаление окна не должно удалять их CSS. */
   ['components/atoms/IconButton/IconButton.css','components/atoms/Buttons/Buttons.css','components/atoms/Link/Link.css'].forEach(function(file){
@@ -56,5 +71,6 @@
   });
   document.write('<link rel="stylesheet" href="' + ROOT + 'foundations/Themes/Themes.css">');
   document.write('<link rel="stylesheet" href="' + ROOT + 'foundations/Themes/Themes.pages.css">');
+  document.write('<link rel="stylesheet" href="' + ROOT + 'foundations/Typography/Typography.themes.css">');
   document.write('<scr' + 'ipt src="' + ROOT + 'foundations/Themes/ThemeBoot.js"><\/scr' + 'ipt>');
 })();

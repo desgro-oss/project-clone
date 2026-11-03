@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Главная — дашборд (концепт new-dashboard-mvp). Источник модульной страницы:
+<!-- Главная Аналитика — дашборд Core. Источник модульной страницы:
      тайлы и окна стоят метками <ds-include>, открывается собранная
      HomePage.preview.html (node .agents/tools/assemble.mjs). Макет дизайнера
      «Главная» 1920 (версия от 15.10.2026) в репозитории не хранится; решения
@@ -9,7 +9,7 @@
 <script src="../../../ds-config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Главная — IBP</title>
+<title>Главная — Аналитик — IBP</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
@@ -19,6 +19,9 @@
     color: var(--text-primary);
     background: var(--bg-page);
   }
+  .screen { --layout-pad-top: var(--space-24); }
+  .role-team { display: flex; flex-direction: column; gap: var(--space-12); min-width: 0; }
+  .role-team__list { display: flex; flex-direction: column; gap: var(--space-8); }
 
   /* ── Раскладка этого экрана ──────────────────────────────────────────────
      Сетка — штатная .grid12 (12 колонок, зазор 16px по обеим осям), ширины
@@ -35,7 +38,7 @@
 
 <div class="nav-layout">
 
-  <!-- меню строится экранным скриптом из ibp-home.js (общий каталог ДС) -->
+  <!-- меню новой роли core_analyst — из host-app/data/navigation.js -->
   <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
 
   <div class="screen">
@@ -64,6 +67,20 @@
 <ds-include src="../widgets/modals/MeetingCreateModal/MeetingCreateModal.html"></ds-include>
 <ds-include src="../widgets/modals/TaskCreateModal/TaskCreateModal.html"></ds-include>
 
+<!-- Служебная смена роли прототипа: общий каталог Core и рантайм host-app. -->
+<div class="modal-scrim" id="roleModal" hidden>
+  <div class="modal modal--w8" role="dialog" aria-modal="true" aria-labelledby="roleModalTitle">
+    <header class="modal__head">
+      <h2 class="modal__title" id="roleModalTitle">Сменить роль</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body"><div class="grid12" id="roleTeams"></div></div>
+    <footer class="modal__foot"><div class="modal__foot-right">
+      <button type="button" class="btn btn--accent btn--m" data-modal-close><span class="btn__label">Закрыть</span></button>
+    </div></footer>
+  </div>
+</div>
+
 <!-- Шаблоны подчастей, которые рисуют скрипты тайлов (кандидаты в ДС) -->
 <ds-include src="../widgets/tiles/StatCard/StatCard.html"></ds-include>
 <ds-include src="../widgets/tiles/DateBadge/DateBadge.html"></ds-include>
@@ -74,7 +91,10 @@
 <script src="../data/mock-tasks.js"></script>
 <script src="../data/mock-news.js"></script>
 <script src="../data/home-store.js"></script>
-<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../host-app/data/authentication.js"></script>
+<script src="../../host-app/data/navigation.js"></script>
+<script src="../../../ds-body.js"></script>
+<script src="../../host-app/data/role-switch.js"></script>
 <!-- подчасти — раньше тайлов, окно встречи (общий слой форм) — раньше окна задачи -->
 <script src="../widgets/tiles/StatCard/StatCard.js"></script>
 <script src="../widgets/tiles/DateBadge/DateBadge.js"></script>
@@ -92,28 +112,39 @@
   'use strict';
   var S = window.HomeStore;
   var P = S.profile;
-  var ROLE = window.IBPHome.defaultRole;
+  var ROLE = 'core_analyst';
 
-  /* ── Меню: каталог ДС ibp-home.js, строка пользователя — профиль и хаб ── */
-  /* Футер отдаёт IBPHome.footerHTML с href="#" — ссылка подменяется на хаб
-     проектов, инициалы — на фото профиля (каталог ДС не трогаем). */
-  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
-  var USER_LINK_TO = ' href="../../../../index.html" aria-label="Хаб проектов"';
+  /* Фрагменты вшиваются без пересчёта href. Маршруты от pages/
+     назначаются здесь и после каждой отрисовки динамических списков. */
+  var ROUTES = {
+    tasks: '../../tasks-app/pages/TasksPage.preview.html?role=core_analyst',
+    clients: '../../clients-app/pages/MyClientsPage.preview.html?role=core_analyst'
+  };
+  function routeHref(section) { return ROUTES[section] || ''; }
+  function bindRoutes(root) {
+    root.querySelectorAll('a[data-home-goto]').forEach(function (a) {
+      var href = routeHref(a.getAttribute('data-home-goto'));
+      if (href) a.setAttribute('href', href);
+    });
+  }
+  window.IBPHomeNavigation = { hrefFor: routeHref, bind: bindRoutes };
+
+  /* ── Меню Core: явная роль, строка пользователя — профиль и хаб ── */
   var INITIALS = (P.firstName.charAt(0) + P.lastName.charAt(0)).toUpperCase();
 
   function ic(name) { return '<i data-icon="' + name + '"></i>'; }
 
-  function itemHTML(it) {
-    if (it.tile && it.tile.links && it.tile.links.length) {
-      var sub = '<div class="nav__sub" id="nav-sub-' + it.id + '"><div class="nav__sub-in">' +
-        it.tile.links.map(function (l) { return '<a class="nav__item" href="#"><span class="nav__label">' + l + '</span></a>'; }).join('') +
+  function itemHTML(it, id) {
+    if (it.links && it.links.length) {
+      var sub = '<div class="nav__sub" id="nav-sub-' + id + '"><div class="nav__sub-in">' +
+        it.links.map(function (l) { return '<a class="nav__item" href="' + (l.href || '#') + '"><span class="nav__label">' + l.text + '</span></a>'; }).join('') +
         '</div></div>';
-      return '<a class="nav__item nav__item--acc" href="#" aria-expanded="false" aria-controls="nav-sub-' + it.id + '">' +
-        '<span class="nav__ico">' + ic(it.icon) + '</span><span class="nav__label">' + it.label + '</span>' +
+      return '<a class="nav__item nav__item--acc" href="#" aria-expanded="false" aria-controls="nav-sub-' + id + '">' +
+        '<span class="nav__ico">' + ic(it.icon) + '</span><span class="nav__label">' + it.text + '</span>' +
         '<span class="nav__caret">' + ic('chevron-down') + '</span></a>' + sub;
     }
     var badge = it.badge ? '<span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">' + it.badge + '</span></span>' : '';
-    return '<a class="nav__item" href="#"><span class="nav__ico">' + ic(it.icon) + '</span><span class="nav__label">' + it.label + '</span>' + badge + '</a>';
+    return '<a class="nav__item" href="' + (it.href || '#') + '"' + (it.badge ? ' aria-label="' + it.text + ', ' + it.badge + '"' : '') + '><span class="nav__ico">' + ic(it.icon) + '</span><span class="nav__label">' + it.text + '</span>' + badge + '</a>';
   }
 
   function buildNav() {
@@ -122,26 +153,25 @@
       '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню">' + ic('left-menu') + '</button>' +
       '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>' +
       '</div><div class="nav__list">' +
-      '<a class="nav__item nav__item--selected" href="#" aria-current="page"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
-    window.IBPHome.itemsFor(ROLE).forEach(function (g, i) {
-      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
-      g.items.forEach(function (it) { s += itemHTML(it); });
+      '<a class="nav__item nav__item--selected" href="HomePage.preview.html?role=core_analyst" aria-current="page"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    window.navigationItems[ROLE].forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.title + '</div>';
+      g.items.forEach(function (it, j) { s += itemHTML(it, i + '-' + j); });
       s += '</div>';
     });
     s += '</div>';
     var fullName = P.lastName + ' ' + P.firstName + ' ' + P.middleName;
-    var footer = window.IBPHome.footerHTML
-      ? window.IBPHome.footerHTML(P.positionName, { initials: INITIALS, name: fullName }).replace(USER_LINK_FROM, USER_LINK_TO)
-      : '<div class="nav__footer">' +
+    var footer = '<div class="nav__footer">' +
         '<a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">' +
         '<span class="av av--circular av--m"><span class="av__text">' + INITIALS + '</span></span>' +
         '<span class="nav__user-text"><span class="nav__user-name">' + fullName + '</span>' +
         '<span class="nav__user-role">' + P.positionName + '</span></span></a>' +
-        '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>' +
+        '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" data-modal="roleModal" aria-haspopup="dialog" aria-label="Сменить роль / выйти">' + ic('logout') + '</button>' +
         '</div>';
     s += footer.replace('<span class="av__text">' + INITIALS + '</span>', '<img class="av__img" src="' + P.photoUrl + '" alt="">');
     nav.innerHTML = s;
     if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+    if (window.DSModal) window.DSModal.bindAll(nav);
     if (window.dsIcons) window.dsIcons.apply(nav);
   }
 
@@ -211,7 +241,7 @@
     }
   );
 
-  /* ── Переходы в разделы: в прототипе разделов нет — уведомление ───── */
+  /* ── Недоступные разделы: рабочие задачи/клиенты используют обычные href ── */
   var SECTIONS = {
     meetings: 'Раздел «Встречи»',
     tasks: 'Раздел «Задачи»',
@@ -220,6 +250,8 @@
     'news-source': 'Публикация в источнике'
   };
   function goto(section) {
+    var href = routeHref(section);
+    if (href) { window.location.href = href; return; }
     if (window.DSSnack) window.DSSnack.show({
       tone: 'info', title: (SECTIONS[section] || 'Раздел') + ' — в следующей версии прототипа',
       text: 'В этом концепте собрана только главная.', dedup: true
@@ -228,12 +260,15 @@
   document.addEventListener('click', function (e) {
     var a = e.target.closest('[data-home-goto]');
     if (!a) return;
+    if (a.tagName === 'A' && routeHref(a.getAttribute('data-home-goto')) === a.getAttribute('href')) return;
     e.preventDefault();
     goto(a.getAttribute('data-home-goto'));
   });
   document.addEventListener('home:goto', function (e) { goto(e.detail && e.detail.section); });
 
   buildNav();
+  bindRoutes(document);
+  window.IBPRoleSwitch.mount(ROLE);
 })();
 </script>
 </body>

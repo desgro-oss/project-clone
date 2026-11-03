@@ -24,7 +24,7 @@
 
   /* section */
 
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
 
   
   .row { display:flex; flex-wrap:wrap; align-items:flex-start; gap:40px; }
@@ -41,10 +41,10 @@
       repeating-conic-gradient(#f2f5f5 0% 25%, #fbfcfc 0% 50%) 0 / 22px 22px; }
 
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
 
 
-  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+  .pg__code { margin-top:4px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* select control */
 
@@ -53,13 +53,13 @@
   @media (max-width:820px){ .vgrid { grid-template-columns:1fr; } }
   .vcell { display:flex; flex-direction:column; gap:14px; }
   .vcap { display:flex; align-items:baseline; gap:12px; }
-  .vcap__name { font: var(--type-body-m-strong); color: var(--text-primary); }
+  .vcap__name { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
   .vcap__tok { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; color: var(--text-inactive); }
   .vdemo { background: var(--bg-tile); border:1px solid var(--border-light); border-radius:12px; padding:14px 0; }
-  .vdesc { font: var(--type-body-s); color: var(--text-secondary); margin:0; text-wrap:pretty; }
+  .vdesc { font: var(--type-body-s-reg); color: var(--text-secondary); margin:0; text-wrap:pretty; }
   .vrow { display:flex; align-items:center; gap:12px; padding:10px 16px; }
   .vrow__av { width:24px; height:24px; border-radius:50%; background: var(--secondary-light); flex:none; }
-  .vrow__txt { font: var(--type-body-m); color: var(--text-primary); }
+  .vrow__txt { font: var(--type-body-m-reg); color: var(--text-primary); }
 
   /* ---------- with text cells ---------- */
   .tgrid { display:flex; flex-direction:column; gap:26px; }
@@ -74,14 +74,14 @@
   .ex-card { background: var(--bg-tile); border:1px solid var(--border-light); border-radius:14px; overflow:hidden; }
   .ex-row { display:flex; align-items:center; gap:14px; padding:14px 18px; }
   .ex-av { width:36px; height:36px; border-radius:50%; background: var(--secondary-light); color: var(--secondary-dark); flex:none;
-    display:flex; align-items:center; justify-content:center; font: var(--type-body-s-strong); }
+    display:flex; align-items:center; justify-content:center; font: var(--type-body-s-strong-smb); }
   .ex-meta { display:flex; flex-direction:column; gap:2px; min-width:0; }
-  .ex-name { font: var(--type-body-m-strong); color: var(--text-primary); }
-  .ex-sub { font: var(--type-body-s); color: var(--text-secondary); }
+  .ex-name { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
+  .ex-sub { font: var(--type-body-s-reg); color: var(--text-secondary); }
 
   /* example: menu */
   .ex-menu { background: var(--bg-tile); border:1px solid var(--border-light); border-radius:11px; padding:6px; box-shadow: 0 10px 30px rgba(40,50,55,.12); }
-  .ex-mi { padding:9px 14px; border-radius:7px; font: var(--type-body-m); color: var(--text-primary); cursor:default; }
+  .ex-mi { padding:9px 14px; border-radius:7px; font: var(--type-body-m-reg); color: var(--text-primary); cursor:default; }
   .ex-mi:hover { background: var(--bg-table-default-hover); }
   .ex-mi--danger { color: var(--error-dark); }
   .ex-menu .dvd { margin:6px 0; }
@@ -96,44 +96,44 @@
   /* example: modal */
   .ex-modal { width:100%; max-width:760px; background: var(--bg-tile); border:1px solid var(--border-light); border-radius:16px; overflow:hidden; box-shadow: 0 18px 50px rgba(40,50,55,.14); }
   .ex-modal__head { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; }
-  .ex-modal__title { font: var(--type-h5-strong); color: var(--text-primary); }
+  .ex-modal__title { font: var(--type-h5-strong-smb); color: var(--text-primary); }
   .ex-modal__x { color: var(--text-inactive); display:inline-flex; cursor:pointer; }
   .ex-modal__x svg { width:20px; height:20px; }
   .ex-modal__body { display:flex; align-items:stretch; gap:0; padding:0; min-height:200px; }
   .ex-modal__col { flex:1; padding:20px 22px; display:flex; flex-direction:column; gap:10px; }
-  .ex-modal__coltitle { font: var(--type-body-s-strong); color: var(--text-secondary); margin-bottom:4px; }
-  .ex-modal__line { margin:0; font: var(--type-body-m); color: var(--text-primary); }
+  .ex-modal__coltitle { font: var(--type-body-s-strong-smb); color: var(--text-secondary); margin-bottom:4px; }
+  .ex-modal__line { margin:0; font: var(--type-body-m-reg); color: var(--text-primary); }
   .ex-modal__body .dvd--v { margin:0; }
   .ex-modal__foot { display:flex; justify-content:flex-end; padding:16px 24px; }
 
   /* example: key-value */
   .kv { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 18px; }
-  .kv__k { font: var(--type-body-m); color: var(--text-secondary); }
-  .kv__v { font: var(--type-body-m-strong); color: var(--text-primary); }
+  .kv__k { font: var(--type-body-m-reg); color: var(--text-secondary); }
+  .kv__v { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
   .kv-group { padding:6px 0; }
 
   /* ---------- do / don't ---------- */
   .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
   .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
-  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong-smb); padding:14px 20px 0; }
   .guide-card__body { padding:24px 20px; flex:1; display:flex; align-items:center; justify-content:center; min-height:140px; }
-  .guide-card__cap { padding:0 20px 20px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+  .guide-card__cap { padding:0 20px 20px; font: var(--type-body-xs-reg); color: var(--text-inactive); text-wrap:pretty; }
 
   /* ---------- reference tables ---------- */
-  .ref-table th, .ref-table td { text-align:left; padding:16px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); vertical-align:middle; }
+  .ref-table th, .ref-table td { text-align:left; padding:16px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); vertical-align:middle; }
 
   /* ---------- token table ---------- */
   .tok-table { width:100%; border-collapse:collapse; }
-  .tok-table th, .tok-table td { text-align:left; padding:14px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); }
-  .tok-table th { font: var(--type-body-s-strong); color: var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; font-size:12px; }
+  .tok-table th, .tok-table td { text-align:left; padding:14px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); }
+  .tok-table th { font: var(--type-body-s-strong-smb); color: var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; font-size:12px; }
   .tok-table tr:last-child td { border-bottom:none; }
   .tok-table code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; color: var(--primary); }
   .tok-table .rt-num { font-variant-numeric: tabular-nums; color: var(--text-secondary); }
 
   @media (max-width:760px){ .color-ref { grid-template-columns:1fr; } }
   
-  .cref-group > h3 { font: var(--type-h5-strong); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
+  .cref-group > h3 { font: var(--type-h5-strong-smb); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
   .cref-row { display:grid; grid-template-columns: 36px 1fr auto; gap:14px; align-items:center; padding:9px 22px; }
   .cref-sw .cf { position:absolute; inset:0; }
 
@@ -250,9 +250,9 @@
       <div class="anat" style="display:grid; grid-template-columns: minmax(280px,1fr) minmax(240px,360px); gap:40px; align-items:center;">
         <div style="background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:44px; display:flex; justify-content:center;" id="anat-diagram"></div>
         <ul class="anat__legend" style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; counter-reset:a;">
-          <li style="display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m); color: var(--text-primary);"><span class="n" style="flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center;">1</span><span><span style="font: var(--type-body-m-strong); color: var(--text-primary);">Линия</span><span style="font: var(--type-body-s); color: var(--text-secondary);"> — 1px, токен --border-light / --border-primary</span></span></li>
-          <li style="display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m); color: var(--text-primary);"><span class="n" style="flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center;">2</span><span><span style="font: var(--type-body-m-strong); color: var(--text-primary);">Охранные отступы</span><span style="font: var(--type-body-s); color: var(--text-secondary);"> — симметричный зазор до контента</span></span></li>
-          <li style="display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m); color: var(--text-primary);"><span class="n" style="flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center;">3</span><span><span style="font: var(--type-body-m-strong); color: var(--text-primary);">Подпись</span><span style="font: var(--type-body-s); color: var(--text-secondary);"> — опционально, Body S, по центру/краям</span></span></li>
+          <li style="display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m-reg); color: var(--text-primary);"><span class="n" style="flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center;">1</span><span><span style="font: var(--type-body-m-strong-smb); color: var(--text-primary);">Линия</span><span style="font: var(--type-body-s-reg); color: var(--text-secondary);"> — 1px, токен --border-light / --border-primary</span></span></li>
+          <li style="display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m-reg); color: var(--text-primary);"><span class="n" style="flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center;">2</span><span><span style="font: var(--type-body-m-strong-smb); color: var(--text-primary);">Охранные отступы</span><span style="font: var(--type-body-s-reg); color: var(--text-secondary);"> — симметричный зазор до контента</span></span></li>
+          <li style="display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m-reg); color: var(--text-primary);"><span class="n" style="flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center;">3</span><span><span style="font: var(--type-body-m-strong-smb); color: var(--text-primary);">Подпись</span><span style="font: var(--type-body-s-reg); color: var(--text-secondary);"> — опционально, Body S, по центру/краям</span></span></li>
         </ul>
       </div>
     </div>
@@ -418,7 +418,7 @@
   <!-- TYPOGRAPHY -->
   <section class="section" data-screen-label="Typography">
     <h2>Типографика</h2>
-    <p class="desc">Подпись разделителя набирается гарнитурой <b>SB Sans Text</b> токеном <code class="tok">--type-body-s</code>.</p>
+    <p class="desc">Подпись разделителя набирается гарнитурой <b>SB Sans Text</b> токеном <code class="tok">--type-body-s-reg</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
         <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.2fr 1.1fr .9fr 1fr 1fr 8px;">
@@ -507,7 +507,7 @@
     <h2>Для разработчиков</h2>
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
-    <p class="subhead" style="font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px;">Точные размеры (redline)</p>
+    <p class="subhead" style="font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0 0 16px;">Точные размеры (redline)</p>
     <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/atoms/Divider/Divider.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
@@ -786,7 +786,7 @@ function makeDiv(o) {
 .dvd-text__label {
   flex: 0 1 auto;
   min-width: 0;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;

@@ -23,7 +23,7 @@
 
   /* section */
 
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:78ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:78ch; text-wrap:pretty; }
 
   
   .row { display:flex; flex-wrap:wrap; align-items:flex-start; gap:20px; }
@@ -41,28 +41,28 @@
   .pg__stagebox { display:flex; align-items:center; justify-content:center; gap:40px; }
 
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
 
 
-  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+  .pg__code { margin-top:4px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* range / number */
   .pg-range { display:flex; align-items:center; gap:12px; }
   .pg-range input[type=range]{ flex:1; accent-color: var(--primary); }
-  .pg-range .val { font:var(--type-body-m-strong); color:var(--text-primary); font-variant-numeric:tabular-nums; min-width:34px; text-align:right; }
+  .pg-range .val { font:var(--type-body-m-strong-smb); color:var(--text-primary); font-variant-numeric:tabular-nums; min-width:34px; text-align:right; }
 
   /* ---------- matrices / grids ---------- */
   .matrix-wrap { overflow-x:auto; }
   .sizes-grid { display:grid; grid-template-columns: repeat(5, 1fr); gap:20px 16px; align-items:end; min-width:560px; text-align:center; }
-  .sizes-grid .col-head { font: var(--type-body-s-strong); color: var(--primary); }
+  .sizes-grid .col-head { font: var(--type-body-s-strong-smb); color: var(--primary); }
   .sizes-grid .cell { display:flex; flex-direction:column; align-items:center; gap:18px; padding:18px 0; }
-  .sizes-grid .cell .sub { font:var(--type-body-xs); color:var(--text-inactive); }
+  .sizes-grid .cell .sub { font:var(--type-body-xs-reg); color:var(--text-inactive); }
 
   .tone-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap:18px; }
   .tone-cell { border:1px solid var(--border-light); border-radius:12px; padding:20px 18px; display:flex; flex-direction:column; align-items:center; gap:14px; background:var(--bg-tile); }
   .tone-cell .swrow { display:flex; align-items:center; gap:12px; height:32px; }
-  .tone-cell .nm { font:var(--type-body-m-strong); color:var(--text-primary); }
-  .tone-cell .rl { font:var(--type-body-xs); color:var(--text-secondary); text-align:center; text-wrap:pretty; }
+  .tone-cell .nm { font:var(--type-body-m-strong-smb); color:var(--text-primary); }
+  .tone-cell .rl { font:var(--type-body-xs-reg); color:var(--text-secondary); text-align:center; text-wrap:pretty; }
 
   /* ---------- usage tiles ---------- */
   .use-tiles { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
@@ -73,11 +73,11 @@
   .navcell { width:56px; height:56px; border-radius:14px; background:var(--bg-tile); border:1px solid var(--border-light); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); box-shadow:0 4px 14px rgba(40,50,55,.06); }
   .navcell svg { width:26px; height:26px; }
   /* avatar mock */
-  .avatar { width:48px; height:48px; border-radius:50%; background:var(--swamp-100); color:var(--text-primary); display:flex; align-items:center; justify-content:center; font:var(--type-body-m-strong); }
+  .avatar { width:48px; height:48px; border-radius:50%; background:var(--swamp-100); color:var(--text-primary); display:flex; align-items:center; justify-content:center; font:var(--type-body-m-strong-smb); }
 
   /* tabs mock */
   .tabs { display:flex; gap:4px; border-bottom:1px solid var(--border-light); }
-  .tab { display:inline-flex; align-items:center; gap:8px; padding:12px 14px 14px; font:var(--type-body-m); color:var(--text-secondary); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; }
+  .tab { display:inline-flex; align-items:center; gap:8px; padding:12px 14px 14px; font:var(--type-body-m-reg); color:var(--text-secondary); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; }
   .tab[aria-selected="true"] { color:var(--text-primary); font-weight:600; border-bottom-color:var(--primary); }
   .tab:hover { color:var(--text-primary); }
 
@@ -85,7 +85,7 @@
   .clist { display:flex; flex-direction:column; }
   .clist__row { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 14px; border-left:2px solid transparent; }
   .clist__row[aria-current="true"] { border-left-color:var(--primary); }
-  .clist__row .nm { font:var(--type-body-m); color:var(--text-secondary); }
+  .clist__row .nm { font:var(--type-body-m-reg); color:var(--text-secondary); }
   .clist__row[aria-current="true"] .nm { color:var(--text-primary); }
 
   /* ---------- anatomy ---------- */
@@ -94,33 +94,33 @@
   .anat__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:54px 44px; display:flex; justify-content:center; }
   .anat__legend { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; counter-reset:a; }
   .anat__legend li { display:flex; gap:14px; align-items:flex-start; }
-  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center; }
-  .anat__legend li .t .k { font: var(--type-body-m-strong); color: var(--text-primary); display:block; }
+  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center; }
+  .anat__legend li .t .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); display:block; }
 
   /* anatomy diagram */
   .anat-dia { position:relative; }
   .anat-dia .big { --bdg-size:48px; min-width:48px; height:48px; padding:0 14px; font:var(--weight-semibold) 22px/1 var(--font-text); }
-  .anat-dia .mk { position:absolute; width:22px; height:22px; border-radius:50%; background:var(--text-primary); color:#fff; font:var(--type-body-xs); font-weight:600; display:flex; align-items:center; justify-content:center; }
+  .anat-dia .mk { position:absolute; width:22px; height:22px; border-radius:50%; background:var(--text-primary); color:#fff; font:var(--type-body-xs-reg); font-weight:600; display:flex; align-items:center; justify-content:center; }
 
   /* ---------- do / don't ---------- */
   .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
   .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
-  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong-smb); padding:14px 20px 0; }
   .guide-card__body { padding:28px 20px; flex:1; display:flex; align-items:center; justify-content:center; gap:24px; }
-  .guide-card__cap { padding:0 20px 18px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+  .guide-card__cap { padding:0 20px 18px; font: var(--type-body-xs-reg); color: var(--text-inactive); text-wrap:pretty; }
 
   /* ---------- reference tables ---------- */
-  .ref-table th, .ref-table td { text-align:left; padding:15px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); vertical-align:middle; }
+  .ref-table th, .ref-table td { text-align:left; padding:15px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); vertical-align:middle; }
 
   @media (max-width:760px){ .color-ref { grid-template-columns:1fr; } }
   
-  .cref-group > h3 { font: var(--type-h5-strong); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
+  .cref-group > h3 { font: var(--type-h5-strong-smb); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
   .cref-row { display:grid; grid-template-columns: 36px 1fr auto; gap:14px; align-items:center; padding:9px 22px; }
   .cref-sw .cf { position:absolute; inset:0; }
 
   /* ---------- developer handoff ---------- */
-  .subhead { font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px; }
+  .subhead { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0 0 16px; }
   .subhead.mt { margin-top: 34px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
@@ -253,12 +253,12 @@
     <div class="row">
       <div class="panel" style="flex:1; min-width:280px;">
         <div style="display:flex; align-items:center; gap:18px; margin-bottom:16px;" id="type-counter"></div>
-        <p style="font:var(--type-h5-strong); color:var(--text-primary); margin:0 0 6px;">Counter</p>
+        <p style="font:var(--type-h5-strong-smb); color:var(--text-primary); margin:0 0 6px;">Counter</p>
         <p class="desc" style="margin:0;">Числовой счётчик. Поддерживает переполнение «99+». Скрывается при значении 0.</p>
       </div>
       <div class="panel" style="flex:1; min-width:280px;">
         <div style="display:flex; align-items:center; gap:18px; margin-bottom:16px; height:32px;" id="type-dot"></div>
-        <p style="font:var(--type-h5-strong); color:var(--text-primary); margin:0 0 6px;">Dot</p>
+        <p style="font:var(--type-h5-strong-smb); color:var(--text-primary); margin:0 0 6px;">Dot</p>
         <p class="desc" style="margin:0;">Точка 8px без числа. Сигнализирует о новом событии или статусе родителя.</p>
       </div>
     </div>
@@ -343,12 +343,12 @@
       <div class="panel" style="flex:1; min-width:260px;">
         <p class="desc tight" style="margin-bottom:18px;">Значение 0 — бейдж скрывается</p>
         <div style="display:flex; align-items:center; gap:22px;" id="state-zero"></div>
-        <p class="desc" style="margin:18px 0 0; font:var(--type-body-s); color:var(--text-inactive);">При count = 0 счётчик не отображается; исключение — явный режим «показывать ноль».</p>
+        <p class="desc" style="margin:18px 0 0; font:var(--type-body-s-reg); color:var(--text-inactive);">При count = 0 счётчик не отображается; исключение — явный режим «показывать ноль».</p>
       </div>
       <div class="panel" style="flex:1; min-width:260px;">
         <p class="desc tight" style="margin-bottom:18px;">Родитель disabled — бейдж приглушается</p>
         <div style="display:flex; align-items:center; gap:22px;" id="state-muted"></div>
-        <p class="desc" style="margin:18px 0 0; font:var(--type-body-s); color:var(--text-inactive);">Тон сбрасывается в серый <code class="tok">--disabled</code>, чтобы не конкурировать с неактивным родителем.</p>
+        <p class="desc" style="margin:18px 0 0; font:var(--type-body-s-reg); color:var(--text-inactive);">Тон сбрасывается в серый <code class="tok">--disabled</code>, чтобы не конкурировать с неактивным родителем.</p>
       </div>
     </div>
     <div class="panel" style="margin-top:20px;">
@@ -375,7 +375,7 @@
   <!-- TYPOGRAPHY -->
   <section class="section" data-screen-label="Typography">
     <h2>Типографика</h2>
-    <p class="desc">Значение набирается токенами типографики ДС — вес зашит в токен и не переопределяется: M(32) — <code class="tok">--type-body-m</code>, S(24) и XS(20) — <code class="tok">--type-body-s</code>, XXS(16) — <code class="tok">--type-body-xs</code>. Моноширинные цифры (<code class="tok">font-variant-numeric: tabular-nums</code>), чтобы счётчик не «прыгал» при смене цифр.</p>
+    <p class="desc">Значение набирается токенами типографики ДС — вес зашит в токен и не переопределяется: M(32) — <code class="tok">--type-body-m-reg</code>, S(24) и XS(20) — <code class="tok">--type-body-s-reg</code>, XXS(16) — <code class="tok">--type-body-xs-reg</code>. Моноширинные цифры (<code class="tok">font-variant-numeric: tabular-nums</code>), чтобы счётчик не «прыгал» при смене цифр.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 0.68fr 0.68fr 0.99fr 0.9fr 1.58fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.68fr 0.68fr 0.99fr 0.9fr 1.58fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">M</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 px / Regular (Body M)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Образец</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.68fr 0.68fr 0.99fr 0.9fr 1.58fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">S</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 px / Regular (Body S)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Образец</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.68fr 0.68fr 0.99fr 0.9fr 1.58fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">XS</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 px / Regular (Body S)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Образец</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.68fr 0.68fr 0.99fr 0.9fr 1.58fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">XXS</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 px / Regular (Body XS)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Образец</span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
@@ -764,7 +764,7 @@ function avatar(txt) {
   [0,1].forEach(v=>{
     const wrap=document.createElement('span'); wrap.style.display='inline-flex'; wrap.style.flexDirection='column'; wrap.style.alignItems='center'; wrap.style.gap='10px';
     wrap.appendChild(anchor(navCell(ICONS.bell), makeBadge({type:'counter',tone:'accent',size:'xs',value:v})));
-    const cap=document.createElement('span'); cap.style.font='var(--type-body-xs)'; cap.style.color='var(--text-inactive)'; cap.textContent='count = '+v;
+    const cap=document.createElement('span'); cap.style.font='var(--type-body-xs-reg)'; cap.style.color='var(--text-inactive)'; cap.textContent='count = '+v;
     wrap.appendChild(cap); z.appendChild(wrap);
   });
 
@@ -776,7 +776,7 @@ function avatar(txt) {
   [['Активен',enabled],['Disabled',disabled]].forEach(([t,el])=>{
     const wrap=document.createElement('span'); wrap.style.display='inline-flex'; wrap.style.flexDirection='column'; wrap.style.alignItems='center'; wrap.style.gap='10px';
     wrap.appendChild(el);
-    const cap=document.createElement('span'); cap.style.font='var(--type-body-xs)'; cap.style.color='var(--text-inactive)'; cap.textContent=t;
+    const cap=document.createElement('span'); cap.style.font='var(--type-body-xs-reg)'; cap.style.color='var(--text-inactive)'; cap.textContent=t;
     wrap.appendChild(cap); m.appendChild(wrap);
   });
 
@@ -1011,7 +1011,7 @@ function makeBadge(o) {
   /* size tokens — overridden per size modifier */
   --bdg-size: 24px;
   --bdg-pad: 0 7px;
-  --bdg-font: var(--type-body-s);
+  --bdg-font: var(--type-body-s-reg);
 
   box-sizing: border-box;
   display: inline-flex;
@@ -1023,7 +1023,7 @@ function makeBadge(o) {
   padding: var(--bdg-pad);
   border-radius: var(--radius-pill);
   font: var(--bdg-font);
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   user-select: none;
@@ -1035,10 +1035,10 @@ function makeBadge(o) {
 
 /* ---------- sizes (counter) ----------------------------------------------- *
    Размеры — прямыми свойствами (не через --bdg-* в модификаторе). */
-.badge--m   { min-width: 32px; height: 32px; padding: 0 10px; font: var(--type-body-m); }
-.badge--s   { min-width: 24px; height: 24px; padding: 0 8px;  font: var(--type-body-s); }
-.badge--xs  { min-width: 20px; height: 20px; padding: 0 6px;  font: var(--type-body-s); }
-.badge--xxs { min-width: 16px; height: 16px; padding: 0 5px;  font: var(--type-body-xs); }
+.badge--m   { min-width: 32px; height: 32px; padding: 0 10px; font: var(--type-body-m-reg); }
+.badge--s   { min-width: 24px; height: 24px; padding: 0 8px;  font: var(--type-body-s-reg); }
+.badge--xs  { min-width: 20px; height: 20px; padding: 0 6px;  font: var(--type-body-s-reg); }
+.badge--xxs { min-width: 16px; height: 16px; padding: 0 5px;  font: var(--type-body-xs-reg); }
 
 /* ---------- type: dot ----------------------------------------------------- */
 .badge--dot {

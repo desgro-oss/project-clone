@@ -478,9 +478,9 @@ function openable(anchor, trigger, menu, placement, align) {
   const tb = document.querySelector('#typo-table tbody');
   if (!tb) return;
   tb.innerHTML = [
-    ['Пункт', 'Изменить', '--type-body-m', 'SB Sans Text', '16 / 20'],
-    ['Горячая клавиша', '⌘C', '--type-body-s', 'SB Sans Text', '14 / 16'],
-    ['Заголовок группы', 'ДЕЙСТВИЯ', '--type-body-xs', 'SB Sans Text', '12 / 16'],
+    ['Пункт', 'Изменить', '--type-body-m-reg', 'SB Sans Text', '16 / 20'],
+    ['Горячая клавиша', '⌘C', '--type-body-s-reg', 'SB Sans Text', '14 / 16'],
+    ['Заголовок группы', 'ДЕЙСТВИЯ', '--type-body-xs-reg', 'SB Sans Text', '12 / 16'],
   ].map(([part, sample, tok, font, sl]) => `
     <tr>
       <td>${part}</td>

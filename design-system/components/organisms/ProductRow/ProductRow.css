@@ -137,13 +137,13 @@ button.prow__mark:hover { color: var(--secondary-dark); }
 .prow__title {
   min-width: 0;
   padding-block: var(--space-2);
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-primary);
   overflow-wrap: anywhere;
 }
 /* заголовок корня — Body L Strong: строка 24px, поля по высоте не нужны,
    корень остаётся 48px */
-.prow--root .prow__title { font: var(--type-body-l-strong); padding-block: 0; }
+.prow--root .prow__title { font: var(--type-body-l-strong-smb); padding-block: 0; }
 
 /* Заголовок-ссылка: у объекта есть своя страница. Кнопки в <a> не вкладываются —
    ссылкой становится заголовок, а его ::after растягивает зону клика на всю
@@ -178,7 +178,7 @@ a.prow__title { text-decoration: none; }
   gap: var(--space-4);
   min-width: 0;
   min-height: 16px;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
 }
 .prow__status > :is(svg, [data-icon]) { flex: none; width: 16px; height: 16px; color: var(--secondary); }
@@ -202,7 +202,7 @@ a.prow__title { text-decoration: none; }
   gap: var(--gap-icon-text);
   min-width: calc(20px + var(--gap-icon-text) + 10ch);
   min-height: 20px;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
 }
 .prow__meta-item > :is(svg, [data-icon]) { flex: none; width: 20px; height: 20px; color: var(--secondary); }

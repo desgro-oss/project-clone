@@ -98,7 +98,7 @@
   background: transparent;
   border-radius: var(--seg-item-radius);
   font: var(--seg-font);
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   color: var(--text-secondary);
   white-space: nowrap;
   cursor: pointer;

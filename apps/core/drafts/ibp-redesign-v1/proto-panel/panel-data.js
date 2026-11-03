@@ -7,7 +7,7 @@ window.ProtoPanelData = {
     "title": "\u0422\u0435\u043a\u0443\u0449\u0430\u044f \u0441\u0438\u0441\u0442\u0435\u043c\u0430 - \u0410\u043d\u0430\u043b\u0438\u0442\u0438\u043a \u0414\u0418\u0414"
   },
   "sources": {
-    "flows": "3d7b2574",
+    "flows": "cf93f688",
     "comments": "e533f5f9"
   },
   "flowsHeader": [
@@ -142,35 +142,6 @@ window.ProtoPanelData = {
             {
               "verb": "click",
               "target": "#nav .nav__item[href=\"LeadsPage.preview.html\"]",
-              "text": null,
-              "index": 0,
-              "timeout": 4000,
-              "value": null,
-              "key": null,
-              "mods": {
-                "alt": false,
-                "shift": false,
-                "ctrl": false,
-                "meta": false
-              },
-              "state": null,
-              "block": null,
-              "ms": null
-            }
-          ]
-        },
-        {
-          "state": 7,
-          "id": "client",
-          "title": "\u041a\u043b\u0438\u0435\u043d\u0442 \u2192 \u0421\u0434\u0435\u043b\u043a\u0438 \u2014 \u0447\u0435\u0442\u044b\u0440\u0435 \u0442\u0430\u0431\u043b\u0438\u0446\u044b \u043b\u0438\u0434\u043e\u0432",
-          "page": "ClientInfoPage.preview.html?id=3000012345&tab=ClientInfoDealsPage",
-          "note": "\u0412\u043a\u043b\u0430\u0434\u043a\u0430 \u00ab\u0421\u0434\u0435\u043b\u043a\u0438 \u2192 \u041b\u0438\u0434\u044b\u00bb: \u043b\u0438\u0434\u044b \u043a\u043b\u0438\u0435\u043d\u0442\u0430 \u0440\u0430\u0437\u043b\u043e\u0436\u0435\u043d\u044b \u043f\u043e \u0447\u0435\u0442\u044b\u0440\u0451\u043c \u0442\u0430\u0431\u043b\u0438\u0446\u0430\u043c \u2014 \u0442\u043e, \u0447\u0442\u043e \u0447\u0430\u0441\u0442\u044c 2 \u0437\u0430\u043c\u0435\u043d\u044f\u0435\u0442 \u0435\u0434\u0438\u043d\u044b\u043c \u0440\u0430\u0437\u0434\u0435\u043b\u043e\u043c. \u0420\u0430\u0437\u0434\u0435\u043b\u043e\u0432 \u043e\u0442\u043a\u0440\u044b\u0442\u043e: 7.",
-          "recorded": null,
-          "issues": [],
-          "do": [
-            {
-              "verb": "click",
-              "target": "#nav .nav__item[href=\"MyClientsPage.preview.html\"]",
               "text": null,
               "index": 0,
               "timeout": 4000,

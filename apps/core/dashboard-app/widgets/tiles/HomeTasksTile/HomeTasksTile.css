@@ -42,8 +42,6 @@
   height: 1.15em;
   color: var(--text-inactive);
 }
-/* Приоритет — прописными (макет главной 15.10.2026); в данных — «Высокий» */
-.lc-tasks__priority { text-transform: uppercase; }
 
 /* Исполнитель в «задачах моего деска»: имя, группа чипом, «+N» остальных
    групп. В «моих задачах» строки нет — её рисует только JS. */
@@ -52,7 +50,7 @@
   align-items: center;
   gap: var(--space-6);
   min-width: 0;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
 }
 .lc-tasks__assignee .chip { flex: none; max-width: 100%; }
@@ -75,13 +73,13 @@
 /* «Скрыть выполненные» убрало все строки: причина на месте списка */
 .lc-tasks__none {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-secondary);
 }
 
 .lc-tasks__empty-text {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-secondary);
 }
 /* Пустой стейт по образцу тайла встреч: иллюстрация и строка причины */

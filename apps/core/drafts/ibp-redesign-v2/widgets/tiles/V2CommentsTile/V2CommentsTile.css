@@ -11,7 +11,7 @@
 .lc-comments__item { position: relative; }
 
 .lc-comments__meta {
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-secondary);
   margin: 0 0 var(--space-4);
 }
@@ -22,7 +22,7 @@
 .lc-comments__date { color: var(--text-secondary); }
 
 .lc-comments__text {
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-primary);
   margin: 0;
   padding-right: calc(var(--space-48) + var(--space-8));

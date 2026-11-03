@@ -215,10 +215,10 @@
     const tb = document.querySelector('#typo-table tbody');
     if (!tb) return;
     [
-      ['Значение · M', '21.12.2022', '--type-body-m'],
-      ['Значение · S (Table Edit)', '21.12.2022', '--type-body-s'],
-      ['Label', 'Label', '--type-body-xs'],
-      ['Helper', 'Helper', '--type-body-xs'],
+      ['Значение · M', '21.12.2022', '--type-body-m-reg'],
+      ['Значение · S (Table Edit)', '21.12.2022', '--type-body-s-reg'],
+      ['Label', 'Label', '--type-body-xs-reg'],
+      ['Helper', 'Helper', '--type-body-xs-reg'],
     ].forEach(([part, sample, token]) => {
       const tr = document.createElement('tr');
       const f = getComputedStyle(document.documentElement).getPropertyValue(token).trim();

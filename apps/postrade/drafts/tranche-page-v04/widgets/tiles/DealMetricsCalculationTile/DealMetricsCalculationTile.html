@@ -1,0 +1,69 @@
+<!-- Локальный компонент «Финансовые метрики» (DealMetricsCalculationTile) — фрагмент
+     страницы сделки: расчёт финансовых метрик по ФИ сделки.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+
+     data-state — состояние данных: loading | empty | data | partial | updating
+                  empty — расчёта ещё не было (или нет ФИ); data — рассчитаны все ФИ;
+                  partial — рассчитана часть ФИ; updating — идёт расчёт
+     data-mode  — режим прав: edit | view. Ставит страница (статус сделки и роль),
+                  тайл режим не вычисляет; вид в просмотре — только CSS
+     свои оси (наличие атрибута — да, нет атрибута — нет):
+       data-fm-locked     — у сделки нет ФИ: «Заблокировано»
+       data-fm-error      — последняя попытка расчёта не посчитала ни одного ФИ: «Ошибка»
+       data-fm-calculated — есть успешный расчёт: вид «Рассчитано»
+     Разметка держит все виды сразу, нужный показывает DealMetricsCalculationTile.css по этим
+     атрибутам — так устроен шаблон ДС (templates/local-component/Component.css). Скрипт
+     DealMetricsCalculationTile.js вписывает числа и дату и ставит атрибуты.
+     Пример ниже — вид «Рассчитано частично» (демо-сделка 1027: 3 ФИ из 8).
+     Кнопки и ссылка с data-fm-act: CALCULATE («Рассчитать», «Пересчет метрик») выполняет
+     тайл, связанный со стором; FIXATION и REPORTS уходят событием fmcalcaction. -->
+<section class="tile lc-fin-metrics" data-state="partial" data-mode="edit" data-fm-calculated="true">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Финансовые метрики</h3></div>
+    </div>
+  </header>
+
+  <!-- Ошибка: последняя попытка расчёта не посчитала ни одного ФИ. Полоса Alert в слоте
+       Tile — и над кнопкой «Рассчитать», и над видом «Рассчитано» с прежней датой. Снимается
+       только успешным расчётом. В просмотре и в «Заблокировано» не показывается. -->
+  <div class="tile__alert lc-fin-metrics__alert">
+    <div class="alert alert--error alert--m alert--flush" role="alert" aria-live="assertive">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Расчет не выполнен, некорректные данные в ФИ</p></div>
+    </div>
+  </div>
+
+  <div class="tile__body">
+
+    <!-- Загрузка: строка итога и ряд кнопок в габаритах будущих -->
+    <div class="sk-group lc-fin-metrics__loading" aria-busy="true">
+      <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+      <span class="sk-block sk-block--rounded" style="--sk-w:120px;--sk-h:32px" aria-hidden="true"></span>
+    </div>
+
+    <!-- Заблокировано: у сделки нет ФИ — серая строка, без полосы и без кнопки -->
+    <p class="lc-fin-metrics__note lc-fin-metrics__locked">Отсутствуют ФИ для расчета</p>
+
+    <!-- Не рассчитано, просмотр: серая строка, без кнопок и без полосы -->
+    <p class="lc-fin-metrics__note lc-fin-metrics__none">Расчет не выполнен</p>
+
+    <!-- Не рассчитано, правка: первый расчёт. Во время расчёта — лоадер на кнопке -->
+    <div class="lc-fin-metrics__start">
+      <button type="button" class="btn btn--accent btn--s" data-fm-act="CALCULATE"><span class="btn__label">Рассчитать</span></button>
+    </div>
+
+    <!-- Рассчитано: итог, действия и переход к отчетам. В просмотре — без «Рассчитано ФИ: N
+         из M.» и без кнопок, «Отчеты →» встаёт в строку итога справа -->
+    <div class="lc-fin-metrics__done">
+      <p class="lc-fin-metrics__summary"><span class="lc-fin-metrics__count">Рассчитано ФИ: <span data-fm-done>3</span> из <span data-fm-total>8</span>. </span>Последний расчет: <span data-fm-at>22.01.2024, 16:45</span></p>
+      <div class="lc-fin-metrics__buttons">
+        <button type="button" class="btn btn--outline btn--s" data-fm-act="CALCULATE"><span class="btn__label">Пересчет метрик</span></button>
+        <button type="button" class="btn btn--outline btn--s" data-fm-act="FIXATION"><span class="btn__label">Фиксация ЭПС/ВБС</span></button>
+      </div>
+      <button type="button" class="btn btn--outline btn--s lc-fin-metrics__reports" data-fm-act="REPORTS"><i data-icon="file"></i><span class="btn__label">Отчеты</span><i data-icon="arrow-right"></i></button>
+    </div>
+
+  </div>
+</section>

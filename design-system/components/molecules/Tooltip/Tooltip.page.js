@@ -324,7 +324,7 @@ function placeTip(stage, tip, target, placement, align, gap) {
 (function () {
   const tb = document.querySelector('#typo-table tbody');
   tb.innerHTML = [
-    ['Контент', 'Текст подсказки', '--type-body-s', 'SB Sans Text', '14 / 16'],
+    ['Контент', 'Текст подсказки', '--type-body-s-reg', 'SB Sans Text', '14 / 16'],
   ].map(([part,sample,tok,font,sl]) => `
     <tr>
       <td>${part}</td>

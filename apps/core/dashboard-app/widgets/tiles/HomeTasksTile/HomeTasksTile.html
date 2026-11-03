@@ -22,7 +22,7 @@
     </div>
     <div class="tile__actions">
       <span class="spin spin--s spin--accent lc-tasks__busy" role="status" aria-label="Обновление задач"></span>
-      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-home-goto="tasks" aria-label="Перейти в раздел Задачи" data-tooltip="Перейти в раздел Задачи"><i data-icon="arrow-right"></i></button>
+      <a class="ibtn ibtn--neutral ibtn--m" href="#" data-home-goto="tasks" aria-label="Перейти в раздел Задачи" data-tooltip="Перейти в раздел Задачи"><i data-icon="arrow-right"></i></a>
       <span class="menu-anchor">
         <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия виджета «Задачи»" aria-haspopup="menu" data-menu="lc-tasks-menu" data-menu-align="end" data-menu-keep-open><i data-icon="more-dots"></i></button>
         <div id="lc-tasks-menu" class="menu menu--floating" role="menu" hidden>
@@ -46,7 +46,7 @@
       <div class="entity lc-tasks__row" data-task-id="T-2001">
         <div class="entity__main">
           <div class="entity__titles">
-            <p class="entity__header"><span class="badge badge--dot badge--error" aria-hidden="true"></span><span class="lc-tasks__priority">Высокий</span><span class="lc-tasks__meta-sep" aria-hidden="true">·</span><span class="lc-tasks__meta-date"><i data-icon="calendar" aria-hidden="true"></i>07.10.2026</span></p>
+            <p class="entity__header"><span class="badge badge--dot badge--error" aria-hidden="true"></span>Высокий<span class="lc-tasks__meta-sep" aria-hidden="true">·</span><span class="lc-tasks__meta-date"><i data-icon="calendar" aria-hidden="true"></i>07.10.2026</span></p>
             <div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-tooltip="Подготовить заключение по лимиту" data-tooltip-truncated="only">Подготовить заключение по лимиту</span></div>
           </div>
           <div class="lc-tasks__assignee">
@@ -88,10 +88,10 @@
         <span class="menu__item-label">Отметить выполненной</span>
       </button>
       <hr class="menu__divider">
-      <button type="button" class="menu__item" role="menuitem" data-task-act="open">
+      <a class="menu__item" role="menuitem" href="#" data-home-goto="tasks" data-task-act="open">
         <span class="menu__item-icon"><i data-icon="arrow-right"></i></span>
         <span class="menu__item-label">Открыть в разделе «Задачи»</span>
-      </button>
+      </a>
     </div>
 
     <div class="lc-tasks__loading" aria-busy="true" aria-label="Загрузка задач">

@@ -1,0 +1,16 @@
+/* Лента событий: самостоятельный Tile или встроенный список главной.
+   Оболочку переключает render({ embedded }), состояния Entity ведёт ДС. */
+.lc-v2-events-list-tile { flex: 1; min-height: 0; }
+.lc-v2-events-list-tile[hidden],
+.lc-v2-events-list-tile [hidden] { display: none; }
+.tile--headless > .lc-v2-events-list-tile__body { flex: 1; min-height: 0; overflow-y: auto; padding: var(--space-16) var(--space-20); }
+.lc-v2-events-list-tile--embedded { display: flex; flex-direction: column; min-width: 0; }
+/* Entity: margin -8/-10. При width:auto paint-box симметрично выходит за
+   список на 8/10px; тело компенсирует вынос и оставляет 16px с четырёх сторон.
+   Встроенные строки: поля 16px, paint-зазор 24−8−8 = 8px. */
+.lc-v2-events-list-tile--embedded > .lc-v2-events-list-tile__body { flex: 1; min-height: 0; overflow-y: auto; padding: calc(var(--space-16) + var(--space-8)) calc(var(--space-16) + var(--space-10)); }
+.lc-v2-events-list-tile__row { width: auto; }
+.lc-v2-events-list-tile--embedded .entity-list { gap: var(--space-24); }
+.lc-v2-events-list-tile--embedded .lc-v2-events-list-tile__row { padding: var(--space-16); }
+.lc-v2-events-list-tile__meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-8); }
+.lc-v2-events-list-tile__meta time { white-space: nowrap; }

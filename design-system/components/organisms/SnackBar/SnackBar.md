@@ -45,8 +45,8 @@ status: auto
 | Error   | --error-bg-light   | --error                 | --error-dark   |
 | Success | --success-bg       | --success               | --success-dark |
 
-- Заголовок: `--type-body-s` (400), `--text-primary`
-- Текст: `--type-body-xs`, `--text-secondary`
+- Заголовок: `--type-body-s-reg` (400), `--text-primary`
+- Текст: `--type-body-xs-reg`, `--text-secondary`
 - Border-radius: `--radius-card` (→ --radius-2xl → 16px)
 - Shadow: `--elevation-2`
 

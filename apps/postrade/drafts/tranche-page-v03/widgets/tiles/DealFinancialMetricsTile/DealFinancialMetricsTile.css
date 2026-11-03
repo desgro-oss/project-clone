@@ -53,19 +53,19 @@
 .lc-deal-metrics__pe-date,
 .lc-deal-metrics__pe-amount,
 .lc-deal-metrics__pe-delta { margin: 0; }
-.lc-deal-metrics__pe-title { font: var(--type-body-m-strong); color: var(--text-primary); }
+.lc-deal-metrics__pe-title { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
 .lc-deal-metrics__pe-unit { color: var(--text-inactive); }
-.lc-deal-metrics__pe-date { font: var(--type-body-xs); color: var(--text-inactive); }
-.lc-deal-metrics__pe-amount { font: var(--type-body-m-strong); color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.lc-deal-metrics__pe-date { font: var(--type-body-xs-reg); color: var(--text-inactive); }
+.lc-deal-metrics__pe-amount { font: var(--type-body-m-strong-smb); color: var(--text-primary); font-variant-numeric: tabular-nums; }
 /* Δ — цвет динамики, как у ReadOnlyField (--positive / --negative). */
-.lc-deal-metrics__pe-delta { font: var(--type-body-xs); color: var(--success-dark); font-variant-numeric: tabular-nums; }
+.lc-deal-metrics__pe-delta { font: var(--type-body-xs-reg); color: var(--success-dark); font-variant-numeric: tabular-nums; }
 .lc-deal-metrics__pe-delta--negative { color: var(--error-dark); }
 
 /* ── Данных нет ─────────────────────────────────────────────────────── */
 /* Одна строка под заголовком, слева — как на макете. */
 .lc-deal-metrics__empty {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-inactive);
 }
 

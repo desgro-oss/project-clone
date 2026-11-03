@@ -53,16 +53,19 @@
   border-radius: var(--tip-radius);
   background: var(--tip-bg);
   color: var(--tip-fg);
-  font: var(--type-body-s);          /* Body S — 14/16 */
-  letter-spacing: 0;
-  white-space: nowrap;               /* по умолчанию — одна строка, обтекание контента */
+  font: var(--type-body-s-reg);          /* Body S — 14/16 */
+  letter-spacing: var(--type-ls);
+  /* Текст тултипа не усекается никогда (решение человека 28.10.2026): короткий — одна строка
+     по ширине контента, длинный переносится в границах --tip-max; слово длиннее строки — тоже. */
+  white-space: normal;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
   overflow: hidden;
-  text-overflow: ellipsis;           /* защита, если контент длиннее --tip-max и JS не переключил на --multiline */
   box-shadow: 0 4px 14px rgba(40, 50, 55, .18);
   z-index: var(--tip-z);
 }
 
-/* перенос длинного контента — ограничение по --tip-max */
+/* перенос длинного контента — с 2.013 это поведение по умолчанию; класс оставлен для совместимости */
 .tip--multiline { white-space: normal; text-wrap: pretty; }
 
 /* ---------- rich — заголовок + описание + действие ------------------------ *
@@ -81,8 +84,8 @@
   white-space: normal;
   text-wrap: pretty;
 }
-.tip__title { font: var(--type-body-s-strong); color: var(--tip-fg); }
-.tip__text  { font: var(--type-body-s); color: var(--tip-fg); opacity: .82; }
+.tip__title { font: var(--type-body-s-strong-smb); color: var(--tip-fg); }
+.tip__text  { font: var(--type-body-s-reg); color: var(--tip-fg); opacity: .82; }
 .tip__actions { display: flex; gap: 4px; margin-top: 8px; }
 .tip__action {
   appearance: none;

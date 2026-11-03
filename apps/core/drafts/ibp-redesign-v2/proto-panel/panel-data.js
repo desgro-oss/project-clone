@@ -7,7 +7,7 @@ window.ProtoPanelData = {
     "title": "IBP Redesign v2 \u2014 \u041b\u0438\u0434\u044b \u0438 \u043c\u043e\u0438 \u043f\u0440\u043e\u0435\u043a\u0442\u044b"
   },
   "sources": {
-    "flows": "e12aa3d9",
+    "flows": "04641296",
     "comments": "e533f5f9"
   },
   "flowsHeader": [
@@ -353,7 +353,7 @@ window.ProtoPanelData = {
     },
     {
       "id": "all-unified-leads",
-      "title": "\u0412\u0441\u0435 \u043b\u0438\u0434\u044b \u2014 \u043e\u0441\u043d\u043e\u0432\u0430\u043d\u0438\u044f \u0438 \u043a\u043b\u0438\u0435\u043d\u0442",
+      "title": "\u0412\u0441\u0435 \u043f\u0440\u043e\u0435\u043a\u0442\u044b \u2014 \u043e\u0441\u043d\u043e\u0432\u0430\u043d\u0438\u044f \u0438 \u043a\u043b\u0438\u0435\u043d\u0442",
       "desc": null,
       "steps": [
         {

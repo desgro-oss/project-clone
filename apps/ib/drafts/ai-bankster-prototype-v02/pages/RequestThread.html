@@ -58,7 +58,7 @@
   .hist__head    { flex: none; display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-4) var(--space-16) var(--space-12); border-bottom: 1px solid transparent; transition: border-color .15s ease; }
   .hist__head.is-scrolled { border-bottom-color: var(--border-light); }
   .hist__label-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
-  .hist__count   { flex: none; white-space: nowrap; font: var(--type-body-xs); color: var(--text-secondary); }
+  .hist__count   { flex: none; white-space: nowrap; font: var(--type-body-xs-reg); color: var(--text-secondary); }
   .hist__body    { flex: 1; min-height: 0; overflow-y: auto; scrollbar-gutter: stable; display: flex; flex-direction: column; gap: var(--space-16); padding: var(--space-4) calc(var(--space-16) - var(--space-8)) var(--space-16) var(--space-16); }
   .hist__list    { display: flex; flex-direction: column; gap: var(--space-4); }
 
@@ -71,7 +71,7 @@
   .hsearch__ico  { flex: none; display: flex; width: 16px; height: 16px; color: var(--text-secondary); transition: color .15s ease; }
   .hsearch__ico > [data-icon] { width: 100%; height: 100%; }
   .hsearch:focus-within .hsearch__ico { color: var(--primary); }
-  .hsearch__control { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; font: var(--type-body-s); color: var(--text-primary); }
+  .hsearch__control { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; font: var(--type-body-s-reg); color: var(--text-primary); }
   .hsearch__control::placeholder { color: var(--text-inactive); opacity: 1; }
   .hsearch__control::-webkit-search-cancel-button { display: none; }
   .hsearch__clear { flex: none; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: var(--radius-s); background: transparent; color: var(--text-secondary); cursor: pointer; }
@@ -79,7 +79,7 @@
   .hsearch__clear[hidden] { display: none; }
   .hsearch__clear > [data-icon] { width: 16px; height: 16px; }
   .hist__hl      { color: inherit; background: color-mix(in srgb, var(--primary) 18%, transparent); border-radius: var(--radius-2xs); box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 18%, transparent); }
-  .hist__empty   { display: flex; flex-direction: column; align-items: center; gap: var(--space-8); padding: var(--space-32) var(--space-16); text-align: center; font: var(--type-body-s); color: var(--text-secondary); }
+  .hist__empty   { display: flex; flex-direction: column; align-items: center; gap: var(--space-8); padding: var(--space-32) var(--space-16); text-align: center; font: var(--type-body-s-reg); color: var(--text-secondary); }
   .hist__empty[hidden] { display: none; }
   .hist__empty-ico { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--primary-bg); color: var(--primary); }
   .hist__empty-ico > [data-icon] { width: 20px; height: 20px; }
@@ -137,13 +137,13 @@
   .msg           { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
   .msg--user     { align-items: flex-end; }
   .msg__bubble   { display: flex; flex-direction: column; gap: var(--space-8); max-width: min(80%, 640px); padding: var(--space-10) var(--space-16); color: var(--text-primary); background: color-mix(in srgb, var(--primary) 9%, var(--bg-tile)); border-radius: var(--radius-3xl) var(--radius-3xl) var(--radius-s) var(--radius-3xl); }
-  .msg__bubble .ds-body-m { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .msg__time     { font: var(--type-body-xs); color: var(--text-inactive); }
+  .msg__bubble .ds-body-m-reg { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg__time     { font: var(--type-body-xs-reg); color: var(--text-inactive); }
   .msg--user > .msg__time { padding-right: var(--space-4); }
   .msg__meta     { display: flex; align-items: center; gap: var(--space-6); }
   .msg__ico      { display: flex; flex: none; width: 16px; height: 16px; color: var(--primary); }
   .msg__ico > [data-icon] { width: 100%; height: 100%; }
-  .msg__name     { font: var(--type-body-s-strong); color: var(--text-primary); }
+  .msg__name     { font: var(--type-body-s-strong-smb); color: var(--text-primary); }
   .msg__meta > .msg__time::before { content: "·"; margin-right: var(--space-6); }
   .msg__body     { display: flex; flex-direction: column; gap: var(--space-12); min-width: 0; }
   .msg.is-new    { animation: msgIn .4s cubic-bezier(.22, 1, .36, 1) both; }
@@ -159,13 +159,13 @@
      углы поворачиваемого квадрата расширяли прокручиваемую область нити,
      полоса прокрутки мигала и весь чат дёргался по горизонтали.
      В прототипе клик по строке завершает подготовку. */
-  .think         { display: inline-flex; align-items: center; gap: var(--space-10); align-self: flex-start; padding: var(--space-4) var(--space-8) var(--space-4) 0; font: var(--type-body-m); color: var(--text-secondary); text-align: left; cursor: pointer; background: none; border: 0; border-radius: var(--radius-m); }
+  .think         { display: inline-flex; align-items: center; gap: var(--space-10); align-self: flex-start; padding: var(--space-4) var(--space-8) var(--space-4) 0; font: var(--type-body-m-reg); color: var(--text-secondary); text-align: left; cursor: pointer; background: none; border: 0; border-radius: var(--radius-m); }
   .think:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   .think__loader { flex: none; display: block; width: 16px; height: 16px; contain: strict; }
   .think__loader::before { content: ""; display: block; box-sizing: border-box; width: 100%; height: 100%; border: 2px solid color-mix(in srgb, var(--primary) 20%, transparent); border-top-color: var(--primary); border-radius: var(--radius-full); animation: thinkSpin .9s linear infinite; }
   .think__text   { color: transparent; background: linear-gradient(90deg, var(--text-secondary) 0%, var(--text-secondary) 40%, var(--text-inactive) 50%, var(--text-secondary) 60%, var(--text-secondary) 100%); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; animation: thinkShimmer 3.2s ease-in-out infinite; transition: opacity .3s ease; }
   .think__text.is-out { opacity: 0; }
-  .think__time   { font: var(--type-body-xs); color: var(--text-inactive); font-variant-numeric: tabular-nums; }
+  .think__time   { font: var(--type-body-xs-reg); color: var(--text-inactive); font-variant-numeric: tabular-nums; }
   @keyframes thinkSpin { to { transform: rotate(360deg); } }
   @keyframes thinkShimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
 
@@ -178,11 +178,11 @@
   .err__ico      { flex: none; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-full); color: var(--error); background: var(--error-bg); }
   .err__ico > [data-icon] { width: 20px; height: 20px; }
   .err__titles   { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-  .err__title    { margin: 0; font: var(--type-body-m-strong); color: var(--text-primary); }
-  .err__text     { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+  .err__title    { margin: 0; font: var(--type-body-m-strong-smb); color: var(--text-primary); }
+  .err__text     { margin: 0; font: var(--type-body-m-reg); color: var(--text-secondary); }
   .err__fix      { margin-left: calc(36px + var(--space-12)); padding: var(--space-12) var(--space-16); background: var(--bg-page); border-radius: var(--radius-m); }
-  .err__cap      { margin: 0 0 var(--space-6); font: var(--type-body-s-strong); color: var(--text-primary); }
-  .err__list     { display: flex; flex-direction: column; gap: var(--space-4); margin: 0; padding-left: var(--space-20); font: var(--type-body-s); color: var(--text-primary); }
+  .err__cap      { margin: 0 0 var(--space-6); font: var(--type-body-s-strong-smb); color: var(--text-primary); }
+  .err__list     { display: flex; flex-direction: column; gap: var(--space-4); margin: 0; padding-left: var(--space-20); font: var(--type-body-s-reg); color: var(--text-primary); }
   .err__list li::marker { color: var(--primary); }
   .err__acts     { display: flex; flex-wrap: wrap; gap: var(--space-8); margin-left: calc(36px + var(--space-12)); }
   .err.is-resolved .err__acts { display: none; }
@@ -267,7 +267,7 @@
     margin: 0;
     padding: var(--space-4) 0;
     border: 0;
-    font: var(--type-body-m);
+    font: var(--type-body-m-reg);
     letter-spacing: normal;
     white-space: pre-wrap;
     overflow-wrap: break-word;
@@ -298,7 +298,7 @@
   .cmp__clear    { animation: cmpPop .3s var(--cmp-ease) both; }
   @keyframes cmpPop { from { opacity: 0; transform: scale(.6) rotate(-90deg); } }
 
-  .cmp__hint     { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4) var(--space-16); font: var(--type-body-xs); color: var(--text-secondary); }
+  .cmp__hint     { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4) var(--space-16); font: var(--type-body-xs-reg); color: var(--text-secondary); }
 
   /* ── Контекст из материала ────────────────────────────────────────────────
      Фрагменты, отправленные из панели просмотра кнопкой «Доработать в чате»:
@@ -405,8 +405,8 @@
   .pv__ico       { flex: none; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-m); color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, var(--bg-tile)); }
   .pv__ico > [data-icon] { width: 20px; height: 20px; }
   .pv__titles    { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-  .pv__title     { margin: 0; overflow: hidden; font: var(--type-body-m-strong); color: var(--text-primary); white-space: nowrap; text-overflow: ellipsis; }
-  .pv__meta      { margin: 0; overflow: hidden; font: var(--type-body-xs); color: var(--text-secondary); white-space: nowrap; text-overflow: ellipsis; }
+  .pv__title     { margin: 0; overflow: hidden; font: var(--type-body-m-strong-smb); color: var(--text-primary); white-space: nowrap; text-overflow: ellipsis; }
+  .pv__meta      { margin: 0; overflow: hidden; font: var(--type-body-xs-reg); color: var(--text-secondary); white-space: nowrap; text-overflow: ellipsis; }
   .pv__acts      { flex: none; display: flex; align-items: center; gap: var(--space-24); }
   .pv__body      { flex: 1; min-height: 0; display: flex; background: var(--bg-page); }
   .pv__frame     { display: block; flex: 1; width: 100%; height: 100%; border: 0; background: var(--bg-page); }
@@ -693,7 +693,7 @@
       <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
     </header>
     <div class="modal__body">
-      <p class="ds-body-m">Вся история диалога, все версии материалов и приложенные файлы будут удалены.</p>
+      <p class="ds-body-m-reg">Вся история диалога, все версии материалов и приложенные файлы будут удалены.</p>
     </div>
     <footer class="modal__foot">
       <div class="modal__foot-right">
@@ -999,10 +999,10 @@
   }
 
   /* ── Текстовые блоки ──────────────────────────────────────────────────── */
-  function text(t) { return '<div class="thr__text"><p class="ds-body-m">' + t + '</p></div>'; }
+  function text(t) { return '<div class="thr__text"><p class="ds-body-m-reg">' + t + '</p></div>'; }
 
   function sources(list) {
-    return '<div class="thr__row"><span class="ds-body-xs">Источники:</span><div class="chiplist chiplist--s">' +
+    return '<div class="thr__row"><span class="ds-body-xs-reg">Источники:</span><div class="chiplist chiplist--s">' +
       list.map(function (s) { return '<span class="chip chip--s"><span class="chip__label">' + esc(s) + '</span></span>'; }).join('') +
       '</div></div>';
   }
@@ -1155,7 +1155,7 @@
     paint(); syncControls();
     setBuilder(false);
 
-    var body = '<p class="ds-body-m">' + esc(q) + '</p>';
+    var body = '<p class="ds-body-m-reg">' + esc(q) + '</p>';
     if (S.files.length) {
       body += '<div class="chiplist chiplist--s">' + S.files.map(function (f) {
         return '<span class="chip chip--s"><span class="chip__icon"><i data-icon="file-basic"></i></span><span class="chip__label">' + esc(f) + '</span></span>';
@@ -1175,7 +1175,7 @@
        и картинка под ним. Размер картинки задан атрибутами: место под неё
        занято сразу, и нить докручивается до её низа, не дожидаясь загрузки. */
     if (q.toLowerCase().replace(/\s+/g, ' ').indexOf('хот кореянки') !== -1) {
-      var i0 = push('agent', text('<span class="ds-body-m">Ищу данные…</span>'));
+      var i0 = push('agent', text('<span class="ds-body-m-reg">Ищу данные…</span>'));
       setTimeout(function () {
         typeAnswer(i0, 'Я вижу вы не работаете! Ваш запрос отправлен к вашему руководителю.',
           '<img class="thr__pic" src="../refs/girl.jpg" width="450" height="438" alt="Портрет девушки">');
@@ -1194,7 +1194,7 @@
     }
 
     if (reportish && !S.hasMaterial) {
-      var i1 = push('agent', text('<span class="ds-body-m">Уточняю параметры…</span>'));
+      var i1 = push('agent', text('<span class="ds-body-m-reg">Уточняю параметры…</span>'));
       setTimeout(function () {
         replace(i1, text('Для материала нужен объект анализа. Откройте конструктор и выберите компанию, группу или отрасль — запрос соберётся сам, а текст останется редактируемым.') +
           '<div class="thr__row"><button class="btn btn--outline btn--s" data-act="builder"><i data-icon="ai-stars"></i><span class="btn__label">Открыть конструктор</span></button></div>');
@@ -1207,7 +1207,7 @@
       return;
     }
 
-    var i2 = push('agent', text('<span class="ds-body-m">Ищу данные…</span>'));
+    var i2 = push('agent', text('<span class="ds-body-m-reg">Ищу данные…</span>'));
     setTimeout(function () {
       typeAnswer(i2, ANSWER, sources(['Отчётность МСФО 2025', 'Раскрытие эмитента', 'Данные Банка', 'Отраслевой обзор 2026']) + answerActions(i2));
     }, 700);
@@ -1986,7 +1986,7 @@
   function seedError() {
     S.errorRequest = objFrag(byId(OBJECTS, 'fert')) + ' ' + byId(FOCUS, 'bench').text;
     S.msgs = [
-      { role: 'user', time: '08.09.2026, 10:20', html: '<p class="ds-body-m">' + esc(S.errorRequest) + '</p>' },
+      { role: 'user', time: '08.09.2026, 10:20', html: '<p class="ds-body-m-reg">' + esc(S.errorRequest) + '</p>' },
       { role: 'agent', time: '08.09.2026, 10:20', html: text('Принял, готовлю материал по отрасли «Минеральные удобрения, СЗФО». Это займёт до 30 минут.') },
       { role: 'agent', time: '08.09.2026, 10:52', html: errorCard() }
     ];
@@ -2003,7 +2003,7 @@
     var d = DIALOGS[h.id];
     if (d) {
       S.msgs = [
-        { role: 'user', time: d.time, html: '<p class="ds-body-m">' + esc(d.q) + '</p>' },
+        { role: 'user', time: d.time, html: '<p class="ds-body-m-reg">' + esc(d.q) + '</p>' },
         { role: 'agent', time: d.time, html: text(esc(d.a)) + sources(d.src) + answerActions(1) }
       ];
       render();
@@ -2011,7 +2011,7 @@
     }
     S.msgs = [
       { role: 'user', time: '11.09.2026, 14:02', html:
-        '<div class="thr__text"><p class="ds-body-m">Запрос из конструктора: ' + esc(OBJECT) + ', детальный материал, направление «Прямые инвестиции». Собственник рассматривает частичный выход. Интересует применимость мезонина, оценка через мультипликаторы peers и график погашений валютного долга до 2028 года.</p></div>' +
+        '<div class="thr__text"><p class="ds-body-m-reg">Запрос из конструктора: ' + esc(OBJECT) + ', детальный материал, направление «Прямые инвестиции». Собственник рассматривает частичный выход. Интересует применимость мезонина, оценка через мультипликаторы peers и график погашений валютного долга до 2028 года.</p></div>' +
         '<div class="chiplist chiplist--s">' +
         '<span class="chip chip--s"><span class="chip__icon"><i data-icon="file-basic"></i></span><span class="chip__label">Отчётность_МСФО_2025.pdf</span></span>' +
         '<span class="chip chip--s"><span class="chip__icon"><i data-icon="file-basic"></i></span><span class="chip__label">Teaser_group.pptx</span></span>' +
@@ -2060,7 +2060,7 @@
   if (params.get('run')) {
     S.openId = 1;
     drawHist();
-    push('user', '<p class="ds-body-m">Запрос из конструктора: ' + esc(OBJECT) + ' · детальный материал · направление «Прямые инвестиции».</p>');
+    push('user', '<p class="ds-body-m-reg">Запрос из конструктора: ' + esc(OBJECT) + ' · детальный материал · направление «Прямые инвестиции».</p>');
     startRun('Принял. Параметры зафиксированы, файлы переданы на извлечение.');
   } else if (params.get('id')) {
     var opened = HIST.filter(function (h) { return String(h.id) === params.get('id'); })[0];

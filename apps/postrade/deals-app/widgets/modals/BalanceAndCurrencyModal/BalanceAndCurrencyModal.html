@@ -1,0 +1,73 @@
+<!-- Связанный артефакт тайла «Баланс и валюта»: модальное окно правки.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Три поля: «Баланс» и «Валюта» — списки (InputAutocomplete + DropdownList,
+     значение только из списка), «Общая сумма лимита» — текстовое поле суммы с
+     постфиксом-кодом валюты. Макет: пустое окно и заполненное (SBIL · RUB ·
+     123 456 789,00). Подпись «лемита» на макете — опечатка, правим на «лимита».
+
+     Значения в разметке — пример с заполненного макета. Окно заполняет и сохраняет
+     BalanceAndCurrencyModal.js (PostModalBalanceAndCurrency): на открытии читает
+     раздел balanceCurrency записи договора (LoanAgreementStore), «Сохранить» зовёт
+     LoanAgreementStore.setBalanceCurrency и закрывает окно; тайл перерисует страница
+     по событию стора. Кнопка без data-modal-close: окно закрывает скрипт. Крестик и
+     Esc закрывают без сохранения; клик мимо окна не закрывает — защиту включает сам
+     Modal.js, потому что в окне поля ввода.
+
+     Крестика очистки в разметке нет намеренно: он живёт по значению, и рисует его
+     рантайм ds-input.js (между информером и шевроном). Значения окно ставит кодом,
+     поэтому после заполнения зовёт DSInput.syncAll.
+
+     Ширина modal--w3 — 442px, как окно на макете. Своего CSS у окна нет. -->
+
+<div class="modal-scrim" id="bal-scrim" hidden>
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="bal-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="bal-title">Баланс и валюта</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="bal-balance"><span class="ds-label__text">Баланс</span></label>
+        <div class="inp__box">
+          <div class="inp__field" data-ddl="bal-balance-list">
+            <input class="inp__control" id="bal-balance" name="balanceCode" autocomplete="off" value="SBIL">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+        </div>
+        <div id="bal-balance-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="bal-currency"><span class="ds-label__text">Валюта</span></label>
+        <div class="inp__box">
+          <div class="inp__field" data-ddl="bal-currency-list">
+            <input class="inp__control" id="bal-currency" name="currencyCode" autocomplete="off" value="RUB">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+        </div>
+        <div id="bal-currency-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <!-- Сумма: число с разрядами и запятой; код валюты — неизменяемый постфикс,
+           его скрипт ставит по выбранной валюте (нет валюты — постфикс скрыт). -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="bal-limit"><span class="ds-label__text">Общая сумма лимита</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="bal-limit" name="totalLimitAmount" inputmode="decimal" autocomplete="off" value="123&nbsp;456&nbsp;789,00">
+          <span class="inp__postfix" data-bal-postfix>RUB</span>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-bal-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

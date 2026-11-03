@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 839.
+Документов: 1017.
 
 ## Корень (4)
 
@@ -174,7 +174,7 @@
 |---|---|
 | [design-system/tools/ds-lint.md](../design-system/tools/ds-lint.md) | Линтер ДС: правила и проверки |
 
-## Агентная система (47)
+## Агентная система (53)
 
 | Документ | Аннотация |
 |---|---|
@@ -203,6 +203,7 @@
 | [.agents/commands/resume.md](../.agents/commands/resume.md) | — |
 | [.agents/commands/screen-check.md](../.agents/commands/screen-check.md) | — |
 | [.agents/commands/screen.md](../.agents/commands/screen.md) | — |
+| [.agents/commands/spec-edits.md](../.agents/commands/spec-edits.md) | — |
 
 ### .agents/proto-panel
 
@@ -224,6 +225,8 @@
 | [.agents/skills/composition-review/SKILL.md](../.agents/skills/composition-review/SKILL.md) | Приёмка композиции |
 | [.agents/skills/concept-design/SKILL.md](../.agents/skills/concept-design/SKILL.md) | Проектирование концептов |
 | [.agents/skills/dev-spec/SKILL.md](../.agents/skills/dev-spec/SKILL.md) | Спецификация на разработку |
+| [.agents/skills/dev-spec/references/edit-patterns.md](../.agents/skills/dev-spec/references/edit-patterns.md) | Закономерности правок человека в спеках на разработку |
+| [.agents/skills/dev-spec/references/edits-log.md](../.agents/skills/dev-spec/references/edits-log.md) | Журнал правок человека в спеках на разработку |
 | [.agents/skills/dev-spec/references/template.md](../.agents/skills/dev-spec/references/template.md) | Название сценария по-русски |
 | [.agents/skills/docs-split/SKILL.md](../.agents/skills/docs-split/SKILL.md) | Раскатка страниц документации ДС на docs-split |
 | [.agents/skills/docs-split/references/lessons.md](../.agents/skills/docs-split/references/lessons.md) | Уроки раскатки docs-split |
@@ -231,6 +234,9 @@
 | [.agents/skills/docs-split/references/review.md](../.agents/skills/docs-split/references/review.md) | Приёмка страниц документации (паттерн \`docs-split\`) |
 | [.agents/skills/docs-split/references/skeleton.md](../.agents/skills/docs-split/references/skeleton.md) | Скелет страницы docs-split (эталон структуры) |
 | [.agents/skills/ds-lookup/SKILL.md](../.agents/skills/ds-lookup/SKILL.md) | Поиск по дизайн-системе IBP |
+| [.agents/skills/illustration-design/SKILL.md](../.agents/skills/illustration-design/SKILL.md) | Иллюстрации: варианты, правки, тёмная пара |
+| [.agents/skills/illustration-design/references/edits-log.md](../.agents/skills/illustration-design/references/edits-log.md) | Журнал правок человека в иллюстрациях |
+| [.agents/skills/illustration-design/references/reference-catalog.md](../.agents/skills/illustration-design/references/reference-catalog.md) | Каталог эталонов: тайловые иллюстрации ДС |
 | [.agents/skills/knowledge-lookup/SKILL.md](../.agents/skills/knowledge-lookup/SKILL.md) | Поиск по базе знаний продукта |
 | [.agents/skills/layout-composition/SKILL.md](../.agents/skills/layout-composition/SKILL.md) | Композиция экрана: тайлы и поля |
 | [.agents/skills/layout-composition/references/dashboards.md](../.agents/skills/layout-composition/references/dashboards.md) | Дашборды и сводки |
@@ -251,7 +257,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (583)
+## Приложения (719)
 
 | Документ | Аннотация |
 |---|---|
@@ -262,13 +268,69 @@
 | Документ | Аннотация |
 |---|---|
 | [apps/core/clients-app/README.md](../apps/core/clients-app/README.md) | clients-app — модуль раздела core |
+| [apps/core/clients-app/pages/ClientComments.screen.md](../apps/core/clients-app/pages/ClientComments.screen.md) | Комментарии клиента |
+| [apps/core/clients-app/pages/ClientInfoPage.screen.md](../apps/core/clients-app/pages/ClientInfoPage.screen.md) | Клиент |
+| [apps/core/clients-app/pages/MyClientsPage.screen.md](../apps/core/clients-app/pages/MyClientsPage.screen.md) | Клиенты |
+| [apps/core/clients-app/proto-panel/comments.md](../apps/core/clients-app/proto-panel/comments.md) | Комментарии к прототипу |
+| [apps/core/clients-app/widgets/tables/BindingOpportunitiesTable/BindingOpportunitiesTable.md](../apps/core/clients-app/widgets/tables/BindingOpportunitiesTable/BindingOpportunitiesTable.md) | BindingOpportunitiesTable |
+| [apps/core/clients-app/widgets/tables/BindingOpportunitiesTable/CHANGELOG.md](../apps/core/clients-app/widgets/tables/BindingOpportunitiesTable/CHANGELOG.md) | BindingOpportunitiesTable — журнал изменений |
+| [apps/core/clients-app/widgets/tables/DcmEcmPipelineTable/CHANGELOG.md](../apps/core/clients-app/widgets/tables/DcmEcmPipelineTable/CHANGELOG.md) | DcmEcmPipelineTable — журнал изменений |
+| [apps/core/clients-app/widgets/tables/DcmEcmPipelineTable/DcmEcmPipelineTable.md](../apps/core/clients-app/widgets/tables/DcmEcmPipelineTable/DcmEcmPipelineTable.md) | DcmEcmPipelineTable |
+| [apps/core/clients-app/widgets/tables/FinancialsTable/CHANGELOG.md](../apps/core/clients-app/widgets/tables/FinancialsTable/CHANGELOG.md) | FinancialsTable — журнал изменений |
+| [apps/core/clients-app/widgets/tables/FinancialsTable/FinancialsTable.md](../apps/core/clients-app/widgets/tables/FinancialsTable/FinancialsTable.md) | FinancialsTable |
+| [apps/core/clients-app/widgets/tables/LeadsTable/CHANGELOG.md](../apps/core/clients-app/widgets/tables/LeadsTable/CHANGELOG.md) | LeadsTable — журнал изменений |
+| [apps/core/clients-app/widgets/tables/LeadsTable/LeadsTable.md](../apps/core/clients-app/widgets/tables/LeadsTable/LeadsTable.md) | LeadsTable |
+| [apps/core/clients-app/widgets/tables/MaPipelineTable/CHANGELOG.md](../apps/core/clients-app/widgets/tables/MaPipelineTable/CHANGELOG.md) | MaPipelineTable — журнал изменений |
+| [apps/core/clients-app/widgets/tables/MaPipelineTable/MaPipelineTable.md](../apps/core/clients-app/widgets/tables/MaPipelineTable/MaPipelineTable.md) | MaPipelineTable |
+| [apps/core/clients-app/widgets/tables/MeetingsProtocolsList/CHANGELOG.md](../apps/core/clients-app/widgets/tables/MeetingsProtocolsList/CHANGELOG.md) | MeetingsProtocolsList — журнал изменений |
+| [apps/core/clients-app/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.md](../apps/core/clients-app/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.md) | MeetingsProtocolsList |
+| [apps/core/clients-app/widgets/tables/MyClientsHierarchicalTree/CHANGELOG.md](../apps/core/clients-app/widgets/tables/MyClientsHierarchicalTree/CHANGELOG.md) | MyClientsHierarchicalTree — журнал изменений |
+| [apps/core/clients-app/widgets/tables/MyClientsHierarchicalTree/MyClientsHierarchicalTree.md](../apps/core/clients-app/widgets/tables/MyClientsHierarchicalTree/MyClientsHierarchicalTree.md) | MyClientsHierarchicalTree |
+| [apps/core/clients-app/widgets/tables/MyClientsTable/CHANGELOG.md](../apps/core/clients-app/widgets/tables/MyClientsTable/CHANGELOG.md) | MyClientsTable — журнал изменений |
+| [apps/core/clients-app/widgets/tables/MyClientsTable/MyClientsTable.md](../apps/core/clients-app/widgets/tables/MyClientsTable/MyClientsTable.md) | MyClientsTable |
+| [apps/core/clients-app/widgets/tables/OpportunitiesPipelineTable/CHANGELOG.md](../apps/core/clients-app/widgets/tables/OpportunitiesPipelineTable/CHANGELOG.md) | OpportunitiesPipelineTable — журнал изменений |
+| [apps/core/clients-app/widgets/tables/OpportunitiesPipelineTable/OpportunitiesPipelineTable.md](../apps/core/clients-app/widgets/tables/OpportunitiesPipelineTable/OpportunitiesPipelineTable.md) | OpportunitiesPipelineTable |
+| [apps/core/clients-app/widgets/tables/PossibleOpportunitiesTable/CHANGELOG.md](../apps/core/clients-app/widgets/tables/PossibleOpportunitiesTable/CHANGELOG.md) | PossibleOpportunitiesTable — журнал изменений |
+| [apps/core/clients-app/widgets/tables/PossibleOpportunitiesTable/PossibleOpportunitiesTable.md](../apps/core/clients-app/widgets/tables/PossibleOpportunitiesTable/PossibleOpportunitiesTable.md) | PossibleOpportunitiesTable |
+| [apps/core/clients-app/widgets/tiles/ClientCreditsList/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/ClientCreditsList/CHANGELOG.md) | ClientCreditsList — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/ClientCreditsList/ClientCreditsList.md](../apps/core/clients-app/widgets/tiles/ClientCreditsList/ClientCreditsList.md) | ClientCreditsList |
+| [apps/core/clients-app/widgets/tiles/ClientNewsTile/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/ClientNewsTile/CHANGELOG.md) | ClientNewsTile — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/ClientNewsTile/ClientNewsTile.md](../apps/core/clients-app/widgets/tiles/ClientNewsTile/ClientNewsTile.md) | ClientNewsTile |
+| [apps/core/clients-app/widgets/tiles/ClientTimingsTile/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/ClientTimingsTile/CHANGELOG.md) | ClientTimingsTile — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/ClientTimingsTile/ClientTimingsTile.md](../apps/core/clients-app/widgets/tiles/ClientTimingsTile/ClientTimingsTile.md) | ClientTimingsTile |
+| [apps/core/clients-app/widgets/tiles/CommentsTile/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/CommentsTile/CHANGELOG.md) | CommentsTile — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/CommentsTile/CommentsTile.md](../apps/core/clients-app/widgets/tiles/CommentsTile/CommentsTile.md) | CommentsTile |
+| [apps/core/clients-app/widgets/tiles/DesksTile/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/DesksTile/CHANGELOG.md) | DesksTile — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/DesksTile/DesksTile.md](../apps/core/clients-app/widgets/tiles/DesksTile/DesksTile.md) | DesksTile |
+| [apps/core/clients-app/widgets/tiles/DocumentsInfoTile/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/DocumentsInfoTile/CHANGELOG.md) | DocumentsInfoTile — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/DocumentsInfoTile/DocumentsInfoTile.md](../apps/core/clients-app/widgets/tiles/DocumentsInfoTile/DocumentsInfoTile.md) | DocumentsInfoTile |
+| [apps/core/clients-app/widgets/tiles/FinancialsChart/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/FinancialsChart/CHANGELOG.md) | FinancialsChart — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/FinancialsChart/FinancialsChart.md](../apps/core/clients-app/widgets/tiles/FinancialsChart/FinancialsChart.md) | FinancialsChart |
+| [apps/core/clients-app/widgets/tiles/GigaInfoTile/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/GigaInfoTile/CHANGELOG.md) | GigaInfoTile — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/GigaInfoTile/GigaInfoTile.md](../apps/core/clients-app/widgets/tiles/GigaInfoTile/GigaInfoTile.md) | GigaInfoTile |
+| [apps/core/clients-app/widgets/tiles/GoalArchiveSection/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/GoalArchiveSection/CHANGELOG.md) | GoalArchiveSection — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/GoalArchiveSection/GoalArchiveSection.md](../apps/core/clients-app/widgets/tiles/GoalArchiveSection/GoalArchiveSection.md) | GoalArchiveSection |
+| [apps/core/clients-app/widgets/tiles/GoalsPopoverBadge/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/GoalsPopoverBadge/CHANGELOG.md) | GoalsPopoverBadge — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/GoalsPopoverBadge/GoalsPopoverBadge.md](../apps/core/clients-app/widgets/tiles/GoalsPopoverBadge/GoalsPopoverBadge.md) | GoalsPopoverBadge |
+| [apps/core/clients-app/widgets/tiles/IndustryInfoTile/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/IndustryInfoTile/CHANGELOG.md) | IndustryInfoTile — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/IndustryInfoTile/IndustryInfoTile.md](../apps/core/clients-app/widgets/tiles/IndustryInfoTile/IndustryInfoTile.md) | IndustryInfoTile |
+| [apps/core/clients-app/widgets/tiles/MeetingsProtocolsDetails/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/MeetingsProtocolsDetails/CHANGELOG.md) | MeetingsProtocolsDetails — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.md](../apps/core/clients-app/widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.md) | MeetingsProtocolsDetails |
+| [apps/core/clients-app/widgets/tiles/RelatedPersonsTile/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/RelatedPersonsTile/CHANGELOG.md) | RelatedPersonsTile — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/RelatedPersonsTile/RelatedPersonsTile.md](../apps/core/clients-app/widgets/tiles/RelatedPersonsTile/RelatedPersonsTile.md) | RelatedPersonsTile |
+| [apps/core/clients-app/widgets/tiles/RequisitesInfoTile/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/RequisitesInfoTile/CHANGELOG.md) | RequisitesInfoTile — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/RequisitesInfoTile/RequisitesInfoTile.md](../apps/core/clients-app/widgets/tiles/RequisitesInfoTile/RequisitesInfoTile.md) | RequisitesInfoTile |
+| [apps/core/clients-app/widgets/tiles/StratDialogueCard/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/StratDialogueCard/CHANGELOG.md) | StratDialogueCard — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/StratDialogueCard/StratDialogueCard.md](../apps/core/clients-app/widgets/tiles/StratDialogueCard/StratDialogueCard.md) | StratDialogueCard |
+| [apps/core/clients-app/widgets/tiles/TeamInfoTile/CHANGELOG.md](../apps/core/clients-app/widgets/tiles/TeamInfoTile/CHANGELOG.md) | TeamInfoTile — журнал изменений |
+| [apps/core/clients-app/widgets/tiles/TeamInfoTile/TeamInfoTile.md](../apps/core/clients-app/widgets/tiles/TeamInfoTile/TeamInfoTile.md) | TeamInfoTile |
 
 ### apps/core/dashboard-app
 
 | Документ | Аннотация |
 |---|---|
-| [apps/core/dashboard-app/README.md](../apps/core/dashboard-app/README.md) | Дашборд Аналитика |
-| [apps/core/dashboard-app/pages/HomePage.screen.md](../apps/core/dashboard-app/pages/HomePage.screen.md) | Главная — дашборд |
+| [apps/core/dashboard-app/README.md](../apps/core/dashboard-app/README.md) | Главная - Аналитик (Дашборд) |
+| [apps/core/dashboard-app/pages/HomePage.screen.md](../apps/core/dashboard-app/pages/HomePage.screen.md) | Главная — Аналитик (Дашборд) |
 | [apps/core/dashboard-app/proto-panel/comments.md](../apps/core/dashboard-app/proto-panel/comments.md) | Комментарии к прототипу |
 | [apps/core/dashboard-app/widgets/modals/MeetingCreateModal/CHANGELOG.md](../apps/core/dashboard-app/widgets/modals/MeetingCreateModal/CHANGELOG.md) | MeetingCreateModal — журнал изменений |
 | [apps/core/dashboard-app/widgets/modals/MeetingCreateModal/MeetingCreateModal.md](../apps/core/dashboard-app/widgets/modals/MeetingCreateModal/MeetingCreateModal.md) | MeetingCreateModal |
@@ -308,12 +370,9 @@
 | [apps/core/drafts/ibp-redesign-v1/pages/BindingActiveNewOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/BindingActiveNewOpportunities.screen.md) | Обязательные сделки |
 | [apps/core/drafts/ibp-redesign-v1/pages/BindingAllLeadsPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/BindingAllLeadsPage.screen.md) | Обязательные лиды |
 | [apps/core/drafts/ibp-redesign-v1/pages/CampaignsActiveOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/CampaignsActiveOpportunities.screen.md) | Кампании продаж |
-| [apps/core/drafts/ibp-redesign-v1/pages/ClientComments.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/ClientComments.screen.md) | Комментарии клиента |
-| [apps/core/drafts/ibp-redesign-v1/pages/ClientInfoPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/ClientInfoPage.screen.md) | Клиент |
 | [apps/core/drafts/ibp-redesign-v1/pages/HomePage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/HomePage.screen.md) | Главная — Аналитик ДИД |
 | [apps/core/drafts/ibp-redesign-v1/pages/LeadsPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/LeadsPage.screen.md) | Лиды |
 | [apps/core/drafts/ibp-redesign-v1/pages/MeetingsProtocolsPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/MeetingsProtocolsPage.screen.md) | Встречи |
-| [apps/core/drafts/ibp-redesign-v1/pages/MyClientsPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/MyClientsPage.screen.md) | Клиенты |
 | [apps/core/drafts/ibp-redesign-v1/pages/MyDeskOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/MyDeskOpportunities.screen.md) | Pipeline |
 | [apps/core/drafts/ibp-redesign-v1/pages/Opportunity.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/Opportunity.screen.md) | Сделка |
 | [apps/core/drafts/ibp-redesign-v1/pages/OpportunityActiveSalesProjects.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/OpportunityActiveSalesProjects.screen.md) | Проекты продаж |
@@ -322,78 +381,27 @@
 | [apps/core/drafts/ibp-redesign-v1/pages/PossibleAllLeadsPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/PossibleAllLeadsPage.screen.md) | Возможные лиды |
 | [apps/core/drafts/ibp-redesign-v1/pages/PotentialPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/PotentialPage.screen.md) | Лид |
 | [apps/core/drafts/ibp-redesign-v1/pages/TaskStatesPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/TaskStatesPage.screen.md) | Статусы задач |
-| [apps/core/drafts/ibp-redesign-v1/pages/TasksPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/TasksPage.screen.md) | Задачи |
 | [apps/core/drafts/ibp-redesign-v1/proto-panel/comments.md](../apps/core/drafts/ibp-redesign-v1/proto-panel/comments.md) | Комментарии к прототипу |
-| [apps/core/drafts/ibp-redesign-v1/widgets/modals/ChangeTaskStatusModal/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/modals/ChangeTaskStatusModal/CHANGELOG.md) | ChangeTaskStatusModal — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.md](../apps/core/drafts/ibp-redesign-v1/widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.md) | ChangeTaskStatusModal |
 | [apps/core/drafts/ibp-redesign-v1/widgets/modals/RefuseFromOpportunityModal/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/modals/RefuseFromOpportunityModal/CHANGELOG.md) | RefuseFromOpportunityModal — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/modals/RefuseFromOpportunityModal/RefuseFromOpportunityModal.md](../apps/core/drafts/ibp-redesign-v1/widgets/modals/RefuseFromOpportunityModal/RefuseFromOpportunityModal.md) | RefuseFromOpportunityModal |
 | [apps/core/drafts/ibp-redesign-v1/widgets/modals/TakeOpportunityToWorkModal/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/modals/TakeOpportunityToWorkModal/CHANGELOG.md) | TakeOpportunityToWorkModal — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/modals/TakeOpportunityToWorkModal/TakeOpportunityToWorkModal.md](../apps/core/drafts/ibp-redesign-v1/widgets/modals/TakeOpportunityToWorkModal/TakeOpportunityToWorkModal.md) | TakeOpportunityToWorkModal |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/BindingOpportunitiesTable/BindingOpportunitiesTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/BindingOpportunitiesTable/BindingOpportunitiesTable.md) | BindingOpportunitiesTable |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/BindingOpportunitiesTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/BindingOpportunitiesTable/CHANGELOG.md) | BindingOpportunitiesTable — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/DcmEcmPipelineTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/DcmEcmPipelineTable/CHANGELOG.md) | DcmEcmPipelineTable — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/DcmEcmPipelineTable/DcmEcmPipelineTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/DcmEcmPipelineTable/DcmEcmPipelineTable.md) | DcmEcmPipelineTable |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/FinancialsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/FinancialsTable/CHANGELOG.md) | FinancialsTable — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/FinancialsTable/FinancialsTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/FinancialsTable/FinancialsTable.md) | FinancialsTable |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/LeadsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/LeadsTable/CHANGELOG.md) | LeadsTable — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/LeadsTable/LeadsTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/LeadsTable/LeadsTable.md) | LeadsTable |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MaPipelineTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MaPipelineTable/CHANGELOG.md) | MaPipelineTable — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MaPipelineTable/MaPipelineTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MaPipelineTable/MaPipelineTable.md) | MaPipelineTable |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/CHANGELOG.md) | MeetingsProtocolsList — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.md) | MeetingsProtocolsList |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsHierarchicalTree/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsHierarchicalTree/CHANGELOG.md) | MyClientsHierarchicalTree — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsHierarchicalTree/MyClientsHierarchicalTree.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsHierarchicalTree/MyClientsHierarchicalTree.md) | MyClientsHierarchicalTree |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsTable/CHANGELOG.md) | MyClientsTable — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsTable/MyClientsTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsTable/MyClientsTable.md) | MyClientsTable |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitiesPipelineTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitiesPipelineTable/CHANGELOG.md) | OpportunitiesPipelineTable — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitiesPipelineTable/OpportunitiesPipelineTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitiesPipelineTable/OpportunitiesPipelineTable.md) | OpportunitiesPipelineTable |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitySalesProjectsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitySalesProjectsTable/CHANGELOG.md) | OpportunitySalesProjectsTable — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitySalesProjectsTable/OpportunitySalesProjectsTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitySalesProjectsTable/OpportunitySalesProjectsTable.md) | OpportunitySalesProjectsTable |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/PossibleOpportunitiesTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/PossibleOpportunitiesTable/CHANGELOG.md) | PossibleOpportunitiesTable — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/PossibleOpportunitiesTable/PossibleOpportunitiesTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/PossibleOpportunitiesTable/PossibleOpportunitiesTable.md) | PossibleOpportunitiesTable |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tables/SalesCampaignsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/SalesCampaignsTable/CHANGELOG.md) | SalesCampaignsTable — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tables/SalesCampaignsTable/SalesCampaignsTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/SalesCampaignsTable/SalesCampaignsTable.md) | SalesCampaignsTable |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tables/SimpleSettingsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/SimpleSettingsTable/CHANGELOG.md) | SimpleSettingsTable — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tables/SimpleSettingsTable/SimpleSettingsTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/SimpleSettingsTable/SimpleSettingsTable.md) | SimpleSettingsTable |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/TaskHistoryTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/TaskHistoryTable/CHANGELOG.md) | TaskHistoryTable — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/TaskHistoryTable/TaskHistoryTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/TaskHistoryTable/TaskHistoryTable.md) | TaskHistoryTable |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/TasksTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/TasksTable/CHANGELOG.md) | TasksTable — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tables/TasksTable/TasksTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/TasksTable/TasksTable.md) | TasksTable |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/CallReportsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/CallReportsTile/CHANGELOG.md) | CallReportsTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/CallReportsTile/CallReportsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/CallReportsTile/CallReportsTile.md) | CallReportsTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientCreditsList/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientCreditsList/CHANGELOG.md) | ClientCreditsList — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientCreditsList/ClientCreditsList.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientCreditsList/ClientCreditsList.md) | ClientCreditsList |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientNewsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientNewsTile/CHANGELOG.md) | ClientNewsTile — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientNewsTile/ClientNewsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientNewsTile/ClientNewsTile.md) | ClientNewsTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientTimingsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientTimingsTile/CHANGELOG.md) | ClientTimingsTile — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientTimingsTile/ClientTimingsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientTimingsTile/ClientTimingsTile.md) | ClientTimingsTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/CommentsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/CommentsTile/CHANGELOG.md) | CommentsTile — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/CommentsTile/CommentsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/CommentsTile/CommentsTile.md) | CommentsTile |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/DescriptionTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/DescriptionTile/CHANGELOG.md) | DescriptionTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/DescriptionTile/DescriptionTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/DescriptionTile/DescriptionTile.md) | DescriptionTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/DesksTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/DesksTile/CHANGELOG.md) | DesksTile — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/DesksTile/DesksTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/DesksTile/DesksTile.md) | DesksTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/DocumentsInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/DocumentsInfoTile/CHANGELOG.md) | DocumentsInfoTile — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/DocumentsInfoTile/DocumentsInfoTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/DocumentsInfoTile/DocumentsInfoTile.md) | DocumentsInfoTile |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialMetricsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialMetricsTile/CHANGELOG.md) | FinancialMetricsTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialMetricsTile/FinancialMetricsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialMetricsTile/FinancialMetricsTile.md) | FinancialMetricsTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialsChart/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialsChart/CHANGELOG.md) | FinancialsChart — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialsChart/FinancialsChart.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialsChart/FinancialsChart.md) | FinancialsChart |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GeneralInformationTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GeneralInformationTile/CHANGELOG.md) | GeneralInformationTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GeneralInformationTile/GeneralInformationTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GeneralInformationTile/GeneralInformationTile.md) | GeneralInformationTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GigaInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GigaInfoTile/CHANGELOG.md) | GigaInfoTile — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GigaInfoTile/GigaInfoTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GigaInfoTile/GigaInfoTile.md) | GigaInfoTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalArchiveSection/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalArchiveSection/CHANGELOG.md) | GoalArchiveSection — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalArchiveSection/GoalArchiveSection.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalArchiveSection/GoalArchiveSection.md) | GoalArchiveSection |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalsPopoverBadge/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalsPopoverBadge/CHANGELOG.md) | GoalsPopoverBadge — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalsPopoverBadge/GoalsPopoverBadge.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalsPopoverBadge/GoalsPopoverBadge.md) | GoalsPopoverBadge |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/IndustryInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/IndustryInfoTile/CHANGELOG.md) | IndustryInfoTile — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/IndustryInfoTile/IndustryInfoTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/IndustryInfoTile/IndustryInfoTile.md) | IndustryInfoTile |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/LinkNavigationTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/LinkNavigationTile/CHANGELOG.md) | LinkNavigationTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/LinkNavigationTile/LinkNavigationTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/LinkNavigationTile/LinkNavigationTile.md) | LinkNavigationTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsDetails/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsDetails/CHANGELOG.md) | MeetingsProtocolsDetails — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.md) | MeetingsProtocolsDetails |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsTile/CHANGELOG.md) | MeetingsProtocolsTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsTile/MeetingsProtocolsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsTile/MeetingsProtocolsTile.md) | MeetingsProtocolsTile |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityClientTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityClientTile/CHANGELOG.md) | OpportunityClientTile — журнал изменений |
@@ -408,22 +416,12 @@
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/ProductClientTiles.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/ProductClientTiles.md) | ProductClientTiles |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductsTile/CHANGELOG.md) | ProductsTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductsTile/ProductsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductsTile/ProductsTile.md) | ProductsTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/RelatedPersonsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/RelatedPersonsTile/CHANGELOG.md) | RelatedPersonsTile — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/RelatedPersonsTile/RelatedPersonsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/RelatedPersonsTile/RelatedPersonsTile.md) | RelatedPersonsTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/RequisitesInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/RequisitesInfoTile/CHANGELOG.md) | RequisitesInfoTile — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/RequisitesInfoTile/RequisitesInfoTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/RequisitesInfoTile/RequisitesInfoTile.md) | RequisitesInfoTile |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/SimpleSettingsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/SimpleSettingsTile/CHANGELOG.md) | SimpleSettingsTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/SimpleSettingsTile/SimpleSettingsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/SimpleSettingsTile/SimpleSettingsTile.md) | SimpleSettingsTile |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/StateInformationTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/StateInformationTile/CHANGELOG.md) | StateInformationTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/StateInformationTile/StateInformationTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/StateInformationTile/StateInformationTile.md) | StateInformationTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/StratDialogueCard/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/StratDialogueCard/CHANGELOG.md) | StratDialogueCard — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/StratDialogueCard/StratDialogueCard.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/StratDialogueCard/StratDialogueCard.md) | StratDialogueCard |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TaskPreviewTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TaskPreviewTile/CHANGELOG.md) | TaskPreviewTile — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TaskPreviewTile/TaskPreviewTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TaskPreviewTile/TaskPreviewTile.md) | TaskPreviewTile |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TasksTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TasksTile/CHANGELOG.md) | TasksTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TasksTile/TasksTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TasksTile/TasksTile.md) | TasksTile |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TeamInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TeamInfoTile/CHANGELOG.md) | TeamInfoTile — журнал изменений |
-| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TeamInfoTile/TeamInfoTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TeamInfoTile/TeamInfoTile.md) | TeamInfoTile |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TimingTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TimingTile/CHANGELOG.md) | TimingTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TimingTile/TimingTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TimingTile/TimingTile.md) | TimingTile |
 
@@ -448,7 +446,8 @@
 | [apps/core/drafts/ibp-redesign-v2/pages/CampaignsActiveOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/CampaignsActiveOpportunities.screen.md) | Кампании продаж |
 | [apps/core/drafts/ibp-redesign-v2/pages/ClientComments.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/ClientComments.screen.md) | Комментарии клиента |
 | [apps/core/drafts/ibp-redesign-v2/pages/ClientInfoPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/ClientInfoPage.screen.md) | Клиент |
-| [apps/core/drafts/ibp-redesign-v2/pages/HomeBoard.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/HomeBoard.screen.md) | Главная — Мой дашборд и Мои проекты |
+| [apps/core/drafts/ibp-redesign-v2/pages/EventsPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/EventsPage.screen.md) | События |
+| [apps/core/drafts/ibp-redesign-v2/pages/HomeBoard.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/HomeBoard.screen.md) | Главная — Мой дашборд, Мои проекты и Поиск клиентов |
 | [apps/core/drafts/ibp-redesign-v2/pages/HomeDashboard.md](../apps/core/drafts/ibp-redesign-v2/pages/HomeDashboard.md) | Дашборд и профиль сотрудника |
 | [apps/core/drafts/ibp-redesign-v2/pages/HomePage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/HomePage.screen.md) | Главная — Аналитик ДИД |
 | [apps/core/drafts/ibp-redesign-v2/pages/Lead.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/Lead.screen.md) | Единый лид |
@@ -457,6 +456,7 @@
 | [apps/core/drafts/ibp-redesign-v2/pages/MeetingsProtocolsPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/MeetingsProtocolsPage.screen.md) | Встречи |
 | [apps/core/drafts/ibp-redesign-v2/pages/MyClientsPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/MyClientsPage.screen.md) | Клиенты |
 | [apps/core/drafts/ibp-redesign-v2/pages/MyDeskOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/MyDeskOpportunities.screen.md) | Pipeline |
+| [apps/core/drafts/ibp-redesign-v2/pages/NewsPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/NewsPage.screen.md) | Новости |
 | [apps/core/drafts/ibp-redesign-v2/pages/Opportunity.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/Opportunity.screen.md) | Сделка |
 | [apps/core/drafts/ibp-redesign-v2/pages/OpportunityActiveSalesProjects.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/OpportunityActiveSalesProjects.screen.md) | Проекты продаж |
 | [apps/core/drafts/ibp-redesign-v2/pages/OpportunityProduct.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/OpportunityProduct.screen.md) | Продукт сделки |
@@ -531,6 +531,10 @@
 | [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DesksTile/V2DesksTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DesksTile/V2DesksTile.md) | V2DesksTile |
 | [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DocumentsInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DocumentsInfoTile/CHANGELOG.md) | V2DocumentsInfoTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DocumentsInfoTile/V2DocumentsInfoTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DocumentsInfoTile/V2DocumentsInfoTile.md) | V2DocumentsInfoTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2EventDetailsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2EventDetailsTile/CHANGELOG.md) | V2EventDetailsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2EventDetailsTile/V2EventDetailsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2EventDetailsTile/V2EventDetailsTile.md) | V2EventDetailsTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2EventsListTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2EventsListTile/CHANGELOG.md) | V2EventsListTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2EventsListTile/V2EventsListTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2EventsListTile/V2EventsListTile.md) | V2EventsListTile |
 | [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialMetricsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialMetricsTile/CHANGELOG.md) | V2FinancialMetricsTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialMetricsTile/V2FinancialMetricsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialMetricsTile/V2FinancialMetricsTile.md) | V2FinancialMetricsTile |
 | [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialsChart/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialsChart/CHANGELOG.md) | V2FinancialsChart — журнал изменений |
@@ -551,6 +555,10 @@
 | [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsDetails/V2MeetingsProtocolsDetails.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsDetails/V2MeetingsProtocolsDetails.md) | V2MeetingsProtocolsDetails |
 | [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsTile/CHANGELOG.md) | V2MeetingsProtocolsTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsTile/V2MeetingsProtocolsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsTile/V2MeetingsProtocolsTile.md) | V2MeetingsProtocolsTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2NewsArticleTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2NewsArticleTile/CHANGELOG.md) | V2NewsArticleTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2NewsArticleTile/V2NewsArticleTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2NewsArticleTile/V2NewsArticleTile.md) | V2NewsArticleTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2NewsListTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2NewsListTile/CHANGELOG.md) | V2NewsListTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2NewsListTile/V2NewsListTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2NewsListTile/V2NewsListTile.md) | V2NewsListTile |
 | [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityClientTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityClientTile/CHANGELOG.md) | V2OpportunityClientTile — журнал изменений |
 | [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityClientTile/V2OpportunityClientTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityClientTile/V2OpportunityClientTile.md) | V2OpportunityClientTile |
 | [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityConnectionsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityConnectionsTile/CHANGELOG.md) | V2OpportunityConnectionsTile — журнал изменений |
@@ -599,6 +607,7 @@
 | Документ | Аннотация |
 |---|---|
 | [apps/core/host-app/README.md](../apps/core/host-app/README.md) | host-app — модуль раздела core |
+| [apps/core/host-app/pages/HomePage.screen.md](../apps/core/host-app/pages/HomePage.screen.md) | Главная страница IBP (по ролям) |
 
 ### apps/core/notifications-app
 
@@ -617,6 +626,15 @@
 | Документ | Аннотация |
 |---|---|
 | [apps/core/tasks-app/README.md](../apps/core/tasks-app/README.md) | tasks-app — модуль раздела core |
+| [apps/core/tasks-app/pages/TasksPage.screen.md](../apps/core/tasks-app/pages/TasksPage.screen.md) | Задачи |
+| [apps/core/tasks-app/widgets/modals/ChangeTaskStatusModal/CHANGELOG.md](../apps/core/tasks-app/widgets/modals/ChangeTaskStatusModal/CHANGELOG.md) | ChangeTaskStatusModal — журнал изменений |
+| [apps/core/tasks-app/widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.md](../apps/core/tasks-app/widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.md) | ChangeTaskStatusModal |
+| [apps/core/tasks-app/widgets/tables/TaskHistoryTable/CHANGELOG.md](../apps/core/tasks-app/widgets/tables/TaskHistoryTable/CHANGELOG.md) | TaskHistoryTable — журнал изменений |
+| [apps/core/tasks-app/widgets/tables/TaskHistoryTable/TaskHistoryTable.md](../apps/core/tasks-app/widgets/tables/TaskHistoryTable/TaskHistoryTable.md) | TaskHistoryTable |
+| [apps/core/tasks-app/widgets/tables/TasksTable/CHANGELOG.md](../apps/core/tasks-app/widgets/tables/TasksTable/CHANGELOG.md) | TasksTable — журнал изменений |
+| [apps/core/tasks-app/widgets/tables/TasksTable/TasksTable.md](../apps/core/tasks-app/widgets/tables/TasksTable/TasksTable.md) | TasksTable |
+| [apps/core/tasks-app/widgets/tiles/TaskPreviewTile/CHANGELOG.md](../apps/core/tasks-app/widgets/tiles/TaskPreviewTile/CHANGELOG.md) | TaskPreviewTile — журнал изменений |
+| [apps/core/tasks-app/widgets/tiles/TaskPreviewTile/TaskPreviewTile.md](../apps/core/tasks-app/widgets/tiles/TaskPreviewTile/TaskPreviewTile.md) | TaskPreviewTile |
 
 ### apps/core/userqueries-app
 
@@ -629,7 +647,6 @@
 | Документ | Аннотация |
 |---|---|
 | [apps/ib/banker-app/README.md](../apps/ib/banker-app/README.md) | banker-app — AI Pitcher (раздел ib) |
-| [apps/ib/banker-app/pages/HomePage.screen.md](../apps/ib/banker-app/pages/HomePage.screen.md) | Главная страница IBP |
 | [apps/ib/banker-app/pages/RequestThread.screen.md](../apps/ib/banker-app/pages/RequestThread.screen.md) | Новый отчёт (нить запроса) |
 
 ### apps/ib/banker-app — снимки задач
@@ -684,6 +701,30 @@
 |---|---|
 | [apps/ib/drafts/ai-bankster-prototype-v02/ai-bankster-prototype-v02.handoff.md](../apps/ib/drafts/ai-bankster-prototype-v02/ai-bankster-prototype-v02.handoff.md) | ai-bankster-prototype-v02 — handoff |
 
+### apps/ib/funds-app
+
+| Документ | Аннотация |
+|---|---|
+| [apps/ib/funds-app/README.md](../apps/ib/funds-app/README.md) | funds-app — модуль раздела ib |
+| [apps/ib/funds-app/pages/FundsPipeline.screen.md](../apps/ib/funds-app/pages/FundsPipeline.screen.md) | Фонды |
+| [apps/ib/funds-app/proto-panel/comments.md](../apps/ib/funds-app/proto-panel/comments.md) | Комментарии к прототипу |
+| [apps/ib/funds-app/widgets/context-menus/AssetActionsMenu/AssetActionsMenu.md](../apps/ib/funds-app/widgets/context-menus/AssetActionsMenu/AssetActionsMenu.md) | Меню актива |
+| [apps/ib/funds-app/widgets/context-menus/AssetActionsMenu/CHANGELOG.md](../apps/ib/funds-app/widgets/context-menus/AssetActionsMenu/CHANGELOG.md) | AssetActionsMenu — журнал изменений |
+| [apps/ib/funds-app/widgets/context-menus/FundActionsMenu/CHANGELOG.md](../apps/ib/funds-app/widgets/context-menus/FundActionsMenu/CHANGELOG.md) | FundActionsMenu — журнал изменений |
+| [apps/ib/funds-app/widgets/context-menus/FundActionsMenu/FundActionsMenu.md](../apps/ib/funds-app/widgets/context-menus/FundActionsMenu/FundActionsMenu.md) | Меню фонда |
+| [apps/ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.md](../apps/ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.md) | Добавить фонд — поиск в базах |
+| [apps/ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/CHANGELOG.md](../apps/ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/CHANGELOG.md) | AddFundEntityFromUcpModal — журнал изменений |
+| [apps/ib/funds-app/widgets/modals/DeleteFundModal/CHANGELOG.md](../apps/ib/funds-app/widgets/modals/DeleteFundModal/CHANGELOG.md) | DeleteFundModal — журнал изменений |
+| [apps/ib/funds-app/widgets/modals/DeleteFundModal/DeleteFundModal.md](../apps/ib/funds-app/widgets/modals/DeleteFundModal/DeleteFundModal.md) | Удалить фонд |
+| [apps/ib/funds-app/widgets/modals/EditFundModal/CHANGELOG.md](../apps/ib/funds-app/widgets/modals/EditFundModal/CHANGELOG.md) | EditFundModal — журнал изменений |
+| [apps/ib/funds-app/widgets/modals/EditFundModal/EditFundModal.md](../apps/ib/funds-app/widgets/modals/EditFundModal/EditFundModal.md) | Форма фонда |
+| [apps/ib/funds-app/widgets/tables/AssetsTable/AssetsTable.md](../apps/ib/funds-app/widgets/tables/AssetsTable/AssetsTable.md) | Активы фонда |
+| [apps/ib/funds-app/widgets/tables/AssetsTable/CHANGELOG.md](../apps/ib/funds-app/widgets/tables/AssetsTable/CHANGELOG.md) | AssetsTable — журнал изменений |
+| [apps/ib/funds-app/widgets/tables/FundsFilters/CHANGELOG.md](../apps/ib/funds-app/widgets/tables/FundsFilters/CHANGELOG.md) | FundsFilters — журнал изменений |
+| [apps/ib/funds-app/widgets/tables/FundsFilters/FundsFilters.md](../apps/ib/funds-app/widgets/tables/FundsFilters/FundsFilters.md) | Фильтры списка фондов |
+| [apps/ib/funds-app/widgets/tables/FundsTable/CHANGELOG.md](../apps/ib/funds-app/widgets/tables/FundsTable/CHANGELOG.md) | FundsTable — журнал изменений |
+| [apps/ib/funds-app/widgets/tables/FundsTable/FundsTable.md](../apps/ib/funds-app/widgets/tables/FundsTable/FundsTable.md) | Список фондов |
+
 ### apps/ib/ib-payments-app
 
 | Документ | Аннотация |
@@ -715,19 +756,33 @@
 | [apps/knowledge-base/glossary/terms/FV.md](../apps/knowledge-base/glossary/terms/FV.md) | — |
 | [apps/knowledge-base/glossary/terms/LP.md](../apps/knowledge-base/glossary/terms/LP.md) | — |
 | [apps/knowledge-base/glossary/terms/Operations.md](../apps/knowledge-base/glossary/terms/Operations.md) | — |
+| [apps/knowledge-base/glossary/terms/БИ.md](../apps/knowledge-base/glossary/terms/БИ.md) | — |
 | [apps/knowledge-base/glossary/terms/ВБС.md](../apps/knowledge-base/glossary/terms/ВБС.md) | — |
+| [apps/knowledge-base/glossary/terms/ГКМ.md](../apps/knowledge-base/glossary/terms/ГКМ.md) | — |
 | [apps/knowledge-base/glossary/terms/ГСЗ.md](../apps/knowledge-base/glossary/terms/ГСЗ.md) | — |
+| [apps/knowledge-base/glossary/terms/ГФО.md](../apps/knowledge-base/glossary/terms/ГФО.md) | — |
+| [apps/knowledge-base/glossary/terms/ДС.md](../apps/knowledge-base/glossary/terms/ДС.md) | — |
 | [apps/knowledge-base/glossary/terms/Деск.md](../apps/knowledge-base/glossary/terms/Деск.md) | — |
+| [apps/knowledge-base/glossary/terms/ЕПК.md](../apps/knowledge-base/glossary/terms/ЕПК.md) | — |
 | [apps/knowledge-base/glossary/terms/ЕТС.md](../apps/knowledge-base/glossary/terms/ЕТС.md) | — |
+| [apps/knowledge-base/glossary/terms/Закрытый период.md](../apps/knowledge-base/glossary/terms/Закрытый%20период.md) | — |
+| [apps/knowledge-base/glossary/terms/Зона проблемности.md](../apps/knowledge-base/glossary/terms/Зона%20проблемности.md) | — |
 | [apps/knowledge-base/glossary/terms/К2.md](../apps/knowledge-base/glossary/terms/К2.md) | — |
 | [apps/knowledge-base/glossary/terms/КНР.md](../apps/knowledge-base/glossary/terms/КНР.md) | — |
+| [apps/knowledge-base/glossary/terms/КО.md](../apps/knowledge-base/glossary/terms/КО.md) | — |
 | [apps/knowledge-base/glossary/terms/КПКИ.md](../apps/knowledge-base/glossary/terms/КПКИ.md) | — |
+| [apps/knowledge-base/glossary/terms/КС.md](../apps/knowledge-base/glossary/terms/КС.md) | — |
 | [apps/knowledge-base/glossary/terms/НКЛ.md](../apps/knowledge-base/glossary/terms/НКЛ.md) | — |
 | [apps/knowledge-base/glossary/terms/ОСЗ.md](../apps/knowledge-base/glossary/terms/ОСЗ.md) | — |
 | [apps/knowledge-base/glossary/terms/ПМЗ.md](../apps/knowledge-base/glossary/terms/ПМЗ.md) | — |
+| [apps/knowledge-base/glossary/terms/Процентная схема.md](../apps/knowledge-base/glossary/terms/Процентная%20схема.md) | — |
 | [apps/knowledge-base/glossary/terms/Сделка ограниченного доступа.md](../apps/knowledge-base/glossary/terms/Сделка%20ограниченного%20доступа.md) | — |
+| [apps/knowledge-base/glossary/terms/Спонсор.md](../apps/knowledge-base/glossary/terms/Спонсор.md) | — |
+| [apps/knowledge-base/glossary/terms/Транш.md](../apps/knowledge-base/glossary/terms/Транш.md) | — |
 | [apps/knowledge-base/glossary/terms/ФИ.md](../apps/knowledge-base/glossary/terms/ФИ.md) | — |
+| [apps/knowledge-base/glossary/terms/ФОК.md](../apps/knowledge-base/glossary/terms/ФОК.md) | — |
 | [apps/knowledge-base/glossary/terms/ЦУП.md](../apps/knowledge-base/glossary/terms/ЦУП.md) | — |
+| [apps/knowledge-base/glossary/terms/ЧОД.md](../apps/knowledge-base/glossary/terms/ЧОД.md) | — |
 | [apps/knowledge-base/glossary/terms/ЭКД.md](../apps/knowledge-base/glossary/terms/ЭКД.md) | — |
 | [apps/knowledge-base/glossary/terms/ЭПС.md](../apps/knowledge-base/glossary/terms/ЭПС.md) | — |
 
@@ -753,12 +808,23 @@
 | [apps/postrade/deals-app/pages/Deal.screen.md](../apps/postrade/deals-app/pages/Deal.screen.md) | Сделка |
 | [apps/postrade/deals-app/pages/FinInstrument.screen.md](../apps/postrade/deals-app/pages/FinInstrument.screen.md) | Финансовый инструмент |
 | [apps/postrade/deals-app/pages/FinancialMetrics.screen.md](../apps/postrade/deals-app/pages/FinancialMetrics.screen.md) | Финансовые метрики |
+| [apps/postrade/deals-app/pages/InitialAndAdditionalAgreements.screen.md](../apps/postrade/deals-app/pages/InitialAndAdditionalAgreements.screen.md) | Договор и дополнительные соглашения |
+| [apps/postrade/deals-app/pages/Instrument.screen.md](../apps/postrade/deals-app/pages/Instrument.screen.md) | Договор займа (НКЛ) |
 | [apps/postrade/deals-app/pages/MainPage.screen.md](../apps/postrade/deals-app/pages/MainPage.screen.md) | Главная страница |
 | [apps/postrade/deals-app/pages/Portfolio.screen.md](../apps/postrade/deals-app/pages/Portfolio.screen.md) | Текущий портфель ДИД |
 | [apps/postrade/deals-app/pages/Tranche.screen.md](../apps/postrade/deals-app/pages/Tranche.screen.md) | Страница транша |
+| [apps/postrade/deals-app/pages/TransferSchemas.screen.md](../apps/postrade/deals-app/pages/TransferSchemas.screen.md) | Единая трансфертная ставка |
 | [apps/postrade/deals-app/proto-panel/comments.md](../apps/postrade/deals-app/proto-panel/comments.md) | Комментарии к прототипу |
 | [apps/postrade/deals-app/refs/Текущий портфель.md](../apps/postrade/deals-app/refs/Текущий%20портфель.md) | Новая страница "Текущий портфель ДИД" |
 | [apps/postrade/deals-app/widgets/README.md](../apps/postrade/deals-app/widgets/README.md) | widgets — виджеты модуля deals-app |
+| [apps/postrade/deals-app/widgets/modals/AdditionalAgreementModal/AdditionalAgreementModal.md](../apps/postrade/deals-app/widgets/modals/AdditionalAgreementModal/AdditionalAgreementModal.md) | Окно «Дополнительное соглашение» |
+| [apps/postrade/deals-app/widgets/modals/AdditionalAgreementModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/AdditionalAgreementModal/CHANGELOG.md) | AdditionalAgreementModal — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.md](../apps/postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.md) | Фильтр дополнительных соглашений |
+| [apps/postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/AdditionalAgreementsFilterModal/CHANGELOG.md) | AdditionalAgreementsFilterModal — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/BalanceAndCurrencyModal/BalanceAndCurrencyModal.md](../apps/postrade/deals-app/widgets/modals/BalanceAndCurrencyModal/BalanceAndCurrencyModal.md) | Модальное окно «Баланс и валюта» |
+| [apps/postrade/deals-app/widgets/modals/BalanceAndCurrencyModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/BalanceAndCurrencyModal/CHANGELOG.md) | BalanceAndCurrencyModal — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/BaseTransferIndexHistoryModal/BaseTransferIndexHistoryModal.md](../apps/postrade/deals-app/widgets/modals/BaseTransferIndexHistoryModal/BaseTransferIndexHistoryModal.md) | История изменения базового индекса |
+| [apps/postrade/deals-app/widgets/modals/BaseTransferIndexHistoryModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/BaseTransferIndexHistoryModal/CHANGELOG.md) | BaseTransferIndexHistoryModal — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CHANGELOG.md) | Модальное окно «Документы по сделке» (CounterpartiesEcmModal) — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.md](../apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.md) | Widget: CounterpartiesEcmModal — Модальное окно «Документы по сделке» |
 | [apps/postrade/deals-app/widgets/modals/DealDescriptionModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/DealDescriptionModal/CHANGELOG.md) | Модальное окно описания сделки (DealDescriptionModal) — журнал изменений |
@@ -787,6 +853,8 @@
 | [apps/postrade/deals-app/widgets/modals/FixationModal/FixationModal.md](../apps/postrade/deals-app/widgets/modals/FixationModal/FixationModal.md) | Фиксация ЭПС/ВБС |
 | [apps/postrade/deals-app/widgets/modals/FixationModal/FixationModalTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/FixationModal/FixationModalTile/CHANGELOG.md) | FixationModalTile — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.md](../apps/postrade/deals-app/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.md) | Карточка фиксации ЭПС/ВБС |
+| [apps/postrade/deals-app/widgets/modals/InitialAndAdditionalAgreementsModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/InitialAndAdditionalAgreementsModal/CHANGELOG.md) | InitialAndAdditionalAgreementsModal — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.md](../apps/postrade/deals-app/widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.md) | Окно «Договор» |
 | [apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/CHANGELOG.md) | Окно «Перенос инструмента» (InstrumentTransferModal) — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.md](../apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.md) | Окно «Перенос инструмента» (InstrumentTransferModal) |
 | [apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CHANGELOG.md) | Модальное окно контрагентов (InstrumentsCounterpartiesModal) — журнал изменений |
@@ -797,6 +865,8 @@
 | [apps/postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.md](../apps/postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.md) | Окно «Инструменты» (InstrumentsModal) |
 | [apps/postrade/deals-app/widgets/modals/LinkChangeModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/LinkChangeModal/CHANGELOG.md) | Окно «Изменить связь с ФИ» (LinkChangeModal) — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.md](../apps/postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.md) | Окно «Изменить связь с ФИ» (LinkChangeModal) |
+| [apps/postrade/deals-app/widgets/modals/LoanExternalDataModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/LoanExternalDataModal/CHANGELOG.md) | LoanExternalDataModal — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/LoanExternalDataModal/LoanExternalDataModal.md](../apps/postrade/deals-app/widgets/modals/LoanExternalDataModal/LoanExternalDataModal.md) | Модальное окно технической информации |
 | [apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/CHANGELOG.md) | Назначение ответственного (NavigatorAppointmentOfResponsibleModal) — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.md](../apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.md) | Назначение ответственного (NavigatorAppointmentOfResponsibleModal) |
 | [apps/postrade/deals-app/widgets/modals/NavigatorApprovalModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/NavigatorApprovalModal/CHANGELOG.md) | Подтверждение приёма на мониторинг (NavigatorApprovalModal) — журнал изменений |
@@ -813,6 +883,12 @@
 | [apps/postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.md](../apps/postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.md) | Окно «Продукты» (ProductsModal) |
 | [apps/postrade/deals-app/widgets/modals/RepaymentModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/RepaymentModal/CHANGELOG.md) | Окно погашения (RepaymentModal) — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.md](../apps/postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.md) | Окно погашения (RepaymentModal) |
+| [apps/postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/CHANGELOG.md) | TrancheLoanLimitsModal — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.md](../apps/postrade/deals-app/widgets/modals/TrancheLoanLimitsModal/TrancheLoanLimitsModal.md) | Окно «Валюта транша» (TrancheLoanLimitsModal) |
+| [apps/postrade/deals-app/widgets/modals/TransferRateHistoryModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/TransferRateHistoryModal/CHANGELOG.md) | TransferRateHistoryModal — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/TransferRateHistoryModal/TransferRateHistoryModal.md](../apps/postrade/deals-app/widgets/modals/TransferRateHistoryModal/TransferRateHistoryModal.md) | История изменения ставок |
+| [apps/postrade/deals-app/widgets/modals/TransferSchemaModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/TransferSchemaModal/CHANGELOG.md) | TransferSchemaModal — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/TransferSchemaModal/TransferSchemaModal.md](../apps/postrade/deals-app/widgets/modals/TransferSchemaModal/TransferSchemaModal.md) | Окно «Процентная схема» |
 | [apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/CHANGELOG.md](../apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/CHANGELOG.md) | Поповер связанных сделок (RelatedDealsPopover) — журнал изменений |
 | [apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md](../apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md) | Widget: RelatedDealsPopover — Поповер связанных сделок |
 | [apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/CHANGELOG.md](../apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/CHANGELOG.md) | Контрагенты сделки (DealCounterpartiesTable) — журнал изменений |
@@ -823,6 +899,12 @@
 | [apps/postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.md](../apps/postrade/deals-app/widgets/tables/FixationHistoryTable/FixationHistoryTable.md) | История фиксаций |
 | [apps/postrade/deals-app/widgets/tables/KPITable/CHANGELOG.md](../apps/postrade/deals-app/widgets/tables/KPITable/CHANGELOG.md) | KPITable — журнал изменений |
 | [apps/postrade/deals-app/widgets/tables/KPITable/KPITable.md](../apps/postrade/deals-app/widgets/tables/KPITable/KPITable.md) | Отчет KPI |
+| [apps/postrade/deals-app/widgets/tiles/AdditionalAgreementTile/AdditionalAgreementTile.md](../apps/postrade/deals-app/widgets/tiles/AdditionalAgreementTile/AdditionalAgreementTile.md) | Дополнительное соглашение |
+| [apps/postrade/deals-app/widgets/tiles/AdditionalAgreementTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/AdditionalAgreementTile/CHANGELOG.md) | AdditionalAgreementTile — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/BalanceAndCurrencyTile/BalanceAndCurrencyTile.md](../apps/postrade/deals-app/widgets/tiles/BalanceAndCurrencyTile/BalanceAndCurrencyTile.md) | Баланс и валюта |
+| [apps/postrade/deals-app/widgets/tiles/BalanceAndCurrencyTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/BalanceAndCurrencyTile/CHANGELOG.md) | BalanceAndCurrencyTile — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/ContractTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/ContractTile/CHANGELOG.md) | ContractTile — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/ContractTile/ContractTile.md](../apps/postrade/deals-app/widgets/tiles/ContractTile/ContractTile.md) | Договор |
 | [apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CHANGELOG.md) | Контрагенты (CounterpartiesTile) — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md](../apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md) | Контрагенты (CounterpartiesTile) |
 | [apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/CHANGELOG.md) | Описание сделки — журнал изменений |
@@ -843,10 +925,24 @@
 | [apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/CHANGELOG.md) | Карточка финансового инструмента (FinInstrumentCard) — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.md](../apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.md) | Карточка финансового инструмента (FinInstrumentCard) |
 | [apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md](../apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md) | Финансовые инструменты (FinInstrumentsTile) |
+| [apps/postrade/deals-app/widgets/tiles/InitialAndAdditionalAgreementsTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/InitialAndAdditionalAgreementsTile/CHANGELOG.md) | InitialAndAdditionalAgreementsTile — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/InitialAndAdditionalAgreementsTile/InitialAndAdditionalAgreementsTile.md](../apps/postrade/deals-app/widgets/tiles/InitialAndAdditionalAgreementsTile/InitialAndAdditionalAgreementsTile.md) | Договор и дополнительные соглашения |
+| [apps/postrade/deals-app/widgets/tiles/LoanExternalDataTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/LoanExternalDataTile/CHANGELOG.md) | LoanExternalDataTile — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/LoanExternalDataTile/LoanExternalDataTile.md](../apps/postrade/deals-app/widgets/tiles/LoanExternalDataTile/LoanExternalDataTile.md) | Техническая информация |
+| [apps/postrade/deals-app/widgets/tiles/LoanNrlTranchesTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/LoanNrlTranchesTile/CHANGELOG.md) | Транши (LoanNrlTranchesTile) — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/LoanNrlTranchesTile/LoanNrlTranchesTile.md](../apps/postrade/deals-app/widgets/tiles/LoanNrlTranchesTile/LoanNrlTranchesTile.md) | Транши |
 | [apps/postrade/deals-app/widgets/tiles/Navigator/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/Navigator/CHANGELOG.md) | Заведение сделки (Navigator) — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/Navigator/Navigator.md](../apps/postrade/deals-app/widgets/tiles/Navigator/Navigator.md) | Заведение сделки |
 | [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/CHANGELOG.md) | Сведения о проекте — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md) | Widget: ProjectInformationTile — Сведения о проекте |
+| [apps/postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/CHANGELOG.md) | TrancheLoanLimitsTile — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.md](../apps/postrade/deals-app/widgets/tiles/TrancheLoanLimitsTile/TrancheLoanLimitsTile.md) | Валюта транша (TrancheLoanLimitsTile) |
+| [apps/postrade/deals-app/widgets/tiles/TrancheNrlSummaryTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/TrancheNrlSummaryTile/CHANGELOG.md) | TrancheNrlSummaryTile — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/TrancheNrlSummaryTile/TrancheNrlSummaryTile.md](../apps/postrade/deals-app/widgets/tiles/TrancheNrlSummaryTile/TrancheNrlSummaryTile.md) | Сводка НКЛ (TrancheNrlSummaryTile) |
+| [apps/postrade/deals-app/widgets/tiles/TransferRateTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/TransferRateTile/CHANGELOG.md) | TransferRateTile — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/TransferRateTile/TransferRateTile.md](../apps/postrade/deals-app/widgets/tiles/TransferRateTile/TransferRateTile.md) | ЕТС |
+| [apps/postrade/deals-app/widgets/tiles/TransferSchemaTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/TransferSchemaTile/CHANGELOG.md) | TransferSchemaTile — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/TransferSchemaTile/TransferSchemaTile.md](../apps/postrade/deals-app/widgets/tiles/TransferSchemaTile/TransferSchemaTile.md) | Процентная схема ЕТС |
 
 ### apps/postrade/deals-app — снимки задач
 
@@ -992,6 +1088,62 @@
 | [apps/postrade/drafts/tranche-page-v03/widgets/tiles/RsbuInterestAdjustmentsTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/RsbuInterestAdjustmentsTile/CHANGELOG.md) | Корректировки процентов РСБУ — журнал изменений |
 | [apps/postrade/drafts/tranche-page-v03/widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.md](../apps/postrade/drafts/tranche-page-v03/widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.md) | Корректировки процентов РСБУ |
 
+### apps/postrade/drafts/tranche-page-v04
+
+| Документ | Аннотация |
+|---|---|
+| [apps/postrade/drafts/tranche-page-v04/pages/Deal.screen.md](../apps/postrade/drafts/tranche-page-v04/pages/Deal.screen.md) | Страница сделки |
+| [apps/postrade/drafts/tranche-page-v04/pages/FinancialMetrics.screen.md](../apps/postrade/drafts/tranche-page-v04/pages/FinancialMetrics.screen.md) | Финансовые метрики |
+| [apps/postrade/drafts/tranche-page-v04/pages/RsbuInterestAdjustments.screen.md](../apps/postrade/drafts/tranche-page-v04/pages/RsbuInterestAdjustments.screen.md) | Корректировки процентов РСБУ |
+| [apps/postrade/drafts/tranche-page-v04/pages/Tranche.screen.md](../apps/postrade/drafts/tranche-page-v04/pages/Tranche.screen.md) | Страница транша |
+| [apps/postrade/drafts/tranche-page-v04/proto-panel/comments.md](../apps/postrade/drafts/tranche-page-v04/proto-panel/comments.md) | Комментарии к прототипу |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/FinancialMetricsDownloadReportModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/FinancialMetricsDownloadReportModal/CHANGELOG.md) | Выгрузка отчета (FinancialMetricsDownloadReportModal) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/FinancialMetricsDownloadReportModal/FinancialMetricsDownloadReportModal.md) | Выгрузка отчета |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/FinancialMetricsFilterModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/FinancialMetricsFilterModal/CHANGELOG.md) | Фильтр отчета финансовых метрик (FinancialMetricsFilterModal) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/FinancialMetricsFilterModal/FinancialMetricsFilterModal.md) | Фильтр отчета финансовых метрик |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/FixationModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/FixationModal/CHANGELOG.md) | FixationModal — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/FixationModal/FixationModal.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/FixationModal/FixationModal.md) | Фиксация ЭПС/ВБС |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/FixationModal/FixationModalTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/FixationModal/FixationModalTile/CHANGELOG.md) | FixationModalTile — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.md) | Карточка фиксации ЭПС/ВБС |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuAdjustmentModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuAdjustmentModal/CHANGELOG.md) | Модальное окно внесения корректировки (RsbuAdjustmentModal) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.md) | Модальное окно корректировки процентов |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuFixationModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuFixationModal/CHANGELOG.md) | Окно «Фиксация РСБУ» (RsbuFixationModal) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuFixationModal/RsbuFixationModal.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuFixationModal/RsbuFixationModal.md) | Окно «Фиксация РСБУ» |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tables/DealCounterpartiesTable/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tables/DealCounterpartiesTable/CHANGELOG.md) | Контрагенты сделки (DealCounterpartiesTable) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md](../apps/postrade/drafts/tranche-page-v04/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md) | Контрагенты сделки |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tables/FinancialMetricsTable/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tables/FinancialMetricsTable/CHANGELOG.md) | FinancialMetricsTable — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.md](../apps/postrade/drafts/tranche-page-v04/widgets/tables/FinancialMetricsTable/FinancialMetricsTable.md) | Отчет финансовых метрик |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tables/FixationHistoryTable/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tables/FixationHistoryTable/CHANGELOG.md) | FixationHistoryTable — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tables/FixationHistoryTable/FixationHistoryTable.md](../apps/postrade/drafts/tranche-page-v04/widgets/tables/FixationHistoryTable/FixationHistoryTable.md) | История фиксаций |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tables/KPITable/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tables/KPITable/CHANGELOG.md) | KPITable — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tables/KPITable/KPITable.md](../apps/postrade/drafts/tranche-page-v04/widgets/tables/KPITable/KPITable.md) | Отчет KPI |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/CounterpartiesTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/CounterpartiesTile/CHANGELOG.md) | Контрагенты (CounterpartiesTile) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md) | Контрагенты (CounterpartiesTile) |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealDescriptionTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealDescriptionTile/CHANGELOG.md) | Описание сделки — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md) | Widget: DealDescriptionTile — Описание сделки |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealFinancialMetricsTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealFinancialMetricsTile/CHANGELOG.md) | Финансовые метрики сделки — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.md) | Финансовые метрики сделки |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealMetricsCalculationTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealMetricsCalculationTile/CHANGELOG.md) | Финансовые метрики (DealMetricsCalculationTile) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.md) | Финансовые метрики |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealPeriodTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealPeriodTile/CHANGELOG.md) | Сроки сделки — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealPeriodTile/DealPeriodTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealPeriodTile/DealPeriodTile.md) | Сроки сделки |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealProductTreeTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealProductTreeTile/CHANGELOG.md) | Продукты сделки (DealProductTreeTile) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealProductTreeTile/DealProductTreeTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealProductTreeTile/DealProductTreeTile.md) | Продукты сделки (DealProductTreeTile) |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealRelatedCollateralsTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealRelatedCollateralsTile/CHANGELOG.md) | Связанные обеспечения (DealRelatedCollateralsTile) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealRelatedCollateralsTile/DealRelatedCollateralsTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealRelatedCollateralsTile/DealRelatedCollateralsTile.md) | Связанные обеспечения |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealTeamTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealTeamTile/CHANGELOG.md) | Команда сделки — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealTeamTile/DealTeamTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/DealTeamTile/DealTeamTile.md) | Команда сделки |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/FinInstrumentsTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/FinInstrumentsTile/CHANGELOG.md) | Финансовые инструменты (FinInstrumentsTile) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/CHANGELOG.md) | Карточка финансового инструмента (FinInstrumentCard) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/FinInstrumentsTile/FinInstrumentCard/FinInstrumentCard.md) | Карточка финансового инструмента (FinInstrumentCard) |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md) | Финансовые инструменты (FinInstrumentsTile) |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/Navigator/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/Navigator/CHANGELOG.md) | Заведение сделки (Navigator) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/Navigator/Navigator.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/Navigator/Navigator.md) | Заведение сделки |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/ProjectInformationTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/ProjectInformationTile/CHANGELOG.md) | Сведения о проекте — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md) | Widget: ProjectInformationTile — Сведения о проекте |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/RsbuInterestAdjustmentsTile/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/RsbuInterestAdjustmentsTile/CHANGELOG.md) | Корректировки процентов РСБУ — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.md) | Корректировки процентов РСБУ |
+
 ### apps/postrade/payments-app
 
 | Документ | Аннотация |
@@ -1089,7 +1241,13 @@
 |---|---|
 | [apps/screen-map/README.md](../apps/screen-map/README.md) | Карта экранов |
 
-## Задачи и заметки (125)
+## Задачи и заметки (161)
+
+| Документ | Аннотация |
+|---|---|
+| [docs/backlog/RE-001-concept-archive.md](backlog/RE-001-concept-archive.md) | Папка архива для концептов в файловой структуре |
+| [docs/backlog/RE-002-proto-panel-nav-map.md](backlog/RE-002-proto-panel-nav-map.md) | Карта в протопанели — на компонентах навигации |
+| [docs/backlog/README.md](backlog/README.md) | Бэклог: мысли и задачи на будущее |
 
 ### Архив/черновики
 
@@ -1154,6 +1312,12 @@
 | [docs/tasks/MS0015-ibp-redesign-leads-concept.review.md](tasks/MS0015-ibp-redesign-leads-concept.review.md) | IBP Redesign v2 — приёмка концепта B |
 | [docs/tasks/MS0015-ibp-redesign-merge.review.md](tasks/MS0015-ibp-redesign-merge.review.md) | Проверка MS0014 / MS0015 перед PR в main |
 | [docs/tasks/MS0016-ibp-redesign-leads-polish.md](tasks/MS0016-ibp-redesign-leads-polish.md) | IBP Redesign v2: доводка реестра «Лиды» после MS0015 — ритм 12px, метрики в шапке, пагинация с итогами, демо на две страницы, «Статус клиента» |
+| [docs/tasks/MS0017-client-search.md](tasks/MS0017-client-search.md) | Поиск клиентов — с каким клиентом работать |
+| [docs/tasks/MS0018-dashboard-polish.md](tasks/MS0018-dashboard-polish.md) | Дашборд — цвета, профиль, копирование и обводки |
+| [docs/tasks/MS0019-home-events-split.md](tasks/MS0019-home-events-split.md) | События на главной — список и подробности |
+| [docs/tasks/MS0019a-events-visual-fix.md](tasks/MS0019a-events-visual-fix.md) | События — убрать вложенные рамки и выровнять строки |
+| [docs/tasks/MS0020-funds-pipeline.md](tasks/MS0020-funds-pipeline.md) | Фонды (FundsPipeline) в модуле ib/funds-app: список фондов, активы фонда, окна фонда |
+| [docs/tasks/MS0021-tooling-module-ui.md](tasks/MS0021-tooling-module-ui.md) | Выделить сервисный модуль tooling и независимый UI хаба и протопанели |
 | [docs/tasks/RE0001-product-row-tree.md](tasks/RE0001-product-row-tree.md) | Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов |
 | [docs/tasks/RE0002-ds-component-folders.md](tasks/RE0002-ds-component-folders.md) | ДС: компонент в своей папке со всеми файлами — структура как в ibp-ui-kit |
 | [docs/tasks/RE0004-local-components-template.md](tasks/RE0004-local-components-template.md) | Локальные компоненты: единый шаблон паспорта, страницы документации и конструктора |
@@ -1195,6 +1359,20 @@
 | [docs/tasks/RE0038-business-context.md](tasks/RE0038-business-context.md) | Раздел «Бизнес-смысл» во всех локальных компонентах и спеках страниц модулей |
 | [docs/tasks/RE0039-page-passports.md](tasks/RE0039-page-passports.md) | Паспорт страницы: описание страниц модулей на карте экранов |
 | [docs/tasks/RE0040-harness2-takeaways.md](tasks/RE0040-harness2-takeaways.md) | Харнес: хук проверки после записи экрана и четыре приёма из Harness² |
+| [docs/tasks/RE0041-nkl-loan-agreement.md](tasks/RE0041-nkl-loan-agreement.md) | Страница договора займа (НКЛ), страницы «Договор и доп. соглашения» и «ЕТС» с тайлами и окнами в deals-app |
+| [docs/tasks/RE0042-spec-human-edits.md](tasks/RE0042-spec-human-edits.md) | Правка спек на разработку человеком в редакторе и разбор правок агентом |
+| [docs/tasks/RE0043-core-modules-promotion.md](tasks/RE0043-core-modules-promotion.md) | Перенести задачи и клиентов из IBP Redesign v1 в модули Core |
+| [docs/tasks/RE0043-core-modules-promotion.review.md](tasks/RE0043-core-modules-promotion.review.md) | RE0043 — независимая приёмка переноса задач и клиентов |
+| [docs/tasks/RE0044-analyst-dashboard-home.md](tasks/RE0044-analyst-dashboard-home.md) | Сделать dashboard-app главной Аналитика в Core |
+| [docs/tasks/RE0044-analyst-dashboard-home.review.md](tasks/RE0044-analyst-dashboard-home.review.md) | RE0044 — независимая приёмка главной Аналитика |
+| [docs/tasks/RE0044a-three-separate-roles.md](tasks/RE0044a-three-separate-roles.md) | Вернуть Аналитика ДИД в Pre и сохранить три отдельные роли |
+| [docs/tasks/RE0044a-three-separate-roles.review.md](tasks/RE0044a-three-separate-roles.review.md) | RE0044a — независимая приёмка трёх отдельных ролей |
+| [docs/tasks/RE0045-page-specs-template.md](tasks/RE0045-page-specs-template.md) | Спеки страниц: единый канон разделов и миграция |
+| [docs/tasks/RE0046-zcode-cost-reader.md](tasks/RE0046-zcode-cost-reader.md) | task-cost: читатель журналов ZCode |
+| [docs/tasks/RE0047-nkl-fixes.md](tasks/RE0047-nkl-fixes.md) | Правки НКЛ и модалки ЕТС: контрагенты в «Документах по сделке», ширина окна, лейбл, раскладка полей |
+| [docs/tasks/RE0048-ds-typography-kit-neo.md](tasks/RE0048-ds-typography-kit-neo.md) | Типографика: имена UI-kit, тема NEO, переключатели |
+| [docs/tasks/RE0048-ds-typography-kit-neo.review.md](tasks/RE0048-ds-typography-kit-neo.review.md) | RE0048 — повторная приёмка типографского кита и типографских тем NEO |
+| [docs/tasks/RE0049-tranche-page.md](tasks/RE0049-tranche-page.md) | Страница транша: погашение, разделы НКЛ и общая информация, аккордеоны витрины |
 | [docs/tasks/README.md](tasks/README.md) | Задачи: как заводить, какие файлы бывают, как считать затраты |
 
 ### Снимки задач
@@ -1203,6 +1381,12 @@
 |---|---|
 | [docs/tasks/MS0006-docs-index.handoff.md](tasks/MS0006-docs-index.handoff.md) | DocsIndex — handoff |
 | [docs/tasks/MS0013-ds-theme-generator.handoff.md](tasks/MS0013-ds-theme-generator.handoff.md) | MS0013 — handoff |
+| [docs/tasks/MS0017-client-search.handoff.md](tasks/MS0017-client-search.handoff.md) | MS0017 — handoff |
+| [docs/tasks/MS0018-dashboard-polish.handoff.md](tasks/MS0018-dashboard-polish.handoff.md) | MS0018 — handoff |
+| [docs/tasks/MS0019-home-events-split.handoff.md](tasks/MS0019-home-events-split.handoff.md) | MS0019 — handoff |
+| [docs/tasks/MS0019a-events-visual-fix.handoff.md](tasks/MS0019a-events-visual-fix.handoff.md) | MS0019a — handoff |
+| [docs/tasks/MS0020-funds-pipeline.handoff.md](tasks/MS0020-funds-pipeline.handoff.md) | FundsPipeline — handoff |
+| [docs/tasks/MS0021-tooling-module-ui.handoff.md](tasks/MS0021-tooling-module-ui.handoff.md) | MS0021 — handoff |
 | [docs/tasks/RE0001-product-row-tree.handoff.md](tasks/RE0001-product-row-tree.handoff.md) | ProductRowTree — handoff |
 | [docs/tasks/RE0002-ds-component-folders.handoff.md](tasks/RE0002-ds-component-folders.handoff.md) | RE0002 · ДС: компонент в своей папке — handoff |
 | [docs/tasks/RE0003-fin-instruments-tile.handoff.md](tasks/RE0003-fin-instruments-tile.handoff.md) | RE0003 FinInstrumentsTile — handoff |
@@ -1230,6 +1414,13 @@
 | [docs/tasks/RE0038-business-context.handoff.md](tasks/RE0038-business-context.handoff.md) | RE0038 — handoff |
 | [docs/tasks/RE0039-page-passports.handoff.md](tasks/RE0039-page-passports.handoff.md) | RE0039 — handoff |
 | [docs/tasks/RE0040-harness2-takeaways.handoff.md](tasks/RE0040-harness2-takeaways.handoff.md) | RE0040 — handoff |
+| [docs/tasks/RE0041-nkl-loan-agreement.handoff.md](tasks/RE0041-nkl-loan-agreement.handoff.md) | RE0041 — handoff |
+| [docs/tasks/RE0043-core-modules-promotion.handoff.md](tasks/RE0043-core-modules-promotion.handoff.md) | RE0043 — перенос задач и клиентов: handoff |
+| [docs/tasks/RE0044-analyst-dashboard-home.handoff.md](tasks/RE0044-analyst-dashboard-home.handoff.md) | RE0044 — главная Аналитика: handoff |
+| [docs/tasks/RE0044a-three-separate-roles.handoff.md](tasks/RE0044a-three-separate-roles.handoff.md) | RE0044a — три отдельные роли: handoff |
+| [docs/tasks/RE0045-page-specs-template.handoff.md](tasks/RE0045-page-specs-template.handoff.md) | Handoff RE0045 — спеки страниц: единый канон |
+| [docs/tasks/RE0048-ds-typography-kit-neo.handoff.md](tasks/RE0048-ds-typography-kit-neo.handoff.md) | RE0048 — handoff |
+| [docs/tasks/RE0049-tranche-page.handoff.md](tasks/RE0049-tranche-page.handoff.md) | RE0049 — handoff (итоговый) |
 
 ## Служебное (1)
 

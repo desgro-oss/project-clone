@@ -24,7 +24,7 @@
 
   /* section */
 
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
   .badge-proposal { display:inline-block; font: var(--type-button-xs); letter-spacing:.06em; text-transform:uppercase; color: var(--text-secondary); background: var(--cgrey-100); border:1px solid var(--border-light); padding:3px 9px; border-radius:999px; margin-left:12px; vertical-align:middle; }
 
   
@@ -43,29 +43,29 @@
   .pg__stagebox { width:100%; max-width:380px; }
 
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
   .ctl input[type=range] { width:100%; accent-color: var(--primary); }
   .ctl .rng-row { display:flex; align-items:center; justify-content:space-between; }
-  .ctl .rng-row .val { font: var(--type-body-s-strong); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .ctl .rng-row .val { font: var(--type-body-s-strong-smb); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
 
 
-  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+  .pg__code { margin-top:4px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* ---------- anatomy ---------- */
   .anat { display:grid; grid-template-columns: minmax(280px,1fr) minmax(240px,360px); gap:40px; align-items:center; }
   @media (max-width:760px){ .anat { grid-template-columns:1fr; } }
   .anat__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:40px 44px; display:flex; justify-content:center; width:100%; }
   .anat__legend { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; counter-reset:a; }
-  .anat__legend li { display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m); color: var(--text-primary); }
-  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center; }
-  .anat__legend li .t .k { font: var(--type-body-m-strong); color: var(--text-primary); }
+  .anat__legend li { display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m-reg); color: var(--text-primary); }
+  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center; }
+  .anat__legend li .t .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
 
   /* ---------- composition grid ---------- */
   .compo-list { display:flex; flex-direction:column; gap:22px; }
   .compo-row { display:grid; grid-template-columns: 200px 1fr; gap:28px; align-items:center; }
   @media (max-width:640px){ .compo-row { grid-template-columns:1fr; } }
-  .compo-row .ch { font: var(--type-body-m-strong); color: var(--text-primary); }
-  .compo-row .cd { font: var(--type-body-s); color: var(--text-secondary); margin-top:2px; }
+  .compo-row .ch { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
+  .compo-row .cd { font: var(--type-body-s-reg); color: var(--text-secondary); margin-top:2px; }
   .compo-row .cell { min-width:0; }
   .compo-row + .compo-row { padding-top:22px; border-top:1px solid var(--border-light); }
 
@@ -73,35 +73,35 @@
   .matrix-wrap { overflow-x:auto; }
   .matrix { display:flex; flex-direction:column; gap:22px; min-width:520px; }
   .matrix-row { display:grid; grid-template-columns: 170px 1fr; gap:24px; align-items:center; }
-  .matrix-row .rn { font: var(--type-body-m-strong); color: var(--text-primary); }
-  .matrix-row .rd { font: var(--type-body-s); color: var(--text-secondary); margin-top:2px; }
+  .matrix-row .rn { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
+  .matrix-row .rd { font: var(--type-body-s-reg); color: var(--text-secondary); margin-top:2px; }
 
   /* ---------- tone scale ---------- */
   .tone-grid { display:flex; flex-direction:column; gap:18px; }
   .tone-row { display:grid; grid-template-columns: 120px 1fr; gap:24px; align-items:center; }
-  .tone-row .tn { font: var(--type-body-m-strong); color: var(--text-primary); }
+  .tone-row .tn { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
 
   /* ---------- corner cases ---------- */
   .cc-grid { display:grid; grid-template-columns: 1fr 1fr; gap:20px; }
   @media (max-width:760px){ .cc-grid { grid-template-columns:1fr; } }
   .cc-card { background: var(--bg-tile); border:1px solid var(--border-light); border-radius:14px; padding:20px 22px; display:flex; flex-direction:column; gap:14px; }
-  .cc-card .ct { font: var(--type-body-m-strong); color: var(--text-primary); }
-  .cc-card .cd { font: var(--type-body-s); color: var(--text-secondary); text-wrap:pretty; }
+  .cc-card .ct { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
+  .cc-card .cd { font: var(--type-body-s-reg); color: var(--text-secondary); text-wrap:pretty; }
 
   /* ---------- do / don't ---------- */
   .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
   .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
-  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong-smb); padding:14px 20px 0; }
   .guide-card__body { padding:20px 20px 0; flex:1; }
-  .guide-card__cap { padding:16px 20px 20px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+  .guide-card__cap { padding:16px 20px 20px; font: var(--type-body-xs-reg); color: var(--text-inactive); text-wrap:pretty; }
 
   /* ---------- reference tables ---------- */
-  .ref-table th, .ref-table td { text-align:left; padding:16px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); vertical-align:middle; }
+  .ref-table th, .ref-table td { text-align:left; padding:16px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); vertical-align:middle; }
 
   @media (max-width:760px){ .color-ref { grid-template-columns:1fr; } }
   
-  .cref-group > h3 { font: var(--type-h5-strong); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
+  .cref-group > h3 { font: var(--type-h5-strong-smb); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
   .cref-row { display:grid; grid-template-columns: 36px 1fr auto; gap:14px; align-items:center; padding:9px 22px; }
   .cref-sw .cf { position:absolute; inset:0; }
 
@@ -110,7 +110,7 @@
   .size-spec__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:44px; display:flex; flex-direction:column; gap:22px; justify-content:center; }
 
   /* ---------- developer handoff ---------- */
-  .subhead { font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px; }
+  .subhead { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0 0 16px; }
   .subhead.mt { margin-top: 34px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
@@ -654,7 +654,7 @@ function positionFloatingMarkers(scope) {
     const wrap = document.createElement('div');
     wrap.appendChild(makePbar({ tone: 'accent', size, value: 62, showValue: false }));
     const label = document.createElement('div');
-    label.style.cssText = 'margin-top:8px; font:var(--type-body-s); color:var(--text-secondary);';
+    label.style.cssText = 'margin-top:8px; font:var(--type-body-s-reg); color:var(--text-secondary);';
     label.textContent = cap;
     wrap.appendChild(label);
     stage.appendChild(wrap);
@@ -715,7 +715,7 @@ function positionFloatingMarkers(scope) {
     const seg = document.createElement('div'); seg.style.cssText = 'height:100%; width:' + w + '%; background:' + color + ';'; scale.appendChild(seg);
   });
   const legend = document.createElement('div');
-  legend.style.cssText = 'display:flex; justify-content:space-between; font:var(--type-body-xs); color:var(--text-inactive);';
+  legend.style.cssText = 'display:flex; justify-content:space-between; font:var(--type-body-xs-reg); color:var(--text-inactive);';
   legend.innerHTML = '<span>0%</span><span>30%</span><span>70%</span><span>100%</span>';
   scaleWrap.appendChild(scale); scaleWrap.appendChild(legend);
 
@@ -757,7 +757,7 @@ function positionFloatingMarkers(scope) {
   tones.forEach(([tone, name, desc]) => {
     const row = document.createElement('div'); row.className = 'tone-row';
     const tn = document.createElement('div');
-    tn.innerHTML = '<div class="tn">' + name + '</div><div class="cd" style="font:var(--type-body-s);color:var(--text-secondary);margin-top:2px;">' + desc + '</div>';
+    tn.innerHTML = '<div class="tn">' + name + '</div><div class="cd" style="font:var(--type-body-s-reg);color:var(--text-secondary);margin-top:2px;">' + desc + '</div>';
     const cell = document.createElement('div'); cell.style.maxWidth = '360px';
     cell.appendChild(makePbar({ tone, value: 62, showValue: false }));
     row.appendChild(tn); row.appendChild(cell);
@@ -794,9 +794,9 @@ function positionFloatingMarkers(scope) {
 /* ---------- TYPOGRAPHY REFERENCE ---------- */
 (function () {
   const rows = [
-    ['Заголовок', 'Заголовок', '--type-body-s', 'SB Sans Text', '14 / 20', 'pbar__label'],
-    ['Значение', '50/100', '--type-body-s-strong', 'SB Sans Text', '14 / 20', 'pbar__value'],
-    ['Хелпер', 'Пояснение', '--type-body-xs', 'SB Sans Text', '12 / 16', 'ds-helper ds-helper--left'],
+    ['Заголовок', 'Заголовок', '--type-body-s-reg', 'SB Sans Text', '14 / 20', 'pbar__label'],
+    ['Значение', '50/100', '--type-body-s-strong-smb', 'SB Sans Text', '14 / 20', 'pbar__value'],
+    ['Хелпер', 'Пояснение', '--type-body-xs-reg', 'SB Sans Text', '12 / 16', 'ds-helper ds-helper--left'],
   ];
   const tb = document.querySelector('#typo-table tbody');
   tb.innerHTML = rows.map(([part, sample, tok, font, sl, cls]) => `
@@ -1043,7 +1043,7 @@ function pbarAutoTone(value, max) { /* акцент по порогам */ }</sc
 }
 .pbar__label {
   min-width: 0;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1051,7 +1051,7 @@ function pbarAutoTone(value, max) { /* акцент по порогам */ }</sc
 }
 .pbar__value {
   flex: none;
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }
@@ -1107,7 +1107,7 @@ function pbarAutoTone(value, max) { /* акцент по порогам */ }</sc
   position: absolute;
   top: calc(-1 * (var(--pbar-h) + 16px));
   width: max-content;
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-primary);
   white-space: nowrap;
   pointer-events: none;

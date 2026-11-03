@@ -58,8 +58,8 @@
 }
 /* Title многострочный: заголовок страницы всегда виден целиком, усечения нет */
 .phead__title{
-  font:var(--type-h3-strong);
-  letter-spacing:0;
+  font:var(--type-h3-strong-smb);
+  letter-spacing: var(--type-ls);
   color:var(--text-primary);
   margin:0;
   min-width:120px;
@@ -90,7 +90,7 @@
   gap:8px 12px;
   flex-wrap:wrap;
   min-width:0;
-  font:var(--type-body-s);
+  font:var(--type-body-s-reg);
   color:var(--text-secondary);
 }
 .phead__subtitle-ico{
@@ -107,7 +107,7 @@
   display:inline-flex;
   align-items:center;
   gap:4px;
-  font:var(--type-body-xs);
+  font:var(--type-body-xs-reg);
   color:var(--text-inactive);
   white-space:nowrap;
 }

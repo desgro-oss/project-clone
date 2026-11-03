@@ -33,7 +33,7 @@ Drawer — панель деталей у правого края экрана �
 - **Поведение** — Выезд справа 200мс, `prefers-reduced-motion` его снимает. Закрытие: крестик, `[data-modal-close]`, Esc, клик мимо. `data-drawer-guarded` на триггере — клик мимо не закрывает (панель с несохранённой формой). Вложенный слой (`data-modal-nested`) открывается поверх панели, не закрывая её. Ниже 640px панель занимает всю ширину.
 - **Состояния** — Скрыта (`hidden` на скриме) · открыта · шапка и подвал с тенью при прокрутке тела (`.is-scrolled`, ставит `DSModal.wireScroll`).
 - **Доступность** — `role="dialog"` + `aria-modal="true"` на `.drawer`, `aria-labelledby` на заголовок. Триггер получает `aria-haspopup="dialog"` и `aria-controls` — их ставит рантайм. Focus trap, возврат фокуса на триггер и `inert` фона — от `Modal.js`. Крестику нужен `aria-label`.
-- **Типографика** — Заголовок `--type-h5-strong` (у Modal — h4-strong: панель уже, и её заголовок соседствует с путём). Путь `--type-body-xs`. Заголовок секции `--type-body-s-strong`. Тело `--type-body-m`.
+- **Типографика** — Заголовок `--type-h5-strong-smb` (у Modal — h4-strong: панель уже, и её заголовок соседствует с путём). Путь `--type-body-xs-reg`. Заголовок секции `--type-body-s-strong-smb`. Тело `--type-body-m-reg`.
 - **Цвета** — Поверхность `--bg-popup`, тень `--shadow-modal-form`, разделители `--border-light`, путь `--text-inactive`, заголовки `--text-primary`. Скрим — `--modal-scrim`.
 
 ## Диагностика

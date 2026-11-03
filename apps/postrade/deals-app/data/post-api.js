@@ -28,6 +28,13 @@
      finMetrics.get(dealId) → Promise<{ calculation, fixations, updated } | null>
      finMetrics.put(dealId, { calculation, fixations }) → Promise<{ ok, updated }>
      finMetrics.reset() → Promise
+     — договор займа (НКЛ), его ДС и процентные схемы (LoanAgreementStore);
+       ключ — id узла договора в дереве продуктов, а не номер сделки:
+       в сделке бывает два договора:
+     loanAgreements.all() → Promise<{ instrumentId: { agreement, updated } }>
+     loanAgreements.get(instrumentId) → Promise<{ agreement, updated } | null>
+     loanAgreements.put(instrumentId, { agreement }) → Promise<{ ok, updated }>
+     loanAgreements.reset() → Promise
    }
 
    Два режима, общие для всех ресурсов:
@@ -47,7 +54,9 @@
      целиком: сохранённый список перекрывает демо-карточки сделки;
    – расчёт метрик — calculation (DealMetricsCalculationRsDto) и fixations
      (EirIbsvFixationRsDto[], mock-fin-metrics-calc.js) целиком: сохранённое
-     перекрывает демо-запись сделки.
+     перекрывает демо-запись сделки;
+   – договор займа — agreement (LoanAgreementRsDto, mock-loan-agreements.js)
+     целиком: сохранённая запись перекрывает демо-запись договора.
    ========================================================================= */
 (function () {
   'use strict';
@@ -137,7 +146,7 @@
   var ready = detect().then(function (m) {
     mode = m;
     if (m === 'local' && window.console) {
-      console.info('PostApi: сервер данных не найден — правки состава участников, дерева продуктов, карточек ФИ и расчёта метрик сохраняются только в этом браузере (localStorage). Контракт сервера — data/API.md');
+      console.info('PostApi: сервер данных не найден — правки состава участников, дерева продуктов, карточек ФИ, расчёта метрик и договоров займа сохраняются только в этом браузере (localStorage). Контракт сервера — data/API.md');
     }
     return m;
   });
@@ -156,6 +165,10 @@
     return { calculation: JSON.parse(JSON.stringify(rec.calculation)), fixations: JSON.parse(JSON.stringify(rec.fixations || [])) };
   });
 
+  var loanAgreements = resource('/api/post/loan-agreements', 'ibp.post.loan-agreements', function (rec) {
+    return { agreement: JSON.parse(JSON.stringify(rec.agreement)) };
+  });
+
   window.PostApi = {
     mode: function () { return mode; },
     ready: ready,
@@ -165,6 +178,7 @@
     reset: participants.reset,
     trees: trees,
     finInstruments: finInstruments,
-    finMetrics: finMetrics
+    finMetrics: finMetrics,
+    loanAgreements: loanAgreements
   };
 })();

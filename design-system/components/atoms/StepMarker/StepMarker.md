@@ -31,7 +31,7 @@ status: curated
 - **Поведение** — номер гаснет (0,2 с), глиф появляется с поворотом −30° и масштабом 0,3 → 1 (0,4 с, `cubic-bezier(.22, 1, .36, 1)`); заливка и цвет — переход 0,25 с; `prefers-reduced-motion` — без анимации.
 - **Состояния** — ожидает (`--st-primary-light`, цифра `--primary-dark`) · текущий (+ рамка 1px внутрь `--primary`) · готов (`--primary`, глиф `--text-on-dark`) · ошибка (`--st-red-light`, `--error-dark`) · недоступен (`--st-disabled-light`, `--st-disabled-dark`).
 - **Доступность** — `aria-hidden="true"`; статус шага — текстом у контейнера (StepForm — скрытый статус «выполнено»); цвет не единственный носитель смысла — глиф меняется вместе с цветом.
-- **Типографика** — `--type-body-xs` / `--type-body-s` + `--weight-semibold`.
+- **Типографика** — `--type-body-xs-reg` / `--type-body-s-reg` + `--weight-semibold`.
 - **Цвета** — `--st-primary-light`, `--primary-dark`, `--primary`, `--text-on-dark`, `--st-red-light`, `--error-dark`, `--st-disabled-light`, `--st-disabled-dark`.
 
 ## Для разработчиков (выжимка)

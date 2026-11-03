@@ -30,8 +30,18 @@
    строки, страница пагинации и ширины уже на месте. Колонки опознаются по
    data-col на .th. Хранилище живёт, пока открыта вкладка браузера.
 
-   Экспорт: window.DSTableSettings = { bind(trigger), bindAll(root), restore(table) }.
-   Автоподключение: bindAll(document) и восстановление на DOMContentLoaded.
+   Вид по умолчанию (с 1.025): задаёт разметка — data-col-hidden на .th
+   (колонка скрыта, пока её не включат), .th--pinned (закреплена), порядок,
+   треки и aria-sort; свои переключатели раздела — template[data-table-options]
+   (блок чекбоксов над списком колонок, событие tableoptions). Снимок вида —
+   на подключении (DSTable.wire зовёт applyDefaults до выравнивания ширин).
+   «Сбросить настройки» слева в подвале — сразу возвращает колонки,
+   сортировку и переключатели к виду по умолчанию и удаляет запись сессии.
+
+   Экспорт: window.DSTableSettings = { bind(trigger), bindAll(root),
+     restore(table), applyDefaults(table), reset(table), options(table) }.
+   Автоподключение: bindAll(document), вид по умолчанию и восстановление на
+   DOMContentLoaded.
    ========================================================================= */
 (function () {
   'use strict';
@@ -71,8 +81,31 @@
     });
   }
 
+  /* ---------- треки строки ---------- */
+  /* Инлайновый grid-template-columns строки по одному треку на ячейку:
+     пробелы внутри скобок (minmax(441px, 441fr)) трек не делят. Треков не
+     столько, сколько ячеек (repeat(), ширины из CSS) — null: тогда колонка
+     живёт на измеренной ширине, как до 1.025. */
+  function tracksOf(row) {
+    var s = (row && row.style.gridTemplateColumns) || '';
+    if (!s) return null;
+    var out = [], cur = '', depth = 0;
+    for (var i = 0; i < s.length; i++) {
+      var ch = s.charAt(i);
+      if (ch === '(') depth++;
+      if (ch === ')') depth--;
+      if (ch === ' ' && depth === 0) { if (cur) out.push(cur); cur = ''; continue; }
+      cur += ch;
+    }
+    if (cur) out.push(cur);
+    return out.length === row.children.length ? out : null;
+  }
+  function trackOf(c) { return c.track || (c.width + 'px'); }
+
   /* ---------- снимок колонок таблицы ---------- */
-  /* Колонки: { id, label, pinned, visible, width, headerCell, rowCells }.
+  /* Колонки: { id, label, pinned, visible, width, track, headerCell, rowCells }.
+     track — трек колонки из разметки (fr-доли раздела сохраняются), width —
+     измеренная ширина на случай, когда трека нет.
      visible/pinned/порядок персистятся на table.__dsTableSettings — повторное
      открытие читает модель, а не DOM (скрытые колонки не в DOM, их ячейки
      удерживаются ссылками rowCells/headerCell). */
@@ -81,6 +114,7 @@
     if (!headerRow) return null;
     var dataRows = dataRowsOf(table, headerRow);
     var children = Array.prototype.slice.call(headerRow.children);
+    var tracks = tracksOf(headerRow);
 
     var leadSep = null, trailSep = null;
     children.forEach(function (c) {
@@ -104,6 +138,7 @@
         pinned: th.classList.contains('th--pinned'),
         visible: true,
         width: Math.round(th.getBoundingClientRect().width),
+        track: tracks ? tracks[i] : null,
         headerCell: th,
         rowCells: dataRows.map(function (r) { return r.children[i]; })
       });
@@ -119,6 +154,7 @@
       dataLead: dataRows.map(function (r) { return r.children[0]; }),
       dataTrail: dataRows.map(function (r) { return r.children[r.children.length - 1]; }),
       leadWidth: Math.round((leadSep || { getBoundingClientRect: function () { return { width: 8 }; } }).getBoundingClientRect().width),
+      leadTrack: tracks && leadSep === children[0] ? tracks[0] : null,
       trailTrack: 'minmax(8px,1fr)'
     };
   }
@@ -169,7 +205,8 @@
      (tbl-resize.js). Модель об этом не знала, и следующее «Применить»
      откатывало такие правки к снимку. Поэтому видимые колонки перед каждым
      использованием модели берут из шапки порядок, закрепление и ширину;
-     скрытые остаются на своих местах в списке — в шапке их нет. */
+     скрытые остаются на своих местах в списке — в шапке их нет. Треки видимых
+     колонок — тоже из шапки: ручка ширины и перенос пишут их туда в px. */
   function syncHeader(state) {
     var cells = Array.prototype.slice.call(state.headerRow.children);
     var visible = state.columns.filter(function (c) { return c.visible; });
@@ -177,18 +214,23 @@
     visible.sort(function (a, b) { return cells.indexOf(a.headerCell) - cells.indexOf(b.headerCell); });
     var vi = 0;
     state.columns = state.columns.map(function (c) { return c.visible ? visible[vi++] : c; });
+    var tracks = tracksOf(state.headerRow);
     visible.forEach(function (c) {
       c.pinned = c.headerCell.classList.contains('th--pinned');
       var w = Math.round(c.headerCell.getBoundingClientRect().width);
       if (w > 0) c.width = w;
+      if (tracks) c.track = tracks[cells.indexOf(c.headerCell)];
     });
   }
 
   /* ---------- применение к таблице ---------- */
-  function commit(state, working) {
+  /* opts.silent — без событий: вид по умолчанию на подключении таблицы не
+     правка пользователя, и запись сессии от него не заводится */
+  function commit(state, working, opts) {
+    opts = opts || {};
     var visible = working.filter(function (c) { return c.visible; });
-    var tracks = [state.leadWidth + 'px'].concat(
-      visible.map(function (c) { return c.width + 'px'; })
+    var tracks = [state.leadTrack || (state.leadWidth + 'px')].concat(
+      visible.map(trackOf)
     ).concat([state.trailTrack]);
     var gtc = tracks.join(' ');
 
@@ -206,6 +248,9 @@
     state.dataRows.forEach(function (row, k) {
       rebuildRow(row, state.dataLead[k], visible.map(function (c) { return c.rowCells[k]; }), state.dataTrail[k]);
     });
+    /* колонка действий (.th--actions), вернувшаяся из скрытых, — ширина по
+       иконкам, если ширину в px ей ещё не задали */
+    if (window.DSTable && window.DSTable.fitActions) window.DSTable.fitActions(state.table || state.headerRow.parentElement, { keepPx: true });
 
     /* ячейки скрытых колонок уходят из DOM и ждут на СВОЕЙ строке — тогда
        склад один и тот же для строк разметки и для строк, дописанных экраном
@@ -246,6 +291,7 @@
 
     /* пересчитать sticky-инсеты закреплённых (tbl-pin.js) */
     if (window.DSTablePin && window.DSTablePin.apply) window.DSTablePin.apply(state.table);
+    if (opts.silent) return;
     state.table.dispatchEvent(new CustomEvent('columnreorder', { bubbles: true, detail: { from: 0, to: 0 } }));
     state.table.dispatchEvent(new CustomEvent('columnsettings', {
       bubbles: true, detail: {
@@ -263,9 +309,23 @@
       '</li>';
   }
 
+  /* ---------- строка переключателя раздела ---------- */
+  function optionItem(o, on) {
+    return '<li class="col-opt">' +
+      '<label class="cb' + (on ? ' cb--selected' : '') + '"><input type="checkbox" class="cb__input" data-option="' + o.key + '"' + (on ? ' checked' : '') + '><span class="cb__box"><span class="cb__mark">' + (on ? CHECK : '') + '</span></span><span class="cb__content"><span class="cb__label">' + o.label + '</span></span></label>' +
+      '</li>';
+  }
+
   /* ---------- модалка ---------- */
-  function buildModalHtml(scrimId, working) {
+  /* decl — переключатели раздела (template[data-table-options]), values — их
+     рабочие значения. Блок стоит над списком колонок и отделён разделителем;
+     нет переключателей — нет и блока */
+  function buildModalHtml(scrimId, working, decl, values) {
     var items = working.map(function (c, i) { return columnListItem(c, i); }).join('');
+    var opts = decl.length
+      ? '<ul class="col-opts">' + decl.map(function (o) { return optionItem(o, !!values[o.key]); }).join('') + '</ul>' +
+        '<hr class="dvd dvd--h">'
+      : '';
     return '<div class="modal-scrim" id="' + scrimId + '">' +
       '<div class="modal modal--w4" role="dialog" aria-modal="true">' +
         '<header class="modal__head">' +
@@ -273,13 +333,16 @@
           '<button type="button" class="ibtn ibtn--neutral ibtn--l" data-cancel aria-label="Закрыть"><i data-icon="close"></i></button>' +
         '</header>' +
         '<div class="modal__body">' +
+          opts +
           '<p class="col-desc">Выберите столбцы для отображения</p>' +
           '<label class="cb" data-parent><input type="checkbox" class="cb__input"><span class="cb__box"><span class="cb__mark"></span></span><span class="cb__content"><span class="cb__label">Выбрать все</span></span></label>' +
           '<hr class="dvd dvd--h">' +
           '<ul class="col-list">' + items + '</ul>' +
         '</div>' +
         '<footer class="modal__foot">' +
-          '<div class="modal__foot-left"></div>' +
+          '<div class="modal__foot-left">' +
+            '<button type="button" class="btn btn--transparent btn--m" data-reset><span class="btn__label">Сбросить настройки</span></button>' +
+          '</div>' +
           '<div class="modal__foot-right">' +
             '<button type="button" class="btn btn--transparent btn--m" data-cancel><span class="btn__label">Отменить</span></button>' +
             '<button type="button" class="btn btn--accent btn--m" data-apply><span class="btn__label">Применить</span></button>' +
@@ -304,9 +367,11 @@
 
   function openSettings(state) {
     var working = state.columns.map(function (c) { return Object.assign({}, c); });
+    var decl = optionDecl(state.table);
+    var values = Object.assign({}, currentOptions(state.table));
     var scrimId = 'ds-table-settings-scrim-' + (++counter);
     var wrap = document.createElement('div');
-    wrap.innerHTML = buildModalHtml(scrimId, working);
+    wrap.innerHTML = buildModalHtml(scrimId, working, decl, values);
     document.body.appendChild(wrap.firstChild);
     var scrim = document.getElementById(scrimId);
     if (window.dsIcons) window.dsIcons.apply(scrim);
@@ -331,7 +396,14 @@
     scrim.addEventListener('click', function (e) {
       if (e.target === scrim) { close(); return; }
       if (e.target.closest('[data-cancel]')) { close(); return; }
-      if (e.target.closest('[data-apply]')) { commit(state, working); close(); return; }
+      if (e.target.closest('[data-apply]')) {
+        commit(state, working);
+        setOptions(state.table, values, false);
+        close();
+        return;
+      }
+      /* сброс — сразу, без «Применить» (решение человека 30.10.2026) */
+      if (e.target.closest('[data-reset]')) { close(); reset(state.table); return; }
       var pin = e.target.closest('[data-pin]');
       if (pin) {
         var pi = parseInt(pin.getAttribute('data-pin'), 10);
@@ -341,6 +413,15 @@
     });
 
     scrim.addEventListener('change', function (e) {
+      var opt = e.target.closest('[data-option]');
+      if (opt) {
+        var on = e.target.checked;
+        values[opt.getAttribute('data-option')] = on;
+        var host = opt.closest('.cb');
+        host.classList.toggle('cb--selected', on);
+        host.querySelector('.cb__mark').innerHTML = on ? CHECK : '';
+        return;
+      }
       var vis = e.target.closest('[data-visible]');
       if (vis) {
         var vi = parseInt(vis.getAttribute('data-visible'), 10);
@@ -409,6 +490,7 @@
       e.preventDefault();
       var table = findTable(trigger);
       if (!table) return;
+      applyDefaults(table);  /* таблица, которую рантайм таблицы не подключал */
       var state = table.__dsTableSettings || captureState(table);
       if (!state) return;
       if (!table.__dsTableSettings) table.__dsTableSettings = state;
@@ -499,8 +581,8 @@
      у «Применить» (commit строит треки из width). Колонка, которой в записи
      нет (появилась в разметке позже), встаёт на свой исходный индекс; ключ
      записи, которого в шапке больше нет, пропускается. Ширина берётся любая
-     положительная: минимум ручки (96px) — ограничение перетаскивания, а в
-     разметке бывают колонки и уже (флаг, признак). */
+     положительная: минимум ручки (96px, у колонки действий — по содержимому) —
+     ограничение перетаскивания, а в разметке бывают колонки и уже (флаг, признак). */
   function restoreColumns(table, saved) {
     var headerRow = headerRowOf(table);
     if (!headerRow) return false;
@@ -520,8 +602,12 @@
       var c = s && byKey[s.key];
       if (!c || used[s.key]) return;
       used[s.key] = true;
-      var width = (typeof s.width === 'number' && s.width > 0) ? Math.round(s.width) : c.width;
-      working.push(Object.assign({}, c, { visible: s.visible !== false, pinned: !!s.pinned, width: width }));
+      var has = typeof s.width === 'number' && s.width > 0;
+      var width = has ? Math.round(s.width) : c.width;
+      working.push(Object.assign({}, c, {
+        visible: s.visible !== false, pinned: !!s.pinned, width: width,
+        track: has ? width + 'px' : c.track
+      }));
     });
     state.columns.forEach(function (c, i) {
       if (used[c.key]) return;
@@ -605,14 +691,201 @@
      сортировка переставляет строки, и экран по её событию пересчитывает окно
      пагинации, а скролл имеет смысл только на окончательной раскладке. */
   function restore(table) {
+    applyDefaults(table);
     var key = persistKey(table);
     if (!key) return false;
     var saved = readStore(key);
     if (!saved) return false;
     var cols = restoreColumns(table, saved);
     var sorted = restoreSort(table, saved);
+    var opts = restoreOptions(table, saved);
     var scrolled = restoreScroll(table, saved);
-    return cols || sorted || scrolled;
+    return cols || sorted || opts || scrolled;
+  }
+
+  /* ---------- вид по умолчанию ---------- */
+  /* Вид по умолчанию раздел задаёт разметкой:
+       колонка скрыта — data-col-hidden на .th (ячейки в разметке есть, рантайм
+         убирает колонку на подключении; в окне она есть, выключенная);
+       колонка закреплена — .th--pinned (+ .tc--pinned у ячеек);
+       порядок и ширина — как в разметке; сортировка — aria-sort у .th;
+       переключатели раздела — template[data-table-options].
+     Снимок вида делается один раз, на подключении таблицы — до правок
+     пользователя и до записи сессии. Рантайм таблицы зовёт applyDefaults из
+     DSTable.wire до выравнивания ширин: тогда fr-доли раздела делят место
+     между видимыми колонками, а не уходят пустотой под скрытые. */
+  function captureDefaults(table) {
+    var headerRow = headerRowOf(table);
+    if (!headerRow) return null;
+    var tracks = tracksOf(headerRow);
+    var cols = [], sort = null;
+    Array.prototype.forEach.call(headerRow.children, function (th, i) {
+      if (th.classList.contains('th--separator')) return;
+      var a = th.getAttribute('aria-sort');
+      var btn = th.querySelector('[data-sort]');
+      if (btn && (a === 'ascending' || a === 'descending')) {
+        sort = { column: btn.getAttribute('data-sort'), dir: a === 'ascending' ? 'asc' : 'desc' };
+      }
+      var labelEl = th.querySelector('.th__label');
+      if (!labelEl || !labelEl.textContent.trim()) return;
+      cols.push({
+        cell: th,
+        visible: !th.hasAttribute('data-col-hidden'),
+        pinned: th.classList.contains('th--pinned'),
+        track: tracks ? tracks[i] : null,
+        width: Math.round(th.getBoundingClientRect().width)
+      });
+    });
+    return { columns: cols, sort: sort };
+  }
+
+  /* Ширина неотрисованной таблицы без инлайн-треков — ноль: применять нечего
+     мерить, ждём её появления */
+  function whenShown(table, fn) {
+    if (!window.ResizeObserver || table.__dsDefaultsWait) return;
+    var ro = new ResizeObserver(function () {
+      var h = headerRowOf(table);
+      if (!h || !h.getBoundingClientRect().width) return;
+      ro.disconnect();
+      table.__dsDefaultsWait = null;
+      fn();
+    });
+    table.__dsDefaultsWait = ro;
+    ro.observe(table);
+  }
+
+  function applyDefaults(table) {
+    if (!table || table.__dsTableDefaults) return;
+    var defs = captureDefaults(table);
+    if (!defs) return;
+    table.__dsTableDefaults = defs;
+    if (defs.columns.every(function (d) { return d.visible; })) return;
+    var headerRow = headerRowOf(table);
+    if (!tracksOf(headerRow) && !headerRow.getBoundingClientRect().width) {
+      whenShown(table, function () { hideDefaults(table); });
+      return;
+    }
+    hideDefaults(table);
+  }
+  function hideDefaults(table) {
+    if (table.__dsTableSettings) return;  /* вид уже менял пользователь */
+    var state = captureState(table);
+    if (!state) return;
+    var working = state.columns.map(function (c) {
+      return Object.assign({}, c, { visible: !c.headerCell.hasAttribute('data-col-hidden') });
+    });
+    commit(state, working, { silent: true });
+  }
+
+  /* ---------- переключатели раздела ---------- */
+  /* Объявление — template[data-table-options] прямым ребёнком обёртки таблицы
+     (.dtable; у таблицы без неё — родителя .tbl). Внутри — по элементу на
+     переключатель: data-option="<ключ>" — ключ, текст — подпись, data-checked —
+     включён по умолчанию. Что переключатель делает со строками, решает раздел:
+     рантайм хранит значения и сообщает о них событием tableoptions на .tbl. */
+  function optionDecl(table) {
+    var host = table.closest('.dtable') || table.parentElement;
+    var tpl = host && host.querySelector(':scope > template[data-table-options]');
+    if (!tpl || !tpl.content) return [];
+    return Array.prototype.map.call(tpl.content.querySelectorAll('[data-option]'), function (el) {
+      return { key: el.getAttribute('data-option'), label: el.textContent.trim(), on: el.hasAttribute('data-checked') };
+    }).filter(function (o) { return !!o.key; });
+  }
+  function defaultOptions(table) {
+    var out = {};
+    optionDecl(table).forEach(function (o) { out[o.key] = o.on; });
+    return out;
+  }
+  function currentOptions(table) {
+    return Object.assign(defaultOptions(table), table.__dsTableOptions || {});
+  }
+  function sameOptions(a, b) {
+    return Object.keys(a).every(function (k) { return !!a[k] === !!b[k]; });
+  }
+  /* значения меняются только по объявленным ключам; событие — если что-то
+     поменялось; restored — возврат из записи сессии, а не действие пользователя */
+  function setOptions(table, values, restored) {
+    var before = currentOptions(table);
+    var next = {};
+    Object.keys(before).forEach(function (k) { next[k] = k in values ? !!values[k] : before[k]; });
+    if (sameOptions(before, next)) return false;
+    table.__dsTableOptions = next;
+    if (!restored) {
+      var key = persistKey(table);
+      if (key) writeStore(key, { options: next });
+    }
+    table.dispatchEvent(new CustomEvent('tableoptions', {
+      bubbles: true, detail: { options: Object.assign({}, next), restored: !!restored }
+    }));
+    return true;
+  }
+  function restoreOptions(table, saved) {
+    return saved.options ? setOptions(table, saved.options, true) : false;
+  }
+
+  /* ---------- сброс к виду по умолчанию ---------- */
+  /* «Сбросить настройки» — сразу, без «Применить»: колонки (порядок,
+     видимость, закрепление, ширина), сортировка и переключатели возвращаются
+     к виду по умолчанию, запись сессии удаляется целиком (решения человека
+     30.10.2026). События — обычные (columnsettings, sort, tableoptions):
+     экран отвечает на сброс так же, как на правку руками. */
+  function reset(table) {
+    if (!table) return false;
+    applyDefaults(table);
+    var defs = table.__dsTableDefaults;
+    if (!defs) return false;
+    var state = table.__dsTableSettings || captureState(table);
+    if (!state) return false;
+    if (table.__dsTableSettings) { syncRows(state); syncHeader(state); }
+
+    var byCell = new Map();
+    state.columns.forEach(function (c) { byCell.set(c.headerCell, c); });
+    var working = [];
+    defs.columns.forEach(function (d) {
+      var c = byCell.get(d.cell);
+      if (!c) return;
+      byCell.delete(d.cell);
+      working.push(Object.assign({}, c, {
+        visible: d.visible, pinned: d.pinned, track: d.track,
+        width: d.width > 0 ? d.width : c.width
+      }));
+    });
+    byCell.forEach(function (c) { working.push(Object.assign({}, c)); });
+    commit(state, working);
+    /* вид по умолчанию: колонка действий снова по иконкам */
+    if (window.DSTable && window.DSTable.fitActions) window.DSTable.fitActions(table);
+    freezeFlex(state);
+
+    if (window.DSTable && table.hasAttribute('data-table')) {
+      var active = null;
+      table.querySelectorAll('[data-sort]').forEach(function (b) {
+        if (b.dataset.sortDir && b.dataset.sortDir !== 'none') active = b;
+      });
+      var api = window.DSTable.wire(table);
+      var d = defs.sort;
+      if (d && !(active && active.dataset.sort === d.column && active.dataset.sortDir === d.dir)) api.sort(d.column, d.dir);
+      else if (!d && active) api.sort(active.dataset.sort, 'none');
+    }
+    setOptions(table, defaultOptions(table), false);
+
+    var key = persistKey(table);
+    if (key) { try { window.sessionStorage.removeItem(key); } catch (e) { /* без памяти */ } }
+    return true;
+  }
+
+  /* fr-треки разметки каждая строка считала бы по своему содержимому —
+     после сброса пишем всем строкам фактические px шапки, как рантайм
+     таблицы на подключении (хвостовой разделитель остаётся гибким) */
+  function freezeFlex(state) {
+    var head = state.headerRow;
+    if (!/fr\b/.test((head.style.gridTemplateColumns || '').replace(/minmax\(8px,\s*1fr\)\s*$/, ''))) return;
+    if (!head.getBoundingClientRect().width) return;
+    var kids = head.children, last = kids.length - 1;
+    var tracks = Array.prototype.map.call(kids, function (c, i) {
+      if (i === last && c.classList.contains('th--separator')) return state.trailTrack;
+      return Math.round(c.getBoundingClientRect().width) + 'px';
+    }).join(' ');
+    [head].concat(state.dataRows).forEach(function (row) { row.style.gridTemplateColumns = tracks; });
   }
 
   /* запись колонок — на любое их изменение: «Применить» (columnsettings),
@@ -638,10 +911,20 @@
 
   function boot() {
     bindAll(document);
+    /* таблицы со скрытыми по умолчанию колонками, которые рантайм таблицы
+       не подключал (без data-table) — вид по умолчанию отсюда */
+    document.querySelectorAll('.th[data-col-hidden]').forEach(function (th) {
+      var t = th.closest('.tbl');
+      if (t) applyDefaults(t);
+    });
     document.querySelectorAll('.tbl[data-table-persist]').forEach(restore);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 
-  window.DSTableSettings = { bind: bind, bindAll: bindAll, restore: restore };
+  window.DSTableSettings = {
+    bind: bind, bindAll: bindAll, restore: restore,
+    applyDefaults: applyDefaults, reset: reset,
+    options: function (table) { return table ? currentOptions(table) : {}; }
+  };
 })();

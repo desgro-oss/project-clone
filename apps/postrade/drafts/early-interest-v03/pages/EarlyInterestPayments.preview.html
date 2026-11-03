@@ -16,11 +16,11 @@
   html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
   body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
 
-  .screen__content { gap: var(--space-16); }
-  .ei-delete-text { margin: 0; font: var(--type-body-m); }
+  .screen__content { gap: var(--space-12); }
+  .ei-delete-text { margin: 0; font: var(--type-body-m-reg); }
 
   .ei-empty[hidden] { display: none; }
-  .ei-empty { display: flex; align-items: center; justify-content: center; padding: var(--space-24); font: var(--type-body-s); color: var(--text-primary); }
+  .ei-empty { display: flex; align-items: center; justify-content: center; padding: var(--space-24); font: var(--type-body-s-reg); color: var(--text-primary); }
 </style>
 <link rel="stylesheet" href="../widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.css">
 <link rel="stylesheet" href="../widgets/modals/EarlyInterestRepaymentModal/EarlyInterestRepaymentModal.css">
@@ -82,9 +82,9 @@
   </header>
   <div class="tile__body">
     <div class="lc-repay-order__list" data-repay-list>
-      <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">1</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Текущие начисленные проценты</span></div></div></div></div>
-      <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">2</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Капитализированные начисленные проценты</span></div></div></div></div>
-      <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">3</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Отложенные начисленные проценты</span></div></div></div></div>
+      <div class="entity"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">1</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Текущие начисленные проценты</span></div></div></div></div>
+      <div class="entity"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">2</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Капитализированные начисленные проценты</span></div></div></div></div>
+      <div class="entity"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">3</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Отложенные начисленные проценты</span></div></div></div></div>
     </div>
   </div>
 </section>

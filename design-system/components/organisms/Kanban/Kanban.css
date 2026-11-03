@@ -48,7 +48,7 @@
 }
 .kanban__title {
   margin: 0;
-  font: var(--type-h5-strong);
+  font: var(--type-h5-strong-smb);
   color: var(--text-primary);
 }
 .kanban__toolbar-right {
@@ -227,7 +227,7 @@
 .kbcol__name {
   min-width: 0;
   margin-top: var(--space-4);   /* (24 - 16) / 2 — первая строка по центру полосы */
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -239,7 +239,7 @@
      шапки всех колонок обязаны быть равной высоты, иначе карточки соседних
      колонок начинаются с разной. Две декларации — не дубль: браузер без
      единицы lh отбрасывает вторую и остаётся на px. */
-  min-height: 32px;             /* 2 строки --type-body-s-strong (14px/16px) */
+  min-height: 32px;             /* 2 строки --type-body-s-strong-smb (14px/16px) */
   min-height: 2lh;              /* где есть lh — высота следует за токеном */
 }
 /* Три действия: добавить · перейти на страницу колонки · меню */
@@ -349,7 +349,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-primary);
 }
 .kbcol--collapsed .kbcol__vname { display: block; }
@@ -382,14 +382,14 @@
   min-width: 0;
 }
 .kbcard__flabel {
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .kbcard__fvalue {
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
@@ -407,7 +407,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-4);
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
 }
 .kbcard__stat :is(svg, [data-icon]) { width: 16px; height: 16px; }
@@ -419,7 +419,7 @@
 }
 .kbcard__id {
   margin-left: auto;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
 }
 
@@ -443,7 +443,7 @@
   gap: var(--space-8);
 }
 .kbcard--compact .tile__title {
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   -webkit-line-clamp: 1;
   line-clamp: 1;
 }

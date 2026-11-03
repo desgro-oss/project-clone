@@ -16,7 +16,7 @@
 
 .slr__head {
   display: flex; justify-content: space-between; gap: var(--space-8);
-  font: var(--type-body-xs); color: var(--text-secondary);
+  font: var(--type-body-xs-reg); color: var(--text-secondary);
 }
 .slr__head[hidden] { display: none; }
 .slr__value { font-variant-numeric: tabular-nums; }

@@ -1,6 +1,6 @@
 /* =========================================================================
    Design System — Typography Foundation
-   SB Sans Display · SB Sans Text · SB Sans Screen
+   SB Sans Display · SB Sans Text · SB Sans Screen · SB Sans Text Cond
    ========================================================================= */
 
 /* ---------- Font faces ---------------------------------------------------- */
@@ -71,38 +71,58 @@
   --font-display: "SB Sans Display", system-ui, sans-serif;
   --font-text: "SB Sans Text", system-ui, sans-serif;
   --font-screen: "SB Sans Screen", system-ui, sans-serif;
+  /* Узкое семейство для Display L/M/S. Файлов @font-face нет — до их передачи
+     токен работает запасным SB Sans Text (вопрос к разработке, RE0048). */
+  --font-text-cond: "SB Sans Text Cond", var(--font-text);
 
   /* Weights */
   --weight-light: 300; /* @kind other */
   --weight-regular: 400; /* @kind other */
   --weight-semibold: 600; /* @kind other */
 
-  /* ---- Type ramp: each token = font / weight / size / line-height ---- */
+  /* Трекинг. Один токен на всю систему: утилити-классы и явные правила ДС
+     берут его, типографская тема NEO переопределяет
+     (Typography.themes.css). 0 — базовая тема. */
+  --type-ls: 0;
+
+  /* ---- Type ramp: each token = font / weight / size / line-height ----
+     Имена — как в UI-kit разработчиков (src/styles/theme/typography.ts,
+     02.11.2026): 29 стилей кебаб-кейсом после префикса --type-. Порядок
+     повторяет кит. Кнопочные M/S/XS имя не меняли. */
 
   /* Headings — SB Sans Display */
-  --type-h1:        var(--weight-light)    52px/68px var(--font-display);
-  --type-h2:        var(--weight-light)    42px/52px var(--font-display);
-  --type-h3-strong: var(--weight-semibold) 28px/32px var(--font-display);
-  --type-h3:        var(--weight-regular)  28px/32px var(--font-display);
-  --type-h4-strong: var(--weight-semibold) 22px/24px var(--font-display);
-  --type-h4:        var(--weight-regular)  22px/24px var(--font-display);
-  --type-h5-strong: var(--weight-semibold) 18px/24px var(--font-display);
-  --type-h5:        var(--weight-regular)  18px/24px var(--font-display);
-  --type-h6-strong: var(--weight-semibold) 16px/20px var(--font-display);
-  --type-h6:        var(--weight-regular)  16px/20px var(--font-display);
+  --type-h1-light:                var(--weight-regular)  52px/68px var(--font-display);
+  --type-h2-light:                var(--weight-regular)  42px/52px var(--font-display);
+  --type-h3-strong-smb:           var(--weight-semibold) 28px/32px var(--font-display);
+  --type-h3-reg:                  var(--weight-regular)  28px/32px var(--font-display);
+  --type-h4-strong-extensive-smb: var(--weight-semibold) 22px/28px var(--font-display);
+  --type-h4-strong-smb:           var(--weight-semibold) 22px/24px var(--font-display);
+  --type-h4-reg:                  var(--weight-regular)  22px/24px var(--font-display);
+  --type-h5-strong-smb:           var(--weight-semibold) 18px/24px var(--font-display);
+  --type-h5-reg:                  var(--weight-regular)  18px/24px var(--font-display);
+  --type-h6-strong-smb:           var(--weight-semibold) 16px/20px var(--font-display);
+  --type-h6-reg:                  var(--weight-regular)  16px/20px var(--font-display);
 
   /* Body — SB Sans Text */
-  --type-body-xl:        var(--weight-regular)  24px/32px var(--font-text);
-  --type-body-xl-strong: var(--weight-semibold) 24px/32px var(--font-text);
-  --type-body-l:         var(--weight-regular)  18px/24px var(--font-text);
-  --type-body-l-strong:  var(--weight-semibold) 18px/24px var(--font-text);
-  --type-body-m:         var(--weight-regular)  16px/20px var(--font-text);
-  --type-body-m-strong:  var(--weight-semibold) 16px/20px var(--font-text);
-  --type-body-s:         var(--weight-regular)  14px/16px var(--font-text);
-  --type-body-s-strong:  var(--weight-semibold) 14px/16px var(--font-text);
-  --type-body-xs:        var(--weight-regular)  12px/16px var(--font-text);
+  --type-body-xl-reg:        var(--weight-regular)  24px/32px var(--font-text);
+  --type-body-xl-strong-smb: var(--weight-semibold) 24px/32px var(--font-text);
+  --type-body-l-reg:         var(--weight-regular)  18px/24px var(--font-text);
+  --type-body-l-strong-smb:  var(--weight-semibold) 18px/24px var(--font-text);
+  --type-body-m-extensive:   var(--weight-regular)  16px/24px var(--font-text);
+  --type-body-m-reg:         var(--weight-regular)  16px/20px var(--font-text);
+  --type-body-m-strong-smb:  var(--weight-semibold) 16px/20px var(--font-text);
+  --type-body-s-reg:         var(--weight-regular)  14px/16px var(--font-text);
+  --type-body-s-strong-smb:  var(--weight-semibold) 14px/16px var(--font-text);
+  --type-body-xs-extensive:  var(--weight-regular)  12px/20px var(--font-text);
+  --type-body-xs-reg:        var(--weight-regular)  12px/16px var(--font-text);
+
+  /* Display — SB Sans Text Cond (широкие акцентные строки) */
+  --type-display-l: var(--weight-regular) 36px/48px var(--font-text-cond);
+  --type-display-m: var(--weight-regular) 24px/40px var(--font-text-cond);
+  --type-display-s: var(--weight-regular) 20px/32px var(--font-text-cond);
 
   /* Buttons — SB Sans Screen */
+  --type-button-l:  var(--weight-regular) 24px/32px var(--font-screen);
   --type-button-m:  var(--weight-regular) 16px/24px var(--font-screen);
   --type-button-s:  var(--weight-regular) 14px/20px var(--font-screen);
   --type-button-xs: var(--weight-regular) 12px/16px var(--font-screen);
@@ -110,32 +130,40 @@
 
 /* ---------- Utility classes ---------------------------------------------- */
 /* `font:` shorthand sets family/weight/size/line-height in one shot.
-   letter-spacing is 0 across the whole system. */
+   letter-spacing берётся из --type-ls: базовая тема — 0, тема NEO — -0.02em. */
 
-.ds-h1        { font: var(--type-h1);        letter-spacing: 0; margin: 0; }
-.ds-h2        { font: var(--type-h2);        letter-spacing: 0; margin: 0; }
-.ds-h3-strong { font: var(--type-h3-strong); letter-spacing: 0; margin: 0; }
-.ds-h3        { font: var(--type-h3);        letter-spacing: 0; margin: 0; }
-.ds-h4-strong { font: var(--type-h4-strong); letter-spacing: 0; margin: 0; }
-.ds-h4        { font: var(--type-h4);        letter-spacing: 0; margin: 0; }
-.ds-h5-strong { font: var(--type-h5-strong); letter-spacing: 0; margin: 0; }
-.ds-h5        { font: var(--type-h5);        letter-spacing: 0; margin: 0; }
-.ds-h6-strong { font: var(--type-h6-strong); letter-spacing: 0; margin: 0; }
-.ds-h6        { font: var(--type-h6);        letter-spacing: 0; margin: 0; }
+.ds-h1-light                { font: var(--type-h1-light);                letter-spacing: var(--type-ls); margin: 0; }
+.ds-h2-light                { font: var(--type-h2-light);                letter-spacing: var(--type-ls); margin: 0; }
+.ds-h3-strong-smb           { font: var(--type-h3-strong-smb);           letter-spacing: var(--type-ls); margin: 0; }
+.ds-h3-reg                  { font: var(--type-h3-reg);                  letter-spacing: var(--type-ls); margin: 0; }
+.ds-h4-strong-extensive-smb { font: var(--type-h4-strong-extensive-smb); letter-spacing: var(--type-ls); margin: 0; }
+.ds-h4-strong-smb           { font: var(--type-h4-strong-smb);           letter-spacing: var(--type-ls); margin: 0; }
+.ds-h4-reg                  { font: var(--type-h4-reg);                  letter-spacing: var(--type-ls); margin: 0; }
+.ds-h5-strong-smb           { font: var(--type-h5-strong-smb);           letter-spacing: var(--type-ls); margin: 0; }
+.ds-h5-reg                  { font: var(--type-h5-reg);                  letter-spacing: var(--type-ls); margin: 0; }
+.ds-h6-strong-smb           { font: var(--type-h6-strong-smb);           letter-spacing: var(--type-ls); margin: 0; }
+.ds-h6-reg                  { font: var(--type-h6-reg);                  letter-spacing: var(--type-ls); margin: 0; }
 
-.ds-body-xl        { font: var(--type-body-xl);        letter-spacing: 0; margin: 0; }
-.ds-body-xl-strong { font: var(--type-body-xl-strong); letter-spacing: 0; margin: 0; }
-.ds-body-l         { font: var(--type-body-l);         letter-spacing: 0; margin: 0; }
-.ds-body-l-strong  { font: var(--type-body-l-strong);  letter-spacing: 0; margin: 0; }
-.ds-body-m         { font: var(--type-body-m);         letter-spacing: 0; margin: 0; }
-.ds-body-m-strong  { font: var(--type-body-m-strong);  letter-spacing: 0; margin: 0; }
-.ds-body-s         { font: var(--type-body-s);         letter-spacing: 0; margin: 0; }
-.ds-body-s-strong  { font: var(--type-body-s-strong);  letter-spacing: 0; margin: 0; }
-.ds-body-xs        { font: var(--type-body-xs);        letter-spacing: 0; margin: 0; }
+.ds-body-xl-reg        { font: var(--type-body-xl-reg);        letter-spacing: var(--type-ls); margin: 0; }
+.ds-body-xl-strong-smb { font: var(--type-body-xl-strong-smb); letter-spacing: var(--type-ls); margin: 0; }
+.ds-body-l-reg         { font: var(--type-body-l-reg);         letter-spacing: var(--type-ls); margin: 0; }
+.ds-body-l-strong-smb  { font: var(--type-body-l-strong-smb);  letter-spacing: var(--type-ls); margin: 0; }
+.ds-body-m-extensive   { font: var(--type-body-m-extensive);   letter-spacing: var(--type-ls); margin: 0; }
+.ds-body-m-reg         { font: var(--type-body-m-reg);         letter-spacing: var(--type-ls); margin: 0; }
+.ds-body-m-strong-smb  { font: var(--type-body-m-strong-smb);  letter-spacing: var(--type-ls); margin: 0; }
+.ds-body-s-reg         { font: var(--type-body-s-reg);         letter-spacing: var(--type-ls); margin: 0; }
+.ds-body-s-strong-smb  { font: var(--type-body-s-strong-smb);  letter-spacing: var(--type-ls); margin: 0; }
+.ds-body-xs-extensive  { font: var(--type-body-xs-extensive);  letter-spacing: var(--type-ls); margin: 0; }
+.ds-body-xs-reg        { font: var(--type-body-xs-reg);        letter-spacing: var(--type-ls); margin: 0; }
 
-.ds-button-m  { font: var(--type-button-m);  letter-spacing: 0; margin: 0; }
-.ds-button-s  { font: var(--type-button-s);  letter-spacing: 0; margin: 0; }
-.ds-button-xs { font: var(--type-button-xs); letter-spacing: 0; margin: 0; }
+.ds-display-l { font: var(--type-display-l); letter-spacing: var(--type-ls); margin: 0; }
+.ds-display-m { font: var(--type-display-m); letter-spacing: var(--type-ls); margin: 0; }
+.ds-display-s { font: var(--type-display-s); letter-spacing: var(--type-ls); margin: 0; }
+
+.ds-button-l  { font: var(--type-button-l);  letter-spacing: var(--type-ls); margin: 0; }
+.ds-button-m  { font: var(--type-button-m);  letter-spacing: var(--type-ls); margin: 0; }
+.ds-button-s  { font: var(--type-button-s);  letter-spacing: var(--type-ls); margin: 0; }
+.ds-button-xs { font: var(--type-button-xs); letter-spacing: var(--type-ls); margin: 0; }
 
 /* Атрибут hidden скрывает всегда (Typography 1.002, 01.10.2026).
    Браузерное `[hidden] { display: none }` слабее любого правила компонента

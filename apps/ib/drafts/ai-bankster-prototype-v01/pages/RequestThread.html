@@ -121,7 +121,7 @@
      самом тексте, не от кнопок ряда. */
   .cbox          { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-12) var(--space-12) var(--space-12) var(--space-16); background: var(--bg-tile); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); transition: border-color .15s ease, box-shadow .15s ease; }
   .cbox:has(.cbox__control:focus) { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg-light); }
-  .cbox__control { display: block; width: 100%; min-height: var(--space-40); padding: 0; border: 0; outline: 0; resize: none; background: transparent; font: var(--type-body-m); color: var(--text-primary); }
+  .cbox__control { display: block; width: 100%; min-height: var(--space-40); padding: 0; border: 0; outline: 0; resize: none; background: transparent; font: var(--type-body-m-reg); color: var(--text-primary); }
   .cbox__control::placeholder { color: var(--text-inactive); opacity: 1; }
   .cbox__row     { display: flex; align-items: center; gap: var(--space-12); }
 
@@ -437,8 +437,8 @@
       <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
     </header>
     <div class="modal__body">
-      <p class="ds-body-m">Запрос, все его версии материала и приложенные файлы уйдут в корзину.</p>
-      <p class="ds-body-s">Восстановить запрос можно в течение 30 дней — из раздела «История и материалы».</p>
+      <p class="ds-body-m-reg">Запрос, все его версии материала и приложенные файлы уйдут в корзину.</p>
+      <p class="ds-body-s-reg">Восстановить запрос можно в течение 30 дней — из раздела «История и материалы».</p>
     </div>
     <footer class="modal__foot">
       <div class="modal__foot-right">
@@ -457,7 +457,7 @@
       <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
     </header>
     <div class="modal__body">
-      <p class="ds-body-m">Выберите материалы контрагента: отчётность, презентации, тизеры. Содержимое файлов передаётся агентной системе наравне с текстом сообщения.</p>
+      <p class="ds-body-m-reg">Выберите материалы контрагента: отчётность, презентации, тизеры. Содержимое файлов передаётся агентной системе наравне с текстом сообщения.</p>
       <div class="alert alert--info alert--m" role="status" aria-live="polite">
         <span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
         <div class="alert__body">
@@ -514,7 +514,7 @@
               </div>
             </div>
           </object>
-          <p class="ds-body-s prv__muted">Краткий материал · 2 страницы. Детальный — в выгрузке.</p>
+          <p class="ds-body-s-reg prv__muted">Краткий материал · 2 страницы. Детальный — в выгрузке.</p>
         </div>
 
         <aside class="prv__rail" aria-label="Выгрузка и версии материала">
@@ -900,10 +900,10 @@
   }
 
   /* ── Текстовые блоки ──────────────────────────────────────────────────── */
-  function text(t) { return '<div class="thr__text"><p class="ds-body-m">' + t + '</p></div>'; }
+  function text(t) { return '<div class="thr__text"><p class="ds-body-m-reg">' + t + '</p></div>'; }
 
   function sources(list) {
-    return '<div class="thr__row"><span class="ds-body-xs">Источники:</span><div class="chiplist chiplist--s">' +
+    return '<div class="thr__row"><span class="ds-body-xs-reg">Источники:</span><div class="chiplist chiplist--s">' +
       list.map(function (s) { return '<span class="chip chip--s"><span class="chip__label">' + esc(s) + '</span></span>'; }).join('') +
       '</div></div>';
   }
@@ -1113,12 +1113,12 @@
         return '<span class="chip chip--s"><span class="chip__icon"><i data-icon="file-basic"></i></span><span class="chip__label">' + esc(f) + '</span></span>';
       }).join('') + '</div>';
     }
-    push('user', '<div class="thr__text"><p class="ds-body-m">' + body + '</p></div>');
+    push('user', '<div class="thr__text"><p class="ds-body-m-reg">' + body + '</p></div>');
     var hadFiles = S.files.length > 0;
     S.files = []; drawFiles();
 
     if (/собер|материал|отчёт|отчет|подготов|пересобер/i.test(q)) {
-      var i1 = push('agent', text('<span class="ds-body-m">Уточняю параметры…</span>'));
+      var i1 = push('agent', text('<span class="ds-body-m-reg">Уточняю параметры…</span>'));
       setTimeout(function () {
         replace(i1, text('Для структурированного материала нужны параметры: сценарий, направление анализа, объём и формат. Открою конструктор с контекстом этой нити — все подставленные значения останутся редактируемыми.') +
           '<div class="thr__row"><button class="btn btn--outline btn--s" data-act="builder"><i data-icon="ai-stars"></i><span class="btn__label">Открыть конструктор отчётов</span></button></div>');
@@ -1131,7 +1131,7 @@
       return;
     }
 
-    var i2 = push('agent', text('<span class="ds-body-m">Ищу данные…</span>'));
+    var i2 = push('agent', text('<span class="ds-body-m-reg">Ищу данные…</span>'));
     setTimeout(function () {
       typeAnswer(i2, ANSWER, sources(['Отчётность МСФО 2025', 'Раскрытие эмитента', 'Данные Банка', 'Отраслевой обзор 2026']) + answerActions(i2));
     }, 700);
@@ -1289,14 +1289,14 @@
     setActions(true);
     S.msgs = [
       { role: 'user', time: '11.09.2026, 14:02', html:
-        '<div class="thr__text"><p class="ds-body-m">Запрос из конструктора: ' + esc(OBJECT) + ', детальный материал, направление «Прямые инвестиции». Собственник рассматривает частичный выход. Интересует применимость мезонина, оценка через мультипликаторы peers и график погашений валютного долга до 2028 года.</p></div>' +
+        '<div class="thr__text"><p class="ds-body-m-reg">Запрос из конструктора: ' + esc(OBJECT) + ', детальный материал, направление «Прямые инвестиции». Собственник рассматривает частичный выход. Интересует применимость мезонина, оценка через мультипликаторы peers и график погашений валютного долга до 2028 года.</p></div>' +
         '<div class="chiplist chiplist--s">' +
         '<span class="chip chip--s"><span class="chip__icon"><i data-icon="file-basic"></i></span><span class="chip__label">Отчётность_МСФО_2025.pdf</span></span>' +
         '<span class="chip chip--s"><span class="chip__icon"><i data-icon="file-basic"></i></span><span class="chip__label">Teaser_group.pptx</span></span>' +
         '<span class="chip chip--s"><span class="chip__icon"><i data-icon="file-basic"></i></span><span class="chip__label">Презентация_менеджмента_2026.pptx</span></span>' +
         '</div>' },
       { role: 'agent', time: '11.09.2026, 14:02', html:
-        '<div class="thr__text"><p class="ds-body-m">Принял. Параметры зафиксированы, файлы переданы на извлечение. Ожидаемое время подготовки — до 30 минут, уведомление придёт даже если вы закроете инструмент.</p></div>' +
+        '<div class="thr__text"><p class="ds-body-m-reg">Принял. Параметры зафиксированы, файлы переданы на извлечение. Ожидаемое время подготовки — до 30 минут, уведомление придёт даже если вы закроете инструмент.</p></div>' +
         '<div class="tile__grid" style="grid-template-columns:repeat(4,1fr);">' +
           '<div class="rof"><span class="ds-label"><span class="ds-label__text">Сценарий</span></span><div class="rof__row"><span class="rof__value">Материал по клиенту</span></div></div>' +
           '<div class="rof"><span class="ds-label"><span class="ds-label__text">Направление</span></span><div class="rof__row"><span class="rof__value">Прямые инвестиции</span></div></div>' +

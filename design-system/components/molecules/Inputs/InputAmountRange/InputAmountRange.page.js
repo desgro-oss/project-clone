@@ -179,10 +179,10 @@
     const tb = document.querySelector('#typo-table tbody');
     if (!tb) return;
     [
-      ['Значение поля', '9 999', '--type-body-m'],
-      ['Префикс «От» / «До»', 'От', '--type-body-m'],
-      ['Label', 'Label', '--type-body-xs'],
-      ['Helper', 'Helper', '--type-body-xs'],
+      ['Значение поля', '9 999', '--type-body-m-reg'],
+      ['Префикс «От» / «До»', 'От', '--type-body-m-reg'],
+      ['Label', 'Label', '--type-body-xs-reg'],
+      ['Helper', 'Helper', '--type-body-xs-reg'],
     ].forEach(([part, sample, token]) => {
       const tr = document.createElement('tr');
       const f = getComputedStyle(document.documentElement).getPropertyValue(token).trim();

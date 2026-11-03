@@ -1,0 +1,305 @@
+<!-- AddFundEntityFromUcpModal — «Добавить фонд», шаг 1: поиск в базе фондов и в ЕПК.
+     Макеты «Add fund / Step 01 — Search empty · Search result A · Search result B ·
+     Empty search result». Открывает его кнопка «Добавить фонд» страницы «Фонды»;
+     окно открывает скрипт окна: AddFundEntityFromUcpModal.open(scrimId, opts).
+
+     Состояние окна — data-state на .modal (свои значения, как у окон модуля postrade):
+       idle    — поиск не выполнялся: справа иллюстрация и подсказка;
+       loading — поиск идёт: скелетоны карточек и деталей;
+       data    — найдено: колонки «Найдено» и детали выбранной карточки;
+       empty   — ничего не найдено: строка причины и «Новый фонд»;
+       error   — поиск не выполнен: Alert ошибки с «Повторить» в колонке результатов.
+     Что выбрано — data-detail на .modal: fund (детали фонда) | client (детали клиента ЕПК).
+     Карточки результатов и детали рисует скрипт окна; ниже — пример по макету A. -->
+<div class="modal-scrim" id="addFundEntityFromUcpModal" hidden>
+  <div class="modal modal--w9 lc-afe" role="dialog" aria-modal="true" aria-labelledby="afe-title" data-state="data" data-detail="fund">
+    <header class="modal__head">
+      <h2 class="modal__title" id="afe-title">Добавить фонд</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert">
+      <div class="alert alert--info alert--m alert--flush" role="status" aria-live="polite">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">В соответствии с распоряжением № 524/3-Р от 08.04.2022 вся информация об американских клиентах скрыта для использования. Все российские юридические лица есть в базе юр. лиц Сбера (ЕПК).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body modal__body--flush">
+      <div class="lc-afe__grid">
+
+        <!-- 1. Параметры поиска. Enter в любом поле — тот же поиск (submit формы) -->
+        <form class="lc-afe__col lc-afe__params" data-afe-form novalidate>
+          <h3 class="ds-h6-strong-smb">Параметры поиска</h3>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-name"><span class="ds-label__text">Название</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-name" name="name" autocomplete="off" value="Интеррос"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-inn"><span class="ds-label__text">ИНН</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-inn" name="inn" inputmode="numeric" autocomplete="off" value="0765"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-ogrn"><span class="ds-label__text">ОГРН</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-ogrn" name="ogrn" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-kpp"><span class="ds-label__text">КПП</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-kpp" name="kpp" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label" for="afe-kio"><span class="ds-label__text">КИО</span></label>
+            <div class="inp__field"><input class="inp__control" id="afe-kio" name="kio" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <label class="cb">
+            <input type="checkbox" class="cb__input" name="hideNoCrm" checked>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Скрывать клиентов без CRM ID</span></span>
+          </label>
+          <button type="submit" class="btn btn--outline btn--m btn--fullwidth" data-afe-search><span class="btn__label">Поиск</span></button>
+        </form>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <!-- 2а. Поиск не выполнялся (idle): иллюстрация и подсказка на месте двух колонок -->
+        <div class="lc-afe__col lc-afe__wide lc-afe__idle">
+          <div class="es es--m">
+            <span class="illu es__illu" data-illu="possible-deals" aria-hidden="true"></span>
+            <div class="es__body">
+              <p class="es__text">Проверьте наличие фонда или актива в базах Сбера.<br>При отсутствии подходящих результатов создайте новую запись.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2б. Ничего не найдено (empty): строка причины и действие -->
+        <div class="lc-afe__col lc-afe__wide lc-afe__notfound" role="status" aria-live="polite">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <p class="ds-body-m-reg lc-afe__note">По вашему запросу результатов не найдено. Вы можете создать новую запись.</p>
+          <div><button type="button" class="btn btn--outline btn--m" data-afe-create><i data-icon="add"></i><span class="btn__label">Новый фонд</span></button></div>
+        </div>
+
+        <!-- 2в. Ошибка поиска (error): Alert в колонке результатов, повтор запроса -->
+        <div class="lc-afe__col lc-afe__wide lc-afe__error">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <div class="alert alert--error alert--m" role="alert" aria-live="assertive">
+            <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+            <div class="alert__body">
+              <p class="alert__text" data-afe-error-text>Не удалось выполнить поиск. Попробуйте ещё раз.</p>
+              <div class="alert__buttons">
+                <button type="button" class="btn btn--outline btn--xs btn--error" data-afe-retry><span class="btn__label">Повторить</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Найдено (data) и загрузка (loading) -->
+        <div class="lc-afe__col lc-afe__results">
+          <h3 class="ds-h6-strong-smb">Найдено</h3>
+          <div class="lc-afe__loading" aria-busy="true">
+            <span class="sk-block sk-block--rounded lc-afe__sk-card" aria-hidden="true"></span>
+            <span class="sk-block sk-block--rounded lc-afe__sk-card" aria-hidden="true"></span>
+            <span class="sk-block sk-block--rounded lc-afe__sk-card" aria-hidden="true"></span>
+          </div>
+          <div class="lc-afe__list" role="radiogroup" aria-label="Найденные записи" data-afe-list
+               data-off-grid="Карточки результатов поиска: ширину задаёт колонка «Найдено» окна, а не сетка страницы">
+            <section class="lc-afe__group" data-afe-group="funds">
+              <p class="ds-body-xs-reg lc-afe__group-title">В базе фондов</p>
+              <div class="lc-afe__cards" data-afe-cards="funds">
+                <article class="tile tile--card lc-afe__card" role="radio" aria-checked="true" tabindex="0" data-afe-kind="fund" data-afe-id="fnd-001">
+                  <header class="tile__header">
+                    <div class="tile__header-main">
+                      <div class="tile__title-row">
+                        <span class="tile__title-icon" aria-hidden="true"><i data-icon="factory-01"></i></span>
+                        <h4 class="tile__title">Интеррос</h4>
+                      </div>
+                      <p class="tile__subtitle">PE</p>
+                    </div>
+                  </header>
+                </article>
+                <article class="tile tile--card lc-afe__card" role="radio" aria-checked="false" tabindex="-1" data-afe-kind="fund" data-afe-id="fnd-008">
+                  <header class="tile__header">
+                    <div class="tile__header-main">
+                      <div class="tile__title-row">
+                        <span class="tile__title-icon" aria-hidden="true"><i data-icon="factory-01"></i></span>
+                        <h4 class="tile__title">Это пример фонда не из ЕПК</h4>
+                        <span class="tile__title-add tile__title-add--icon tile__title-add--warning" tabindex="0" role="img" aria-label="Клиент не привязан к базе юр. лиц Сбера (ЕПК)." data-tooltip="Клиент не привязан к базе юр. лиц Сбера (ЕПК)." data-tooltip-multiline="yes"><i data-icon="alert-triangle-filled"></i></span>
+                      </div>
+                      <p class="tile__subtitle">PE</p>
+                    </div>
+                  </header>
+                </article>
+              </div>
+            </section>
+            <section class="lc-afe__group" data-afe-group="clients">
+              <div class="lc-afe__group-head">
+                <p class="ds-body-xs-reg lc-afe__group-title">В базе юр. лиц Сбера (ЕПК)</p>
+                <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Юр. лица из этого списка не добавлены в базу фондов" data-tooltip="Юр. лица из этого списка не добавлены в базу фондов" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button>
+              </div>
+              <div class="lc-afe__cards" data-afe-cards="clients">
+                <article class="tile tile--card lc-afe__card" role="radio" aria-checked="false" tabindex="-1" data-afe-kind="client" data-afe-id="pty-3001">
+                  <header class="tile__header">
+                    <div class="tile__header-main">
+                      <div class="tile__title-row">
+                        <span class="tile__title-icon" aria-hidden="true"><i data-icon="building-03"></i></span>
+                        <h4 class="tile__title">ИП «Интер О.С.»</h4>
+                      </div>
+                      <p class="tile__subtitle">Юридическое лицо · Резидент</p>
+                    </div>
+                  </header>
+                  <div class="tile__body">
+                    <dl class="lc-afe__kv">
+                      <dt>ИНН</dt><dd>076543834</dd>
+                      <dt>КПП</dt><dd>33432423423</dd>
+                      <dt>КПП КН</dt><dd>7788994455</dd>
+                      <dt>ОГРН</dt><dd>076543834</dd>
+                      <dt>CRM ID</dt><dd>1-1V9D55</dd>
+                    </dl>
+                  </div>
+                </article>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div class="dvd dvd--v lc-afe__dvd-detail" role="separator" aria-orientation="vertical"></div>
+
+        <!-- 4. Детали выбранного (data): фонд или клиент ЕПК -->
+        <div class="lc-afe__col lc-afe__detail" aria-live="polite">
+          <div class="lc-afe__loading" aria-busy="true">
+            <div class="sk-group">
+              <span class="sk-line sk-line--title" style="--sk-w:40%" aria-hidden="true"></span>
+              <span class="sk-line" style="--sk-w:72%" aria-hidden="true"></span>
+              <span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span>
+              <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <!-- 4а. Фонд из базы фондов (макет A) -->
+          <div class="lc-afe__info lc-afe__info--fund" data-afe-fund>
+            <div class="lc-afe__info-head">
+              <h3 class="ds-h6-strong-smb" data-afe-f="title">Интеррос</h3>
+              <a class="btn btn--outline btn--xs" href="#" data-afe-f="link"><span class="btn__label">Страница фонда</span><i data-icon="arrow-right"></i></a>
+            </div>
+            <!-- только у фонда без partyId; «Привязать» — воркфлоу не делается (решение 30.10.2026) -->
+            <div class="alert alert--warning alert--m alert--row" role="status" data-afe-unbound hidden>
+              <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+              <div class="alert__body">
+                <p class="alert__text">Клиент не привязан к базе юр. лиц Сбера (ЕПК).</p>
+                <div class="alert__buttons">
+                  <button type="button" class="btn btn--outline btn--xs btn--warning" data-afe-bind><span class="btn__label">Привязать</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="lc-afe__fields">
+              <div class="rof lc-afe__full">
+                <span class="ds-label"><span class="ds-label__text">Название</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="name">Интеррос</span></div>
+              </div>
+              <div class="rof lc-afe__full">
+                <span class="ds-label"><span class="ds-label__text">Бенефициар</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="beneficiaries">Владимир Потанин</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Объем инвестиций, млрд RUB</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="investmentVolume">987,65</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Приоритет</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="priority">Высокий</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">ИНН</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="inn">7706419639</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">КПП</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-f="kpp">1157746316598</span></div>
+              </div>
+              <div class="rof lc-afe__full">
+                <span class="ds-label"><span class="ds-label__text">Ключевые отрасли</span></span>
+                <div class="rof__row">
+                  <div class="rof__value rof__value--chips">
+                    <div class="chiplist chiplist--s" data-afe-f="keyIndustries">
+                      <span class="chip chip--s"><span class="chip__label">Металлы и руды</span></span>
+                      <span class="chip chip--s"><span class="chip__label">Информационно-технологические услуги</span></span>
+                      <span class="chip chip--s"><span class="chip__label">Банки</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4б. Клиент из ЕПК (макет B) -->
+          <div class="lc-afe__info lc-afe__info--client" data-afe-client>
+            <div class="lc-afe__info-head">
+              <h3 class="ds-h6-strong-smb" data-afe-c="title">ИП «Интер О.С.»</h3>
+              <a class="btn btn--outline btn--xs" href="#" data-afe-c="link"><span class="btn__label">Страница клиента</span><i data-icon="arrow-right"></i></a>
+            </div>
+            <div class="lc-afe__fields lc-afe__fields--single">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Полное наименование</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="fullName">ОТКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО "Интеррос"</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Тип клиента</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="clientTypeName">Юридическое лицо</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование холдинга</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="holdingName">ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "РОМАШКА-ПРОМОКАШКА-ХОЛДИНГ"</span></div>
+              </div>
+              <div class="lc-afe__team">
+                <h4 class="ds-body-m-strong-smb">Команда клиента</h4>
+                <p class="ds-body-m-reg" data-afe-c="teamEmpty" hidden>—</p>
+                <div class="dtable" data-afe-c="team">
+                  <div class="dtable__body">
+                    <div class="tbl" data-table data-sort-rows>
+                      <div class="tbl__row tbl__row--head lc-afe__team-row">
+                        <div class="th th--separator"></div>
+                        <div class="th" aria-sort="none" data-col="employeeNumber"><span class="th__label">Табельный номер</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="employeeNumber" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                        <div class="th" aria-sort="none" data-col="fio"><span class="th__label">ФИО</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="fio" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                        <div class="th" aria-sort="none" data-col="role"><span class="th__label">Роль</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="role" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                        <div class="th th--separator"></div>
+                      </div>
+                      <div class="tbl__row lc-afe__team-row" data-afe-team-row>
+                        <div class="tc tc--separator"></div>
+                        <div class="tc" data-col="employeeNumber"><span class="tc__row"><span class="tc__text tc__text--truncate">18181811</span></span></div>
+                        <div class="tc" data-col="fio"><span class="tc__row"><span class="tc__text tc__text--truncate">Иванов Иван Иванович</span></span></div>
+                        <div class="tc" data-col="role"><span class="tc__row"><span class="tc__text tc__text--truncate">Клиентский менеджер</span></span></div>
+                        <div class="tc tc--separator"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование подотрасли</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="subIndustryName">Производство железной руды</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование отрасли</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="industryName">Металлургическая и горнодобывающая промышленность</span></div>
+              </div>
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Наименование сегмента</span></span>
+                <div class="rof__row"><span class="rof__value" data-afe-c="segmentName">Крупнейшие</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <!-- доступна только при выбранном клиенте ЕПК (урок Л235: запрет — атрибутом disabled) -->
+        <button type="button" class="btn btn--accent btn--m" data-afe-next disabled><span class="btn__label">Продолжить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

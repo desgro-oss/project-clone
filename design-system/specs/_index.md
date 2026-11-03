@@ -8,12 +8,12 @@ purpose: Манифест спек компонентов. Читай нужну
 |---|---|---|---|---|
 | AllocationBar | components/organisms/AllocationBar/AllocationBar.md | components/organisms/AllocationBar/AllocationBar.css | alert, button | 1.003 |
 | Alert | components/molecules/Alert/Alert.md | components/molecules/Alert/Alert.css | button, link | 1.010 |
-| Avatar | components/atoms/Avatar/Avatar.md | components/atoms/Avatar/Avatar.css | badge | 1.005 |
+| Avatar | components/atoms/Avatar/Avatar.md | components/atoms/Avatar/Avatar.css | badge | 1.006 |
 | Badge | components/atoms/Badge/Badge.md | components/atoms/Badge/Badge.css | — | 1.003 |
 | Breadcrumbs | components/molecules/Breadcrumbs/Breadcrumbs.md | components/molecules/Breadcrumbs/Breadcrumbs.css | link, context-menu, tooltip | 1.006 |
 | ButtonGroup | components/molecules/ButtonGroup/ButtonGroup.md | components/molecules/ButtonGroup/ButtonGroup.css | button | 1.005 |
 | Buttons | components/atoms/Buttons/Buttons.md | components/atoms/Buttons/Buttons.css | spinner | 1.012 |
-| Chart | components/organisms/Chart/Chart.md | components/organisms/Chart/Chart.css | tooltip, alert, skeleton, segment-control, icon-button, button, table-cell | 1.003 |
+| Chart | components/organisms/Chart/Chart.md | components/organisms/Chart/Chart.css | tooltip, alert, skeleton, segment-control, icon-button, button, table-cell | 1.004 |
 | Checkbox | components/atoms/Checkbox/Checkbox.md | components/atoms/Checkbox/Checkbox.css | label-helper | 1.007 |
 | Chip | components/atoms/Chip/Chip.md | components/atoms/Chip/Chip.css | label-helper, spinner | 1.020 |
 | Colors | foundations/Colors/Colors.md | — | — | 1.005 |
@@ -29,7 +29,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | Entity | components/organisms/Entity/Entity.md | components/organisms/Entity/Entity.css | avatar, chip, icon-button, button, badge | 1.008 |
 | IconButton | components/atoms/IconButton/IconButton.md | components/atoms/IconButton/IconButton.css | badge, spinner | 1.013 |
 | Icons | foundations/Icons/Icons.md | — | — | 1.003 |
-| Illustrations | foundations/Illustrations/Illustrations.md | foundations/Illustrations/Illustrations.css | — | 1.006 |
+| Illustrations | foundations/Illustrations/Illustrations.md | foundations/Illustrations/Illustrations.css | — | 1.007 |
 | Layout | foundations/Layout/Layout.md | foundations/Layout/Layout.css | nav-panel, breadcrumbs, spacing | 1.015 |
 | InputAmountRange | components/molecules/Inputs/InputAmountRange/InputAmountRange.md | components/molecules/Inputs/InputRanges.css | input, label-helper, tooltip | 1.007 |
 | InputAutocomplete | components/molecules/Inputs/InputAutocomplete/InputAutocomplete.md | components/molecules/Inputs/Inputs.css | label-helper, checkbox, chip, tooltip, dropdown-list | 1.019 |
@@ -64,15 +64,15 @@ purpose: Манифест спек компонентов. Читай нужну
 | StepMarker | components/atoms/StepMarker/StepMarker.md | components/atoms/StepMarker/StepMarker.css | — | 1.000 |
 | SubTab | components/molecules/SubTab/SubTab.md | components/molecules/SubTab/SubTab.css | badge | 1.001 |
 | Switch | components/atoms/Switch/Switch.md | components/atoms/Switch/Switch.css | label-helper, spinner | 1.009 |
-| Table | components/organisms/Table/Table.md | components/organisms/Table/Table.css | table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu | 1.023 |
-| TableCell | components/organisms/TableCell/TableCell.md | components/organisms/TableCell/TableCell.css | checkbox, chip, icon-button, button, tooltip, chart | 2.023 |
+| Table | components/organisms/Table/Table.md | components/organisms/Table/Table.css | table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu | 1.026 |
+| TableCell | components/organisms/TableCell/TableCell.md | components/organisms/TableCell/TableCell.css | checkbox, chip, icon-button, button, tooltip, chart | 2.029 |
 | TableFilter | components/organisms/TableFilter/TableFilter.md | components/organisms/TableFilter/TableFilter.css | button, icon-button, chip, badge, modal, tab, input, checkbox | 1.010 |
 | Tab | components/molecules/Tab/Tab.md | components/molecules/Tab/Tab.css | — | 1.012 |
-| Themes | foundations/Themes/Themes.md | foundations/Themes/Themes.css | - | 1.015 |
+| Themes | foundations/Themes/Themes.md | foundations/Themes/Themes.css | - | 1.016 |
 | Tile | components/organisms/Tile/Tile.md | components/organisms/Tile/Tile.css | icon-button, button, link, chip, badge, alert, divider | 1.016 |
 | Toast | components/molecules/Toast/Toast.md | components/molecules/Toast/Toast.css | button, spinner | 1.007 |
-| Tooltip | components/molecules/Tooltip/Tooltip.md | components/molecules/Tooltip/Tooltip.css | button | 2.011 |
-| Typography | foundations/Typography/Typography.md | — | — | 1.002 |
+| Tooltip | components/molecules/Tooltip/Tooltip.md | components/molecules/Tooltip/Tooltip.css | button | 2.013 |
+| Typography | foundations/Typography/Typography.md | — | — | 2.001 |
 
 ## RND (не компоненты)
 

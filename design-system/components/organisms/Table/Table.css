@@ -58,8 +58,8 @@
 }
 .dtable__toolbar-left { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; }
 .dtable__title-row { display: flex; align-items: baseline; gap: 10px; }
-.dtable__title { font: var(--type-h5-strong); color: var(--text-primary); margin: 0; white-space: nowrap; }
-.dtable__count { font: var(--type-body-s); color: var(--text-inactive); white-space: nowrap; }
+.dtable__title { font: var(--type-h5-strong-smb); color: var(--text-primary); margin: 0; white-space: nowrap; }
+.dtable__count { font: var(--type-body-s-reg); color: var(--text-inactive); white-space: nowrap; }
 .dtable__toolbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 /* ------------------------------------------------------------------ */
@@ -121,7 +121,7 @@
    .tbl__row (display:grid), и блок-контейнер для его position:sticky — сама
    строка: ходить по вертикали ячейке негде, шапка уезжала вместе с контентом
    (инцидент: портфель ДИД, 05.09.2026). По горизонтали то же правило работало
-   именно потому, что строка шире скроллпорта (.tbl__row { min-width: max-content }),
+   именно потому, что строка шире скроллпорта (.tbl__row { min-width: min-content }),
    поэтому закрепление колонок (.th--pinned) не ломалось и дефект не всплывал.
    Строка шапки обязана нести .tbl__row--head — класс рантайм уже знает
    (ds-table.js isHeadRow), теперь он же несёт и раскладку. */
@@ -157,8 +157,8 @@
   text-align: center;
 }
 .dtable__empty .illu { width: 140px; height: 100px; margin-bottom: 8px; }
-.dtable__empty-title { font: var(--type-body-m-strong); color: var(--text-primary); margin: 0; }
-.dtable__empty-text { font: var(--type-body-s); color: var(--text-secondary); max-width: 38ch; margin: 0; text-wrap: pretty; }
+.dtable__empty-title { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin: 0; }
+.dtable__empty-text { font: var(--type-body-s-reg); color: var(--text-secondary); max-width: 38ch; margin: 0; text-wrap: pretty; }
 .dtable__empty .btn { margin-top: 8px; }
 
 /* ------------------------------------------------------------------ */

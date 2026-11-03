@@ -18,6 +18,9 @@
                                              колонки со склада строки. Для
                                              потребителя, который обновляет
                                              ячейку на месте
+     fitActions(tblEl)                     — трек колонки действий (.th--actions)
+                                             = ширина по иконкам; зовётся сам
+                                             при подключении (wire)
      chipOverflow(tblEl)                   — пересчитать свёртку чипов «+N»
                                              (нужен, только если потребитель
                                              перерисовал ячейки мимо api)
@@ -418,20 +421,84 @@
   }
 
   /* ---------- согласование колонок шапки и строк ----------
-     Строки .dtable__body — отдельные grid-контейнеры с min-width: max-content,
-     и доля-трек (fr) каждая считает по содержимому СВОЕЙ строки: шапка с длинными
-     подписями и строки данных получают разные колонки, пока ресайз не запишет
-     всем одинаковые px. Тот же результат — один раз на подключении: фактические
+     Строки .dtable__body — отдельные grid-контейнеры, и доля-трек (fr) каждая
+     считает по содержимому СВОЕЙ строки: шапка с длинными подписями и строки
+     данных могут получить разные колонки, пока ресайз не запишет всем
+     одинаковые px. Тот же результат — один раз на подключении: фактические
      px-ширины шапки пишутся всем строкам, хвостовой разделитель остаётся
      гибким (minmax(8px,1fr)) и забирает остаток ширины. Таблица, скрытая на
      момент подключения (неактивный таб), выравнивается при первом показе. */
+  /* Треки grid-template-columns верхнего уровня (скобки minmax() не режутся). */
+  function splitTracks(gtc) {
+    var out = [], depth = 0, cur = '';
+    for (var i = 0; i < gtc.length; i++) {
+      var ch = gtc[i];
+      if (ch === '(') depth++;
+      if (ch === ')') depth--;
+      if (/\s/.test(ch) && !depth) { if (cur) out.push(cur); cur = ''; continue; }
+      cur += ch;
+    }
+    if (cur) out.push(cur);
+    return out;
+  }
+
+  /* Ширина колонки действий по иконкам: поля ячейки + IconButton + зазоры.
+     Берётся самая широкая ячейка тела; null — в теле нет строк или в ячейке
+     что-то кроме IconButton (обёртка тултипа .tip-anchor прозрачна). */
+  function actionsWidth(tbl, idx) {
+    var rows = tbl.querySelectorAll(':scope > .tbl__row:not(.tbl__row--head)');
+    var max = 0;
+    for (var i = 0; i < rows.length; i++) {
+      var cell = rows[i].children[idx];
+      if (!cell || cell.closest('[hidden]')) continue;
+      var box = cell.querySelector(':scope > .tc__row') || cell;
+      var btns = [];
+      var ok = Array.prototype.every.call(box.children, function (el) {
+        if (el.hidden || el.classList.contains('tip')) return true;
+        var b = el.classList.contains('ibtn') ? el
+          : (el.classList.contains('tip-anchor') && el.querySelector(':scope > .ibtn'));
+        if (b) btns.push(b);
+        return !!b;
+      });
+      if (!ok || !btns.length) continue;
+      var cs = getComputedStyle(cell), gap = parseFloat(getComputedStyle(box).columnGap) || 0;
+      var w = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0)
+        + (parseFloat(cs.borderLeftWidth) || 0) + (parseFloat(cs.borderRightWidth) || 0)
+        + btns.reduce(function (s, b) { return s + b.getBoundingClientRect().width; }, 0)
+        + gap * (btns.length - 1);
+      if (w > max) max = w;
+    }
+    return max ? Math.ceil(max) : null;
+  }
+
+  /* Колонка действий (.th--actions, TableCell 2.028): трек — фиксированная
+     ширина по иконкам, что бы ни стояло в разметке. Экран ширину не пишет.
+     opts.keepPx — не трогать трек, уже заданный в px («Применить» в окне
+     колонок: ширину мог выбрать человек). */
+  function fitActions(tbl, opts) {
+    var keepPx = !!(opts && opts.keepPx);
+    var head = tbl.querySelector(':scope > .tbl__row');
+    if (!head || !head.querySelector(':scope > .th--actions')) return;
+    var tracks = splitTracks(head.style.gridTemplateColumns || '');
+    if (tracks.length !== head.children.length) return;
+    var changed = false;
+    Array.prototype.forEach.call(head.children, function (th, i) {
+      if (!th.classList.contains('th--actions')) return;
+      /* keepPx — ширину в px уже поставил человек (ресайз) или прошлый подгон */
+      if (keepPx && /^\d+(\.\d+)?px$/.test(tracks[i])) return;
+      var w = actionsWidth(tbl, i);
+      if (w && tracks[i] !== w + 'px') { tracks[i] = w + 'px'; changed = true; }
+    });
+    if (!changed) return;
+    var str = tracks.join(' ');
+    tbl.querySelectorAll(':scope > .tbl__row').forEach(function (row) { row.style.gridTemplateColumns = str; });
+  }
+
   function alignColumns(tbl) {
     var head = tbl.querySelector(':scope > .tbl__row');
     if (!head || head.__dsAligned) return;
     var gtc = head.style.gridTemplateColumns || '';
     if (!gtc) return;
-    var flexy = /fr\b/.test(gtc.replace(/minmax\(8px,\s*1fr\)\s*$/, ''));
-    if (!flexy) { head.__dsAligned = true; return; }
     if (!head.offsetWidth) {
       if (window.ResizeObserver && !tbl.__dsAlignWatch) {
         tbl.__dsAlignWatch = new ResizeObserver(function () {
@@ -441,6 +508,12 @@
       }
       return;
     }
+    /* колонка действий — до замера: её ширина по иконкам не делит свободное
+       место, остальные fr-доли делят то, что осталось */
+    fitActions(tbl);
+    gtc = head.style.gridTemplateColumns || '';
+    var flexy = /fr\b/.test(gtc.replace(/minmax\(8px,\s*1fr\)\s*$/, ''));
+    if (!flexy) { head.__dsAligned = true; return; }
     var kids = head.children, last = kids.length - 1;
     var tracks = Array.prototype.map.call(kids, function (c, i) {
       if (i === last && /(^|\s)th--separator(\s|$)/.test(c.className)) return 'minmax(8px,1fr)';
@@ -453,6 +526,11 @@
   function wire(tbl, opts) {
     if (!tbl || tbl.__dsTableWired) return tbl && tbl.__dsTableWired;
     opts = opts || {};
+    /* вид по умолчанию (data-col-hidden, TableSettings.js) — до выравнивания:
+       fr-доли разметки делят место между видимыми колонками, а не оставляют
+       пустоту на месте скрытых. Рантаймы ds.js грузятся синхронно, к первому
+       wire() DSTableSettings уже есть */
+    if (window.DSTableSettings && window.DSTableSettings.applyDefaults) window.DSTableSettings.applyDefaults(tbl);
     alignColumns(tbl);
 
     /* стартовое направление берём из разметки: без этого первый клик по
@@ -753,5 +831,5 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', registerTrunc);
   else registerTrunc();
 
-  window.DSTable = { bind: bind, bindAll: bindAll, wire: wire, wireAll: wireAll, chipOverflow: chipOverflow, adoptRow: adoptRow, cell: cellOf };
+  window.DSTable = { bind: bind, bindAll: bindAll, wire: wire, wireAll: wireAll, chipOverflow: chipOverflow, adoptRow: adoptRow, cell: cellOf, fitActions: fitActions };
 })();

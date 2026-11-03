@@ -1,0 +1,7 @@
+{
+  "_": "Фильтры списка фондов. Справочники — FUND_TYPE_LABELS и FUND_PRIORITY_LABELS из data/funds.js страницы FundsPipeline (подключаются витриной со страницы-хозяина). data — фильтры не заданы; filtered — заданы все три фильтра; empty — фондов нет, поля выключены (setDisabled); long — длинный запрос и все четыре типа (сводка «PE, +3»). Значения — FundFiltersDto фронтенда, но приоритеты — массивом priorityCodes (несколько приоритетов, решение 30.10.2026).",
+  "data": { "filters": { "smartSearch": "", "typeCodes": [], "priorityCodes": [] } },
+  "filtered": { "filters": { "smartSearch": "Интеррос", "typeCodes": ["PE", "PE_VC"], "priorityCodes": ["HIGH", "LOW"] } },
+  "empty": { "disabled": true, "filters": { "smartSearch": "", "typeCodes": [], "priorityCodes": [] } },
+  "long": { "filters": { "smartSearch": "Восток Инвестиции (ранее BVCP) — институциональные инвесторы", "typeCodes": ["PE", "PE_VC", "FAMILY_OFFICE", "HOLDING"], "priorityCodes": ["MEDIUM"] } }
+}

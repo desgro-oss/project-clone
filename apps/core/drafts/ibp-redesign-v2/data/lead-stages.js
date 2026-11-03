@@ -42,10 +42,10 @@
     DID_LEAD: { icon: 'file-basic', title: 'Лид ДИД', tone: 'primary', colors: ['--st-primary-light','--st-primary-dark','--st-primary'], page: 'potential' },
     CM_LEAD: { icon: 'file-basic', title: 'Лид для КМ', tone: 'green', colors: ['--st-green-light','--st-green-dark','--st-green'], page: 'potential' },
     BINDING_LEAD: { icon: 'important-leads', title: 'Обязательный лид', tone: 'orange', colors: ['--st-orange-light','--st-orange-dark','--st-orange'], page: 'bindingLeads' },
-    POSSIBLE_LEAD: { icon: 'possible-leads', title: 'Возможный лид', tone: 'grey', colors: ['--pink-50','--pink-800','--pink-500'], page: 'possibleLeads' },
+    POSSIBLE_LEAD: { icon: 'possible-leads', title: 'Возможный лид', tone: 'grey', colors: ['--st-grey-light','--st-grey-dark','--st-grey'], page: 'possibleLeads' },
     CIB_SALES_PROJECT: { icon: 'sales-projects', title: 'Проект продаж CIB', tone: 'dpurple', colors: ['--st-dpurple-light','--st-dpurple-dark','--st-dpurple'], page: 'opportunity', source: 'cib' },
-    SALES_CAMPAIGN: { icon: 'sales-company', title: 'Кампания продаж', tone: 'dpurple', colors: ['--indigo-50','--indigo-800','--indigo-500'], page: 'opportunity', source: 'campaign' },
-    MEETING: { icon: 'calendar', title: 'Из встречи', tone: 'orange', colors: ['--cyan-50','--cyan-800','--cyan-500'], page: 'meetings' }
+    SALES_CAMPAIGN: { icon: 'sales-company', title: 'Кампания продаж', tone: 'dpurple', colors: ['--st-dpurple-light','--st-dpurple-dark','--st-dpurple'], page: 'opportunity', source: 'campaign' },
+    MEETING: { icon: 'calendar', title: 'Из встречи', tone: 'orange', colors: ['--st-orange-light','--st-orange-dark','--st-orange'], page: 'meetings' }
   };
   function checks(lead) {
     var m = (lead.meetings || []).filter(function (item) { return item.statusCode !== 'CANCELLED'; });

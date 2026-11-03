@@ -23,7 +23,7 @@
   border: 1px solid var(--lc-stat-border);
   border-radius: var(--radius-m);
   background: var(--lc-stat-bg);
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-secondary);
   text-align: left;
   cursor: pointer;
@@ -36,11 +36,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-secondary);
 }
 .lc-stat__value {
-  font: var(--type-h4-strong);
+  font: var(--type-h4-strong-smb);
   color: var(--lc-stat-fg);
   font-variant-numeric: tabular-nums;
 }
@@ -52,7 +52,7 @@
   padding: var(--space-8);
   text-align: center;
 }
-.lc-stat--s .lc-stat__value { order: -1; font: var(--type-h5-strong); }
+.lc-stat--s .lc-stat__value { order: -1; font: var(--type-h5-strong-smb); }
 .lc-stat--s .lc-stat__caption { display: none; }
 
 /* Тоны */

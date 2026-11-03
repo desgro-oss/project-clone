@@ -82,13 +82,13 @@
 }
 
 .alert__title {
-  font: var(--type-body-m-strong);
+  font: var(--type-body-m-strong-smb);
   color: var(--text-primary);
   margin: 0;
   text-wrap: pretty;
 }
 .alert__text {
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
   margin: 4px 0 0;
   text-wrap: pretty;

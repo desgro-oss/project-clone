@@ -1,0 +1,8 @@
+{
+  "id": "clients-app",
+  "track": "product",
+  "title": "Клиенты",
+  "desc": "Клиенты: реестр, дерево холдингов, карточка клиента и комментарии",
+  "home": "pages/MyClientsPage.preview.html",
+  "icon": "factory-01"
+}

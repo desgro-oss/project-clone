@@ -2,20 +2,20 @@
 name: Мои клиенты по холдингам
 type: table
 category: Общие
-purpose: Клиенты аналитика, сгруппированные по холдингам, с раскрытием групп
-version: 1.002
-updated: 10.10.2026
+purpose: Клиенты выборки реестра, сгруппированные по холдингам, с раскрытием групп
+version: 1.004
+updated: 26.10.2026
 rulesVersion: 2.000
 owner: "не решено (10.10.2026)"
 designer: "агент (ibp-redesign-v2)"
 frontend: core/clients-app widgets/HierarchicalTree/MyClientsHierarchicalTree
 ds: [Tile, Table, TableCell, Link, Buttons, SegmentControl, Alert]
 uses: []
-usedOn: [pages/MyClientsPage.html — вид «дерево»]
+usedOn: [pages/MyClientsPage.html — вид «дерево», pages/HomeBoard.html — вид «дерево» вкладки «Поиск клиентов»]
 opens: [ClientInfoPage — ссылка клиента]
 artifactOf:
 opensFrom: []
-dependsOn: ["data/store.js (IBPR.clients, employee, lbl)", widgets/tables/V2MyClientsTable (wireView)]
+dependsOn: ["data/store.js (IBPR.clients, employee, lbl)", "widgets/tables/V2MyClientsTable (показывает дерево и передаёт выборку, wireView)"]
 variants: []
 modifiers: []
 requirements: [docs/tasks/MS0014-ibp-redesign-context-pages.md, docs/tasks/MS0014a-ibp-redesign-frontend-names.md]
@@ -26,7 +26,7 @@ knowledge: []
 
 ## Описание (Purpose)
 
-Вид «дерево» реестра «Мои клиенты» по ТЗ MS0014 §4.7: строки-группы холдингов с раскрытием и клиенты холдинга. Колонки — по конфигу фронтенда (клиент, полное наименование, ИНН, отрасль, ТБ, ГКМ, CRM ID). Фильтров в виде дерева нет, как во фронтенде.
+Вид «дерево» реестра клиентов V2MyClientsTable по ТЗ MS0014 §4.7: строки-группы холдингов с раскрытием и клиенты холдинга. Группирует ту выборку, что открыта в реестре: «Мои клиенты» — избранные клиенты, «Поиск клиентов» — вся база (раздел «Клиенты» и главная). Колонки — по конфигу фронтенда (клиент, полное наименование, ИНН, отрасль, ТБ, ГКМ, CRM ID). Фильтров в виде дерева нет, как во фронтенде.
 
 ## Раскладка (Layout)
 
@@ -103,8 +103,8 @@ knowledge: []
 
 - Шеврон группы сворачивает клиентов холдинга.
 - Клиент → ClientInfoPage.
-- SegmentControl → `onView(view)`.
-- «Краткий отчет» — Toast «Файл выгружен»; «Добавить клиента» — по клику ничего (Р6).
+- SegmentControl → `onView(view)`: таблица и дерево переключает V2MyClientsTable, дерево перерисовывается при каждом показе.
+- «Краткий отчет» — Toast «Файл выгружен»; «Добавить клиента» — как у V2MyClientsTable: переход на «Поиск клиентов», на самом поиске кнопки нет.
 
 ### Связанные артефакты
 
@@ -121,6 +121,7 @@ knowledge: []
 | Файл | Глобальная переменная | Тип | Источник имён |
 |---|---|---|---|
 | data/clients.js | MOCK_CLIENTS | ClientRsDto | invented (10.10.2026) |
+| data/clients.js | MOCK_BASE_CLIENTS | ClientRsDto | invented (26.10.2026) |
 
 ## Для разработчиков (Implementation)
 

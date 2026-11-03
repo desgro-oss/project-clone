@@ -11,6 +11,8 @@
    (.nav__block + .nav__block-label), пункт = компонент (.nav__item),
    текущий — .nav__item--selected. Окна и поповеры тайла — под-пункты его
    аккордеона (.nav__item--acc + .nav__sub): в ките они не самостоятельны.
+   Артефакт со своими артефактами — вложенный аккордеон второго уровня
+   (глубже витрина не вкладывает).
 
    Вызов со страницы:
      IBPKitNav.render({ nav, groups, base, current, hub })
@@ -33,11 +35,21 @@
 
   /* Группы в порядке категорий проекта; внутри — по алфавиту видимого
      названия (правила ДС). Пустая категория тоже рисуется: по ней видно,
-     куда класть новый компонент. Окна и поповеры — у своего тайла. */
+     куда класть новый компонент. Окна и поповеры — у своего тайла.
+     Для меню и карточек входы разные: меню показывает верхний уровень
+     (без вложенных), карточки обзора — все компоненты категории. */
   function grouped(kit) {
     var top = kit.components.filter(function (c) { return !c.owner; });
     return kit.categories.map(function (cat) {
       return { category: cat, items: top.filter(function (c) { return c.category === cat; }).sort(byName) };
+    });
+  }
+  /* Карточки обзора: все компоненты категории, включая вложенных (owner) —
+     иначе артефакт с собственным артефактом («Процентная схема ЕТС») и его
+     соседи-истории пропадали бы с обзора. */
+  function allGrouped(kit) {
+    return kit.categories.map(function (cat) {
+      return { category: cat, items: kit.components.filter(function (c) { return c.category === cat; }).sort(byName) };
     });
   }
   function artifactsOf(kit, id) {
@@ -64,6 +76,30 @@
     try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); } catch (e) { /* без хранилища — всё раскрыто */ }
   }
 
+  /* Под-список аккордеона компонента: «Обзор» + его артефакты. Артефакт с
+     собственными артефактами — вложенный аккордеон того же вида (второй
+     уровень: «Обзор» + его артефакты); глубже витрина не вкладывает.
+     Переключение обоих уровней ведёт рантайм NavPanel (делегирование по
+     .nav__item--acc), дополнительной привязки не нужно. */
+  function subListHTML(kit, comp, arts, base, current, subId) {
+    return '<div class="nav__sub" id="' + subId + '"><div class="nav__sub-in">'
+      + item(base + '/' + comp.doc, 'Обзор', comp.id === current)
+      + arts.map(function (a) {
+          var inner = artifactsOf(kit, a.id);
+          if (!inner.length) return item(base + '/' + a.doc, a.name, a.id === current);
+          var innerId = 'kit-sub-' + a.id;
+          var innerOpen = a.id === current || inner.some(function (x) { return x.id === current; });
+          return '<a class="nav__item nav__item--acc' + (a.id === current ? ' nav__item--selected' : '') + '" href="#"'
+            + ' aria-expanded="' + (innerOpen ? 'true' : 'false') + '" aria-controls="' + innerId + '">'
+            + '<span class="nav__label">' + esc(a.name) + '</span><span class="nav__caret"><i data-icon="chevron-down"></i></span></a>'
+            + '<div class="nav__sub" id="' + innerId + '"><div class="nav__sub-in">'
+            + item(base + '/' + a.doc, 'Обзор', a.id === current)
+            + inner.map(function (x) { return item(base + '/' + x.doc, x.name, x.id === current); }).join('')
+            + '</div></div>';
+        }).join('')
+      + '</div></div>';
+  }
+
   function listHTML(kit, groups, base, current) {
     var closed = closedCats();
     return groups.map(function (g, gi) {
@@ -86,15 +122,14 @@
         var arts = artifactsOf(kit, it.id);
         var href = base + '/' + it.doc;
         if (!arts.length) { s += item(href, it.name, it.id === current); return; }
-        var open = it.id === current || arts.some(function (a) { return a.id === current; });
+        var open = it.id === current || arts.some(function (a) {
+          return a.id === current || artifactsOf(kit, a.id).some(function (x) { return x.id === current; });
+        });
         var subId = 'kit-sub-' + it.id;
         s += '<a class="nav__item nav__item--acc' + (it.id === current ? ' nav__item--selected' : '') + '" href="#"'
           + ' aria-expanded="' + (open ? 'true' : 'false') + '" aria-controls="' + subId + '">'
           + '<span class="nav__label">' + esc(it.name) + '</span><span class="nav__caret"><i data-icon="chevron-down"></i></span></a>'
-          + '<div class="nav__sub" id="' + subId + '"><div class="nav__sub-in">'
-          + item(href, 'Обзор', it.id === current)
-          + arts.map(function (a) { return item(base + '/' + a.doc, a.name, a.id === current); }).join('')
-          + '</div></div>';
+          + subListHTML(kit, it, arts, base, current, subId);
       });
       return s + '</div></div></div>';
     }).join('');
@@ -112,6 +147,8 @@
     });
   }
 
+  /* Карточки обзора: все компоненты категории (см. allGrouped), включая
+     вложенных — сводки артефактов у тайла это не отменяет. */
   function cardsHTML(kit, groups, base) {
     return groups.map(function (g) {
       var cards = g.items.map(function (it) {
@@ -164,7 +201,7 @@
       bindCats(list);
     }
     if (opts.nav && opts.hub) refreshFooter(opts.nav, opts.hub);
-    if (opts.groups) opts.groups.innerHTML = cardsHTML(kit, groups, base);
+    if (opts.groups) opts.groups.innerHTML = cardsHTML(kit, allGrouped(kit), base);
     if (window.dsIcons) window.dsIcons.apply(document);
   }
 

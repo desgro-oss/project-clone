@@ -380,18 +380,18 @@ function initTables() {
   tbl('typo-table',
     [['Часть', '1.6fr'], ['Токен', '1.2fr'], ['Размер / интерлиньяж', '1fr'], ['Цвет', '1.2fr']],
     [
-      ['Заголовок ' + tok('.chart__title') + ' (M)', tok('--type-body-m-strong'), '16 / 20', tok('--text-primary')],
-      ['Заголовок, размер S', tok('--type-body-s-strong'), '14 / 16', tok('--text-primary')],
-      ['Заголовок, размер L', tok('--type-body-l-strong'), '18 / 24', tok('--text-primary')],
-      ['Подзаголовок ' + tok('.chart__subtitle'), tok('--type-body-xs'), '12 / 16', tok('--text-secondary')],
-      ['Подписи осей ' + tok('.chart__axis text'), tok('--type-body-xs'), '12 / 16', tok('--text-inactive')],
-      ['Подписи осей, размер L', tok('--type-body-s'), '14 / 16', tok('--text-inactive')],
-      ['Легенда ' + tok('.chart__legend-item'), tok('--type-body-xs'), '12 / 16', tok('--text-secondary')],
-      ['Значение в легенде', tok('--type-body-xs'), '12 / 16', tok('--text-primary')],
-      ['Подпись значения ' + tok('.chart__vlabel'), tok('--type-body-xs'), '12 / 16', tok('--text-secondary')],
-      ['Заголовок тултипа', tok('--type-body-s-strong'), '14 / 16', tok('--text-on-dark')],
-      ['Строка тултипа', tok('--type-body-s'), '14 / 16', tok('--text-on-dark') + ', opacity .82'],
-      ['Значение в тултипе', tok('--type-body-s-strong'), '14 / 16', tok('--text-on-dark')]
+      ['Заголовок ' + tok('.chart__title') + ' (M)', tok('--type-body-m-strong-smb'), '16 / 20', tok('--text-primary')],
+      ['Заголовок, размер S', tok('--type-body-s-strong-smb'), '14 / 16', tok('--text-primary')],
+      ['Заголовок, размер L', tok('--type-body-l-strong-smb'), '18 / 24', tok('--text-primary')],
+      ['Подзаголовок ' + tok('.chart__subtitle'), tok('--type-body-xs-reg'), '12 / 16', tok('--text-secondary')],
+      ['Подписи осей ' + tok('.chart__axis text'), tok('--type-body-xs-reg'), '12 / 16', tok('--text-inactive')],
+      ['Подписи осей, размер L', tok('--type-body-s-reg'), '14 / 16', tok('--text-inactive')],
+      ['Легенда ' + tok('.chart__legend-item'), tok('--type-body-xs-reg'), '12 / 16', tok('--text-secondary')],
+      ['Значение в легенде', tok('--type-body-xs-reg'), '12 / 16', tok('--text-primary')],
+      ['Подпись значения ' + tok('.chart__vlabel'), tok('--type-body-xs-reg'), '12 / 16', tok('--text-secondary')],
+      ['Заголовок тултипа', tok('--type-body-s-strong-smb'), '14 / 16', tok('--text-on-dark')],
+      ['Строка тултипа', tok('--type-body-s-reg'), '14 / 16', tok('--text-on-dark') + ', opacity .82'],
+      ['Значение в тултипе', tok('--type-body-s-strong-smb'), '14 / 16', tok('--text-on-dark')]
     ]);
 
   var palRows = CH.palette.map(function (t, i) {
@@ -471,7 +471,7 @@ function initRedline() {
       ['Легенда · минимальная высота', cs('.chart__legend-item').minHeight],
       ['Маркер серии', cs('.chart__marker').width + ' × ' + cs('.chart__marker').height],
       ['Маркер серии · радиус', cs('.chart__marker').borderRadius],
-      ['Подписи осей', cs('.chart__axis text').font || 'var(--type-body-xs)'],
+      ['Подписи осей', cs('.chart__axis text').font || 'var(--type-body-xs-reg)'],
       ['Отступ подписи Y от поля', '8px'],
       ['Отступ подписи X от оси', '15px (базовая линия)'],
       ['Радиус столбца', 'var(--radius-2xs) — 2px'],

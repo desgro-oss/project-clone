@@ -1,0 +1,47 @@
+<!-- @dsCard group="Fixtures" name="B19" viewport="1440x900" -->
+<!DOCTYPE html>
+<!-- ФИКСТУРА линтера: B19. Получена из `_base.ok.html` добавлением одного
+     объявления в собственный <style> — так, как оно стояло в TableCell 2.025.
+     ДЕФЕКТ: `min-width: max(100%, max-content)`. max()/min()/clamp()/calc()
+     принимают только длины, проценты и числа: браузер считает объявление
+     недействительным и отбрасывает его целиком, молча — в CSS правило есть,
+     в computed style его нет (закрепление колонок не работало с 07.10 по
+     27.10.2026). Правило обязано ПАДАТЬ здесь и МОЛЧАТЬ на эталоне —
+     `lessons-cli verify`. -->
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фикстура B19 — Дизайн-система</title>
+<link rel="stylesheet" href="../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../components/molecules/Inputs/Inputs.css">
+<link rel="stylesheet" href="../docs-kit/ds-toc.css">
+<style>
+  .fx-note { font: var(--type-body-m-reg); color: var(--text-secondary); min-width: max(100%, max-content); }
+</style>
+</head>
+<body>
+<main class="page ds-split">
+  <p class="meta">Версия: <b>1.000</b> · Обновлено: <b>06.09.2026</b></p>
+  <div class="splitpane">
+    <div class="splitpane__a">
+      <div id="pg-controls">
+        <div class="ctl"><span class="lbl">Вариант</span></div>
+        <div class="inp inp--m"><div class="inp__field"><input class="inp__control"></div></div>
+      </div>
+    </div>
+    <div class="splitpane__b">
+      <p class="fx-note">Область предпросмотра.</p>
+    </div>
+  </div>
+</main>
+<script src="../docs-kit/ds-toc.js"></script>
+<script src="../components/molecules/Splitter/Splitter.js"></script>
+<script src="../docs-kit/docs-split.js"></script>
+</body>
+</html>

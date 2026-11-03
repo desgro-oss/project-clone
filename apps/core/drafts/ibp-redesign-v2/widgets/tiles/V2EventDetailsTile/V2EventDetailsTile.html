@@ -1,0 +1,29 @@
+<!-- Локальный компонент «Событие» — правая панель страницы EventsPage:
+     что случилось, когда и кто, что изменилось (поле, было, стало) и с чем
+     связано — ссылки на проект, сделку, клиента. Содержимое рисует
+     V2EventDetailsTile.js (LcEventDetailsTile.render). -->
+<section class="tile tile--headless lc-v2-event-details-tile" data-state="data" data-mode="view" aria-labelledby="lc-event-title">
+  <div class="tile__body lc-v2-event-details-tile__body ds-scroll">
+    <article class="lc-v2-event-details-tile__event" data-event-article>
+      <div class="lc-v2-event-details-tile__type" data-event-type></div>
+      <h2 class="lc-v2-event-details-tile__title" id="lc-event-title" data-event-title></h2>
+      <p class="lc-v2-event-details-tile__meta"><time data-event-date></time><span aria-hidden="true">·</span><span data-event-author></span></p>
+      <section class="lc-v2-event-details-tile__section" aria-labelledby="lc-event-change-title" data-event-change-section>
+        <h3 class="lc-v2-event-details-tile__section-title" id="lc-event-change-title">Что изменилось</h3>
+        <div class="lc-v2-event-details-tile__fields" data-event-change></div>
+      </section>
+      <section class="lc-v2-event-details-tile__section" aria-labelledby="lc-event-links-title">
+        <h3 class="lc-v2-event-details-tile__section-title" id="lc-event-links-title">Связано с</h3>
+        <ul class="lc-v2-event-details-tile__links" data-event-links></ul>
+      </section>
+    </article>
+    <!-- событие не выбрано: вкладка без событий включённых типов -->
+    <div class="es es--m" data-event-none hidden>
+      <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+      <div class="es__body">
+        <p class="es__title">Событие не выбрано</p>
+        <p class="es__text">Выберите событие в списке слева.</p>
+      </div>
+    </div>
+  </div>
+</section>

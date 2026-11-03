@@ -1,0 +1,20 @@
+{
+  "id": "primer",
+  "title": "Образец",
+  "dir": "образец",
+  "order": 3,
+  "sample": true,
+  "tile": { "title": "Настройки", "desc": "Параметры раздела и права доступа" },
+  "scenes": [
+    { "file": "primer-1-solo-gear", "keep": true, "layout": "solo", "base": "none",
+      "hero": { "motif": "gear" } },
+    { "file": "primer-2-solo-tray", "keep": true, "layout": "solo", "base": "none",
+      "hero": { "motif": "docTray" } },
+    { "file": "primer-3-pair-vault", "keep": true, "layout": "pair", "base": "none",
+      "hero": { "motif": "vault" }, "mid": { "motif": "coinStack", "opts": { "n": 6 } } },
+    { "file": "primer-4-trio-tower", "keep": true, "layout": "trio", "base": "none",
+      "hero": { "motif": "tower" }, "mid": { "motif": "docStack", "opts": { "n": 6 } }, "small": { "motif": "cube" } },
+    { "file": "primer-5-diagonal-monitor", "keep": true, "layout": "diagonal", "base": "slab",
+      "hero": { "motif": "monitor" }, "mid": { "motif": "docTray" }, "small": { "motif": "clipboard" } }
+  ]
+}

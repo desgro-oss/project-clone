@@ -121,7 +121,7 @@
       const t = document.createElement('div'); t.className = 'tbl-demo';
       t.innerHTML = '<div class="tbl-demo__row tbl-demo__row--head"><div></div><div class="tbl-demo__cell">Контрагент</div><div class="tbl-demo__cell">Комментарий</div><div></div></div>';
       const row = document.createElement('div'); row.className = 'tbl-demo__row';
-      row.innerHTML = '<div></div><div class="tbl-demo__cell" style="font:var(--type-body-s);">ООО ЮгСтрой</div><div class="tbl-demo__cell"></div><div></div>';
+      row.innerHTML = '<div></div><div class="tbl-demo__cell" style="font:var(--type-body-s-reg);">ООО ЮгСтрой</div><div class="tbl-demo__cell"></div><div></div>';
       row.children[2].appendChild(mk({ size: 's', table: true, value: 'Text', width: 'auto', live: true }));
       row.children[2].firstChild.style.width = '100%';
       t.appendChild(row);
@@ -313,10 +313,10 @@
     const tb = document.querySelector('#typo-table tbody');
     if (!tb) return;
     const rows = [
-      ['Текст поля · M', 'Text', '--type-body-m', 'inp-m'],
-      ['Текст поля · S (Table Edit)', 'Text', '--type-body-s', 'inp-s'],
-      ['Label', 'Label', '--type-body-xs', 'label'],
-      ['Helper', 'Helper', '--type-body-xs', 'helper'],
+      ['Текст поля · M', 'Text', '--type-body-m-reg', 'inp-m'],
+      ['Текст поля · S (Table Edit)', 'Text', '--type-body-s-reg', 'inp-s'],
+      ['Label', 'Label', '--type-body-xs-reg', 'label'],
+      ['Helper', 'Helper', '--type-body-xs-reg', 'helper'],
     ];
     rows.forEach(([part, sample, token, kind]) => {
       const tr = document.createElement('tr');

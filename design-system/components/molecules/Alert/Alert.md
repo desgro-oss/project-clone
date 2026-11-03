@@ -38,7 +38,7 @@ status: curated
 - **Поведение** — Закрытие (× убирает Алерт, необратимо в сессии; важное сообщение — без крестика); Сворачивание (шеврон сворачивает до строки заголовка, aria-expanded); Позиция в потоке (полная ширина контейнера, раздвигает контент, стек с зазором, не вкладываются); Анимация (раскрытие/сворачивание по высоте + fade 150–200мс ease-out; reduced-motion → только opacity).
 - **Состояния** — сам Алерт статичен, не реагирует на курсор; интерактивны только действия/кнопки/ссылки. Иконка-действие: Default (Text_Inactive), Hover (Text_Secondary + подложка в тон 12%), Active (акцент тона), Focus (2px обводка тона).
 - **Доступность** — role/aria-live по тону: Error·Warning → alert/assertive, Info·Success → status/polite. Иконка тона aria-hidden. Кнопки действий с aria-label; шеврон с aria-expanded — поворот на 180° красится и по `[aria-expanded="false"]` напрямую, класс `.alert--collapsed` остаётся источником истины (RulesAudit W1, 12.08.2026). Не перехватывает Esc (не модальный).
-- **Типографика** — заголовок --type-body-m-strong; текст --type-body-s; кнопка --type-button-xs; ссылка --type-body-s.
+- **Типографика** — заголовок --type-body-m-strong-smb; текст --type-body-s-reg; кнопка --type-button-xs; ссылка --type-body-s-reg.
 - **Цвета** — пара «заливка + акцент» из группы Situative. info: --info-bg + --info; warning: --warning-bg + --warning; error: --error-bg-light + --error; success: --success-bg + --success. Заголовок Text_Primary, текст Text_Secondary, действия Text_Inactive. Кнопки внутри несут явный модификатор Тон Button (`.btn--info/--warning/--error/--success`, совпадающий с тоном Алерта); переопределение --primary/--link на .alert остаётся для цвета ссылок и focus-обводки.
 
 ## Для разработчиков (выжимка)

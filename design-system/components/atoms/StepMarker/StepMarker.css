@@ -35,9 +35,9 @@
   width: var(--space-24);
   height: var(--space-24);
   border-radius: var(--radius-full);
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   color: var(--primary-dark);
   background: var(--st-primary-light);
   vertical-align: middle;
@@ -52,7 +52,7 @@
 .stepmark--l {
   width: var(--space-32);
   height: var(--space-32);
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   font-weight: var(--weight-semibold);
   --stepmark-icon: 18px;
 }

@@ -1,0 +1,8 @@
+<!-- Вариант «Меню актива» (AssetActionsMenu) для актива без partyId (не из ЕПК):
+     без «Перейти на страницу клиента» — во фронтенде пункт есть только при partyId
+     (useAssetActions; допущение 30.10.2026, макета нет). Триггер — кнопка «⋮» строки
+     AssetsTable с data-menu="assetActionsMenuCustom". Паспорт общий — AssetActionsMenu.md. -->
+<div id="assetActionsMenuCustom" class="menu menu--floating" role="menu" aria-label="Действия с активом" hidden>
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Редактировать</span></button>
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Удалить актив из фонда</span></button>
+</div>

@@ -37,7 +37,7 @@
 
   <div class="screen screen--app">
     <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
-      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="../../../host-app/pages/HomePage.html">Главная</a></li>
       <li class="crumbs__item crumbs__item--current">
         <span class="crumbs__current" aria-current="page" data-crumb-current>Проекты продаж CIB: Активные проекты</span>
       </li>
@@ -65,8 +65,21 @@
      по конфигу реестра «cib» (data/dictionaries.js, REGISTRY_CONFIGS):
      колонки, вкладки-подфильтры, действия строк, разделы фильтра. Страница
      вшивает меткой <ds-include> и монтирует: IBPR_TABLE.opportunities(host).
-     Пустое тело — .dtable__empty, ошибка — Alert блока __error. -->
-<section data-registry="cib" id="reg-table" data-state="data" data-mode="view" class="tile tile--headless lc-cib-opp-table col-12" data-widget="OpportunitySalesProjectsTable" data-widget-group="tables" data-widget-src="../widgets/tables/OpportunitySalesProjectsTable/OpportunitySalesProjectsTable.html">
+     Пустое тело — .dtable__empty, ошибка — Alert блока __error.
+     Тулбар — над таблицей (Table, вариант .dtable-toolbar); карточка — сама
+     .dtable, без тайла-подложки (решение пользователя 20.10.2026, как в реестрах
+     v2 — встречи/задачи/клиенты). -->
+<div data-registry="cib" id="reg-table" data-state="data" data-mode="view" class="lc-cib-opp-table col-12" data-widget="OpportunitySalesProjectsTable" data-widget-group="tables" data-widget-src="../widgets/tables/OpportunitySalesProjectsTable/OpportunitySalesProjectsTable.html">
+  <!-- тулбар над таблицей (Table, вариант .dtable-toolbar): фильтр слева,
+       «Краткий отчет» справа; карточка — сама .dtable, без тайла-подложки -->
+  <div class="dtable-toolbar">
+    <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+      <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+    </div>
+    <div class="dtable__toolbar-right">
+      <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+    </div>
+  </div>
   <div class="alert alert--error alert--m lc-cib-opp-table__error" role="alert">
     <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
     <div class="alert__body">
@@ -75,16 +88,6 @@
     </div>
   </div>
   <div class="dtable dtable--fill">
-    <div class="dtable__toolbar">
-      <div class="dtable__toolbar-left">
-        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
-          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
-        </div>
-      </div>
-      <div class="dtable__toolbar-right">
-        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
-      </div>
-    </div>
     <div class="dtable__body">
       <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
       <div class="dtable__empty" data-rt-empty hidden>
@@ -94,7 +97,7 @@
     </div>
     <div class="dtable__footer" data-rt-footer></div>
   </div>
-</section>
+</div>
 
       <!-- #sec:modals ── окна: сборщик выносит в конец страницы -->
       <!-- Локальный компонент «Взять сделку в работу» — окно подтверждения

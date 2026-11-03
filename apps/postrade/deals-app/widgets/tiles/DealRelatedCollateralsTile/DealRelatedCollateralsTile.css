@@ -13,7 +13,7 @@
 }
 .lc-collaterals__stub {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-inactive);
   text-align: center;
 }

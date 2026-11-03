@@ -1,0 +1,12 @@
+{
+  "_": "Демо-данные конструктора витрины: fund — FundItemDto удаляемого фонда, по состояниям и long (самые длинные значения). Рисует сценарий демо функцией окна DeleteFundModal.render. Значения — макет «Удаление фонда» и data/funds.js (30.10.2026).",
+  "data": {
+    "fund": { "objectId": "fnd-001", "name": "Интеррос", "inn": "7706419639", "kpp": "1157746316598", "partyId": "pty-1001", "aumAssetsCount": 16 }
+  },
+  "partial": {
+    "fund": { "objectId": "fnd-008", "name": "Это пример фонда не из ЕПК", "inn": null, "kpp": null, "partyId": null, "aumAssetsCount": 0 }
+  },
+  "long": {
+    "fund": { "objectId": "fnd-009", "name": "Акционерное общество «Управляющая компания Российского фонда прямых инвестиций — Восток Инвестиции»", "inn": "770641963912", "kpp": "115774631427", "partyId": "pty-1009", "aumAssetsCount": 1240 }
+  }
+}

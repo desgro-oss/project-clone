@@ -1,0 +1,104 @@
+<!-- Локальный компонент «Активы фонда» (AssetsTable) — правая панель сплиттера
+     страницы FundsPipeline. Карточка — сама .dtable (Table ДС), без тайла-подложки,
+     как V2MeetingsProtocolsList (решение человека 20.10.2026). Заголовок, строки
+     и пустое состояние рисует AssetsTable.render (AssetsTable.js); разметка ниже —
+     каркас всех состояний, нужное показывает CSS по data-state. -->
+<div class="dtable dtable--fill lc-assets-table" data-state="data" data-mode="edit">
+  <div class="dtable__toolbar">
+    <div class="dtable__toolbar-left"><h3 class="dtable__title" data-at-title>Активы фонда</h3></div>
+    <div class="dtable__toolbar-right">
+      <!-- окно добавления актива не делается (решение человека 30.10.2026) -->
+      <button type="button" class="btn btn--outline btn--xs lc-assets-table__add"><i data-icon="add"></i><span class="btn__label">Добавить актив</span></button>
+      <!-- Шестерёнка «Настроить колонки» (как в ДС: ibtn neutral M, глиф settings; решение
+           человека 30.10.2026) — стандартное окно ДС TableSettings по хуку data-table-settings:
+           строится из колонок шапки первой .tbl этой .dtable (таблица данных) -->
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-assets-table__setup" data-table-settings aria-label="Настроить колонки"><i data-icon="settings"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Закрыть активы фонда" data-at-close><i data-icon="close"></i></button>
+    </div>
+  </div>
+  <div class="dtable__body">
+    <!-- данные есть: строки рисует AssetsTable.render -->
+    <div class="tbl lc-assets-table__data" data-table data-sort-rows data-table-persist="AssetsTable" data-at-tbl>
+      <div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div>
+    </div>
+    <!-- загрузка: шапка на месте, строки — скелетоны -->
+    <div class="tbl lc-assets-table__loading" data-table aria-busy="true">
+      <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 272px 158px 120px 180px 145px 125px 180px minmax(200px,1fr) 52px minmax(8px,1fr)">
+        <div class="th th--separator"></div>
+        <div class="th"><span class="th__label">Название актива</span></div>
+        <div class="th"><span class="th__label">Псевдоним</span></div>
+        <div class="th"><span class="th__label">Дата приобретения</span></div>
+        <div class="th th--right"><span class="th__label">Enterprise Value, млн RUB</span></div>
+        <div class="th th--right"><span class="th__label">MCAP / 100% equity, млн RUB</span></div>
+        <div class="th th--right"><span class="th__label">Доля владения</span></div>
+        <div class="th th--right"><span class="th__label">Стоимость доли, млн RUB</span></div>
+        <div class="th"><span class="th__label">Отрасль</span></div>
+        <div class="th th--actions th--pinned" data-col="actions"><span class="th__label">Действия</span></div>
+        <div class="th th--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px 272px 158px 120px 180px 145px 125px 180px minmax(200px,1fr) 52px minmax(8px,1fr)">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:70%" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:64px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:88px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:72px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:40px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:88px" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span></div>
+        <div class="tc"></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px 272px 158px 120px 180px 145px 125px 180px minmax(200px,1fr) 52px minmax(8px,1fr)">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:55%" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:64px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:72px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:88px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:40px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:72px" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:45%" aria-hidden="true"></span></div>
+        <div class="tc"></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row" style="grid-template-columns:8px 272px 158px 120px 180px 145px 125px 180px minmax(200px,1fr) 52px minmax(8px,1fr)">
+        <div class="tc tc--separator"></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:62%" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:64px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:88px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:64px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:40px" aria-hidden="true"></span></div>
+        <div class="tc tc--numbers tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:88px" aria-hidden="true"></span></div>
+        <div class="tc tc--skeleton"><span class="sk-line sk-line--caption" style="--sk-w:50%" aria-hidden="true"></span></div>
+        <div class="tc"></div>
+        <div class="tc tc--separator"></div>
+      </div>
+    </div>
+    <!-- данных нет: у фонда нет активов (EmptyAssetsPreview фронтенда) -->
+    <div class="lc-assets-table__empty">
+      <div class="es es--l">
+        <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <div class="es__body">
+          <p class="es__title">Здесь пока ничего нет</p>
+          <p class="es__text" data-at-empty-text>—</p>
+        </div>
+        <div class="es__actions">
+          <!-- окно добавления актива не делается (решение человека 30.10.2026) -->
+          <button type="button" class="btn btn--accent btn--m lc-assets-table__add"><i data-icon="add"></i><span class="btn__label">Добавить актив</span></button>
+        </div>
+      </div>
+    </div>
+    <!-- ошибка: причина словами пользователя и повтор; остальной экран работает -->
+    <div class="lc-assets-table__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Не удалось загрузить активы фонда</p>
+          <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

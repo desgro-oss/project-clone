@@ -62,7 +62,7 @@
   border: 1px solid var(--border-light);
   border-radius: var(--ddl-radius);
   box-shadow: var(--ddl-shadow);
-  letter-spacing: 0;
+  letter-spacing: var(--type-ls);
   z-index: 40;
 }
 
@@ -83,7 +83,7 @@
   border: 0;
   background: transparent;
   color: var(--text-primary);
-  font: var(--type-body-m);                /* Body M — 16 / 20 */
+  font: var(--type-body-m-reg);                /* Body M — 16 / 20 */
   text-align: left;
   cursor: pointer;
   user-select: none;
@@ -162,7 +162,7 @@
   display: inline-flex;
   align-items: center;
   color: var(--text-inactive);
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   white-space: nowrap;
 }
 .ddl__item-check-single {
@@ -197,7 +197,7 @@
 .ddl__item[aria-selected="true"],
 .ddl__item--selected { background: var(--ddl-item-selected); }
 .ddl__item[aria-selected="true"] .ddl__item-label,
-.ddl__item--selected .ddl__item-label { color: var(--text-primary); font: var(--type-body-m-strong); }
+.ddl__item--selected .ddl__item-label { color: var(--text-primary); font: var(--type-body-m-strong-smb); }
 
 /* selected + hover / focus */
 .ddl__item[aria-selected="true"]:hover,
@@ -212,11 +212,11 @@
 .ddl__item--checkbox[aria-checked="true"] { background: transparent; }
 .ddl__item--checkbox[aria-checked="true"]:hover,
 .ddl__item--checkbox[aria-checked="true"].is-hover { background: var(--ddl-item-hover); }
-.ddl__item--checkbox[aria-checked="true"] .ddl__item-label { color: var(--text-primary); font: var(--type-body-m); }
+.ddl__item--checkbox[aria-checked="true"] .ddl__item-label { color: var(--text-primary); font: var(--type-body-m-reg); }
 
 /* ---------- «Выбрать всё» — первая строка множественного выбора ---------- */
 .ddl__item--all .ddl__item-label,
-.ddl__item--checkbox.ddl__item--all .ddl__item-label { font: var(--type-body-m-strong); }
+.ddl__item--checkbox.ddl__item--all .ddl__item-label { font: var(--type-body-m-strong-smb); }
 .ddl__item--all + .ddl__divider { margin-top: 0; }
 
 /* disabled */
@@ -254,7 +254,7 @@
   padding: 8px var(--ddl-item-px) 4px;
   background: var(--ddl-bg);
   color: var(--text-inactive);
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   text-transform: uppercase;
   letter-spacing: .04em;
   user-select: none;
@@ -279,7 +279,7 @@
   min-height: var(--ddl-item-h);
   padding: 14px var(--ddl-item-px);
   color: var(--text-primary);
-  font: var(--type-body-m-strong);
+  font: var(--type-body-m-strong-smb);
   text-wrap: pretty;
 }
 .ddl__state-icon {
@@ -298,13 +298,13 @@
 .ddl__state-text { min-width: 0; }
 .ddl__state-sub {
   display: block;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
   margin-top: 2px;
 }
 
 /* loading */
-.ddl__state--loading { color: var(--text-inactive); font: var(--type-body-m); }
+.ddl__state--loading { color: var(--text-inactive); font: var(--type-body-m-reg); }
 .ddl__state--loading .ddl__state-icon { color: var(--text-inactive); }
 /* empty */
 .ddl__state--empty .ddl__state-icon { color: var(--text-secondary); }

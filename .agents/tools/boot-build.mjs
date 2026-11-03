@@ -121,6 +121,14 @@ export function render(P) {
     + '    if (th === \'ibp-dark\') th = \'ibp-neo-dark\';\n'
     + '    if (th && th !== \'legacy\' && th !== \'ibp-legacy\') document.documentElement.setAttribute(\'data-theme\', th);\n'
     + '  } catch (e) { /* хранилище недоступно, ?theme= нет — legacy */ }\n'
+    + '  /* Типографская тема (RE0048): ?typography= или сохранённый выбор.\n'
+    + '     «base», пусто и отсутствие — без атрибута, базовая типографика. */\n'
+    + '  try {\n'
+    + '    var ty = /[?&]typography=([^&#]*)/.exec(window.location.search || \'\');\n'
+    + '    var tv = (ty ? decodeURIComponent(ty[1]) : window.localStorage.getItem(\'ds.typography\') || \'\').toLowerCase();\n'
+    + '    if (tv === \'neo\') document.documentElement.setAttribute(\'data-typography\', \'neo\');\n'
+    + '    else document.documentElement.removeAttribute(\'data-typography\');\n'
+    + '  } catch (e) { /* хранилище недоступно, ?typography= нет — базовая */ }\n'
     + '  /* Фон стартовой страницы (Illustrations): под тёмной темой — тёмный\n'
     + '     вариант; ставится после темы и обновляется на её смену (RE0011). */\n'
     + '  var applyBg = function () {\n'
@@ -324,6 +332,15 @@ function selftest() {
     && runHead(HEAD, '', {})['data-theme'] === undefined;
   if (!themeOk) failed++;
   out.push((themeOk ? 'ok    ' : 'FAIL  ') + 'первый тег ставит data-theme из ?theme=/localStorage, legacy — без атрибута');
+  /* Типографская тема (RE0048): тот же первый тег ставит data-typography
+     из ?typography=/localStorage; «base», пусто и отсутствие — без атрибута. */
+  const typoOk = runHead(HEAD, '?typography=neo', {})['data-typography'] === 'neo'
+    && runHead(HEAD, '', { 'ds.typography': 'neo' })['data-typography'] === 'neo'
+    && runHead(HEAD, '?typography=base', { 'ds.typography': 'neo' })['data-typography'] === undefined
+    && runHead(HEAD, '?typography=NEO', {})['data-typography'] === 'neo'
+    && runHead(HEAD, '', {})['data-typography'] === undefined;
+  if (!typoOk) failed++;
+  out.push((typoOk ? 'ok    ' : 'FAIL  ') + 'первый тег ставит data-typography из ?typography=/localStorage, base — без атрибута');
   /* Фон стартовой страницы (RE0011): под тёмной темой — тёмный вариант,
      под legacy — светлый. setProperty стаба записывает переменную. */
   const bgDark = {}, bgLegacy = {};

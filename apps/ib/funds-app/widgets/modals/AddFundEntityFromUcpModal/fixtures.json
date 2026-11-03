@@ -1,0 +1,53 @@
+{
+  "_": "Демо-данные конструктора витрины для окна «Добавить фонд — поиск в базах». Базы фондов и ЕПК — MOCK_FUNDS и MOCK_UCP_CLIENTS из data/funds.js страницы «Фонды»; здесь — что ввести в поля поиска и что выбрать (по макетам «Add fund / Step 01»). long — свои короткие базы с самыми длинными значениями. Рисует сценарий демо функциями окна (AddFundEntityFromUcpModal.render / search / select / setState).",
+  "idle": { "prefill": {} },
+  "loading": { "prefill": { "name": "Интеррос", "inn": "0765" } },
+  "data": {
+    "prefill": { "name": "Интеррос", "inn": "0765" },
+    "select": { "fund": "fnd-001", "client": "pty-3001" }
+  },
+  "partial": {
+    "prefill": { "name": "Интер", "kpp": "7802", "hideNoCrm": false },
+    "select": { "fund": "fnd-001", "client": "pty-3003" }
+  },
+  "empty": { "prefill": { "name": "Андромеда" } },
+  "error": { "prefill": { "name": "Интеррос", "inn": "0765" }, "message": "Не удалось выполнить поиск: база юр. лиц Сбера (ЕПК) не отвечает. Попробуйте ещё раз." },
+  "long": {
+    "prefill": { "name": "Восток" },
+    "select": { "fund": "fnd-901", "client": "pty-9901" },
+    "funds": [
+      {
+        "objectId": "fnd-901", "name": "Восток Инвестиции Управление Альтернативными Активами (ранее Baring Vostok Capital Partners)", "alias": "Восток Инвестиции — BVCP", "inn": "770655964512", "kpp": "770601001", "partyId": null,
+        "keyBeneficiaries": [{ "displayName": "Институциональные инвесторы" }, { "displayName": "Международная финансовая корпорация" }, { "displayName": "Европейский банк реконструкции и развития" }],
+        "types": [{ "code": "PE", "name": "PE" }, { "code": "PE_VC", "name": "PE / VC" }, { "code": "HOLDING", "name": "Холдинг" }],
+        "priority": { "code": "MEDIUM", "name": "Средний" }, "aumAssetsCount": 14, "contacts": [], "comment": null,
+        "investmentVolume": 12345.67,
+        "keyIndustries": [
+          { "code": "METALS_MINING", "name": "Металлы и руды" }, { "code": "IT_SERVICES", "name": "Информационно-технологические услуги" },
+          { "code": "TELECOM", "name": "Телекоммуникационные услуги" }, { "code": "BANKS", "name": "Банки" },
+          { "code": "REAL_ESTATE", "name": "Управление и девелопмент коммерческой недвижимости" }
+        ]
+      }
+    ],
+    "clients": [
+      {
+        "partyId": "pty-9901", "shortName": "ООО «Восточная горно-металлургическая управляющая компания»", "fullName": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ВОСТОЧНАЯ ГОРНО-МЕТАЛЛУРГИЧЕСКАЯ УПРАВЛЯЮЩАЯ КОМПАНИЯ ПО РАЗВИТИЮ МЕСТОРОЖДЕНИЙ\"",
+        "clientKind": "LEGAL", "clientTypeName": "Юридическое лицо", "residencyName": "Нерезидент",
+        "inn": "770655964599", "kpp": "770601001", "kppKn": "997750001", "ogrn": "1027700132195", "kio": "10567", "crmId": "1-1V9D55-ZXQ",
+        "holdingName": "ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО \"ГОРНО-МЕТАЛЛУРГИЧЕСКИЙ ХОЛДИНГ ВОСТОЧНОЙ СИБИРИ И ДАЛЬНЕГО ВОСТОКА\"",
+        "team": [
+          { "employeeNumber": "18181811", "fio": "Константинопольский Александр Владимирович", "role": "Старший банкир конгломерата по металлургии и горнодобыче" },
+          { "employeeNumber": "18181812", "fio": "Петров Иван Иванович", "role": "Клиентский менеджер" }
+        ],
+        "subIndustryName": "Добыча и обогащение руд цветных и драгоценных металлов",
+        "industryName": "Металлургическая и горнодобывающая промышленность", "segmentName": "Крупнейшие"
+      },
+      {
+        "partyId": "pty-9902", "shortName": "Восточный холдинг", "fullName": "Восточный холдинг",
+        "clientKind": "HOLDING", "clientTypeName": "Холдинг", "residencyName": null,
+        "inn": null, "kpp": null, "kppKn": null, "ogrn": null, "kio": null, "crmId": "1-1SKTO4YD",
+        "holdingName": null, "team": [], "subIndustryName": null, "industryName": null, "segmentName": null
+      }
+    ]
+  }
+}

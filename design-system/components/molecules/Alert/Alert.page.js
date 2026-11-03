@@ -139,7 +139,7 @@
     // Alert vs Toast vs SnackBar — витрина
     setHTML('diff-alert', alertHTML({ tone: 'info', title: 'Инлайн-сообщение', text: 'Живёт в потоке блока.' }));
     var diffToast = document.getElementById('diff-toast');
-    if (diffToast) diffToast.innerHTML = '<div style="display:inline-flex;align-items:center;gap:10px;background:var(--cgrey-700,#333F48);color:#fff;border-radius:8px;padding:10px 16px;font:var(--type-body-s)">Процесс запущен</div>';
+    if (diffToast) diffToast.innerHTML = '<div style="display:inline-flex;align-items:center;gap:10px;background:var(--cgrey-700,#333F48);color:#fff;border-radius:8px;padding:10px 16px;font:var(--type-body-s-reg)">Процесс запущен</div>';
     var diffSnack = document.getElementById('diff-snack');
     if (diffSnack) { diffSnack.innerHTML = ''
       + '<div class="snack snack--info" data-snack-tone="info" role="status" aria-live="polite" style="position:static;width:auto;max-width:280px;box-shadow:var(--shadow-l,0 10px 30px rgba(40,50,55,.16))">'
@@ -250,7 +250,7 @@
       return '<div class="spec__row">'
         + '<div class="spec__state">' + r[0] + '<small>' + r[1] + '</small></div>'
         + '<div class="spec__sample"><button type="button" class="ibtn ibtn--m ibtn--neutral" aria-label="' + r[0] + '"><i data-icon="close"></i></button></div>'
-        + '<div style="font:var(--type-body-s);color:var(--text-secondary)">' + r[2] + '</div>'
+        + '<div style="font:var(--type-body-s-reg);color:var(--text-secondary)">' + r[2] + '</div>'
         + '</div>';
     }).join('');
     // тонируем sample через родителя-alert контекст (акцент info)
@@ -332,10 +332,10 @@
     var body = document.querySelector('#type-table tbody');
     if (!body) return;
     var rows = [
-      ['Заголовок', '--type-body-m-strong', '--type-body-s-strong', 'Text_Primary'],
-      ['Текст', '--type-body-s', '--type-body-xs', 'Text_Secondary'],
+      ['Заголовок', '--type-body-m-strong-smb', '--type-body-s-strong-smb', 'Text_Primary'],
+      ['Текст', '--type-body-s-reg', '--type-body-xs-reg', 'Text_Secondary'],
       ['Кнопка', '--type-button-xs', '--type-button-xs', 'тон (акцент)'],
-      ['Ссылка', '--type-body-s', '--type-body-s', 'тон (акцент)']
+      ['Ссылка', '--type-body-s-reg', '--type-body-s-reg', 'тон (акцент)']
     ];
     body.innerHTML = rows.map(function (r) {
       return '<div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.63fr 0.86fr 0.72fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">' + r[0] + '</span></span></div><div class="tc"><code class="tok">' + r[1] + '</code></div><div class="tc"><code class="tok">' + r[2] + '</code></div><div class="tc"><span class="tc__row"><span class="tc__text" style="color:var(--text-secondary)">' + r[3] + '</span></span></div><div class="tc tc--separator"></div></div>';

@@ -20,6 +20,13 @@
   форматами идентификаторов как в системе (сделка `166092`, лид `L-44`,
   продажа `LD-12345`, встреча `M-8904`, задача `169437`).
 
+## Перенесённые модули
+
+30.10.2026 (RE0043): задачи перенесены в `apps/core/tasks-app`, клиенты —
+в `apps/core/clients-app`. Плитки, меню и ссылки объектов ведут на новые адреса.
+Общие виджеты находятся в этих модулях и вшиваются по относительным путям;
+остальные страницы и демо-данные концепта остаются здесь.
+
 ## Страницы (`pages/`)
 
 Имена страниц и виджетов — имена фронтенда (`docs/tasks/MS0014a-ibp-redesign-frontend-names.md`,
@@ -40,11 +47,11 @@
 | `BindingAllLeadsPage.html` | Обязательные лиды (Р4) | BindingLeadsPage |
 | `PossibleAllLeadsPage.html` | Возможные лиды (Р4) | PossibleLeadsPage |
 | `PotentialPage.html` | Лид (во фронтенде — «потенциал») | PotentialPage |
-| `MyClientsPage.html` | Клиенты: таблица, дерево, пустое состояние | `core/clients-app` MyClients |
-| `ClientInfoPage.html` | Клиент: 9 вкладок | ClientInfo (+ ClientInfoDealsPage, ClientInfoFinancials, ClientInfoGoalsPage) |
-| `ClientComments.html` | Комментарии клиента | пары нет |
+| `apps/core/clients-app/pages/MyClientsPage.preview.html` | Клиенты: таблица, дерево, пустое состояние | `core/clients-app` MyClients |
+| `apps/core/clients-app/pages/ClientInfoPage.preview.html` | Клиент: 9 вкладок | ClientInfo (+ ClientInfoDealsPage, ClientInfoFinancials, ClientInfoGoalsPage) |
+| `apps/core/clients-app/pages/ClientComments.preview.html` | Комментарии клиента | пары нет |
 | `MeetingsProtocolsPage.html` | Встречи: реестр и предпросмотр (Splitter) | `ib/ma-opportunities-app` MeetingsProtocols |
-| `TasksPage.html` | Задачи: реестр и предпросмотр (Splitter) | `core/tasks-app` TasksPage |
+| `apps/core/tasks-app/pages/TasksPage.preview.html` | Задачи: реестр и предпросмотр (Splitter) | `core/tasks-app` TasksPage |
 | `AdminPage.html` | Администрирование | `core/host-app` AdminPage |
 | `TaskStatesPage.html` | Справочник «Статусы задач» (Splitter) | `core/settings-app` TaskStatesPage |
 
@@ -54,7 +61,8 @@
 
 ## Виджеты (`widgets/`)
 
-51 виджет: 33 тайла, 15 таблиц, 3 модалки.
+Исходный набор включает 51 виджет (33 тайла, 15 таблиц, 3 модалки).
+Часть набора перенесена в модули Core: актуальные пути — в метках страниц.
 
 | Группа | Виджеты |
 |---|---|

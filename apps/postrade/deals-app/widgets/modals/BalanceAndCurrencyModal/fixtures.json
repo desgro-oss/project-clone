@@ -1,0 +1,22 @@
+{
+  "_": "Демо-данные витрины окна: раздел balanceCurrency записи договора (balanceCode, currencyCode, totalLimitAmount). Пустое значение — null. Значения выдуманные (рыба).",
+
+  "data": {
+    "balanceCode": "SBIL",
+    "currencyCode": "RUB",
+    "totalLimitAmount": 123456789
+  },
+
+  "empty": {
+    "_": "Окно пустое: раздел не заполнялся, постфикс валюты скрыт.",
+    "balanceCode": null,
+    "currencyCode": null,
+    "totalLimitAmount": null
+  },
+
+  "long": {
+    "balanceCode": "PROMFINANCE",
+    "currencyCode": "EUR",
+    "totalLimitAmount": 98765432109.87
+  }
+}

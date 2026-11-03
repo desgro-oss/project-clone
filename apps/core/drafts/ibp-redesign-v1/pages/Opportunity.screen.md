@@ -31,7 +31,7 @@ widgets: [tiles/OpportunityClientTile, tiles/GeneralInformationTile, tiles/State
 
 | Уровень крошек | Текст | Ссылка |
 |---|---|---|
-| 1 | Главная | `HomePage.html` |
+| 1 | Главная | `../../../host-app/pages/HomePage.html` |
 | 2 | <Раздел>: <Вкладка> | реестр источника `?tab=<страница фронтенда>` |
 | 3 (текущий) | Сделка <ID>.<Проект> | — |
 
@@ -117,11 +117,11 @@ Page (Layout, nav--rail)
 | `StateInformationTile` | виджет концепта — `../widgets/tiles/StateInformationTile/StateInformationTile.md` |
 | `DescriptionTile` | виджет концепта — `../widgets/tiles/DescriptionTile/DescriptionTile.md` |
 | `TimingTile` | виджет концепта — `../widgets/tiles/TimingTile/TimingTile.md` |
-| `CommentsTile` | виджет концепта — `../widgets/tiles/CommentsTile/CommentsTile.md` |
+| `CommentsTile` | виджет концепта — `../../../clients-app/widgets/tiles/CommentsTile/CommentsTile.md` |
 | `FinancialMetricsTile` | виджет концепта — `../widgets/tiles/FinancialMetricsTile/FinancialMetricsTile.md` |
 | `ProductsTile` | виджет концепта — `../widgets/tiles/ProductsTile/ProductsTile.md` |
 | `OpportunityProductTile` | виджет концепта — `../widgets/tiles/OpportunityProductTile/OpportunityProductTile.md` |
-| `DesksTile` | виджет концепта — `../widgets/tiles/DesksTile/DesksTile.md` |
+| `DesksTile` | виджет концепта — `../../../clients-app/widgets/tiles/DesksTile/DesksTile.md` |
 | `OpportunityTeamMembersTile` | виджет концепта — `../widgets/tiles/OpportunityTeamMembersTile/OpportunityTeamMembersTile.md` |
 | `OpportunityConnectionsTile` | виджет концепта — `../widgets/tiles/OpportunityConnectionsTile/OpportunityConnectionsTile.md` |
 | `TasksTile` | виджет концепта — `../widgets/tiles/TasksTile/TasksTile.md` |
@@ -142,10 +142,10 @@ Page (Layout, nav--rail)
 |---|---|
 | «Взять в работу» | окно `TakeOpportunityToWorkModal` → сделка в Pipeline «Сделки моего деска», SnackBar; страница перерисовывается: крошки «Pipeline: Сделки моего деска», стадия «Проработка идеи сделки», действий источника нет, адрес и пункт меню — Pipeline |
 | «Отказаться» | окно `RefuseFromOpportunityModal` → «В архиве» источника, статус «Выбыла», причина и комментарий в «Статусе» |
-| Стрелка «Клиент» | `ClientInfoPage.preview.html?id=…` |
+| Стрелка «Клиент» | `../../../clients-app/pages/ClientInfoPage.preview.html?id=…` |
 | Стрелка карточки продукта | `OpportunityProduct.preview.html?source=&deal=&product=` |
 | «Проект продаж …» в связях | реестр проектов продаж |
-| Строка задачи | `TasksPage.preview.html?id=…` |
+| Строка задачи | `../../../tasks-app/pages/TasksPage.preview.html?id=…` |
 | Карандаши, «Документы по сделке», «Презентация для ПИК», «Добавить» | по клику ничего (Р6) |
 | Открытие страницы | сделка помечается просмотренной |
 

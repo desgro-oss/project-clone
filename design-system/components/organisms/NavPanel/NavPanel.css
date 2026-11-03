@@ -150,7 +150,7 @@
   display: flex;
   align-items: flex-end;
   padding: 0 12px 6px;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
   white-space: nowrap;
   overflow: hidden;
@@ -198,7 +198,7 @@
 .nav__label {
   flex: 1 1 auto;
   min-width: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -218,7 +218,7 @@
 .nav__item[aria-current]:not([aria-current="false"]),
 .nav__item[aria-current]:not([aria-current="false"]):hover { background: var(--bg-table-default-focus); color: var(--text-primary); }
 .nav__item--selected .nav__label,
-.nav__item[aria-current]:not([aria-current="false"]) .nav__label { font: var(--type-body-m-strong); }
+.nav__item[aria-current]:not([aria-current="false"]) .nav__label { font: var(--type-body-m-strong-smb); }
 .nav__item--selected .nav__ico,
 .nav__item[aria-current]:not([aria-current="false"]) .nav__ico { color: var(--secondary-dark); }
 
@@ -266,7 +266,7 @@
   border-radius: var(--radius-m);
   background: var(--bg-hint);
   color: var(--text-on-dark);
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   box-shadow: var(--elevation-2);
   opacity: 0;
   visibility: hidden;
@@ -278,7 +278,7 @@
    показ (:hover) не задеваем */
 .nav--rail .nav__item--selected .nav__label,
 .nav--rail .nav__item[aria-current]:not([aria-current="false"]) .nav__label {
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
 }
 .nav--rail .nav__item:hover .nav__label,
 .nav--rail .nav__item:focus-visible .nav__label {
@@ -325,8 +325,8 @@
 }
 .nav__user:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
 .nav__user-text { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.nav__user-name { font: var(--type-body-s-strong); color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.nav__user-role { font: var(--type-body-xs); color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav__user-name { font: var(--type-body-s-strong-smb); color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav__user-role { font: var(--type-body-xs-reg); color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nav__logout { flex: none; }
 
 .nav--rail .nav__user-text,

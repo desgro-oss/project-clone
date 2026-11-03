@@ -15,6 +15,34 @@
       без кнопки переноса, отметка «КНР» не меняется. Смена режима
       перерисовывает колонки.
 
+   6) вариант «Контрагент» (страница договора, инструмент) — data-variant="instrument"
+      на .lc-knrm. По умолчанию атрибута нет, окно работает как окно КНР, и ни одна
+      строка ниже на него не влияет. В варианте instrument:
+      – заголовок окна — «Контрагент»;
+      – вместо чекбокса «КНР» у участника сделки — радио-отметка (Radiobutton ДС):
+        выбор одного контрагента договора, выбранная карточка подсвечена
+        (Selected у Card). Отметок КНР в интерфейсе нет, состав КНР не меняется;
+      – при открытии отмечен контрагент договора, если он участник сделки;
+      – «Сохранить» недоступна (disabled), пока никто не выбран; убрать выбранного
+        из участников — сбросить выбор;
+      – «Сохранить»: состав участников — тем же store.commit(), что у окна КНР, затем
+        LoanAgreementStore.setCounterparty(id) и onSave(id). Контрагент, найденный
+        поиском и перенесённый в участники, становится участником сделки по этому
+        же commit(). Крестик, Esc — откат черновика, как в окне КНР.
+
+   Как страница договора подключает окно (КНР на странице сделки это не нужно):
+     PostModalCounterparties.use({
+       variant: 'instrument',        // без него (или use()) — вариант сделки
+       counterpartyId: 'ul-10',      // кто отмечен при открытии; не задан — берётся
+                                     // LoanAgreementStore.get().counterpartyId
+       onSave: function (id) { … }   // по желанию: окно уже записало выбор в
+                                     // LoanAgreementStore; тайл страница
+                                     // перерисует по событию стора
+     });
+     — вызвать до открытия окна и при смене договора; режим прав — как у КНР,
+     data-mode на .lc-knrm. Окно открывают кнопки тайла (data-modal="knr-scrim").
+     PostModalCounterparties.open() — открыть окно из кода.
+
    Данные — CounterpartiesStore (data/counterparties-store.js): состав сделки,
    поиск, черновик и сохранение живут там. Разметку карточки даёт локальный
    компонент «Карточка контрагента» (PostCardCounterparty). Здесь только
@@ -73,6 +101,90 @@
     return root && root.getAttribute('data-mode') === 'view' ? 'view' : 'edit';
   }
 
+  /* ── Вариант «Контрагент» (страница договора) ───────────────────── */
+  /* Единственный вход варианта — data-variant="instrument" на корне окна. Без
+     него в этом разделе ничего не исполняется: окно КНР остаётся как было. */
+  var useOpts = null;           /* параметры PostModalCounterparties.use */
+  var chosen = null;            /* id выбранного контрагента договора (черновик) */
+  var saveLocked = false;       /* «Сохранить» выключена вариантом, а не разметкой */
+  var titleEl = scrim.querySelector('#knr-title');
+  var TITLE_DEFAULT = titleEl ? titleEl.textContent : '';
+  var TITLE_INSTRUMENT = 'Контрагент';
+  var PICK_LABEL = 'Контрагент';
+  var PICK_HINT = 'Перенесите сюда контрагента договора и выберите его';
+
+  function isInstrument() {
+    return !!root && root.getAttribute('data-variant') === 'instrument';
+  }
+
+  /* Кого отметить при открытии: контрагента, переданного страницей, а если не
+     передан — контрагента записи договора. Не участник сделки — не отмечен. */
+  function preselect() {
+    var id = null;
+    if (useOpts && useOpts.counterpartyId !== undefined) {
+      id = useOpts.counterpartyId;
+    } else if (window.LoanAgreementStore && window.LoanAgreementStore.get) {
+      try { id = window.LoanAgreementStore.get().counterpartyId; } catch (e) { id = null; }
+    }
+    return id && store() && store().isMember(id) ? id : null;
+  }
+
+  function pickHTML(id, checked, disabled) {
+    return '<label class="rb lc-knrm__pick">'
+      + '<input type="radio" class="rb__input" name="knr-counterparty" value="' + escHtml(id) + '"'
+      + (checked ? ' checked' : '') + (disabled ? ' disabled' : '') + '>'
+      + '<span class="rb__box"><i class="rb__mark" data-icon="'
+      + (checked ? 'radio-button-checked' : 'radio-button-unchecked') + '"></i></span>'
+      + '<span class="rb__content"><span class="rb__label">' + PICK_LABEL + '</span></span></label>';
+  }
+
+  /* Радио-отметка участника сделки и подсветка выбранной карточки */
+  function pickify(el, item) {
+    var main = el.querySelector('.lc-knrm__main');
+    if (!main) return;
+    var on = item.id === chosen;
+    main.insertAdjacentHTML('beforeend', pickHTML(item.id, on, modeOf() === 'view'));
+    if (on) el.classList.add('is-selected');
+  }
+
+  /* Выбор поменялся: отметки всех карточек (обеих вкладок) — по chosen,
+     иконка радио — по состоянию; перерисовки карточек не нужно. */
+  function syncPicks() {
+    Array.prototype.forEach.call(scrim.querySelectorAll('.lc-knrm__pick .rb__input'), function (inp) {
+      var on = inp.value === chosen;
+      inp.checked = on;
+      var mark = inp.closest('.rb').querySelector('.rb__mark');
+      if (mark) {
+        mark.setAttribute('data-icon', on ? 'radio-button-checked' : 'radio-button-unchecked');
+        mark.removeAttribute('data-icon-done');
+      }
+      var card = inp.closest('.lc-knrm__card');
+      if (card) card.classList.toggle('is-selected', on);
+    });
+    if (window.dsIcons) window.dsIcons.apply(scrim);
+    syncSave();
+  }
+
+  /* Недоступное действие выключается разметкой: нет выбора — нет «Сохранить» */
+  function syncSave() {
+    var btn = scrim.querySelector('[data-knr-save]');
+    if (!btn) return;
+    if (isInstrument()) {
+      btn.disabled = !chosen;
+      saveLocked = true;
+    } else if (saveLocked) {
+      btn.disabled = false;
+      saveLocked = false;
+    }
+  }
+
+  /* Заголовок окна по варианту */
+  function syncTitle() {
+    if (!titleEl) return;
+    var t = isInstrument() ? TITLE_INSTRUMENT : TITLE_DEFAULT;
+    if (titleEl.textContent !== t) titleEl.textContent = t;
+  }
+
   /* ── Результаты поиска ──────────────────────────────────────────── */
   /* По вкладке: null — поиск не задан (в колонке подсказка), массив id —
      что нашлось. Убранный из участников контрагент дописывается в конец
@@ -129,8 +241,28 @@
         disabled: members && item.kind !== kind,
         moveLabel: members ? 'Убрать из участников сделки' : 'Перенести в участники сделки'
       });
-      if (el) drop.appendChild(el);
+      if (el) {
+        if (members && isInstrument()) pickify(el, item);
+        drop.appendChild(el);
+      }
     });
+
+    /* Колонка участников в варианте «Контрагент»: радиогруппа и свой текст
+       подсказки. В варианте сделки ничего из этого не ставится и не снимается,
+       пока вариант не включали. */
+    if (members) {
+      var mHint = drop.querySelector('.lc-knrm__hint');
+      if (isInstrument()) {
+        drop.setAttribute('role', 'radiogroup');
+        drop.setAttribute('aria-label', PICK_LABEL);
+        if (mHint && !mHint.hasAttribute('data-hint-deal')) mHint.setAttribute('data-hint-deal', mHint.textContent);
+        if (mHint && kind === 'ul') mHint.textContent = PICK_HINT;
+      } else if (drop.getAttribute('role') === 'radiogroup') {
+        drop.removeAttribute('role');
+        drop.removeAttribute('aria-label');
+        if (mHint && mHint.hasAttribute('data-hint-deal')) mHint.textContent = mHint.getAttribute('data-hint-deal');
+      }
+    }
 
     /* Подсказка колонки результатов: пока поиска не было — как искать,
        после пустого поиска — что ничего не нашлось. Карточки её прячут (CSS). */
@@ -147,12 +279,18 @@
     /* Подсказка кнопки, которую сейчас уберёт перерисовка, иначе осталась бы
        висеть: mouseleave у удалённого узла не наступает. */
     if (window.DSTooltip) window.DSTooltip.hideAll();
+    /* выбранного убрали из участников (перенос, откат, смена сделки) — выбор сброшен */
+    if (isInstrument() && chosen && store() && !store().isMember(chosen)) chosen = null;
     Array.prototype.slice.call(scrim.querySelectorAll('[data-knr-drop]')).forEach(fill);
+    syncTitle();
+    syncSave();
     buildUlList();
     /* риск-метрики появились вместе с карточками — их рантайм собирает чип и
        поповер сам, но только по свежей разметке (подсказку кнопки переноса
        привязывает рендер карточки) */
     if (window.DSRiskMetric) window.DSRiskMetric.mount(scrim);
+    /* радио-отметки варианта «Контрагент» дорисованы после карточек — иконки подключаем здесь */
+    if (isInstrument() && window.dsIcons) window.dsIcons.apply(scrim);
     if (focusId) {
       var panel = scrim.querySelector('[data-knr-panel]:not([hidden])') || scrim;
       var btn = panel.querySelector('[data-knr-card="' + focusId + '"] [data-knr-move]');
@@ -174,6 +312,7 @@
     if (!rec) return;
     addResult(rec.kind, id);
     focusId = id;
+    if (isInstrument() && chosen === id) chosen = null;
     store().move(id, 'found');
   }
 
@@ -221,6 +360,16 @@
     if (!box || modeOf() === 'view') return;
     var card = box.closest('.lc-knrm__card');
     if (card && store()) store().setKnr(cardId(card), box.checked);
+  });
+
+  /* Выбор контрагента договора (вариант instrument): одна отметка на всё окно.
+     Делегированно, потому что карточки перерисовываются. В просмотре радио
+     выключено разметкой; проверка режима — страховка. */
+  scrim.addEventListener('change', function (e) {
+    var inp = e.target.closest('.lc-knrm__pick .rb__input');
+    if (!inp || !isInstrument() || modeOf() === 'view') return;
+    chosen = inp.checked ? inp.value : chosen;
+    syncPicks();
   });
 
   /* ── Подтверждение удаления КНР ─────────────────────────────────── */
@@ -372,6 +521,7 @@
         saving = false;
         resetSearch();
         store().begin();
+        chosen = isInstrument() ? preselect() : null;
         repaint();
       } else if (!saving) {
         store().rollback();
@@ -380,9 +530,23 @@
 
     scrim.addEventListener('click', function (e) {
       if (!e.target.closest('[data-knr-save]') || !store()) return;
+      if (isInstrument() && !chosen) return;
       saving = true;
       store().commit();
+      if (isInstrument()) saveInstrument();
     });
+  }
+
+  /* Вариант «Контрагент»: выбор уходит в запись договора. Состав участников
+     уже ушёл в commit() выше — перенесённый из результатов контрагент стал
+     участником сделки именно им. Окно самодостаточно: стор договора зовёт оно,
+     onSave страницы — только уведомление. */
+  function saveInstrument() {
+    var id = chosen;
+    if (window.LoanAgreementStore && window.LoanAgreementStore.setCounterparty) {
+      window.LoanAgreementStore.setCounterparty(id);
+    }
+    if (useOpts && typeof useOpts.onSave === 'function') useOpts.onSave(id);
   }
 
   /* Смена режима — карточки рисуются заново в новом режиме. На странице
@@ -390,7 +554,7 @@
      наблюдатель нужен тому, кто переключает режим у открытого окна, — витрине. */
   function bindMode() {
     if (!root) return;
-    new MutationObserver(repaint).observe(root, { attributes: true, attributeFilter: ['data-mode'] });
+    new MutationObserver(repaint).observe(root, { attributes: true, attributeFilter: ['data-mode', 'data-variant'] });
   }
 
   /* Перерисовка по событию стора: перенос, отметка КНР, откат черновика,
@@ -398,10 +562,31 @@
   function bindStore() {
     if (!store()) return;
     store().on('change', function (d) {
-      if (d && d.reason === 'use') resetSearch();
+      if (d && d.reason === 'use') {
+        resetSearch();
+        if (isInstrument()) chosen = preselect();
+      }
       repaint();
     });
   }
+
+  /* Подключение страницей (описание — в шапке файла) */
+  function use(opts) {
+    opts = opts || {};
+    var instrument = opts.variant === 'instrument';
+    useOpts = instrument ? { counterpartyId: opts.counterpartyId, onSave: opts.onSave } : null;
+    if (!root) return;
+    if (instrument) root.setAttribute('data-variant', 'instrument');
+    else root.removeAttribute('data-variant');
+    chosen = instrument ? preselect() : null;
+    repaint();
+  }
+
+  function open() {
+    if (window.DSModal) window.DSModal.open(scrim);
+  }
+
+  window.PostModalCounterparties = { use: use, open: open };
 
   bindTabs();
   bindConfirm();

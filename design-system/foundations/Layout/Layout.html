@@ -52,7 +52,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .lay-block{background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-m)}
 .lay-tile{height:104px}
 .lay-phead{height:60px;background:transparent;border:none;display:flex;align-items:flex-end}
-.lay-phead span{font:var(--type-h4-strong);color:var(--text-primary)}
+.lay-phead span{font:var(--type-h4-strong-smb);color:var(--text-primary)}
 .lay-rows{display:flex;flex-direction:column}
 .lay-rows div{height:36px;border-bottom:1px solid var(--border-light)}
 .lay-rows div:first-child{background:var(--bg-table-default-focus)}
@@ -66,7 +66,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .lay-home::before{content:"";position:absolute;inset:0;background:url("../../assets/illustrations/background-illustration.svg") center/cover no-repeat;opacity:.6;pointer-events:none}
 .lay-home .grid12{position:relative}
 .lay-group{display:flex;flex-direction:column;gap:16px;min-width:0}
-.lay-group__head{font:var(--type-h5-strong);color:var(--text-primary);margin:0}
+.lay-group__head{font:var(--type-h5-strong-smb);color:var(--text-primary);margin:0}
 .lay-ntile{height:190px}
 /* перестроение как на главной: пара .col-3/.colw-6, затем свой третий шаг.
    Третий шаг обязан иметь ту же специфичность (0,2,0) и стоять ниже — иначе
@@ -80,37 +80,37 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 /* вертикальный ритм реестра — 12px (шапка → зона тулбара → таблица) */
 .lay-frame.is-table .screen__content{gap:var(--space-12)}
 .lay-phead--reg{height:40px;align-items:center;justify-content:space-between}
-.lay-btn{height:40px;display:inline-flex;align-items:center;padding:0 16px;border-radius:var(--radius-control);background:var(--primary);color:var(--text-on-dark);font:var(--type-body-s);white-space:nowrap}
+.lay-btn{height:40px;display:inline-flex;align-items:center;padding:0 16px;border-radius:var(--radius-control);background:var(--primary);color:var(--text-on-dark);font:var(--type-body-s-reg);white-space:nowrap}
 .lay-toolbar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:8px;height:32px}
 .lay-toolbar__l{display:flex;align-items:center;gap:4px;min-width:0}  /* зазор .tfilter — 4px */
-.lay-pill{height:32px;display:inline-flex;align-items:center;padding:0 12px;border:1px solid var(--border-light);border-radius:var(--radius-control);background:var(--bg-tile);font:var(--type-body-s);color:var(--text-secondary);white-space:nowrap}
+.lay-pill{height:32px;display:inline-flex;align-items:center;padding:0 12px;border:1px solid var(--border-light);border-radius:var(--radius-control);background:var(--bg-tile);font:var(--type-body-s-reg);color:var(--text-secondary);white-space:nowrap}
 .lay-pill--chip{background:var(--bg-table-default-focus)}
 .lay-sq{width:32px;height:32px;border-radius:var(--radius-control);background:var(--cgrey-200);flex:none}
 .lay-tbl{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-xl);overflow:hidden}
 .lay-tbl__body{flex:1 1 auto;min-height:0;overflow:auto}
 .lay-tbl__head{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:16px;height:44px;padding:0 16px;background:var(--bg-tile);border-bottom:1px solid var(--border-light)}
 .lay-tbl__head i{height:12px;border-radius:var(--radius-xs);background:var(--cgrey-200);flex:none}
-.lay-tbl__foot{flex:none;display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 20px;border-top:1px solid var(--border-light);font:var(--type-body-s);color:var(--text-secondary)}
+.lay-tbl__foot{flex:none;display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 20px;border-top:1px solid var(--border-light);font:var(--type-body-s-reg);color:var(--text-secondary)}
 /* подсветка зон — как на разборе макета */
 .is-zones .crumbs{background:color-mix(in srgb, var(--error) 12%, transparent)}
 .is-zones .screen__content{position:relative}
 .is-zones .screen__content::before,.is-zones .screen__content::after{content:"";position:absolute;top:0;bottom:0;width:24px;background:color-mix(in srgb, var(--info) 22%, transparent)}
 .is-zones .screen__content::before{left:0}
 .is-zones .screen__content::after{right:0}
-.zone-legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font:var(--type-body-s);color:var(--text-secondary)}
+.zone-legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font:var(--type-body-s-reg);color:var(--text-secondary)}
 .zone-legend span{display:inline-flex;align-items:center;gap:8px}
 .zone-legend i{width:14px;height:14px;border-radius:4px;flex:none}
 .dev-code{position:relative;background:var(--bg-table-default-focus);border:1px solid var(--border-light);border-radius:var(--radius-m);padding:16px;overflow:auto}
 .dev-code pre{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:20px;color:var(--text-primary)}
-.dev-copy{position:absolute;top:10px;right:10px;font:var(--type-body-xs);color:var(--text-secondary);background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-xs);padding:4px 12px;cursor:pointer}
+.dev-copy{position:absolute;top:10px;right:10px;font:var(--type-body-xs-reg);color:var(--text-secondary);background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-xs);padding:4px 12px;cursor:pointer}
 .dev-copy:hover{color:var(--primary);border-color:var(--border-primary)}
   .ctl .rng-row { display:flex; align-items:center; justify-content:space-between; }
-  .ctl .rng-row .val { font: var(--type-body-s-strong); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .ctl .rng-row .val { font: var(--type-body-s-strong-smb); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
   .pg__stage { flex:1; min-height:0; width:100%; padding:32px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:14px; }
   /* пример полосы прокрутки: рамка — у обёртки, у самой области .ds-scroll её нет (инвариант) */
   .scroll-demo { max-width:360px; border:1px solid var(--border-light); border-radius:var(--radius-m); background:var(--bg-tile); overflow:hidden; }
   .scroll-demo__area { height:180px; padding:var(--space-12) var(--space-8) var(--space-12) var(--space-16); }
-  .scroll-demo__row { margin:0; padding:var(--space-8) 0; font:var(--type-body-m); color:var(--text-primary); border-bottom:1px solid var(--border-light); }
+  .scroll-demo__row { margin:0; padding:var(--space-8) 0; font:var(--type-body-m-reg); color:var(--text-primary); border-bottom:1px solid var(--border-light); }
 </style>
   <link rel="stylesheet" href="../../components/molecules/Splitter/Splitter.css">
   <link rel="stylesheet" href="../../components/molecules/SegmentControl/SegmentControl.css">
@@ -220,7 +220,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     <h3>Экран-реестр: состав и отступы</h3>
     <p class="desc">Реестр — самый частый тип экрана продукта, и состав блоков у него фиксирован: заголовок страницы, зона тулбара, таблица. Таблица здесь не «очередной блок в потоке» — это последний блок, забирающий весь остаток высоты, поэтому реестр всегда собирается в режиме app-shell (<code class="tok">.screen--app</code> + <code class="tok">.dtable--fill</code>). Эталон — «Текущий портфель ДИД».</p>
     <div class="panel" style="padding:0;overflow:hidden;margin-bottom:32px"><div id="registryTable"></div></div>
-    <p class="desc"><b>Вертикальный ритм реестра — 12px, а не 24px.</b> Заголовок страницы → зона тулбара → таблица стоят плотнее общего ритма: блоки здесь не самостоятельные разделы, а одна связка «что показываем — как отобрано — сами данные». Значение задаёт экран одной строкой <code class="tok">.screen__content { gap: var(--space-12) }</code> — это единственная раскладочная строка, которую экран-реестр пишет сам, и единственное разрешённое отклонение от ритма 24px. Всё остальное — поля, высоты, залипание — даёт каркас.</p>
+    <p class="desc"><b>Вертикальный ритм экрана с таблицей — 12px, а не 24px.</b> Заголовок страницы → табы → ряд тайлов над таблицей → зона тулбара → таблица стоят плотнее общего ритма: блоки здесь не самостоятельные разделы, а одна связка «что показываем — как отобрано — сами данные». Какие из блоков есть, такие и стоят, расстояние между любой соседней парой одно. Значение задаёт экран одной строкой <code class="tok">.screen__content { gap: var(--space-12) }</code> — это единственная раскладочная строка, которую экран с таблицей пишет сам, и единственное разрешённое отклонение от ритма 24px. Зазор внутри блока (сетка тайлов 16px) не меняется; экран без таблицы остаётся на 24px. Всё остальное — поля, высоты, залипание — даёт каркас.</p>
     <p class="desc"><b>Снизу — 24px, как у любого экрана.</b> Нижнее поле контентной области одинаково для всех типов контента; собственного отступа под таблицей нет. Добавочный <code class="tok">margin-bottom</code> у <code class="tok">.dtable</code> — ошибка, а не приём: он даёт «почти 32px», которых нет ни в шкале экрана, ни на соседних страницах, и таблица перестаёт совпадать по низу с тайлами и карточками.</p>
     <p class="desc"><b>Сколько высоты остаётся таблице.</b> Всё, что не заняли зоны каркаса. При вьюпорте 900px и заголовке без подзаголовка: 900 − 44 (крошки) − 8 (верхнее поле) − 40 (шапка страницы) − 12 − 32 (зона тулбара) − 12 − 24 (нижнее поле) = <b>728px</b>. Внутри этой высоты таблица сама раскладывает липкую шапку колонок, скроллящееся тело и закреплённый футер пагинации — экран их высоты не считает.</p>
 

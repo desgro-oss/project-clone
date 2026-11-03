@@ -10,4 +10,4 @@
 .lc-fin-table[data-state="loading"] .lc-fin-table__loading { display: flex; }
 .lc-fin-table[data-state="loading"] .lc-fin-table__content,
 .lc-fin-table[data-state="error"] .lc-fin-table__content { display: none; }
-.lc-fin-table__caption { font: var(--type-body-s); color: var(--text-secondary); }
+.lc-fin-table__caption { font: var(--type-body-s-reg); color: var(--text-secondary); }

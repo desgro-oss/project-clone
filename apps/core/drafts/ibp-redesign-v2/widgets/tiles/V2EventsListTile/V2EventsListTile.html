@@ -1,0 +1,17 @@
+<!-- Локальный компонент «Лента событий» — левая панель страницы EventsPage:
+     события вкладки и включённых типов от новых к старым, выбранное
+     подсвечено. Строки рисует V2EventsListTile.js (LcEventsListTile.render). -->
+<section class="tile tile--headless lc-v2-events-list-tile" data-state="data" data-mode="view" aria-label="Список событий">
+  <div class="tile__body lc-v2-events-list-tile__body ds-scroll">
+    <!-- строки: кнопка на событие; выбранное — aria-current="true" -->
+    <div class="entity-list" data-events-list></div>
+    <!-- данных нет: во вкладке нет событий включённых типов -->
+    <div class="es es--m" data-events-empty hidden>
+      <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+      <div class="es__body">
+        <p class="es__title">Событий нет</p>
+        <p class="es__text">Включите другие типы событий в фильтре выше.</p>
+      </div>
+    </div>
+  </div>
+</section>

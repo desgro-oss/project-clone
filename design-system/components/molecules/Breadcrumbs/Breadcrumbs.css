@@ -42,8 +42,8 @@
   min-height: 44px;
   width: 100%;
   list-style: none;
-  font: var(--type-body-s); /* Body S — 14/16, единственный размер компонента */
-  letter-spacing: 0;
+  font: var(--type-body-s-reg); /* Body S — 14/16, единственный размер компонента */
+  letter-spacing: var(--type-ls);
   min-width: 0;
   overflow: hidden;         /* трейл не переносится на вторую строку — лишнее схлопывается в «…» */
 }
@@ -118,4 +118,4 @@
    .menu__item из components/molecules/ContextMenu/ContextMenu.css): список страниц, клик по строке
    переходит на неё */
 .crumbs__popup.menu { min-width: 160px; max-width: 320px; padding: 6px 0; }
-.crumbs__popup .menu__item { min-height: 36px; font: var(--type-body-s); }
+.crumbs__popup .menu__item { min-height: 36px; font: var(--type-body-s-reg); }

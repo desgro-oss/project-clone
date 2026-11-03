@@ -1,0 +1,44 @@
+/* Локальный компонент «Договор» (ContractTile).
+   Только внутренняя раскладка и показ своих блоков по состоянию.
+   Цвета, шрифты, отступы, радиусы, тени — токены ДС; своих значений здесь нет.
+   Состояния компонентов ДС отсюда не переопределяются.
+   Карандаш шапки в просмотре убирает из разметки скрипт (syncActions), не этот файл. */
+
+/* Перестроение — по СВОЕЙ ширине, а не по ширине окна: один и тот же тайл
+   стоит и на странице договора, и в витрине на любой ширине. */
+.lc-contract-tile { container-type: inline-size; }
+
+/* ── Поля: колонок столько, сколько полей у типа (макет «Tile_Contract»: поля
+   одной строкой). Колонки сжимаемые: длинная подпись переносится (ds-label--wrap),
+   длинное значение усекается с тултипом. ─────────────────────────────────── */
+.lc-contract-tile__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lc-contract-tile[data-variant="shares"] .lc-contract-tile__grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.lc-contract-tile[data-variant="options-repo"] .lc-contract-tile__grid,
+.lc-contract-tile[data-variant="pjsc-guarantee"] .lc-contract-tile__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.lc-contract-tile[data-variant="compensation-payments"] .lc-contract-tile__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* Кнопка в теле не растягивается на ширину тайла: колонка по левому краю */
+.lc-contract-tile__content { align-items: flex-start; }
+.lc-contract-tile__content > .lc-contract-tile__grid { align-self: stretch; }
+
+/* ── Что видно в каком состоянии ───────────────────────────────────── */
+/* База — «данные есть»; empty — та же сетка с прочерками. Правила с корнем, чтобы
+   перебить display сетки тайла. */
+.lc-contract-tile .lc-contract-tile__grid--empty { display: none; }
+.lc-contract-tile[data-state="empty"] .lc-contract-tile__grid--data { display: none; }
+.lc-contract-tile[data-state="empty"] .lc-contract-tile__grid--empty { display: grid; }
+
+/* ── Перестроение по своей ширине ──────────────────────────────────── */
+/* Типы с четырьмя и пятью полями ниже 640px — три колонки; ниже 420px у всех
+   типов две колонки, ниже 220px — одна, порядок полей тот же. */
+@container (max-width: 639px) {
+  .lc-contract-tile[data-variant="shares"] .lc-contract-tile__grid,
+  .lc-contract-tile[data-variant="options-repo"] .lc-contract-tile__grid,
+  .lc-contract-tile[data-variant="pjsc-guarantee"] .lc-contract-tile__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@container (max-width: 419px) {
+  .lc-contract-tile .lc-contract-tile__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container (max-width: 219px) {
+  .lc-contract-tile .lc-contract-tile__grid { grid-template-columns: minmax(0, 1fr); }
+}

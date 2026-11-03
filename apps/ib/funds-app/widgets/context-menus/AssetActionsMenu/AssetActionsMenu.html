@@ -1,0 +1,10 @@
+<!-- Локальный компонент «Меню актива» (AssetActionsMenu) — актив с partyId (клиент ЕПК).
+     Одно меню на все кнопки «⋮» строк AssetsTable: триггер — data-menu="assetActionsMenu"
+     (ContextMenu ДС). Пункты — useAssetActions фронтенда, порядок — макет «ContextMenu».
+     Окна активов не делаются (решение человека 30.10.2026): пункты меню только закрывают его.
+     Вариант без «Перейти на страницу клиента» — AssetActionsMenuCustom.html. -->
+<div id="assetActionsMenu" class="menu menu--floating" role="menu" aria-label="Действия с активом" hidden>
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Редактировать</span></button>
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Удалить актив из фонда</span></button>
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Перейти на страницу клиента</span></button>
+</div>

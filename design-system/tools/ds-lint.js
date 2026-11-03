@@ -125,6 +125,17 @@ const SCROLL_GEOMETRY_OK = {
 const SVG_OK = /(code-panel__copy|copy-btn|card__go|crumb|ds-nav__toggle|ds-toc|chev|arrow|guide|rules|dont|good|bad|class="toast"|cb__mark|cb__box|sw__|rb__)/i;
 const BAD_TABLE = [/<table[\s>]/i, /\bref-table\b/, /\bdev-table\b/, /\bcolor-ref\b/, /\bcref-/];
 
+/* RE0048: старые имена типографики, удалённые в Typography 2.000 — рампа
+   живёт только в именах UI-kit (--type-h1-light, --type-body-m-reg,
+   .ds-h6-strong-smb, …). Имя учитывается целиком: после него не `-`, буква
+   или цифра, поэтому --type-h3 не матчится внутри --type-h3-strong-smb.
+   B20 у линтера (WARN, файлы ДС), Б51 у сенсора экранов (BLOCKER). */
+const TYPO_OLD_RX = /(?<![A-Za-z0-9-])(?:--type-(?:h1|h2|h3-strong|h3|h4-strong|h4|h5-strong|h5|h6-strong|h6|body-xl-strong|body-xl|body-l-strong|body-l|body-m-strong|body-m|body-s-strong|body-s|body-xs)|ds-(?:h1|h2|h3-strong|h3|h4-strong|h4|h5-strong|h5|h6-strong|h6|body-xl-strong|body-xl|body-l-strong|body-l|body-m-strong|body-m|body-s-strong|body-s|body-xs))(?![A-Za-z0-9-])/;
+/* Старые имена на странице типографики — ДАННЫЕ таблицы «До переезда»
+   (решение человека 02.11.2026: снимок для ручной сверки в Pixo), а не
+   ссылки: B20 этот файл не стережёт. Остальные файлы ДС — стережёт. */
+const TYPO_OLD_DOC_PAGE = 'foundations/Typography/Typography.html';
+
 /* ---------- утилиты ---------- */
 const RX = {
   cssVarDef: /(--[a-zA-Z0-9-]+)\s*:/g,
@@ -141,6 +152,30 @@ const RX = {
 };
 const strip = (s) => s.replace(/<[^>]*>/g, ' ').replace(/&[a-z]+;/g, ' ').replace(/\s+/g, ' ').trim();
 const uniq = (a) => [...new Set(a)];
+/* B19 — математическая функция CSS (min/max/clamp/calc) с ключевым словом
+   размера (min-content, max-content, fit-content) внутри. Такие функции
+   принимают только длины, проценты и числа: браузер считает объявление
+   недействительным и отбрасывает его целиком, без ошибки в консоли — в CSS
+   правило есть, в computed style его нет. Так с 07.10 по 27.10.2026 не
+   работало закрепление колонок во всех прокручиваемых таблицах: TableCell
+   2.025 `.dtable__body .tbl__row { min-width: max(100%, max-content) }`.
+   Ключевые слова размера пишутся самостоятельным значением (`min-width:
+   min-content`), а не аргументом функции; calc-size() не в счёт.
+   Возвращает найденные вызовы (комментарии вырезаны). */
+function intrinsicInMath(css) {
+  const src = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const hits = [];
+  for (const m of src.matchAll(/(?<![-\w])(min|max|clamp|calc)\(/g)) {
+    let depth = 0, i = m.index + m[1].length;
+    for (; i < src.length; i++) {
+      if (src[i] === '(') depth++;
+      else if (src[i] === ')' && --depth === 0) break;
+    }
+    const call = src.slice(m.index, i + 1);
+    if (/(?<![-\w])(min-content|max-content|fit-content)(?![-\w])/.test(call)) hits.push(call.replace(/\s+/g, ' '));
+  }
+  return hits;
+}
 const base = (p) => p.split('/').pop();
 /* Путь href относительно страницы pageRel (обе — от корня ДС; страницы apps
    приходят как `../apps/…`). Нужен B16, чтобы прочитать локальный CSS,
@@ -375,6 +410,36 @@ async function globalChecks(P, out) {
       if (forbidden.test(js)) hits.push(f);
     }
     if (hits.length) out.push(['BLOCKER', 'B16', 'имена тем (--color-*/--ramp-*) вне foundations/Themes: ' + uniq(hits).slice(0, 5).join(', ')]);
+  }
+  /* B19 — недействительное объявление: ключевое слово размера в min()/max()/
+     clamp()/calc() (см. intrinsicInMath). Весь CSS ДС, включая хром
+     документации: браузер отбрасывает такое объявление в любом файле. */
+  {
+    const hits = [];
+    for (const f of P.styleFiles) {
+      const css = (P.src && P.src.get(f)) || (await readFile(f).catch(() => ''));
+      for (const h of intrinsicInMath(css)) hits.push(f + ': ' + h);
+    }
+    if (hits.length) out.push(['BLOCKER', 'B19', 'ключевое слово размера внутри min()/max()/clamp()/calc() — браузер молча отбросит всё объявление: ' + uniq(hits).slice(0, 5).join('; ') + ' — писать min-content/max-content самостоятельным значением']);
+  }
+  /* B20 — старые имена типографики (RE0048). С Typography 2.000 рампа живёт
+     только в именах UI-kit; 19 старых токенов и классов удалены вместе со
+     ссылками — вписание обратно это битая ссылка на несуществующий токен
+     (B1 её не видит: определения не вернуть). Обход файлов ДС: CSS,
+     страницы, рантаймы, спеки. Вне оборота: журнал (история, не
+     переписывается), фикстуры (дефект там намеренный), сам линтер (таблица
+     соответствия в комментарии правила), зеркало иконок (данные глифов).
+     Страница при явной проверке — дубль в pageChecks (ниже), экраны
+     приложений — Б51 сенсора layout-check. */
+  {
+    const hits = [];
+    for (const f of P.list) {
+      if (f === 'CHANGELOG.md' || f === TYPO_OLD_DOC_PAGE || /^fixtures\//.test(f) || /ds-lint/.test(f) || f === 'foundations/Icons/icons-data.js') continue;
+      if (!/\.(css|html|htm|js|mjs|md)$/.test(f)) continue;
+      const src = (P.src && P.src.get(f)) || (await readFile(f).catch(() => ''));
+      if (TYPO_OLD_RX.test(src)) hits.push(f);
+    }
+    if (hits.length) out.push(['WARN', 'B20', 'старые имена типографики (удалены в Typography 2.000): ' + uniq(hits).slice(0, 5).join(', ') + (hits.length > 5 ? ' …' : '')]);
   }
   /* B17 — главная ДС несёт служебный тег темы (RE0005). Она вне pageChecks
      (SKIP_ALL), поэтому проверяется здесь. Остальные страницы — в pageChecks;
@@ -1127,6 +1192,16 @@ async function pageChecks(p, P, opts, out) {
     }
     if (hits.length) say('BLOCKER', 'B16', 'имена тем (--color-*/--ramp-*) вне foundations/Themes: ' + uniq(hits).slice(0, 3).join(', '));
   }
+  /* B19 — то же для собственного <style> страницы и, у экранов, локального
+     CSS по <link> (виджет собирается в страницу) — см. intrinsicInMath. */
+  {
+    const hits = intrinsicInMath(all(RX.styleBlock, noHtmlComments, 0).join('\n')).map((h) => base(p) + ': ' + h);
+    if (isScreen) {
+      const localCss = uniq(links.map((h) => resolveRel(p, h)).filter((r) => r && r.startsWith('../') && /\.css$/.test(r)));
+      for (const r of localCss) for (const h of intrinsicInMath(await readFile(r).catch(() => ''))) hits.push(r + ': ' + h);
+    }
+    if (hits.length) say('BLOCKER', 'B19', 'ключевое слово размера внутри min()/max()/clamp()/calc() — браузер молча отбросит всё объявление: ' + uniq(hits).slice(0, 3).join('; ') + ' — писать min-content/max-content самостоятельным значением');
+  }
   /* B17 — страница ДС без служебного тега темы (RE0005). ds-split-страницы
      держит ДС20 (docs-split check); здесь — остальные: страницы старого
      образца и главная (главная — в globalChecks, её срезает SKIP_ALL).
@@ -1631,6 +1706,17 @@ async function pageChecks(p, P, opts, out) {
       if (ver && sv && sv.trim() !== ver.trim()) say('WARN', 'D7', 'версия в спеке ' + sv + ' ≠ ' + ver + ' на странице');
       if (upd && su && su.trim() !== upd.trim()) say('WARN', 'D7', 'дата в спеке ' + su + ' ≠ ' + upd + ' на странице');
     }
+  }
+
+  /* B20 — старые имена типографики (RE0048, см. globalChecks): здесь
+     страница и переданные экраны — разметка, свой <style>, шаблоны
+     скриптов. Страница типографики исключена: старые имена там — данные
+     таблицы «До переезда» (решение человека 02.11.2026). Фикстура линтера
+     доказывает правило на явном прогоне. */
+  {
+    const src = p === TYPO_OLD_DOC_PAGE ? '' : (P.src.get(p) || '');
+    const m = src.match(TYPO_OLD_RX);
+    if (m) say('WARN', 'B20', 'старое имя типографики «' + m[0] + '» — рампа только в именах кита (Typography 2.000)');
   }
 }
 

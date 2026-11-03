@@ -29,7 +29,7 @@
     return '&lt;span class="kbd-combo"&gt;' + keys.map(k).join(' + ') + '&lt;/span&gt;';
   }
   /* строка текста того же кегля, что и клавиша: клавиша стоит в тексте */
-  const TEXT = { s: '--type-body-xs', m: '--type-body-s', l: '--type-body-m' };
+  const TEXT = { s: '--type-body-xs-reg', m: '--type-body-s-reg', l: '--type-body-m-reg' };
   function line(size, parts) {
     const p = document.createElement('p');
     p.style.cssText = 'margin:0; font:var(' + TEXT[size] + '); color:var(--text-secondary);';
@@ -77,7 +77,7 @@
     const hint = document.getElementById('use-hint');
     if (hint) {
       const row = document.createElement('p');
-      row.style.cssText = 'margin:0; display:flex; flex-wrap:wrap; justify-content:center; gap:var(--space-4) var(--space-16); font:var(--type-body-xs); color:var(--text-secondary);';
+      row.style.cssText = 'margin:0; display:flex; flex-wrap:wrap; justify-content:center; gap:var(--space-4) var(--space-16); font:var(--type-body-xs-reg); color:var(--text-secondary);';
       const part = (...xs) => { const s = document.createElement('span'); xs.forEach((x) => s.appendChild(typeof x === 'string' ? document.createTextNode(x) : x)); return s; };
       row.appendChild(part(makeKbd(['Enter']), ' — отправить'));
       row.appendChild(part(makeKbd(['Shift', 'Enter']), ' — новая строка'));

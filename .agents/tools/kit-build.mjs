@@ -1267,7 +1267,9 @@ export function pageSpecs(P) {
   const sections = new Set(sm.maps.map((m) => m && m.section).filter(Boolean));
   for (const app of findApps(P.root, P.appsDir, P.appsManifest)) {
     const section = app.dir.split('/')[0];
-    if (!sections.has(section) || isConcept(P, app)) continue;
+    /* модуль главных ролей (project.json → roleHomes) стоит на картах других разделов (узел app: home) */
+    const roleHome = Boolean(P.roleHomes) && app.dir === P.roleHomes.app;
+    if ((!sections.has(section) && !roleHome) || isConcept(P, app)) continue;
     const pages = path.join(app.abs, P.appShape.pages || 'pages');
     for (const f of filesOf(pages).filter((n) => n.endsWith('.screen.md'))) {
       const specAbs = path.join(pages, f);

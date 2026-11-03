@@ -30,8 +30,8 @@
   grid-template-columns: max-content minmax(0, 1fr);
   gap: var(--space-2) var(--space-8);
 }
-.lc-knrm__flabel { font: var(--type-body-xs); color: var(--text-secondary); }
-.lc-knrm__fvalue { font: var(--type-body-xs); color: var(--text-primary); overflow-wrap: anywhere; }
+.lc-knrm__flabel { font: var(--type-body-xs-reg); color: var(--text-secondary); }
+.lc-knrm__fvalue { font: var(--type-body-xs-reg); color: var(--text-primary); overflow-wrap: anywhere; }
 
 /* чекбокс «КНР» появляется только у участника сделки */
 .lc-knrm__knr { margin-top: var(--space-12); }

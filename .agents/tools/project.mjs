@@ -168,8 +168,25 @@ export function project(from = HERE) {
   const knowledgeBase = kbm && norm(kbm.dir)
     ? { dir: norm(kbm.dir), dirAbs: abs(norm(kbm.dir)), pages: Array.isArray(kbm.pages) ? kbm.pages : [] }
     : null;
+  /* Главные ролей (`roleHomes`, решение человека 29.10.2026): главная одна на
+     все роли — страница модуля `app` (как во фронтенде core/host-app/HomePage),
+     роль — параметр адреса `?role=<код>`. `entries` — строки хаба: главная роли
+     первой строкой колонки «Проекты» раздела `section`, root — каталог модуля.
+     Узел карты раздела — `app: home`. null — манифест главных не объявляет. */
+  const rh = m.roleHomes && typeof m.roleHomes === 'object' ? m.roleHomes : null;
+  const roleHomes = rh && appsDir && norm(rh.app) && norm(rh.page)
+    ? {
+      app: norm(rh.app), page: norm(rh.page),
+      root: appsDir + '/' + norm(rh.app), rootAbs: abs(appsDir + '/' + norm(rh.app)),
+      pageRel: appsDir + '/' + norm(rh.app) + '/pages/' + norm(rh.page),
+      entries: (Array.isArray(rh.entries) ? rh.entries : []).filter((e) => e && typeof e === 'object')
+        .map((e) => ({ ...e, href: appsDir + '/' + norm(rh.app) + '/pages/' + norm(rh.page) + '?role=' + encodeURIComponent(String(e.role || '')) })),
+    }
+    : null;
   return {
     error: null, root, manifest: m,
+    /** Главные ролей: { app, page, root, rootAbs, pageRel, entries: [{ id, section, role, title, desc, icon, href }] } или null. */
+    roleHomes,
     ds, dsAbs: abs(ds), dsFrom, dsError: dsConf && dsConf.error || null,
     kit, kitAbs: abs(kit),
     tools, toolsAbs: abs(tools),

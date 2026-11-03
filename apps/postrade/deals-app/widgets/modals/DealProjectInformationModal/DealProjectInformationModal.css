@@ -23,7 +23,7 @@
    «Документы по сделке» (lc-deal-ecm__heading). */
 .lc-project-info-modal__heading {
   margin: 0;
-  font: var(--type-h6-strong);
+  font: var(--type-h6-strong-smb);
   color: var(--text-primary);
 }
 

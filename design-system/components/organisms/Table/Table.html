@@ -35,12 +35,12 @@
 <link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
 <style>
 a{color:var(--link);} a:hover{color:var(--link-dark);}
-.section>p.desc{font:var(--type-body-m);color:var(--text-secondary);margin:0 0 28px;max-width:80ch;text-wrap:pretty;}
-.subhead{font:var(--type-body-m-strong);color:var(--text-primary);margin:32px 0 14px;}
+.section>p.desc{font:var(--type-body-m-reg);color:var(--text-secondary);margin:0 0 28px;max-width:80ch;text-wrap:pretty;}
+.subhead{font:var(--type-body-m-strong-smb);color:var(--text-primary);margin:32px 0 14px;}
 /* контролы конструктора (вкладка «Конструктор») */
 .ctl{display:flex;flex-direction:column;gap:10px;}
 .ctl.is-off{display:none;}
-.pg__grouphead{grid-column:1 / -1;font:var(--type-body-s-strong);font-size:11px;color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;padding-top:16px;margin-top:4px;border-top:1px solid var(--border-light);}
+.pg__grouphead{grid-column:1 / -1;font:var(--type-body-s-strong-smb);font-size:11px;color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;padding-top:16px;margin-top:4px;border-top:1px solid var(--border-light);}
 .pg__grouphead:first-child{padding-top:0;margin-top:0;border-top:none;}
 .ctl>.lbl{font:600 11px/1 var(--font-text),sans-serif;color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
 /* preview stage (демо в верхней панели) */
@@ -51,7 +51,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 .dt-detached{display:flex;flex-direction:column;align-items:stretch;gap:12px;width:100%;min-width:0;}
 /* неактуальные свитчи конструктора скрываются целиком (label.pg-toggle) */
 .toggles .pg-toggle.is-off{display:none;}
-.ws-cap{font:var(--type-body-xs);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
+.ws-cap{font:var(--type-body-xs-reg);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
 /* columns modal chrome — components/organisms/Table/TableSettings.css (общий слой рантайма ds-table-settings.js) */
 /* anatomy */
 .anat{display:flex;flex-direction:column;gap:28px;}
@@ -68,13 +68,13 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 .guide{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:760px){.guide{grid-template-columns:1fr;}}
 .guide-card{background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-2xl);padding:20px 22px;display:flex;flex-direction:column;gap:8px;}
-.guide-card__tag{font:var(--type-body-xs);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
-.guide-card__body{font:var(--type-body-s);color:var(--text-secondary);text-wrap:pretty;}
+.guide-card__tag{font:var(--type-body-xs-reg);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
+.guide-card__body{font:var(--type-body-s-reg);color:var(--text-secondary);text-wrap:pretty;}
 .guide-card__body b{color:var(--text-primary);}
 /* states */
 .states-grid{display:flex;flex-direction:column;gap:20px;}
 .st-card{background:var(--bg-tile);border:1px solid var(--border-light);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;}
-.st-card__label{font:var(--type-body-xs);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
+.st-card__label{font:var(--type-body-xs-reg);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
 .st-card .dtable__body{max-height:none;}
 .st-card .dtable{width:100%;}
 </style>
@@ -113,8 +113,8 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     Обзор компонентов
   </a>
   <div class="meta">
-    <span>Версия <b>1.023</b></span>
-    <span>Обновлено <b>13.10.2026</b></span>
+    <span>Версия <b>1.026</b></span>
+    <span>Обновлено <b>30.10.2026</b></span>
     <span>CSS <b>components/organisms/Table/Table.css</b></span>
     <span>Зависимости <b>table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu</b></span>
   </div>
@@ -174,11 +174,12 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 
   <div class="subsec" data-screen-label="ColumnWidth">
     <h3>Ширина колонки</h3>
-    <p class="desc">Не отключаемая опция и не часть «Настройки колонок»: ручка <code class="tok">.th__resize</code> стоит последним ребёнком каждой <code class="tok">.th</code> (кроме разделителей) всегда. Перетаскивание правой границы шапки и клавиши <b>← →</b> (шаг 16px, минимум 96px) меняют ширину вживую — детали см. <a class="inl" href="../TableCell/TableCell.html">TableCell</a>, раздел «Поведение». Поведение приходит из общего скрипта <code class="tok">components/organisms/Table/TableResize.js</code>, который входит в <code class="tok">ds.js</code>: на собранном экране ресайз колонок работает из коробки, отдельного подключения и <code class="tok">data-</code>-атрибутов не требует.</p>
+    <p class="desc">Не отключаемая опция и не часть «Настройки колонок»: ручка <code class="tok">.th__resize</code> стоит последним ребёнком каждой <code class="tok">.th</code> (кроме разделителей) всегда. Перетаскивание правой границы шапки и клавиши <b>← →</b> (шаг 16px, минимум 96px, но не больше исходной ширины; колонка действий — по содержимому) меняют ширину вживую — детали см. <a class="inl" href="../TableCell/TableCell.html">TableCell</a>, раздел «Поведение». Поведение приходит из общего скрипта <code class="tok">components/organisms/Table/TableResize.js</code>, который входит в <code class="tok">ds.js</code>: на собранном экране ресайз колонок работает из коробки, отдельного подключения и <code class="tok">data-</code>-атрибутов не требует.</p>
   </div>
   <div class="subsec" data-screen-label="ColumnsSettings">
     <h3>Настройка колонок</h3>
     <p class="desc">Кнопка-шестерёнка (<code class="tok">settings</code>) в тулбаре открывает Modal <code class="tok">--w4</code> со списком колонок. Это — стандартная модалка «Настройка таблицы» для всех таблиц; собирает её рантайм <code class="tok">components/organisms/Table/TableSettings.js</code> (в <code class="tok">ds.js</code>) по хуку <code class="tok">data-table-settings</code> на кнопке, читая колонки из шапки таблицы. В теле — описание «Выберите столбцы для отображения», родительский чекбокс «Выбрать все» (массово переключает видимость, с <code class="tok">indeterminate</code>-состоянием) и серый разделитель перед списком. В каждой строке списка: чекбокс видимости, IconButton закрепления и иконка перетаскивания (<code class="tok">drag-dots</code>) — самой крайней справа; перетаскивание за неё меняет порядок в таблице. В футере — «Отменить» (Transparent) и «Применить» (Accent). Поддерживается закрепление нескольких колонок; изменения применяются по «Применить» (перестановка, скрытие/показ, закрепление реальных колонок таблицы), «Отменить»/Escape/клик по скриму откатывают. Колонки без подписи <code class="tok">.th__label</code> (выбор/действие) — «служебные», в настройке не участвуют. Настройка всегда показывает таблицу такой, какая она сейчас: колонку, закреплённую булавкой или перенесённую за подпись в шапке, «Применить» не возвращает назад. Таблица может помнить свой вид на время сессии: после перехода на другую страницу и возврата колонки остаются в том же порядке, с той же видимостью, закреплением и шириной, сортировка — той же, а тело таблицы прокручено туда же, где его оставили. Всё это держится, пока открыта вкладка браузера. Собрать несколько вариантов представления, структура и удаление — раздел «Настройка таблицы» спеки.</p>
+    <p class="desc"><b>Вид по умолчанию.</b> У таблицы раздела есть вид, с которым она открывается: часть колонок скрыта, часть закреплена. Скрытую по умолчанию колонку объявляет атрибут <code class="tok">data-col-hidden</code> на <code class="tok">.th</code> — в окне она есть, но выключена, и появляется в таблице, когда пользователь её включит; закреплённую — класс <code class="tok">.th--pinned</code>. Свои настройки раздела (например, «Показывать новые непросмотренные записи») объявляются в <code class="tok">&lt;template data-table-options&gt;</code> и встают блоком чекбоксов над списком колонок; что они делают со строками, решает раздел по событию <code class="tok">tableoptions</code>. Слева в подвале окна — «Сбросить настройки»: сразу, без «Применить», возвращает колонки, сортировку и переключатели к виду по умолчанию и забывает вид, сохранённый на сессию. В демо наверху колонка «Ответственный» скрыта по умолчанию.</p>
   </div>
   <div class="subsec" data-screen-label="SavedFilters">
     <h3>Сохранённые фильтры</h3>
@@ -299,7 +300,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 <!-- 10. ТИПОГРАФИКА -->
 <section class="section" id="typography" data-screen-label="Типографика">
   <h2>Типографика</h2>
-  <p class="desc">Заголовок тулбара — <code class="tok">--type-h5-strong</code> (18/24, SB Sans Display), как заголовок Tile. Счётчик и вспомогательный текст — <code class="tok">--type-body-s</code>. Текст пустого состояния — заголовок <code class="tok">--type-body-m-strong</code>, пояснение <code class="tok">--type-body-s</code>. Содержимое строк и шапки — токены TableCell.</p>
+  <p class="desc">Заголовок тулбара — <code class="tok">--type-h5-strong-smb</code> (18/24, SB Sans Display), как заголовок Tile. Счётчик и вспомогательный текст — <code class="tok">--type-body-s-reg</code>. Текст пустого состояния — заголовок <code class="tok">--type-body-m-strong-smb</code>, пояснение <code class="tok">--type-body-s-reg</code>. Содержимое строк и шапки — токены TableCell.</p>
 </section>
 
 <!-- 11. ЦВЕТА -->
@@ -490,6 +491,7 @@ onSelectionChange(count): bulkRow.hidden = (count === 0)
 <script src="TableResize.js"></script>
 <script src="TableReorder.js"></script>
 <script src="TablePin.js"></script>
+<script src="TableHeadLabel.js"></script>
 <script src="Table.page.js"></script>
 <script src="../../../docs-kit/docs-split.js"></script>
 
@@ -592,8 +594,8 @@ onSelectionChange(count): bulkRow.hidden = (count === 0)
 }
 .dtable__toolbar-left { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; }
 .dtable__title-row { display: flex; align-items: baseline; gap: 10px; }
-.dtable__title { font: var(--type-h5-strong); color: var(--text-primary); margin: 0; white-space: nowrap; }
-.dtable__count { font: var(--type-body-s); color: var(--text-inactive); white-space: nowrap; }
+.dtable__title { font: var(--type-h5-strong-smb); color: var(--text-primary); margin: 0; white-space: nowrap; }
+.dtable__count { font: var(--type-body-s-reg); color: var(--text-inactive); white-space: nowrap; }
 .dtable__toolbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 /* ------------------------------------------------------------------ */
@@ -655,7 +657,7 @@ onSelectionChange(count): bulkRow.hidden = (count === 0)
    .tbl__row (display:grid), и блок-контейнер для его position:sticky — сама
    строка: ходить по вертикали ячейке негде, шапка уезжала вместе с контентом
    (инцидент: портфель ДИД, 05.09.2026). По горизонтали то же правило работало
-   именно потому, что строка шире скроллпорта (.tbl__row { min-width: max-content }),
+   именно потому, что строка шире скроллпорта (.tbl__row { min-width: min-content }),
    поэтому закрепление колонок (.th--pinned) не ломалось и дефект не всплывал.
    Строка шапки обязана нести .tbl__row--head — класс рантайм уже знает
    (ds-table.js isHeadRow), теперь он же несёт и раскладку. */
@@ -691,8 +693,8 @@ onSelectionChange(count): bulkRow.hidden = (count === 0)
   text-align: center;
 }
 .dtable__empty .illu { width: 140px; height: 100px; margin-bottom: 8px; }
-.dtable__empty-title { font: var(--type-body-m-strong); color: var(--text-primary); margin: 0; }
-.dtable__empty-text { font: var(--type-body-s); color: var(--text-secondary); max-width: 38ch; margin: 0; text-wrap: pretty; }
+.dtable__empty-title { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin: 0; }
+.dtable__empty-text { font: var(--type-body-s-reg); color: var(--text-secondary); max-width: 38ch; margin: 0; text-wrap: pretty; }
 .dtable__empty .btn { margin-top: 8px; }
 
 /* ------------------------------------------------------------------ */

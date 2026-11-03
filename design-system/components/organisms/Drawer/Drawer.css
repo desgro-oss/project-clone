@@ -128,13 +128,13 @@
   flex-wrap: wrap;
   min-width: 0;
   margin: 0;
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-inactive);
 }
 .drawer__path :is(svg, [data-icon]) { width: 14px; height: 14px; flex: none; }
 .drawer__title {
   margin: 0;
-  font: var(--type-h5-strong);
+  font: var(--type-h5-strong-smb);
   color: var(--text-primary);
   text-wrap: pretty;   /* заголовок переносится, а не обрезается */
 }
@@ -165,7 +165,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--drawer-body-gap);
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-primary);
 }
 /* Полоса прокрутки тела — как у .ds-scroll (Layout): только бегунок 8px,
@@ -233,7 +233,7 @@
 }
 .drawer__sectitle {
   margin: 0;
-  font: var(--type-body-s-strong);
+  font: var(--type-body-s-strong-smb);
   color: var(--text-primary);
 }
 /* действие секции уезжает вправо — «Добавить поле», «Изменить» */

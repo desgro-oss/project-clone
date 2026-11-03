@@ -31,7 +31,7 @@ widgets: [tiles/OpportunityClientTile, tiles/GeneralInformationTile, tiles/Produ
 
 | Уровень крошек | Текст | Ссылка |
 |---|---|---|
-| 1 | Главная | `HomePage.html` |
+| 1 | Главная | `../../../host-app/pages/HomePage.html` |
 | 2 | Лиды: Лиды · Лиды: Лиды для КМ · Обязательные лиды · Возможные лиды | реестр по виду лида |
 | 3 (текущий) | <ID>. <Клиент> | — |
 
@@ -98,9 +98,9 @@ Page (Layout, nav--rail)
 | `GeneralInformationTile` | виджет концепта — `../widgets/tiles/GeneralInformationTile/GeneralInformationTile.md` |
 | `ProductsTile` | виджет концепта — `../widgets/tiles/ProductsTile/ProductsTile.md` |
 | `OpportunityProductTile` | виджет концепта — `../widgets/tiles/OpportunityProductTile/OpportunityProductTile.md` |
-| `CommentsTile` | виджет концепта — `../widgets/tiles/CommentsTile/CommentsTile.md` |
+| `CommentsTile` | виджет концепта — `../../../clients-app/widgets/tiles/CommentsTile/CommentsTile.md` |
 | `MeetingsProtocolsTile` | виджет концепта — `../widgets/tiles/MeetingsProtocolsTile/MeetingsProtocolsTile.md` |
-| `DesksTile` | виджет концепта — `../widgets/tiles/DesksTile/DesksTile.md` |
+| `DesksTile` | виджет концепта — `../../../clients-app/widgets/tiles/DesksTile/DesksTile.md` |
 | `OpportunityTeamMembersTile` | виджет концепта — `../widgets/tiles/OpportunityTeamMembersTile/OpportunityTeamMembersTile.md` |
 | `OpportunityConnectionsTile` | виджет концепта — `../widgets/tiles/OpportunityConnectionsTile/OpportunityConnectionsTile.md` |
 
@@ -115,7 +115,7 @@ Page (Layout, nav--rail)
 | Триггер | Результат |
 |---|---|
 | «Переместить в Pipeline» | окно подтверждения → сделка в Pipeline «Сделки моего деска», лид получает статус «Перемещён в Pipeline», SnackBar; в «Связях» — ссылка на сделку (Р7) |
-| Стрелка «Клиент» | `ClientInfoPage.preview.html?id=…` |
+| Стрелка «Клиент» | `../../../clients-app/pages/ClientInfoPage.preview.html?id=…` |
 | Карандаши, «Добавить», «Документы по клиенту» | по клику ничего (Р6) |
 
 ## 8. Модальные окна (Modals)

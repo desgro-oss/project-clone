@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/ib/funds-app/widgets/modals/EditFundModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Форма фонда — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../ib/funds-app/widgets/modals/EditFundModal/EditFundModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Форма фонда">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Локальный компонент «Форма фонда» (EditFundModal) — окно добавления фонда из ЕПК,
+     создания нового фонда и редактирования фонда (макеты «Add-Edit-funds», 30.10.2026).
+     Вшивается в конец страницы меткой ds-include; страница связывает скриптом:
+     EditFundModal.open('editFundModal', { mode, source, client, fund, name, priorities, onSave }).
+     Заголовок, подписи кнопок, значения полей, выключенные поля, ряд ИНН | КПП и
+     предупреждение ЕПК ставит скрипт окна по варианту (паспорт, variants).
+     Состояние данных — data-state на .modal: data · partial · loading · updating. -->
+<div hidden id="editFundModal" class="modal-scrim modal-scrim--inline" data-widget="EditFundModal" data-widget-group="modals" data-widget-src="../../../ib/funds-app/widgets/modals/EditFundModal/EditFundModal.html">
+  <div class="modal modal--w5 lc-edit-fund-modal" role="dialog" aria-modal="true" aria-labelledby="efm-title" data-state="data" data-variant="add-ucp">
+    <header class="modal__head">
+      <h2 class="modal__title" id="efm-title" data-efm-title>Добавить фонд</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <!-- фонд не из ЕПК (вариант edit-custom): предупреждение уровня окна; «Привязать» —
+         воркфлоу не делается (решение 30.10.2026), обработчика у кнопки нет -->
+    <div class="modal__alert" data-efm-ucp-alert hidden>
+      <div class="alert alert--warning alert--m alert--row alert--flush" role="status">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Клиент не привязан к базе юр. лиц Сбера (ЕПК).</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--warning" data-efm-link-ucp><span class="btn__label">Привязать</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <!-- fieldset — для состояния «Обновление»: правило Modal «поля в <fieldset disabled>» -->
+      <fieldset class="lc-edit-fund-modal__fields" aria-labelledby="efm-title" data-efm-fields>
+
+        <div class="inp inp--m inp--disabled" data-efm-field="name">
+          <label class="ds-label ds-label--disabled" for="efm-name"><span class="ds-label__text">Название фонда</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-name" type="text" autocomplete="off" disabled value="ИП «Интер О.С.»">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m" data-efm-field="alias">
+          <label class="ds-label" for="efm-alias"><span class="ds-label__text">Псевдоним</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-alias" type="text" autocomplete="off" value="Большой перспективный фонд">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m" data-efm-field="beneficiaries">
+          <label class="ds-label" for="efm-beneficiaries"><span class="ds-label__text">Бенефициар</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-beneficiaries" type="text" autocomplete="off" value="Иванов Сергей Петрович">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--multiline" data-efm-field="comment">
+          <label class="ds-label" for="efm-comment"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <textarea class="inp__control" id="efm-comment" rows="2">Текст комментария</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ИНН | КПП — только у фонда из ЕПК, всегда выключены -->
+        <div class="lc-edit-fund-modal__row" data-efm-requisites>
+          <div class="inp inp--m inp--disabled" data-efm-field="inn">
+            <label class="ds-label ds-label--disabled" for="efm-inn"><span class="ds-label__text">ИНН</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="efm-inn" type="text" autocomplete="off" disabled value="7706419639">
+              </div>
+            </div>
+          </div>
+          <div class="inp inp--m inp--disabled" data-efm-field="kpp">
+            <label class="ds-label ds-label--disabled" for="efm-kpp"><span class="ds-label__text">КПП</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="efm-kpp" type="text" autocomplete="off" disabled value="1157746314274">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Приоритет — одиночный выбор, половина ширины; список заполняет скрипт окна -->
+        <div class="lc-edit-fund-modal__row">
+          <div class="inp inp--m" data-efm-field="priorityCode">
+            <label class="ds-label" for="efm-priority"><span class="ds-label__text">Приоритет</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="efm-priority-list">
+                <input class="inp__control" id="efm-priority" type="text" autocomplete="off" value="Высокий">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button>
+                  <button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button>
+                </span>
+              </div>
+            </div>
+            <div id="efm-priority-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-label="Приоритет фонда" data-efm-priority-list>
+              <button type="button" class="ddl__item" role="option" aria-selected="true" data-code="HIGH"><span class="ddl__item-body"><span class="ddl__item-label">Высокий</span></span></button>
+              <button type="button" class="ddl__item" role="option" aria-selected="false" data-code="MEDIUM"><span class="ddl__item-body"><span class="ddl__item-label">Средний</span></span></button>
+              <button type="button" class="ddl__item" role="option" aria-selected="false" data-code="LOW"><span class="ddl__item-body"><span class="ddl__item-label">Низкий</span></span></button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close data-efm-cancel><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-efm-save><span class="btn__label" data-efm-save-label>Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>30.10.2026</b></span><span>Категория: <b>Фонды</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты IB</a> · ib/funds-app</p>
+  <h1>Форма фонда</h1>
+  <p class="lead">Добавить фонд из ЕПК, создать новый фонд или изменить данные фонда</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/ib/funds-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../ib/funds-app/widgets/modals/EditFundModal">apps/ib/funds-app/widgets/modals/EditFundModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ib/funds-app/src/features/modals/EditFundModal (форма — entities/forms/EditFundForm)</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница «Фонды» (FundsPipeline) — метка в конце страницы, id скрима editFundModal</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../ib/funds-app/pages/FundsPipeline.preview.html">apps/ib/funds-app/pages/FundsPipeline.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="FundActionsMenu.doc.html">Меню фонда (FundActionsMenu)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="AddFundEntityFromUcpModal.doc.html">«Продолжить» окна AddFundEntityFromUcpModal с выбранным клиентом ЕПК (add-ucp)</a>, «Новый фонд» того же окна (create-custom), <a class="inl" href="FundActionsMenu.doc.html">пункт «Редактировать» меню фонда FundActionsMenu (edit-ucp, edit-custom)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Варианты</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">add-ucp<br>create-custom<br>edit-ucp<br>edit-custom</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Задача MS0020<br>этап Э2 (макеты «Add-Edit-funds»: Add fund / Step 02 - EPK, New fund / Step 02 - Custom, Edit fund / EPK, Edit fund / Edit custom fund; решения человека 30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 30.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.001</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Окно с данными фонда — второй шаг добавления фонда и окно правки фонда страницы «Фонды». Одно окно, четыре варианта (закрытый список <code class="tok">variants</code>):</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.6fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Вариант</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Заголовок</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Основная кнопка</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Название, ИНН, КПП</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Предупреждение ЕПК</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.6fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">add-ucp</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в окне поиска выбран клиент <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B5%D0%BF%D0%BA">ЕПК</a> и нажато «Продолжить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Добавить фонд</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Добавить</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">из клиента ЕПК, выключены</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.6fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">create-custom</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в окне поиска нажато «Новый фонд»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Новый фонд</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сохранить</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">название — из строки поиска, можно править; ИНН и КПП нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.6fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit-ucp</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Редактировать» в меню фонда с <code class="tok">partyId</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактировать фонд</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сохранить</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">из фонда, выключены</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.6fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit-custom</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Редактировать» в меню фонда без <code class="tok">partyId</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактировать фонд</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сохранить</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">название можно править; ИНН и КПП нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Клиент не привязан к базе юр. лиц Сбера (ЕПК).» + «Привязать»</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Пользователь заполняет псевдоним, бенефициара, комментарий и приоритет; у фонда не из ЕПК — ещё и название. Основная кнопка проверяет форму и отдаёт её странице (<code class="tok">onSave</code>), окно закрывается; «Отменить», крестик и Esc закрывают окно без сохранения.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Бизнес-смысл">
+<h2>Бизнес-смысл</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зачем существует</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто заполняет и когда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сотрудник IB при добавлении фонда (после поиска в <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B5%D0%BF%D0%BA">ЕПК</a>) и при правке фонда из меню строки списка фондов (задача MS0020, макеты «Add-Edit-funds»); роли — не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто пользуется результатом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">список фондов страницы «Фонды» (Руководитель IB, <code class="tok">director_ib</code>); другие потребители — не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бизнес-правила</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фонд из <a class="inl" href="../../../knowledge-base/glossary/index.html#%D0%B5%D0%BF%D0%BA">ЕПК</a> (<code class="tok">partyId</code> есть) — название, ИНН и КПП приходят из ЕПК и не правятся; фонд не из ЕПК — ИНН и КПП нет, название правится, окно предупреждает, что клиент не привязан к ЕПК; привязка к ЕПК («Привязать») — отдельный воркфлоу, пока не делается (решение человека 30.10.2026). Название обязательно, комментарий — до 254 символов (схема формы фронтенда). Смысл приоритета — не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Источники: задача MS0020 (решения человека 30.10.2026), макеты «Add-Edit-funds» (30.10.2026), фронтенд <code class="tok">funds-app</code> (<code class="tok">features/modals/EditFundModal/EditFundModal.tsx</code>, <code class="tok">entities/forms/EditFundForm/</code>).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Modal .modal--w5 (747px на 1920)
+├── шапка: заголовок по варианту + крестик
+├── Alert warning, row, flush — только edit-custom
+│   └── «Клиент не привязан к базе юр. лиц Сбера (ЕПК).» + Button outline XS warning «Привязать»
+├── тело: fieldset полей, зазор тела окна
+│   ├── InputText «Название фонда» (во всю ширину)
+│   ├── InputText «Псевдоним»
+│   ├── InputText «Бенефициар»
+│   ├── InputText многострочный «Комментарий»
+│   ├── ряд 1 : 1 — InputText «ИНН» | InputText «КПП» (только add-ucp, edit-ucp)
+│   └── ряд 1 : 1 — InputAutocomplete «Приоритет» (одиночный выбор, левая половина) + DropdownList
+└── подвал справа: Button transparent M «Отменить» · Button accent M «Добавить» / «Сохранить»</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.modal--w5</code>; <code class="tok">.modal__alert</code> для предупреждения ЕПК; подвал только справа; защита от клика по скриму включается сама (в окне есть поля)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.inp--m</code>; «Комментарий» — <code class="tok">.inp--multiline</code> (textarea); выключенное поле — <code class="tok">.inp--disabled</code> + <code class="tok">disabled</code> у контрола + <code class="tok">.ds-label--disabled</code>; ошибка — <code class="tok">.inp--error</code> + тултип при фокусе</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAutocomplete + DropdownList</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Приоритет»: поле с шевроном <code class="tok">data-ddl</code>, список <code class="tok">.ddl</code> одиночного выбора (заливка строки), набранный текст — выбор, если совпал с подписью; крестик очистки сбрасывает выбор</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.alert--warning.alert--m.alert--row.alert--flush</code>, кнопка <code class="tok">.btn--outline.btn--xs.btn--warning</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons, IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подвал — M; крестик шапки — IconButton neutral L</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tooltip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тултип ошибки поля (<code class="tok">DSTooltip.make</code> / <code class="tok">bind</code>, тип error, снизу от начала поля)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Загрузка»: <code class="tok">.sk-surface</code> на рамках полей — шиммер в габаритах полей</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Spinner</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Обновление»: <code class="tok">.spin.spin--current</code> в основной кнопке <code class="tok">.btn--loading</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputText/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/components/molecules/DropdownList/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/components/molecules/Alert/Alert.html">Alert</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a> · <a class="inl" href="../../../../design-system/components/atoms/Skeleton/Skeleton.html">Skeleton</a> · <a class="inl" href="../../../../design-system/components/atoms/Spinner/Spinner.html">Spinner</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../ib/funds-app/widgets/modals/EditFundModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../ib/funds-app/widgets/modals/EditFundModal/EditFundModal.css">EditFundModal.css</a> · <a class="inl" href="../../../ib/funds-app/widgets/modals/EditFundModal/EditFundModal.html">EditFundModal.html</a> · <a class="inl" href="../../../ib/funds-app/widgets/modals/EditFundModal/EditFundModal.js">EditFundModal.js</a> · <a class="inl" href="../../../ib/funds-app/widgets/modals/EditFundModal/EditFundModal.kit.scenario.mjs">EditFundModal.kit.scenario.mjs</a> · <a class="inl" href="../../../ib/funds-app/widgets/modals/EditFundModal/EditFundModal.md">EditFundModal.md</a> · <a class="inl" href="../../../ib/funds-app/widgets/modals/EditFundModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">name</code> — Название фонда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">название фонда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">add-ucp — <code class="tok">UcpClientDto.shortName</code>; create-custom — строка поиска окна AddFundEntityFromUcpModal; edit — <code class="tok">FundItemDto.name</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">alias</code> — Псевдоним</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">псевдоним фонда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundItemDto.alias</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">beneficiaries</code> — Бенефициар</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">бенефициар фонда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">edit — имена <code class="tok">FundItemDto.keyBeneficiaries[].displayName</code> через запятую (допущение 30.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">comment</code> — Комментарий</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">комментарий к фонду</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка, до 254 символов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundItemDto.comment</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">inn</code> — ИНН</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ИНН клиента ЕПК</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">add-ucp — <code class="tok">UcpClientDto.inn</code>; edit-ucp — <code class="tok">FundItemDto.inn</code>; только чтение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">— (не вводится)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">kpp</code> — КПП</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">КПП клиента ЕПК</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">add-ucp — <code class="tok">UcpClientDto.kpp</code>; edit-ucp — <code class="tok">FundItemDto.kpp</code>; только чтение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">— (не вводится)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">priorityCode</code> — Приоритет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">приоритет фонда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">код <code class="tok">FundPriorityCode</code> (подписи <code class="tok">FUND_PRIORITY_LABELS</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundItemDto.priority.code</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">partyId</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клиент ЕПК фонда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка или null</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">add-ucp — <code class="tok">UcpClientDto.partyId</code>; edit — <code class="tok">FundItemDto.partyId</code>; в окне не показывается</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Порядок строк — порядок отображения. Имена — <code class="tok">EditFundFormData</code> фронтенда, у приоритета — код (<code class="tok">priorityCode</code>, во фронтенде <code class="tok">priority</code> — значение справочника). Пустое необязательное поле показывается пустым на своём месте и уходит в форму как <code class="tok">null</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.9fr) minmax(0,1.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.9fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Руководитель IB (<code class="tok">director_ib</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026): в прототипе окно открывается всем</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Окно — форма правки: режима «Только просмотр» у него нет; нет права править — точку входа («Добавить фонд», пункт «Редактировать») не рисует страница или меню. Во фронтенде — права <code class="tok">createFund</code>, <code class="tok">updateFund</code> (<code class="tok">usePermissions</code>); матрица ролей — не решено (30.10.2026).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.7fr) minmax(0,1.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.7fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да — правка фонда, пока приходят данные фонда (во фронтенде — Skeleton на каждое поле)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">каркас окна и подписи полей на месте, рамки полей — шиммер <code class="tok">.sk-surface</code>; ряд ИНН \</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.7fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля по варианту (таблица «Описание»)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.7fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пустые необязательные поля — пустые на своих местах; у фонда из ЕПК без КПП поле КПП пустое и выключено</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.7fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет: окно правки всегда показывает форму, пустая форма — это «Заполнено частично»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.7fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет внутри окна: не пришли данные фонда — фронтенд закрывает окно и показывает SnackBar с текстом ошибки; ошибка сохранения — SnackBar, окно остаётся (<code class="tok">useOnSubmitFund</code>, не решено 30.10.2026 — в прототипе сохранение не падает)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.7fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да — идёт сохранение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal <code class="tok">.modal--saving</code>: тело приглушено, поля в <code class="tok">&lt;fieldset disabled&gt;</code>; основная кнопка <code class="tok">.btn--loading</code> со Spinner; «Отменить» и «Привязать» выключены</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.7fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да — единственный режим окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля по варианту</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.7fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет: окна правки на просмотр не бывает</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.7fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается — точку входа не рисует страница</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поле выключено</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Название, ИНН, КПП у фонда из ЕПК (add-ucp, edit-ucp)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.inp--disabled</code>, контрол <code class="tok">disabled</code>, подпись <code class="tok">.ds-label--disabled</code>; крестика очистки нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка поля</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пустое «Название фонда»; «Комментарий» длиннее 254 символов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.inp--error</code>, <code class="tok">aria-invalid</code>; текст — тултипом при фокусе поля: «Заполните поле» (допущение 30.10.2026) / «Максимальная длина – 254 символов. Указано N символов.» (текст фронтенда)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Предупреждение ЕПК</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">edit-custom</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert warning под шапкой, «Привязать» — без обработчика</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет — это окно, его можно закрыть без сохранения.</li><li>Обязательные поля внутри: «Название фонда» (см. «Поля»).</li><li>Что показывает, когда обязательное не заполнено: при уходе из поля и по основной кнопке — ошибка поля (<code class="tok">.inp--error</code> + тултип при фокусе); окно не закрывается, фокус — на первое поле с ошибкой. Пометки обязательности у подписи нет — её нет на макете (вопрос ниже).</li><li>Что отдаёт наружу: <code class="tok">onSave(form)</code> зовётся только для формы без ошибок.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">однострочные поля — прокрутка текста внутри поля (поведение InputText); «Комментарий» — многострочное поле, растёт по содержимому (InputText); лимит 254 — проверкой, а не обрезкой ввода</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тело окна прокручивается само, шапка и подвал закреплены (Modal); список приоритетов — три значения</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не уже <code class="tok">calc(100vw − 48px)</code> (Modal); ряды ИНН \</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ширина фиксирована шагом <code class="tok">--modal-w-5</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EditFundModal.open('editFundModal', opts)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вариант по <code class="tok">mode</code>, <code class="tok">source</code>, <code class="tok">fund.partyId</code>; поля заполнены; окно открыто рантаймом ДС (<code class="tok">DSModal.open(scrim, { keep: true })</code>), фокус — на первое доступное поле</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выбор в «Приоритете» (клик, клавиши)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значение — подпись из справочника, в форме — код</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ввод текста в «Приоритет» и уход из поля</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">совпал с подписью целиком — выбор; не совпал — возвращается прежний выбор</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик очистки «Приоритета»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбор сброшен (<code class="tok">priorityCode: null</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Уход из «Названия фонда» или «Комментария»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">проверка поля; ошибка уходит, как только поле исправлено</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Добавить» / «Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">проверка; ошибки — окно остаётся открытым; без ошибок — <code class="tok">onSave(form)</code>, окно закрывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Отменить», крестик, Esc</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно закрывается, ничего не сохраняется; клик по скриму окно не закрывает (форма)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Привязать» (edit-custom)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ничего: воркфлоу не делается (решение 30.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Проверка ввода</h3>
+<p class="desc">Схема <code class="tok">EditFundModal.tsx</code>: <code class="tok">name</code> — обязательно; <code class="tok">comment</code> — не длиннее 254 символов, текст «Максимальная длина – 254 символов. Указано N символов.» (перевод фронтенда). Проверка — при уходе из поля (<code class="tok">mode: 'onBlur'</code> фронтенда) и по основной кнопке.</p>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.8fr) minmax(0,1fr) minmax(0,1.6fr) minmax(0,2.6fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.8fr) minmax(0,1fr) minmax(0,1.6fr) minmax(0,2.6fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Продолжить» / «Новый фонд» окна AddFundEntityFromUcpModal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно (это)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">форма фонда, варианты add-ucp, create-custom</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Добавить» / «Сохранить» — страница добавляет фонд в список; отмена — ничего</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.8fr) minmax(0,1fr) minmax(0,1.6fr) minmax(0,2.6fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Редактировать» меню фонда FundActionsMenu</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно (это)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">форма фонда, варианты edit-ucp, edit-custom</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить» — страница обновляет строку фонда; отмена — ничего</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Окно ничего не открывает. Во фронтенде «Связать с базой ЕПК» закрывает это окно и открывает AddFundEntityFromUcpModal с данными формы — в прототипе воркфлоу не делается.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Справочник приоритетов фонда (<code class="tok">FundPriorityRsDto[]</code>, во фронтенде <code class="tok">useGetDictionaries</code>); при правке — данные фонда (<code class="tok">FundSummaryRsDto</code>, во фронтенде <code class="tok">FundsGeneralInformationApi.getFundsSummary</code>); сохранение — создание или изменение фонда (<code class="tok">useOnSubmitFund</code>). Имена методов выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/funds.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_FUNDS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">FundItemDto[] — фонд для правки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">моки и колонки фронтенда <code class="tok">FundsTable</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/funds.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_UCP_CLIENTS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">UcpClientDto[] — клиент ЕПК для add-ucp</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ClientUcpDto</code> фронтенда</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/funds.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.FUND_PRIORITY_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подписи <code class="tok">FundPriorityCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">моки фронтенда + invented (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/EditFundModal/fixtures.json</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">— (витрина)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">{ client, name, fund, fundCustom }</code> по состояниям и <code class="tok">long</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">те же</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.4fr) minmax(0,1.5fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.4fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code> скрима</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">editFundModal</code> (по умолчанию)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">скрим, который открывает <code class="tok">open</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.4fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code> на <code class="tok">.modal</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data</code> · <code class="tok">partial</code> · <code class="tok">loading</code> · <code class="tok">updating</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ставит скрипт окна (<code class="tok">setState</code>), страница метке не задаёт</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Скрипт окна</h3>
+<p class="desc"><code class="tok">EditFundModal.js</code>, глобальный <code class="tok">window.EditFundModal</code>; подключается страницей после <code class="tok">ds-body.js</code>:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Функция</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что делает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">open(scrimId, { mode, source, client?, fund?, name?, priorities, onSave })</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code>: <code class="tok">'create'</code> \</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">render(scrim, opts)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же без открытия (витрина), возвращает вариант</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">variantOf(opts)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">'add-ucp'</code> \</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">setState(scrim, state)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code> + классы ДС (<code class="tok">mirror</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mirror(scrim)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">загрузка → <code class="tok">.sk-surface</code> на полях; обновление → <code class="tok">.modal--saving</code>, <code class="tok">fieldset disabled</code>, <code class="tok">.btn--loading</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc"><code class="tok">onSave(form)</code>, <code class="tok">form = { name, alias, beneficiaries, comment, inn, kpp, priorityCode, partyId }</code> — пустые необязательные значения <code class="tok">null</code>; у вариантов не из ЕПК <code class="tok">inn</code>, <code class="tok">kpp</code>, <code class="tok">partyId</code> — <code class="tok">null</code>.</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.1fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.1fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно, заголовок, подвал, предупреждение ЕПК</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EditFundModal.html</code>, <code class="tok">EditFundModal.js</code> (<code class="tok">VARIANTS</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">features/modals/EditFundModal/EditFundModal.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.1fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поля и раскладка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EditFundModal.html</code>, <code class="tok">EditFundModal.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">entities/forms/EditFundForm/EditFundForm.tsx</code>, <code class="tok">EditFundForm.grid.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.1fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Проверка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EditFundModal.js</code> (<code class="tok">checkField</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">схема <code class="tok">yup</code> в <code class="tok">EditFundModal.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2.1fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mirror</code> (<code class="tok">.sk-surface</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EditFundForm.tsx</code> (<code class="tok">Skeleton</code> при <code class="tok">isLoading</code>)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Сценарий проверки API и демо — <code class="tok">EditFundModal.kit.scenario.mjs</code> (гонять: <code class="tok">node .agents/tools/page-run.mjs apps/local-components/ib/funds-app/EditFundModal.doc.html --scenario apps/ib/funds-app/widgets/modals/EditFundModal/EditFundModal.kit.scenario.mjs --no-flows</code>).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.9fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фронтенд: заголовок создания «Создать фонд», кнопка всегда «Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Добавить фонд» + «Добавить» (add-ucp), «Новый фонд» + «Сохранить» (create-custom)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по макетам; правило задачи — где макет и фронтенд расходятся, делаем по макету</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фронтенд: предупреждение ЕПК при любом фонде не из ЕПК (<code class="tok">isCustomFund</code>), и при создании</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">только edit-custom; у create-custom предупреждения нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на макете «New fund / Step 02 - Custom» его нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фронтенд: текст «Клиент не привязан к базе ЕПК», кнопка «Связать с базой ЕПК»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Клиент не привязан к базе юр. лиц Сбера (ЕПК).», «Привязать»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по макету «Edit custom fund»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет «Edit custom fund»: заголовок «Новый фонд»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Редактировать фонд»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">так в задании человека и во фронтенде (<code class="tok">update</code>); вопрос ниже</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фронтенд: поле «Тип» (множественный выбор) рядом с «Приоритетом»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на макетах его нет; вопрос ниже</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фронтенд: поля «Бенефициар» в форме нет (есть только в схеме)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поле есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по макетам</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фронтенд: у фонда не из ЕПК ИНН и КПП — вводимые поля (<code class="tok">disabled={!isCustomFund}</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у фонда не из ЕПК ИНН и КПП нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по макетам «New fund» и «Edit custom fund»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фронтенд: <code class="tok">maxLength={254}</code> у комментария (счётчик)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">счётчика нет, длина — проверкой с текстом ошибки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">счётчика нет на макете; задание — ошибка проверки по правилам InputText</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фронтенд: при загрузке — отдельный Skeleton на месте каждого поля</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">шиммер <code class="tok">.sk-surface</code> на рамках полей, подписи полей видны</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">спека Skeleton: <code class="tok">.sk-surface</code> сохраняет габариты элемента — раскладка не прыгает после ответа</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кому</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заголовок окна правки фонда не из ЕПК: «Редактировать фонд» (сделано, фронтенд) или «Новый фонд» (макет «Edit custom fund»)?</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дизайнер</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Предупреждение ЕПК у нового фонда (create-custom): во фронтенде есть, на макете нет — сделано по макету. Верно?</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">владелец продукта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">3</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поле «Тип» фонда (во фронтенде есть, на макетах нет) — нужно в форме?</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">владелец продукта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">4</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бенефициар — одна строка, у фонда — список <code class="tok">keyBeneficiaries</code>: допущение 30.10.2026 — имена через запятую. Как хранить?</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">аналитик</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">5</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Текст ошибки пустого названия: допущение 30.10.2026 — «Заполните поле» (во фронтенде — стандартное сообщение <code class="tok">yup</code>). Нужна ли пометка обязательности <code class="tok">*</code> у «Названия фонда» (на макете нет)?</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дизайнер</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">6</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопка «Добавить» (add-ucp) и «Сохранить» — после сохранения нужно ли уведомление (Toast / SnackBar)? Во фронтенде — только при ошибке</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дизайнер</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/ib/funds-app/widgets/modals/EditFundModal/EditFundModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">EditFundModal.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/ib/funds-app/widgets/modals/EditFundModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/ib/funds-app/pages/FundsPipeline.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../ib/funds-app/data/funds.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../ib/funds-app/widgets/tables/FundsFilters/FundsFilters.js"></script>
+<script src="../../../ib/funds-app/widgets/tables/FundsTable/FundsTable.js"></script>
+<script src="../../../ib/funds-app/widgets/tables/AssetsTable/AssetsTable.js"></script>
+<script src="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.js"></script>
+<script src="../../../ib/funds-app/widgets/modals/EditFundModal/EditFundModal.js"></script>
+<script src="../../../ib/funds-app/widgets/modals/DeleteFundModal/DeleteFundModal.js"></script>
+<script src="EditFundModal.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"EditFundModal","type":"modal","base":"../..","hub":"../../../../index.html","states":["data","loading"],"modes":[],"state":"data","mode":null,"width":null,"scenario":true,"fixtures":{"_":"Демо-данные конструктора витрины: объект на состояние данных и long — те же данные с самыми длинными значениями. Ключи образца: client — UcpClientDto (вариант add-ucp), name — название из поиска (create-custom), fund — FundItemDto фонда из ЕПК (edit-ucp), fundCustom — FundItemDto фонда не из ЕПК (edit-custom). Рисует их сценарий демо функцией окна EditFundModal.render. Значения — по макетам «Add-Edit-funds» (30.10.2026).","data":{"client":{"partyId":"pty-3001","shortName":"ИП «Интер О.С.»","inn":"7706419639","kpp":"1157746314274"},"name":"Андромеда","fund":{"objectId":"fnd-001","name":"Интеррос","alias":"Интеррос","inn":"7706419639","kpp":"1157746314274","partyId":"pty-1001","keyBeneficiaries":[{"displayName":"Владимир Потанин"}],"priority":{"code":"HIGH","name":"Высокий"},"comment":"Текст комментария"},"fundCustom":{"objectId":"fnd-008","name":"Интеррос","alias":"Интеррос","inn":null,"kpp":null,"partyId":null,"keyBeneficiaries":[{"displayName":"Владимир Потанин"}],"priority":{"code":"HIGH","name":"Высокий"},"comment":"Текст комментария"}},"partial":{"client":{"partyId":"pty-3002","shortName":"Интерактив Брокерс","inn":null,"kpp":null},"name":"Андромеда","fund":{"objectId":"fnd-004","name":"РФПИ","alias":null,"inn":"7706559641","kpp":null,"partyId":"pty-1004","keyBeneficiaries":[],"priority":null,"comment":null},"fundCustom":{"objectId":"fnd-008","name":"Это пример фонда не из ЕПК","alias":null,"inn":null,"kpp":null,"partyId":null,"keyBeneficiaries":[],"priority":null,"comment":null}},"long":{"client":{"partyId":"pty-3001","shortName":"Акционерное общество «Управляющая компания Российского фонда прямых инвестиций — Восток Инвестиции»","inn":"770641963912","kpp":"115774631427"},"name":"Закрытый паевой инвестиционный фонд комбинированный «Восток Инвестиции — Технологии и инфраструктура»","fund":{"objectId":"fnd-009","name":"Акционерное общество «Управляющая компания Российского фонда прямых инвестиций — Восток Инвестиции»","alias":"Восток Инвестиции — фонд прямых инвестиций в технологические и инфраструктурные компании","inn":"770641963912","kpp":"115774631427","partyId":"pty-1009","keyBeneficiaries":[{"displayName":"Институциональные инвесторы"},{"displayName":"Государственная корпорация развития «ВЭБ.РФ»"},{"displayName":"Константинопольский Александр Владимирович"}],"priority":{"code":"MEDIUM","name":"Средний"},"comment":"Фонд рассматривает сделки в сегменте технологических и инфраструктурных компаний с выручкой от 5 млрд руб. Встреча с управляющей командой — ноябрь 2026, по итогам — решение о совместных инвестициях в два актива портфеля. Контакт со стороны фонда — инвестиционный директор."},"fundCustom":{"objectId":"fnd-008","name":"Закрытый паевой инвестиционный фонд комбинированный «Восток Инвестиции — Технологии и инфраструктура»","alias":"Восток Инвестиции — фонд прямых инвестиций в технологические и инфраструктурные компании","inn":null,"kpp":null,"partyId":null,"keyBeneficiaries":[{"displayName":"Константинопольский Александр Владимирович"}],"priority":{"code":"LOW","name":"Низкий"},"comment":"Фонд заведён вручную, в ЕПК не найден. Проверить реквизиты управляющей компании и привязать к клиенту ЕПК после регистрации."}}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Форма фонда» (EditFundModal) — окно добавления фонда из ЕПК,
+     создания нового фонда и редактирования фонда (макеты «Add-Edit-funds», 30.10.2026).
+     Вшивается в конец страницы меткой ds-include; страница связывает скриптом:
+     EditFundModal.open('editFundModal', { mode, source, client, fund, name, priorities, onSave }).
+     Заголовок, подписи кнопок, значения полей, выключенные поля, ряд ИНН | КПП и
+     предупреждение ЕПК ставит скрипт окна по варианту (паспорт, variants).
+     Состояние данных — data-state на .modal: data · partial · loading · updating. -->
+<div class="modal-scrim" id="editFundModal" hidden>
+  <div class="modal modal--w5 lc-edit-fund-modal" role="dialog" aria-modal="true" aria-labelledby="efm-title" data-state="data" data-variant="add-ucp">
+    <header class="modal__head">
+      <h2 class="modal__title" id="efm-title" data-efm-title>Добавить фонд</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <!-- фонд не из ЕПК (вариант edit-custom): предупреждение уровня окна; «Привязать» —
+         воркфлоу не делается (решение 30.10.2026), обработчика у кнопки нет -->
+    <div class="modal__alert" data-efm-ucp-alert hidden>
+      <div class="alert alert--warning alert--m alert--row alert--flush" role="status">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Клиент не привязан к базе юр. лиц Сбера (ЕПК).</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--warning" data-efm-link-ucp><span class="btn__label">Привязать</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <!-- fieldset — для состояния «Обновление»: правило Modal «поля в <fieldset disabled>» -->
+      <fieldset class="lc-edit-fund-modal__fields" aria-labelledby="efm-title" data-efm-fields>
+
+        <div class="inp inp--m inp--disabled" data-efm-field="name">
+          <label class="ds-label ds-label--disabled" for="efm-name"><span class="ds-label__text">Название фонда</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-name" type="text" autocomplete="off" disabled value="ИП «Интер О.С.»">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m" data-efm-field="alias">
+          <label class="ds-label" for="efm-alias"><span class="ds-label__text">Псевдоним</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-alias" type="text" autocomplete="off" value="Большой перспективный фонд">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m" data-efm-field="beneficiaries">
+          <label class="ds-label" for="efm-beneficiaries"><span class="ds-label__text">Бенефициар</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-beneficiaries" type="text" autocomplete="off" value="Иванов Сергей Петрович">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--multiline" data-efm-field="comment">
+          <label class="ds-label" for="efm-comment"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <textarea class="inp__control" id="efm-comment" rows="2">Текст комментария</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ИНН | КПП — только у фонда из ЕПК, всегда выключены -->
+        <div class="lc-edit-fund-modal__row" data-efm-requisites>
+          <div class="inp inp--m inp--disabled" data-efm-field="inn">
+            <label class="ds-label ds-label--disabled" for="efm-inn"><span class="ds-label__text">ИНН</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="efm-inn" type="text" autocomplete="off" disabled value="7706419639">
+              </div>
+            </div>
+          </div>
+          <div class="inp inp--m inp--disabled" data-efm-field="kpp">
+            <label class="ds-label ds-label--disabled" for="efm-kpp"><span class="ds-label__text">КПП</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="efm-kpp" type="text" autocomplete="off" disabled value="1157746314274">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Приоритет — одиночный выбор, половина ширины; список заполняет скрипт окна -->
+        <div class="lc-edit-fund-modal__row">
+          <div class="inp inp--m" data-efm-field="priorityCode">
+            <label class="ds-label" for="efm-priority"><span class="ds-label__text">Приоритет</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="efm-priority-list">
+                <input class="inp__control" id="efm-priority" type="text" autocomplete="off" value="Высокий">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button>
+                  <button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button>
+                </span>
+              </div>
+            </div>
+            <div id="efm-priority-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-label="Приоритет фонда" data-efm-priority-list>
+              <button type="button" class="ddl__item" role="option" aria-selected="true" data-code="HIGH"><span class="ddl__item-body"><span class="ddl__item-label">Высокий</span></span></button>
+              <button type="button" class="ddl__item" role="option" aria-selected="false" data-code="MEDIUM"><span class="ddl__item-body"><span class="ddl__item-label">Средний</span></span></button>
+              <button type="button" class="ddl__item" role="option" aria-selected="false" data-code="LOW"><span class="ddl__item-body"><span class="ddl__item-label">Низкий</span></span></button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close data-efm-cancel><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-efm-save><span class="btn__label" data-efm-save-label>Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент EditFundModal — «Форма фонда».
+   Только внутренняя раскладка полей; механика окна, полей, списка, предупреждения,
+   скелетона и сохранения — Modal, InputText, InputAutocomplete, DropdownList,
+   Alert, Skeleton, Buttons ДС. Цвета, шрифты, отступы — токены ДС.
+   Состояния компонентов ДС отсюда не переопределяются. */
+
+/* fieldset держит поля для состояния «Обновление» (<fieldset disabled>, правило
+   Modal); браузерные рамка и отступы fieldset сбрасываются, зазор между полями —
+   тот же, что у тела окна. */
+.lc-edit-fund-modal__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--modal-body-gap);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* Ряд из двух полей: ИНН | КПП; «Приоритет» — в первой половине ряда (макет). */
+.lc-edit-fund-modal__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+/* Состояния данных (data-state на .modal). База — «Данные есть» и «Заполнено
+   частично»: та же разметка, пустое поле остаётся на месте пустым.
+   «Загрузка» и «Обновление» переводит в классы ДС скрипт окна
+   (EditFundModal.mirror): скелетон .sk-surface на полях, .modal--saving,
+   fieldset disabled, .btn--loading у основной кнопки. Здесь — только то, чего
+   классами ДС не сказать: в загрузке не видно предупреждения ЕПК (вариант фонда
+   ещё не известен). */
+.lc-edit-fund-modal[data-state="loading"] [data-efm-ucp-alert] { display: none; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   EditFundModal.js — поведение окна «Форма фонда» (EditFundModal).
+
+   Чего нет в рантаймах ДС и что делает этот файл: вариант окна по входу
+   (заголовок, подпись основной кнопки, выключенные поля, ряд ИНН | КПП,
+   предупреждение ЕПК), заполнение полей, выбор приоритета из справочника,
+   проверка ввода и сбор формы. Слой окна (портал, фокус, Esc, крестик, защита
+   от клика по скриму у формы), крестики очистки полей, открытие списка,
+   тултип ошибки — рантаймы ДС (Modal, Inputs, DropdownList, Tooltip).
+
+   API (глобальный объект window.EditFundModal):
+     open(scrimId, opts) → api DSModal (close(ok), isOpen) | null
+       scrimId — id скрима, по умолчанию 'editFundModal';
+       opts = {
+         mode: 'create' | 'update',
+         source: 'ucp' | 'custom',      // при update вариант решает fund.partyId
+         client?: UcpClientDto,         // create + ucp: Название/ИНН/КПП/partyId
+         fund?: FundItemDto,            // update: значения полей
+         name?: string,                 // create + custom: название из поиска
+         priorities: FUND_PRIORITY_LABELS,  // { HIGH: 'Высокий', … }
+         onSave(form)                   // форма прошла проверку; окно закроется
+       }
+       form = { name, alias, beneficiaries, comment, inn, kpp, priorityCode, partyId }
+       (имена EditFundFormData фронтенда; пустое необязательное поле — null).
+     render(scrim, opts) → вариант     — заполнить окно без открытия (витрина)
+     variantOf(opts) → 'add-ucp' | 'create-custom' | 'edit-ucp' | 'edit-custom'
+     setState(scrim, state)            — data · partial · loading · updating
+     mirror(scrim)                     — перевести data-state в классы ДС
+   Окно открывается рантаймом ДС: DSModal.open(scrim, { keep: true }).
+   Ошибка проверки окно не закрывает: поле получает .inp--error и тултип
+   с текстом при фокусе (правило InputText).
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var DEFAULT_ID = 'editFundModal';
+  var COMMENT_MAX = 254;
+  var VARIANTS = {
+    'add-ucp':       { title: 'Добавить фонд',      save: 'Добавить',  ucp: true,  alert: false },
+    'create-custom': { title: 'Новый фонд',         save: 'Сохранить', ucp: false, alert: false },
+    'edit-ucp':      { title: 'Редактировать фонд', save: 'Сохранить', ucp: true,  alert: false },
+    'edit-custom':   { title: 'Редактировать фонд', save: 'Сохранить', ucp: false, alert: true }
+  };
+  /* Подписи справочника, если страница их не передала (data/funds.js). */
+  function priorities(opts) {
+    return (opts && opts.priorities) || window.FUND_PRIORITY_LABELS || {};
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function str(v) { return v == null ? '' : String(v); }
+  function orNull(v) { var s = str(v).trim(); return s ? s : null; }
+
+  function variantOf(opts) {
+    opts = opts || {};
+    if (opts.mode === 'update') return opts.fund && opts.fund.partyId ? 'edit-ucp' : 'edit-custom';
+    return opts.source === 'ucp' ? 'add-ucp' : 'create-custom';
+  }
+
+  /* Значения формы по входу окна. */
+  function valuesOf(opts, variant) {
+    var f = opts.fund || {}, c = opts.client || {};
+    if (variant === 'add-ucp') {
+      return { name: c.shortName, alias: null, beneficiaries: null, comment: null,
+        inn: c.inn, kpp: c.kpp, priorityCode: null, partyId: c.partyId || null };
+    }
+    if (variant === 'create-custom') {
+      return { name: opts.name, alias: null, beneficiaries: null, comment: null,
+        inn: null, kpp: null, priorityCode: null, partyId: null };
+    }
+    /* Бенефициар — одна строка формы; у фонда список keyBeneficiaries:
+       допущение 30.10.2026 — имена через запятую. */
+    var bens = (f.keyBeneficiaries || []).map(function (b) { return str(b.displayName).trim(); }).filter(Boolean);
+    return { name: f.name, alias: f.alias, beneficiaries: bens.length ? bens.join(', ') : null,
+      comment: f.comment, inn: f.inn, kpp: f.kpp,
+      priorityCode: f.priority ? f.priority.code : null, partyId: f.partyId || null };
+  }
+
+  function q(scrim, sel) { return scrim.querySelector(sel); }
+  function control(scrim, key) { var w = q(scrim, '[data-efm-field="' + key + '"]'); return w && w.querySelector('.inp__control'); }
+
+  /* ── ошибка поля: .inp--error + тултип при фокусе (правило InputText) ── */
+  function fieldError(input) {
+    if (input.__efmError) return input.__efmError;
+    var inp = input.closest('.inp'), box = input.closest('.inp__box');
+    var message = '', api = null;
+    function ensure() {
+      if (api || !window.DSTooltip || !box) return api;
+      var o = { type: 'error', placement: 'bottom', align: 'start', multiline: true };
+      var tip = window.DSTooltip.make('', o);
+      box.appendChild(tip);
+      o.tip = tip;
+      api = window.DSTooltip.bind(input, o);
+      ['mouseenter', 'focus'].forEach(function (ev) {
+        input.addEventListener(ev, function () { if (!message && api) api.hide(true); });
+      });
+      return api;
+    }
+    input.__efmError = {
+      set: function (msg) {
+        message = msg;
+        inp.classList.add('inp--error');
+        input.setAttribute('aria-invalid', 'true');
+        var a = ensure();
+        if (!a) return;
+        a.tip.firstChild.textContent = msg;
+        if (document.activeElement === input) a.show(true);
+      },
+      clear: function () {
+        message = '';
+        inp.classList.remove('inp--error');
+        input.removeAttribute('aria-invalid');
+        if (api) api.hide(true);
+      }
+    };
+    return input.__efmError;
+  }
+
+  /* Правила проверки — схема EditFundModal.tsx фронтенда: «Название фонда»
+     обязательно, «Комментарий» не длиннее 254 символов. Текст ошибки длины —
+     перевод фронтенда; текст пустого названия — допущение (30.10.2026). */
+  function checkField(scrim, key) {
+    var c = control(scrim, key);
+    if (!c || c.disabled) return true;
+    var v = str(c.value), msg = '';
+    if (key === 'name' && !v.trim()) msg = 'Заполните поле';
+    if (key === 'comment' && v.length > COMMENT_MAX) {
+      msg = 'Максимальная длина – ' + COMMENT_MAX + ' символов. Указано ' + v.length + ' символов.';
+    }
+    if (msg) fieldError(c).set(msg); else if (c.__efmError) c.__efmError.clear();
+    return !msg;
+  }
+  function validate(scrim) {
+    var ok = ['name', 'comment'].map(function (k) { return checkField(scrim, k); }).every(Boolean);
+    if (!ok) { var first = q(scrim, '.inp--error .inp__control'); if (first) first.focus(); }
+    return ok;
+  }
+
+  /* ── приоритет: одиночный выбор из справочника ── */
+  function paintPriorities(scrim, code) {
+    var list = q(scrim, '[data-efm-priority-list]'), P = scrim.__efm.priorities;
+    if (!list) return;
+    list.innerHTML = Object.keys(P).map(function (k) {
+      return '<button type="button" class="ddl__item" role="option" aria-selected="' + (k === code ? 'true' : 'false') + '" data-code="' + esc(k) + '">'
+        + '<span class="ddl__item-body"><span class="ddl__item-label">' + esc(P[k]) + '</span></span></button>';
+    }).join('');
+  }
+  function setPriority(scrim, code) {
+    var P = scrim.__efm.priorities;
+    scrim.__efm.priorityCode = code && P[code] ? code : null;
+    var c = control(scrim, 'priorityCode');
+    if (c) c.value = scrim.__efm.priorityCode ? P[scrim.__efm.priorityCode] : '';
+    paintPriorities(scrim, scrim.__efm.priorityCode);
+    if (c && window.DSInput) window.DSInput.sync(c.closest('.inp'));
+  }
+  /* Набранный руками текст — выбор, если совпал с подписью целиком (Л202). */
+  function commitTypedPriority(scrim) {
+    var c = control(scrim, 'priorityCode'), P = scrim.__efm.priorities;
+    var s = str(c && c.value).trim().toLowerCase();
+    if (!s) { setPriority(scrim, null); return; }
+    var hit = Object.keys(P).filter(function (k) { return String(P[k]).toLowerCase() === s; })[0];
+    setPriority(scrim, hit || scrim.__efm.priorityCode);
+  }
+
+  /* ── сбор формы ── */
+  function formOf(scrim) {
+    var s = scrim.__efm, v = function (k) { var c = control(scrim, k); return c ? c.value : ''; };
+    var ucp = VARIANTS[s.variant].ucp;
+    return {
+      name: str(v('name')).trim(),
+      alias: orNull(v('alias')),
+      beneficiaries: orNull(v('beneficiaries')),
+      comment: orNull(v('comment')),
+      inn: ucp ? orNull(s.values.inn) : null,
+      kpp: ucp ? orNull(s.values.kpp) : null,
+      priorityCode: s.priorityCode,
+      partyId: s.values.partyId
+    };
+  }
+
+  /* ── привязка один раз на скрим ── */
+  function bind(scrim) {
+    if (scrim.__efmBound) return;
+    scrim.__efmBound = true;
+    scrim.addEventListener('click', function (e) {
+      var it = e.target.closest('.ddl__item[data-code]');
+      if (it && it.closest('[data-efm-priority-list]')) { setPriority(scrim, it.getAttribute('data-code')); return; }
+      if (e.target.closest('[data-efm-save]')) save(scrim);
+    });
+    scrim.addEventListener('ds-input:clear', function (e) {
+      var w = e.target.closest('[data-efm-field]');
+      if (w && w.getAttribute('data-efm-field') === 'priorityCode') setPriority(scrim, null);
+    });
+    var pc = control(scrim, 'priorityCode');
+    if (pc) pc.addEventListener('change', function () { commitTypedPriority(scrim); });
+    /* Проверка по уходу из поля (mode: 'onBlur' фронтенда); поле с ошибкой
+       перепроверяется на каждом вводе, чтобы ошибка ушла, как только исправлена. */
+    ['name', 'comment'].forEach(function (k) {
+      var c = control(scrim, k);
+      if (!c) return;
+      c.addEventListener('blur', function () { checkField(scrim, k); });
+      c.addEventListener('input', function () { if (c.getAttribute('aria-invalid')) checkField(scrim, k); });
+    });
+  }
+
+  function save(scrim) {
+    var s = scrim.__efm;
+    if (!s || s.state === 'loading' || s.state === 'updating') return;
+    commitTypedPriority(scrim);
+    if (!validate(scrim)) return;
+    var form = formOf(scrim);
+    if (s.onSave) s.onSave(form);
+    if (s.api) s.api.close(true);
+  }
+
+  /* ── вариант и значения ── */
+  function setField(scrim, key, value, disabled) {
+    var c = control(scrim, key);
+    if (!c) return;
+    var inp = c.closest('.inp'), lab = inp.querySelector('.ds-label');
+    c.value = str(value);
+    c.disabled = !!disabled;
+    inp.classList.toggle('inp--disabled', !!disabled);
+    if (lab) lab.classList.toggle('ds-label--disabled', !!disabled);
+    if (c.__efmError) c.__efmError.clear();
+  }
+
+  function render(scrim, opts) {
+    if (typeof scrim === 'string') scrim = document.getElementById(scrim);
+    if (!scrim) return null;
+    opts = opts || {};
+    var variant = variantOf(opts), V = VARIANTS[variant];
+    var values = valuesOf(opts, variant);
+    var prev = scrim.__efm || {};
+    scrim.__efm = { variant: variant, values: values, priorities: priorities(opts),
+      priorityCode: null, onSave: opts.onSave || null, api: prev.api || null, state: 'data' };
+    bind(scrim);
+    var modal = q(scrim, '.modal');
+    modal.setAttribute('data-variant', variant);
+    q(scrim, '[data-efm-title]').textContent = V.title;
+    q(scrim, '[data-efm-save-label]').textContent = V.save;
+    q(scrim, '[data-efm-ucp-alert]').hidden = !V.alert;
+    q(scrim, '[data-efm-requisites]').hidden = !V.ucp;
+    setField(scrim, 'name', values.name, V.ucp);
+    setField(scrim, 'alias', values.alias, false);
+    setField(scrim, 'beneficiaries', values.beneficiaries, false);
+    setField(scrim, 'comment', values.comment, false);
+    setField(scrim, 'inn', values.inn, true);
+    setField(scrim, 'kpp', values.kpp, true);
+    setPriority(scrim, values.priorityCode);
+    setState(scrim, 'data');
+    if (window.DSInput) window.DSInput.syncAll(scrim);
+    return variant;
+  }
+
+  /* ── состояние данных: data-state на .modal, в классы ДС — mirror ── */
+  function setState(scrim, state) {
+    if (typeof scrim === 'string') scrim = document.getElementById(scrim);
+    if (!scrim) return;
+    q(scrim, '.modal').setAttribute('data-state', state || 'data');
+    mirror(scrim);
+  }
+
+  function mirror(scrim) {
+    var modal = q(scrim, '.modal');
+    if (!modal) return;
+    var st = modal.getAttribute('data-state') || 'data';
+    if (scrim.__efm) scrim.__efm.state = st;
+    var loading = st === 'loading', saving = st === 'updating';
+    /* Загрузка: каркас на месте, шиммер на рамках полей (.sk-surface — Skeleton). */
+    scrim.querySelectorAll('.inp__field').forEach(function (f) { f.classList.toggle('sk-surface', loading); });
+    var body = q(scrim, '.modal__body');
+    if (body) { if (loading) body.setAttribute('aria-busy', 'true'); else body.removeAttribute('aria-busy'); }
+    /* Обновление (сохранение): правило Modal — .modal--saving, поля в
+       <fieldset disabled>, основная кнопка .btn--loading со Spinner. */
+    modal.classList.toggle('modal--saving', saving);
+    var fs = q(scrim, '[data-efm-fields]');
+    if (fs) fs.disabled = saving || loading;
+    var link = q(scrim, '[data-efm-link-ucp]');
+    if (link) link.disabled = saving;
+    var btn = q(scrim, '[data-efm-save]');
+    if (btn) {
+      btn.disabled = loading || saving;
+      btn.classList.toggle('btn--loading', saving);
+      var spin = btn.querySelector('.spin');
+      if (saving && !spin) btn.insertAdjacentHTML('afterbegin', '<span class="spin spin--current" aria-hidden="true"></span>');
+      if (!saving && spin) spin.remove();
+    }
+    var cancel = q(scrim, '[data-efm-cancel]');
+    if (cancel) cancel.disabled = saving;
+  }
+
+  function open(scrimId, opts) {
+    var scrim = document.getElementById(scrimId || DEFAULT_ID);
+    if (!scrim || !window.DSModal) return null;
+    render(scrim, opts);
+    var api = window.DSModal.open(scrim, { keep: true });
+    scrim.__efm.api = api;
+    return api;
+  }
+
+  window.EditFundModal = { open: open, render: render, variantOf: variantOf, setState: setState, mirror: mirror };
+})();
+</script>
+</body>
+</html>

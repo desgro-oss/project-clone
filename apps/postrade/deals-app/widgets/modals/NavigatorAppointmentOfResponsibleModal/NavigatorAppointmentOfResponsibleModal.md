@@ -70,7 +70,7 @@ Modal modal--w5 (747px)
 | Modal | ДС | `modal--w5` — окно на макете шире остальных окон навигатора |
 | InputAutocomplete | ДС | M, одиночный выбор, список — DropdownList `ddl--floating ddl--scroll`; строка — ФИО и под ним табельный номер (хелпер опции) |
 | ReadOnlyField | ДС | текст; пустое значение — прочерк |
-| Typography | ДС | заголовок таблицы — `ds-h6-strong`, как подзаголовки окон «Продукты ДИД» и «КНР» |
+| Typography | ДС | заголовок таблицы — `ds-h6-strong-smb`, как подзаголовки окон «Продукты ДИД» и «КНР» |
 | Table, TableCell | ДС | без тулбара, липкая шапка; колонки — разделитель 8px · 120px · остаток · 200px · разделитель 8px; значения — `tc__text--truncate` с тултипом усечения; пустое значение — `tc__empty` |
 | IconButton | ДС | крестик шапки `ibtn--neutral ibtn--l` |
 | Buttons | ДС | «Назначить» `btn--accent btn--m` |

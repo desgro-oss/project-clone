@@ -651,9 +651,9 @@
   /* ============================ TYPOGRAPHY ============================ */
   (function () {
     const rows = [
-      ['Label', '--type-body-xs', 'SB Sans Text', '12 / 16', '--text-secondary'],
-      ['Значение', '--type-body-m', 'SB Sans Text', '16 / 20', '--text-primary'],
-      ['Helper', '--type-body-xs', 'SB Sans Text', '12 / 16', '--text-inactive'],
+      ['Label', '--type-body-xs-reg', 'SB Sans Text', '12 / 16', '--text-secondary'],
+      ['Значение', '--type-body-m-reg', 'SB Sans Text', '16 / 20', '--text-primary'],
+      ['Helper', '--type-body-xs-reg', 'SB Sans Text', '12 / 16', '--text-inactive'],
     ];
     const tb = document.querySelector('#typo-table tbody');
     if (!tb) return;
@@ -796,9 +796,9 @@
 
     if (sizeTbody) {
       const rows = [
-        ['Label', '--type-body-xs', data.labelSize + ' / ' + data.labelLh + ' px'],
-        ['Значение (текст)', '--type-body-m', data.valueSize + ' / ' + data.valueLh + ' px'],
-        ['Helper', '--type-body-xs', data.helperSize + ' / ' + data.helperLh + ' px'],
+        ['Label', '--type-body-xs-reg', data.labelSize + ' / ' + data.labelLh + ' px'],
+        ['Значение (текст)', '--type-body-m-reg', data.valueSize + ' / ' + data.valueLh + ' px'],
+        ['Helper', '--type-body-xs-reg', data.helperSize + ' / ' + data.helperLh + ' px'],
         ['Значение-чип (Chip XS)', 'chip--xs', data.chipH + ' px — высота'],
       ];
       sizeTbody.innerHTML = rows.map(r => `<div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.68fr 1.08fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">${r[0]}</span></span></div><div class="tc"><code>${r[1]}</code></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">${r[2]}</span></span></div><div class="tc tc--separator"></div></div>`).join('');

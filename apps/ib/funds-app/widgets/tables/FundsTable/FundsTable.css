@@ -1,0 +1,33 @@
+/* Локальный компонент «Список фондов» (FundsTable).
+   Только внутренняя раскладка. Цвета, шрифты, отступы — токены ДС; своих значений нет.
+   Карточка — таблица ДС (.dtable --fill, тулбар .dtable__toolbar без заголовка:
+   слева фильтры FundsFilters, справа шестерёнка настройки), строки — TableCell,
+   аватар — Avatar, типы — Chip, пустые состояния — EmptyState: их размеры и состояния
+   отсюда не переопределяются.
+
+   Оси на корне (ставит FundsTable.js):
+   - data-state — loading | data | empty (фондов нет вовсе);
+   - data-results — all | none: «Ничего не найдено» по фильтрам (своё состояние). */
+
+/* Корень — карточка на всю высоту родителя: сжимается по ширине панели сплиттера,
+   горизонтальный скролл остаётся у тела таблицы (.dtable__body, Table). */
+.lc-funds-table { min-width: 0; min-height: 0; }
+
+/* Тулбар: ряд фильтров слева забирает всю ширину до шестерёнки. Колонка
+   .dtable__toolbar-left ДС рассчитана на заголовок над счётчиком — здесь в ней
+   один ряд, поэтому она тянется, а ряд и кнопка выровнены по центру. */
+.lc-funds-table__toolbar { align-items: center; flex-wrap: nowrap; }
+.lc-funds-table__filters { flex: 1 1 auto; align-items: stretch; }
+.lc-funds-table__toolbar > .dtable__toolbar-right { flex: none; }
+
+/* Пустые состояния — по центру тела таблицы, как на макете «Список фондов —
+   Empty state» (образец — KPITable.css): тело становится колонкой, EmptyState
+   забирает свободную высоту. Скрытие — атрибутом hidden (EmptyState, Table). */
+.lc-funds-table .dtable__body:has(> .es:not([hidden])) {
+  display: flex;
+  flex-direction: column;
+}
+.lc-funds-table .dtable__body > .es:not([hidden]) {
+  flex: 1 1 auto;
+  justify-content: center;
+}

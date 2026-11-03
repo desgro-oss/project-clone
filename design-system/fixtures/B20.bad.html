@@ -1,0 +1,47 @@
+<!-- @dsCard group="Fixtures" name="B20" viewport="1440x900" -->
+<!DOCTYPE html>
+<!-- ФИКСТУРА линтера: B20. Получена из `_base.ok.html` вписыванием старых
+     имён типографики в собственный <style> и в разметку. ДЕФЕКТ: токен
+     `--type-body-m` и класс `ds-body-m` удалены в Typography 2.000 (RE0048) —
+     рампа живёт только в именах UI-kit (`--type-body-m-reg`, `.ds-body-m-reg`);
+     ссылки на старые имена — битые: браузер не найдёт значение, класс не
+     существует. Правило обязано ПАДАТЬ здесь и МОЛЧАТЬ на эталоне —
+     `lessons-cli verify --only B20`. В глобальном обходе файлов ДС (B20 в
+     globalChecks) папка fixtures пропущена: здесь дефект намеренный. -->
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фикстура B20 — Дизайн-система</title>
+<link rel="stylesheet" href="../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../components/molecules/Inputs/Inputs.css">
+<link rel="stylesheet" href="../docs-kit/ds-toc.css">
+<style>
+  .fx-note { font: var(--type-body-m); color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<main class="page ds-split">
+  <p class="meta">Версия: <b>1.000</b> · Обновлено: <b>02.11.2026</b></p>
+  <div class="splitpane">
+    <div class="splitpane__a">
+      <div id="pg-controls">
+        <div class="ctl"><span class="lbl">Вариант</span></div>
+        <div class="inp inp--m"><div class="inp__field"><input class="inp__control"></div></div>
+      </div>
+    </div>
+    <div class="splitpane__b">
+      <p class="fx-note ds-body-s">Область предпросмотра.</p>
+    </div>
+  </div>
+</main>
+<script src="../docs-kit/ds-toc.js"></script>
+<script src="../components/molecules/Splitter/Splitter.js"></script>
+<script src="../docs-kit/docs-split.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 .lc-desks { min-width: 0; }
 
 .lc-desks__note {
-  font: var(--type-body-xs);
+  font: var(--type-body-xs-reg);
   color: var(--text-secondary);
   margin: 0 0 var(--space-12);
 }
@@ -24,6 +24,6 @@
 }
 
 .lc-desks__name {
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-primary);
 }

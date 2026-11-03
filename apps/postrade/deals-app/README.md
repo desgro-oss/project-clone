@@ -208,6 +208,29 @@ Post, категория «Сделка» (задача RE0014): интерак�
 `data/API.md`). Какая сделка какое состояние тайла «Финансовые инструменты» показывает — в
 шапке `mock-fin-instruments.js`.
 
+Договор займа (НКЛ) — `window.LoanAgreementStore` (`loan-agreement-store.js` поверх
+`mock-loan-agreements.js`; задача RE0041, ответы человека 26.10.2026): разделы договора
+(договор, баланс и валюта, техническая информация), дополнительные соглашения и процентные
+схемы ЕТС. Запись хранится по id узла договора в дереве продуктов (в сделке бывает два договора),
+через `PostApi` (ресурс `loan-agreements`, `data/API.md`). Номер, название, транши и погашение
+договора стор берёт из `ProductTreeStore`: плановая дата погашения договора — самая поздняя
+среди его траншей, правка закрыта статусом сделки и погашением договора. Правила схем (периоды не
+пересекаются, ставка = БИ + спред, лаг применения БИ в рабочих днях) и сведения о том, какой
+демо-договор в каком состоянии, — в шапках `loan-agreement-store.js` и `mock-loan-agreements.js`.
+Какой договор открыт на странице и как он назван в крошках — `window.InstrumentContext`
+(`instrument-context.js`, по образцу `tranche-context.js`; адрес `?id=<сделка>&ins=<id узла договора>`).
+Страницы договора — `Instrument.html` (договор займа) и `InitialAndAdditionalAgreements.html` («Договор и
+дополнительные соглашения», пара во фронтенде `InitialAndAdditionalAgreementsPage` — «по догадке», сверить с
+фронтендом); их тайлы «Договор» берут состав полей по типу продукта из общего словаря
+`loan-contract-fields.js`. Тайл «Договор» (`ContractTile`) и карточка дополнительного соглашения
+(`AdditionalAgreementTile`) — имена наши, пары во фронтенде нет («Договор» — возможно,
+`InitialAndAdditionalAgreementsPageBar`; карточка — у фронтенда `AdditionalAgreementsSection`).
+
+Баланс и валюта узлов дерева (`balance`, `currency` в `mock-deal-trees.js`) — временные: по ответу человека
+26.10.2026 они принадлежат тайлам «Баланс и валюта» страниц инструментов и транша. Пока их читают колонки
+«Балансы сделки» и «Валюты» реестра, карточка ФИ и суммы в строках дерева; перечень потребителей и план перевода на тайлы — вопрос 25 паспорта «Продукты сделки»
+(`widgets/tiles/DealProductTreeTile/DealProductTreeTile.md`); переводить — вместе со страницами инструментов и транша.
+
 ## Что лежит
 
 <!-- @tree — дерево генерирует .agents/tools/module-readme.mjs, руками не править -->
@@ -227,14 +250,54 @@ deals-app/
 │   ├── FinInstrument.html                      ← Финансовый инструмент — источник, собирается в FinInstrument.preview.html
 │   ├── FinInstrument.preview.html              ← собранная страница — открывать её
 │   ├── FinInstrument.screen.md                 ← спека
+│   ├── InitialAndAdditionalAgreements.html     ← Договор и дополнительные соглашения — источник, собирается в InitialAndAdditionalAgreements.preview.html
+│   ├── InitialAndAdditionalAgreements.preview.html ← собранная страница — открывать её
+│   ├── InitialAndAdditionalAgreements.scenario.mjs
+│   ├── InitialAndAdditionalAgreements.screen.md ← спека
+│   ├── Instrument.html                         ← Договор займа (НКЛ) — источник, собирается в Instrument.preview.html
+│   ├── Instrument.preview.html                 ← собранная страница — открывать её
+│   ├── Instrument.scenario.mjs
+│   ├── Instrument.screen.md                    ← спека
 │   ├── MainPage.html                           ← Главная страница
 │   ├── MainPage.screen.md                      ← спека
 │   ├── Portfolio.html                          ← Текущий портфель ДИД
 │   ├── Portfolio.screen.md                     ← спека
-│   ├── Tranche.html                            ← Страница транша
-│   └── Tranche.screen.md                       ← спека
+│   ├── Tranche.html                            ← Страница транша — источник, собирается в Tranche.preview.html
+│   ├── Tranche.preview.html                    ← собранная страница — открывать её
+│   ├── Tranche.scenario.mjs
+│   ├── Tranche.screen.md                       ← спека
+│   ├── TransferSchemas.html                    ← Единая трансфертная ставка — источник, собирается в TransferSchemas.preview.html
+│   ├── TransferSchemas.preview.html            ← собранная страница — открывать её
+│   ├── TransferSchemas.scenario.mjs
+│   └── TransferSchemas.screen.md               ← спека
 ├── widgets/
 │   ├── modals/                                 ← модальные окна
+│   │   ├── AdditionalAgreementModal/           ← Окно «Дополнительное соглашение»
+│   │   │   ├── AdditionalAgreementModal.css
+│   │   │   ├── AdditionalAgreementModal.html
+│   │   │   ├── AdditionalAgreementModal.js
+│   │   │   ├── AdditionalAgreementModal.md
+│   │   │   ├── CHANGELOG.md
+│   │   │   └── fixtures.json
+│   │   ├── AdditionalAgreementsFilterModal/    ← Фильтр дополнительных соглашений
+│   │   │   ├── AdditionalAgreementsFilterModal.css
+│   │   │   ├── AdditionalAgreementsFilterModal.html
+│   │   │   ├── AdditionalAgreementsFilterModal.js
+│   │   │   ├── AdditionalAgreementsFilterModal.md
+│   │   │   ├── CHANGELOG.md
+│   │   │   └── fixtures.json
+│   │   ├── BalanceAndCurrencyModal/            ← Модальное окно «Баланс и валюта»
+│   │   │   ├── BalanceAndCurrencyModal.html
+│   │   │   ├── BalanceAndCurrencyModal.js
+│   │   │   ├── BalanceAndCurrencyModal.md
+│   │   │   ├── CHANGELOG.md
+│   │   │   └── fixtures.json
+│   │   ├── BaseTransferIndexHistoryModal/      ← История изменения базового индекса
+│   │   │   ├── BaseTransferIndexHistoryModal.html
+│   │   │   ├── BaseTransferIndexHistoryModal.js
+│   │   │   ├── BaseTransferIndexHistoryModal.md
+│   │   │   ├── CHANGELOG.md
+│   │   │   └── fixtures.json
 │   │   ├── CounterpartiesEcmModal/             ← Модальное окно «Документы по сделке»
 │   │   │   ├── CHANGELOG.md
 │   │   │   ├── CounterpartiesEcmModal.css
@@ -335,6 +398,12 @@ deals-app/
 │   │   │   │   ├── FixationModalTile.md
 │   │   │   │   └── fixtures.json
 │   │   │   └── fixtures.json
+│   │   ├── InitialAndAdditionalAgreementsModal/ ← Окно «Договор»
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── fixtures.json
+│   │   │   ├── InitialAndAdditionalAgreementsModal.html
+│   │   │   ├── InitialAndAdditionalAgreementsModal.js
+│   │   │   └── InitialAndAdditionalAgreementsModal.md
 │   │   ├── InstrumentsCounterpartiesModal/     ← Модальное окно контрагентов
 │   │   │   ├── CHANGELOG.md
 │   │   │   ├── CounterpartyCard/
@@ -369,6 +438,12 @@ deals-app/
 │   │   │   ├── LinkChangeModal.html
 │   │   │   ├── LinkChangeModal.js
 │   │   │   └── LinkChangeModal.md
+│   │   ├── LoanExternalDataModal/              ← Модальное окно технической информации
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── fixtures.json
+│   │   │   ├── LoanExternalDataModal.html
+│   │   │   ├── LoanExternalDataModal.js
+│   │   │   └── LoanExternalDataModal.md
 │   │   ├── NavigatorAppointmentOfResponsibleModal/ ← Назначение ответственного
 │   │   │   ├── CHANGELOG.md
 │   │   │   ├── fixtures.json
@@ -417,13 +492,33 @@ deals-app/
 │   │   │   ├── ProductTreeConfirmModal.html
 │   │   │   ├── ProductTreeConfirmModal.js
 │   │   │   └── ProductTreeConfirmModal.md
-│   │   └── RepaymentModal/                     ← Окно погашения
+│   │   ├── RepaymentModal/                     ← Окно погашения
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── fixtures.json
+│   │   │   ├── RepaymentModal.css
+│   │   │   ├── RepaymentModal.html
+│   │   │   ├── RepaymentModal.js
+│   │   │   └── RepaymentModal.md
+│   │   ├── TrancheLoanLimitsModal/             ← Окно «Валюта транша»
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── fixtures.json
+│   │   │   ├── TrancheLoanLimitsModal.html
+│   │   │   ├── TrancheLoanLimitsModal.js
+│   │   │   └── TrancheLoanLimitsModal.md
+│   │   ├── TransferRateHistoryModal/           ← История изменения ставок
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── fixtures.json
+│   │   │   ├── TransferRateHistoryModal.css
+│   │   │   ├── TransferRateHistoryModal.html
+│   │   │   ├── TransferRateHistoryModal.js
+│   │   │   └── TransferRateHistoryModal.md
+│   │   └── TransferSchemaModal/                ← Окно «Процентная схема»
 │   │       ├── CHANGELOG.md
 │   │       ├── fixtures.json
-│   │       ├── RepaymentModal.css
-│   │       ├── RepaymentModal.html
-│   │       ├── RepaymentModal.js
-│   │       └── RepaymentModal.md
+│   │       ├── TransferSchemaModal.css
+│   │       ├── TransferSchemaModal.html
+│   │       ├── TransferSchemaModal.js
+│   │       └── TransferSchemaModal.md
 │   ├── popovers/                               ← поповеры и тултипы
 │   │   └── RelatedDealsPopover/                ← Поповер связанных сделок
 │   │       ├── CHANGELOG.md
@@ -463,6 +558,27 @@ deals-app/
 │   │       ├── KPITable.kit.scenario.mjs
 │   │       └── KPITable.md
 │   └── tiles/                                  ← тайлы
+│       ├── AdditionalAgreementTile/            ← Дополнительное соглашение
+│       │   ├── AdditionalAgreementTile.css
+│       │   ├── AdditionalAgreementTile.html
+│       │   ├── AdditionalAgreementTile.js
+│       │   ├── AdditionalAgreementTile.md
+│       │   ├── CHANGELOG.md
+│       │   └── fixtures.json
+│       ├── BalanceAndCurrencyTile/             ← Баланс и валюта
+│       │   ├── BalanceAndCurrencyTile.css
+│       │   ├── BalanceAndCurrencyTile.html
+│       │   ├── BalanceAndCurrencyTile.js
+│       │   ├── BalanceAndCurrencyTile.md
+│       │   ├── CHANGELOG.md
+│       │   └── fixtures.json
+│       ├── ContractTile/                       ← Договор
+│       │   ├── CHANGELOG.md
+│       │   ├── ContractTile.css
+│       │   ├── ContractTile.html
+│       │   ├── ContractTile.js
+│       │   ├── ContractTile.md
+│       │   └── fixtures.json
 │       ├── CounterpartiesTile/                 ← Контрагенты
 │       │   ├── CHANGELOG.md
 │       │   ├── CounterpartiesTile.css
@@ -532,6 +648,27 @@ deals-app/
 │       │   ├── FinInstrumentsTile.js
 │       │   ├── FinInstrumentsTile.md
 │       │   └── fixtures.json
+│       ├── InitialAndAdditionalAgreementsTile/ ← Договор и дополнительные соглашения
+│       │   ├── CHANGELOG.md
+│       │   ├── fixtures.json
+│       │   ├── InitialAndAdditionalAgreementsTile.css
+│       │   ├── InitialAndAdditionalAgreementsTile.html
+│       │   ├── InitialAndAdditionalAgreementsTile.js
+│       │   └── InitialAndAdditionalAgreementsTile.md
+│       ├── LoanExternalDataTile/               ← Техническая информация
+│       │   ├── CHANGELOG.md
+│       │   ├── fixtures.json
+│       │   ├── LoanExternalDataTile.css
+│       │   ├── LoanExternalDataTile.html
+│       │   ├── LoanExternalDataTile.js
+│       │   └── LoanExternalDataTile.md
+│       ├── LoanNrlTranchesTile/                ← Транши
+│       │   ├── CHANGELOG.md
+│       │   ├── fixtures.json
+│       │   ├── LoanNrlTranchesTile.css
+│       │   ├── LoanNrlTranchesTile.html
+│       │   ├── LoanNrlTranchesTile.js
+│       │   └── LoanNrlTranchesTile.md
 │       ├── Navigator/                          ← Заведение сделки
 │       │   ├── CHANGELOG.md
 │       │   ├── fixtures.json
@@ -539,12 +676,40 @@ deals-app/
 │       │   ├── Navigator.html
 │       │   ├── Navigator.js
 │       │   └── Navigator.md
-│       └── ProjectInformationTile/             ← Сведения о проекте
+│       ├── ProjectInformationTile/             ← Сведения о проекте
+│       │   ├── CHANGELOG.md
+│       │   ├── ProjectInformationTile.css
+│       │   ├── ProjectInformationTile.html
+│       │   ├── ProjectInformationTile.js
+│       │   └── ProjectInformationTile.md
+│       ├── TrancheLoanLimitsTile/              ← Валюта транша
+│       │   ├── CHANGELOG.md
+│       │   ├── fixtures.json
+│       │   ├── TrancheLoanLimitsTile.css
+│       │   ├── TrancheLoanLimitsTile.html
+│       │   ├── TrancheLoanLimitsTile.js
+│       │   └── TrancheLoanLimitsTile.md
+│       ├── TrancheNrlSummaryTile/              ← Сводка НКЛ
+│       │   ├── CHANGELOG.md
+│       │   ├── fixtures.json
+│       │   ├── TrancheNrlSummaryTile.css
+│       │   ├── TrancheNrlSummaryTile.html
+│       │   ├── TrancheNrlSummaryTile.js
+│       │   └── TrancheNrlSummaryTile.md
+│       ├── TransferRateTile/                   ← ЕТС
+│       │   ├── CHANGELOG.md
+│       │   ├── fixtures.json
+│       │   ├── TransferRateTile.css
+│       │   ├── TransferRateTile.html
+│       │   ├── TransferRateTile.js
+│       │   └── TransferRateTile.md
+│       └── TransferSchemaTile/                 ← Процентная схема ЕТС
 │           ├── CHANGELOG.md
-│           ├── ProjectInformationTile.css
-│           ├── ProjectInformationTile.html
-│           ├── ProjectInformationTile.js
-│           └── ProjectInformationTile.md
+│           ├── fixtures.json
+│           ├── TransferSchemaTile.css
+│           ├── TransferSchemaTile.html
+│           ├── TransferSchemaTile.js
+│           └── TransferSchemaTile.md
 ├── data/
 │   ├── API.md
 │   ├── counterparties-store.js                 ← CounterpartiesStore — база контрагентов и состав участников сделки.
@@ -554,6 +719,9 @@ deals-app/
 │   ├── fin-instruments-store.js                ← FinInstrumentsStore — карточки финансовых инструментов (ФИ) текущей сде…
 │   ├── fin-metrics-notify.js                   ← FinMetricsNotify — сообщения финансовых метрик: снек по исходу расчёта и
 │   ├── fin-metrics-store.js                    ← FinMetricsStore — расчёт финансовых метрик текущей сделки и его отчёты.
+│   ├── instrument-context.js                   ← InstrumentContext — какой договор займа (НКЛ) открыт на странице догово…
+│   ├── loan-agreement-store.js                 ← LoanAgreementStore — договор займа (НКЛ) выбранной сделки: разделы
+│   ├── loan-contract-fields.js                 ← loan-contract-fields.js — состав полей договора по типам продуктов.
 │   ├── mock-counterparties.js                  ← Мок-данные ДИД — база контрагентов (window.MOCK_COUNTERPARTIES) и
 │   ├── mock-deal-trees.js                      ← Деревья продуктов сделок ДИД (window.MOCK_DEAL_TREES), ключ — id сделки.
 │   ├── mock-deals.js                           ← Мок-данные ДИД — реестр сделок (window.MOCK_DEALS) и перечни (window.DE…
@@ -561,6 +729,7 @@ deals-app/
 │   ├── mock-fin-instruments.js                 ← Карточки финансовых инструментов (ФИ) сделок — демо-данные прототипа.
 │   ├── mock-fin-metrics-calc.js                ← Расчёт финансовых метрик сделок — демо-данные прототипа
 │   ├── mock-financial-metrics.js               ← Финансовые метрики сделок — демо-данные (window.MOCK_DEAL_FIN_METRICS).
+│   ├── mock-loan-agreements.js                 ← Договор займа (НКЛ) — демо-данные страниц договора (window.MOCK_LOAN_AG…
 │   ├── mock-product-catalog.js                 ← Каталог продуктов сделки — демо-данные прототипа.
 │   ├── mock-report-employees.js                ← Сотрудники для выгрузки отчёта финансовых метрик — демо-данные
 │   ├── mock-team.js                            ← Мок-данные ДИД — сотрудники банка для выпадающих списков окна «Команда

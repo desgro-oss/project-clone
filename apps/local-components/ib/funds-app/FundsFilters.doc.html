@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/ib/funds-app/widgets/tables/FundsFilters/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фильтры списка фондов — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../ib/funds-app/widgets/tables/FundsFilters/FundsFilters.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Фильтры списка фондов">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--table" id="pg-stage">
+<div class="lc-funds-filters" data-state="data" data-mode="view" role="group" aria-label="Фильтры списка фондов" id="fundsFilters" data-widget="FundsFilters" data-widget-group="tables" data-widget-src="../../../ib/funds-app/widgets/tables/FundsFilters/FundsFilters.html">
+  <!-- Ряд фильтров в тулбаре таблицы «Список фондов» (решение человека 30.10.2026: фильтры —
+       внутри таблицы, своей карточки нет). Три поля размера S (32px): тип и приоритет — одной
+       ширины, по самому длинному значению (data-ff-fit; поиск — не шире их двух вместе; ширины считает
+       FundsFilters.js по подписям справочника). Тип и приоритет — множественный выбор:
+       список с чекбоксами, выбранное — сводкой «Первое, +N». Опции строит FundsFilters.init из
+       справочников страницы; когда фондов нет, FundsFilters.setDisabled выключает все три поля. -->
+
+  <!-- smartSearch: InputText S с иконкой поиска и информером. Подсказка — своя разметка
+       Tooltip ДС (.tip внутри .tip-anchor): текст и строки атрибутов через <br>.
+       id тултипа и aria-describedby у информера ставит DSTooltip.bind в FundsFilters.init —
+       так у каждой копии виджета (витрина) свой тултип. -->
+  <div class="inp inp--s lc-funds-filters__search" data-ff-field="smartSearch">
+    <div class="inp__field">
+      <span class="inp__lead"><i data-icon="search"></i></span>
+      <input class="inp__control" type="text" placeholder="по атрибутам фонда..." aria-label="Поиск по атрибутам фонда" autocomplete="off">
+      <span class="inp__acts">
+        <span class="tip-anchor">
+          <button type="button" class="inp__act inp__act--static" aria-label="Подсказка" data-ff-tip><i data-icon="info-circle"></i></button>
+          <span class="tip tip--main tip--top tip--center tip--floating" role="tooltip">Поиск записей осуществляется по атрибутам:<br>•&nbsp;Название Фонда<br>•&nbsp;Псевдоним<br>•&nbsp;Бенефициар<br>•&nbsp;ИНН Фонда<span class="tip__arrow"></span></span>
+        </span>
+        <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+      </span>
+    </div>
+  </div>
+
+  <!-- typeCodes: InputAutocomplete S — сводка «PE, +1» (.inp__summary; вариант S ДС — только
+       сводкой), список с чекбоксами. Сводку вставляет FundsFilters.js перед полем ввода. -->
+  <div class="inp inp--s" data-ff-field="typeCodes" data-ff-fit>
+    <div class="inp__field">
+      <input class="inp__control" type="text" placeholder="Все типы" aria-label="Тип фонда" autocomplete="off">
+      <span class="inp__acts">
+        <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+        <button type="button" class="inp__act inp__act--chev" aria-label="Показать список типов"><i data-icon="chevron-down"></i></button>
+      </span>
+    </div>
+    <div class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true" aria-label="Типы фондов"></div>
+  </div>
+
+  <!-- priorityCodes: InputAutocomplete S — как тип: несколько приоритетов, чекбоксы, сводка
+       (решение человека 30.10.2026: «там можно выбрать несколько значений») -->
+  <div class="inp inp--s" data-ff-field="priorityCodes" data-ff-fit>
+    <div class="inp__field">
+      <input class="inp__control" type="text" placeholder="Все приоритеты" aria-label="Приоритет фонда" autocomplete="off">
+      <span class="inp__acts">
+        <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+        <button type="button" class="inp__act inp__act--chev" aria-label="Показать список приоритетов"><i data-icon="chevron-down"></i></button>
+      </span>
+    </div>
+    <div class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true" aria-label="Приоритеты фондов"></div>
+  </div>
+
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>таблица</b></span><span>Версия: <b>3.001</b></span><span>Обновлено: <b>30.10.2026</b></span><span>Категория: <b>Фонды</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты IB</a> · ib/funds-app</p>
+  <h1>Фильтры списка фондов</h1>
+  <p class="lead">Поиск по атрибутам фонда, фильтры по типу и приоритету</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">таблица</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/ib/funds-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../ib/funds-app/widgets/tables/FundsFilters">apps/ib/funds-app/widgets/tables/FundsFilters/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ib/funds-app/widgets/tables/FundsFilters</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница «Фонды» (FundsPipeline) — в тулбаре таблицы «Список фондов» (слот FundsTable, слева от шестерёнки настройки)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../ib/funds-app/pages/FundsPipeline.preview.html">apps/ib/funds-app/pages/FundsPipeline.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Задача MS0020 (макеты «Funds pipeline / Fund list», «Tooltip», «Фонды / Список фондов - Empty state», решения человека 30.10.2026; Э2 — ответ на вопрос 3: фильтры — новый вид по макету; доработка 30.10.2026 — фильтры в тулбаре таблицы, несколько приоритетов, ширина по значению)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">3.001 · обновлено 30.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.001</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Ряд фильтров списка фондов страницы «Фонды». Своей карточки нет: ряд стоит в тулбаре таблицы «Список фондов», слева от шестерёнки настройки (решение человека 30.10.2026). Три поля размера S (32px): тип и приоритет — одной ширины, по самому длинному значению справочников (берётся большее из двух); поиск тянется, но не шире двух этих полей вместе.</p>
+<ol class="kit-md__ol"><li><b>Поиск</b> (<code class="tok">smartSearch</code>) — иконка лупы слева, плейсхолдер «по атрибутам фонда...», справа информер с подсказкой: «Поиск записей осуществляется по атрибутам:» и строки атрибутов с маркером «•» — «Название Фонда», «Псевдоним», «Бенефициар», «ИНН Фонда» (тексты и регистр — с макета «Tooltip»).</li><li><b>Тип фонда</b> (<code class="tok">typeCodes</code>) — плейсхолдер «Все типы», множественный выбор из справочника типов: список с чекбоксами и строкой «Выбрать всё», выбранные типы — сводкой в поле («PE, +1»: первый выбранный и число остальных).</li><li><b>Приоритет</b> (<code class="tok">priorityCodes</code>) — плейсхолдер «Все приоритеты», множественный выбор, как у типа: список с чекбоксами, выбранные — сводкой «Высокий, +1» (решение человека 30.10.2026: приоритетов можно выбрать несколько). «Выбрать всё» нет — опций меньше четырёх (DropdownList).</li></ol>
+<p class="desc">Фильтры сразу применяются к списку фондов: кнопки «Применить» нет. Когда фондов нет вовсе, все три поля выключены — фильтровать нечего (макет «Список фондов - Empty state»).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Бизнес-смысл">
+<h2>Бизнес-смысл</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зачем существует</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Найти фонд в списке по его атрибутам и отобрать фонды по типу и приоритету</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто заполняет и когда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Руководитель IB (<code class="tok">director_ib</code>) на странице «Фонды», в любой момент работы со списком. Другие роли — не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кто пользуется результатом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Список фондов той же страницы — показывает только подходящие фонды. Сохраняются ли фильтры между заходами — не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бизнес-правила</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поиск — по названию фонда, псевдониму, бенефициару и ИНН фонда (подсказка макета «Tooltip»); запрос короче трёх символов фильтр не меняет (фронтенд <code class="tok">FundsFilters.tsx</code>). Тип — любой из выбранных (несколько типов сразу); приоритет — тоже любой из выбранных (решение человека 30.10.2026). Фондов нет — поля выключены (макет «Список фондов - Empty state»). Как сочетаются тип и приоритет между собой (И / ИЛИ) — не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Источники: задача <code class="tok">docs/tasks/MS0020-funds-pipeline.md</code> (решения человека 30.10.2026, опись макетов), макеты «Funds pipeline / Fund list», «Tooltip», «Фонды / Список фондов - Empty state» (скриншоты 30.10.2026), фронтенд <code class="tok">funds-app</code> — <code class="tok">widgets/tables/FundsFilters/FundsFilters.tsx</code>, <code class="tok">FundsFilters.config.ts</code> (<code class="tok">FundFiltersDto</code>).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>ряд .lc-funds-filters (role=group, flex, зазор 8px) — в тулбаре таблицы FundsTable
+├── InputText S, тянется: иконка «search» · поле · информер «info-circle» с тултипом (текст + строки атрибутов) · крестик очистки
+├── InputAutocomplete S, по ширине значения: сводка выбранных типов «PE, +1» · поле · крестик · шеврон
+│   └── DropdownList: «Выбрать всё» · разделитель · типы с чекбоксами
+└── InputAutocomplete S, по ширине значения: сводка выбранных приоритетов «Высокий, +1» · поле · крестик · шеврон
+    └── DropdownList: приоритеты с чекбоксами</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">размер S (<code class="tok">inp--s</code>, 32px — решение человека 30.10.2026, см. «Осознанные отклонения»), без метки; иконка слева <code class="tok">.inp__lead</code> (<code class="tok">search</code>); информер <code class="tok">.inp__act--static</code> (<code class="tok">info-circle</code>) левее крестика очистки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAutocomplete</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">размер S; тип и приоритет — сводка <code class="tok">.inp__summary</code> «первое, +N» (вариант S в ДС — только сводкой); шеврон <code class="tok">.inp__act--chev</code>; ширина поля — по самому длинному значению (<code class="tok">data-ff-fit</code>, считает скрипт)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">DropdownList</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">aria-multiselectable</code>, опции <code class="tok">ddl__item--checkbox</code> у типа и приоритета; у типа первая строка <code class="tok">ddl__item--all</code> «Выбрать всё» (опций четыре и больше); совпадение с запросом — <code class="tok">.ddl__match</code>; пусто — <code class="tok">.ddl__state--empty</code> «Ничего не найдено»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Checkbox</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">внутри опций списка (<code class="tok">.cb__box</code>, <code class="tok">.cb__mark</code>), состояние — <code class="tok">aria-checked</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tooltip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">своя разметка <code class="tok">.tip.tip--main.tip--top.tip--center.tip--floating</code> внутри <code class="tok">.tip-anchor</code> рядом с информером: текст, строки атрибутов через <code class="tok">&lt;br&gt;</code> с маркером «•», <code class="tok">.tip__arrow</code>; ширина — <code class="tok">--tip-max</code> (280px, как в макете). Своих классов и CSS внутри <code class="tok">.tip</code> нет; привязка — <code class="tok">DSTooltip.bind(информер, { tip })</code> в <code class="tok">init</code>, id тултипа и <code class="tok">aria-describedby</code> ставит рантайм</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/molecules/Inputs/InputText/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/components/molecules/DropdownList/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/components/atoms/Checkbox/Checkbox.html">Checkbox</a> · <a class="inl" href="../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../ib/funds-app/widgets/tables/FundsFilters/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../ib/funds-app/widgets/tables/FundsFilters/FundsFilters.css">FundsFilters.css</a> · <a class="inl" href="../../../ib/funds-app/widgets/tables/FundsFilters/FundsFilters.html">FundsFilters.html</a> · <a class="inl" href="../../../ib/funds-app/widgets/tables/FundsFilters/FundsFilters.js">FundsFilters.js</a> · <a class="inl" href="../../../ib/funds-app/widgets/tables/FundsFilters/FundsFilters.kit.scenario.mjs">FundsFilters.kit.scenario.mjs</a> · <a class="inl" href="../../../ib/funds-app/widgets/tables/FundsFilters/FundsFilters.md">FundsFilters.md</a> · <a class="inl" href="../../../ib/funds-app/widgets/tables/FundsFilters/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,2.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,2.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">smartSearch</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Запрос поиска по атрибутам фонда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка; пустая — без поиска</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ввод пользователя</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,2.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">typeCodes</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выбранные типы фонда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundTypeCode[]</code>; пустой — все типы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">справочник типов <code class="tok">FUND_TYPE_LABELS</code> (во фронтенде <code class="tok">DictionariesApi.useGetFundTypesDictionaryQuery</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,2.1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">priorityCodes</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выбранные приоритеты фонда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundPriorityCode[]</code>; пустой — все приоритеты</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">справочник приоритетов <code class="tok">FUND_PRIORITY_LABELS</code> (во фронтенде <code class="tok">useGetFundPrioritiesDictionaryQuery</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Порядок строк — порядок отображения. Имена — <code class="tok">FundFiltersDto</code> фронтенда (<code class="tok">Pick&lt;FundFilterRqDto, 'smartSearch' | 'priorityCode' | 'typeCodes'&gt;</code>), кроме приоритета: во фронтенде <code class="tok">priorityCode</code> — один, в прототипе <code class="tok">priorityCodes</code> — массив (см. «Осознанные отклонения»).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Руководитель IB (<code class="tok">director_ib</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да — фильтры меняет любой, кто видит список</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Другие роли</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Режима «только просмотр» у фильтров нет: это не данные фонда, а условия показа списка.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">во фронтенде, пока справочники не пришли, списки пустые; своего вида в макетах нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля доступны, фильтры не заданы — плейсхолдеры «по атрибутам фонда...», «Все типы», «Все приоритеты»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заданы не все фильтры — незаданное поле показывает свой плейсхолдер</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фондов нет — все три поля выключены (<code class="tok">disabled</code>, вид Disabled ДС); пустое состояние рисует список фондов, не фильтры</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">справочник не загрузился — вид не задан</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фильтры применяются сразу, своей индикации нет; обновление показывает список фондов</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">базовый вид</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает страница</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2fr) minmax(0,2.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фильтры заданы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбран тип, приоритет или введён запрос</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сводки типов и приоритетов в полях, текст запроса; у поиска — крестик очистки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поля выключены</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">setDisabled(root, true)</code> — страница, когда фондов нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">disabled</code> у контролов и кнопок полей, <code class="tok">.inp--disabled</code>; списки не открываются, крестиков нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Список: ничего не найдено</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">набранный текст не совпал ни с одной опцией типа или приоритета</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">системная строка «Ничего не найдено» вместо опций</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет.</li><li>Обязательные поля внутри: нет.</li><li>Что показывает, когда обязательное не заполнено: не применимо.</li><li>Что отдаёт наружу (признак для экрана или формы): не применимо — наружу уходят только значения фильтров (событие <code class="tok">fundsfilters:change</code>).</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запрос прокручивается внутри поля, поле не растёт</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбранные типы и приоритеты — сводка «первое, +N» одной строкой; список опций — <code class="tok">ddl--scroll</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тип и приоритет держат свою ширину; поиск не уже своего плейсхолдера с обвязкой поля (min-width ставит <code class="tok">fit</code>), а когда места не хватает, ряд переносит поля на следующую строку (<code class="tok">flex-wrap: wrap</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поиск тянется, но не шире суммы ширин типа и приоритета с зазором между ними; дальше ряд не растёт, шестерёнка таблицы остаётся справа</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ширина типа и приоритета</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">одна на оба поля — по большему из них (решение человека 30.10.2026); у каждого по самому широкому содержимому: плейсхолдер или сводка «подпись, +N» для каждой подписи справочника — скрипт мерит текст шрифтом поля, прибавляет обвязку поля; сводка не обрезается ни при каком выборе</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ввод в поиск</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">через 300 мс — событие с новым <code class="tok">smartSearch</code>; 1–2 символа событие не дают, фильтр остаётся прежним (как во фронтенде)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик в поиске</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поле очищается, событие с <code class="tok">smartSearch: ''</code> сразу</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по полю типа, шеврону, ↓</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">раскрывается список типов (DropdownList)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Чекбокс типа · «Выбрать всё»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тип добавляется или снимается, список остаётся открытым, сводка в поле обновляется, событие с новым <code class="tok">typeCodes</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ввод в поле типа</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">опции фильтруются по подстроке, совпадение подсвечено; закрытие списка стирает запрос</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Снять все типы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">снять чекбоксы в списке или «Выбрать всё» до пустого — событие с <code class="tok">typeCodes: []</code>. Крестик у поля типа виден только при набранном запросе и стирает запрос: сводку рантайм ДС значением поля не считает (см. «Открытые вопросы»)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Чекбокс приоритета</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">приоритет добавляется или снимается, список остаётся открытым, сводка в поле обновляется, событие с новым <code class="tok">priorityCodes</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ввод в поле приоритета</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">опции фильтруются по подстроке; закрытие списка стирает запрос</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Снять все приоритеты</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">снять чекбоксы — событие с <code class="tok">priorityCodes: []</code>, в поле плейсхолдер «Все приоритеты»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Наведение или фокус на информер</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тултип: «Поиск записей осуществляется по атрибутам:» и четыре строки атрибутов; Esc и уход курсора скрывают</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<p class="desc">Не применимо: фильтры ничего не открывают — тултип информера и списки полей принадлежат компонентам ДС.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Справочники типов и приоритетов фонда (<code class="tok">code</code>, <code class="tok">name</code>); во фронтенде — <code class="tok">DictionariesApi.useGetFundTypesDictionaryQuery</code>, <code class="tok">useGetFundPrioritiesDictionaryQuery</code> (<code class="tok">FundsFilters.hooks.ts</code>). Значения фильтров уходят в запрос списка фондов (<code class="tok">FundFilterRqDto</code>).</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,2.7fr) minmax(0,1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,2.7fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/funds.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.FUND_TYPE_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">Record&lt;FundTypeCode, string&gt;</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">моки фронтенда <code class="tok">funds-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) minmax(0,2.7fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/funds.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.FUND_PRIORITY_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">Record&lt;FundPriorityCode, string&gt;</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">моки фронтенда <code class="tok">funds-app</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fundsFilters</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">корень для API скрипта</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не нужен: место — слот тулбара таблицы (<code class="tok">FundsTable.placeFilters</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">CSS состояний не различает; «Поля выключены» — вызовом <code class="tok">setDisabled</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">режима правки у фильтров нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Скрипт компонента</h3>
+<p class="desc"><code class="tok">FundsFilters.js</code> — глобальный <code class="tok">window.FundsFilters</code>, подключается после <code class="tok">ds-body.js</code>:</p>
+<ul class="bullets"><li><code class="tok">init(root, { types, priorities })</code> — справочники <code class="tok">{ code: подпись }</code>, строит опции, привязывает поля к <code class="tok">DSDropdownList</code> и тултип информера к <code class="tok">DSTooltip</code>, ставит ширину полей <code class="tok">data-ff-fit</code>;</li><li><code class="tok">fit(root)</code> — пересчитать ширину: тип и приоритет — одной ширины по большему, поиск — от ширины плейсхолдера до суммы ширин типа и приоритета с зазором (виджет перенесли, догрузился шрифт; скрытое поле досчитывается при показе);</li><li><code class="tok">setDisabled(root, bool)</code> — выключает или включает все три поля;</li><li><code class="tok">value(root)</code> → <code class="tok">{ smartSearch, typeCodes, priorityCodes }</code>;</li><li><code class="tok">setValue(root, filters, { silent })</code> — значения кодом (демо витрины);</li><li>событие <code class="tok">fundsfilters:change</code> с корня (<code class="tok">bubbles</code>), <code class="tok">detail</code> — <code class="tok">{ smartSearch, typeCodes, priorityCodes }</code>.</li></ul>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Панель фильтров</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tables/FundsFilters/FundsFilters.html</code>, <code class="tok">.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tables/FundsFilters/FundsFilters.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Значения фильтров</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">detail</code> события <code class="tok">fundsfilters:change</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundFiltersDto</code> (<code class="tok">FundsFilters.types.ts</code>), <code class="tok">controller.setFilters</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Справочники</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FUND_TYPE_LABELS</code>, <code class="tok">FUND_PRIORITY_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FundsFilters.hooks.ts</code> (<code class="tok">useFundsFiltersDictionaries</code>)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС InputText, InputAutocomplete: размер S (32px) — только Table Edit, основной — M (40px)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">все три поля S (<code class="tok">inp--s</code>), как в макете «Funds pipeline / Fund list» и во фронтенде (<code class="tok">size='sm'</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение человека 30.10.2026 (ответ на вопрос 3 задачи MS0020: «для фильтров на этой странице будет новый компонент»)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фронтенд: выбранные типы — чипами в поле (<code class="tok">multiple</code>, <code class="tok">visibleItemsCount: 3</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сводка «первое, +N» (<code class="tok">.inp__summary</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у InputAutocomplete S в ДС показ выбора — только сводкой; чипов в поле S нет (страница ДС переключает S на сводку, счётчик «+N» рантайма <code class="tok">Inputs.js</code> — всегда чип S 24px при правиле «S → чип XS 20px»). Сочетание не изобретается — вопрос 1</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС Tooltip: контент — строка; «список» в подсказке — уже Popover (Tooltip, «Богатый контент»)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">обычный тултип main, своя разметка <code class="tok">.tip</code> с <code class="tok">&lt;br&gt;</code>-переносами: первая строка текста и четыре строки атрибутов с маркером «•» и неразрывным пробелом; классов и CSS внутри <code class="tok">.tip</code> нет, отступ маркеров макета не повторяется</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение человека 30.10.2026: подсказка поиска — тултипом со списком атрибутов (макет «Tooltip»); Popover меняет триггер на клик и вид. Элемента «список» у Tooltip ДС нет — вопрос 2</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фронтенд: приоритет — один (<code class="tok">priorityCode</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">несколько приоритетов, <code class="tok">priorityCodes: string[]</code>, чекбоксы и сводка, как у типа</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение человека 30.10.2026: «там можно выбрать несколько значений»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фронтенд и макет: фильтры — отдельная карточка над таблицей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ряд в тулбаре таблицы «Список фондов», заголовка у таблицы нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение человека 30.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС InputAutocomplete: ширина поля задаётся раскладкой (у поля нет «ширины по содержимому»)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ширину типа и приоритета в px ставит скрипт по самому длинному значению справочника</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение человека 30.10.2026: «по ширине самого широкого значения»; варианта ДС нет — вопрос 8</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кому</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Ответ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поля фильтров M или S; подсказка поиска текстом или списком атрибутов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">человек</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Закрыт: ответ человека 30.10.2026 — фильтры страницы — новый вид по макету: поля S и подсказка со списком атрибутов (версия 2.000)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выбранные типы в поле S: нужен ли вариант ДС «чипы XS в поле S» (со счётчиком «+N» XS в <code class="tok">Inputs.js</code>)? Пока — сводка «первое, +N», вариант S ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС, дизайнер</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нужен ли у Tooltip ДС элемент «список» (маркеры с отступом, как в макете «Tooltip»)? Пока — строки через <code class="tok">&lt;br&gt;</code> с «•»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">3</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тип и приоритет — фильтры сочетаются по И, значения внутри типа и внутри приоритета — по ИЛИ? Допущение 30.10.2026 — так считает FundsTable</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">владелец продукта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">4</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сохраняются ли фильтры между заходами на страницу?</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">владелец продукта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">5</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Вид загрузки и ошибки справочников</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дизайнер</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">6</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Категория витрины: «Общие» (так завёл ведущий) или «Другое» — фильтры знают предметную область фондов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ведущий</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">отдельный раздел витрины «Фонды» — уникальный модуль со своими локальными компонентами (решение человека 30.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">8</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нужен ли у InputAutocomplete ДС вариант «ширина по самому длинному значению» вместо ширины, которую считает скрипт виджета?</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">7</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик у поля типа при выбранных типах: рантайм ДС (<code class="tok">Inputs.js</code>, <code class="tok">hasValue</code>) сводку значением не считает, крестик не показывается — сброс только в списке. Нужен ли крестик (правка ДС)?</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/ib/funds-app/widgets/tables/FundsFilters/FundsFilters.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">FundsFilters.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/ib/funds-app/widgets/tables/FundsFilters/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/ib/funds-app/pages/FundsPipeline.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../ib/funds-app/data/funds.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../ib/funds-app/widgets/tables/FundsFilters/FundsFilters.js"></script>
+<script src="../../../ib/funds-app/widgets/tables/FundsTable/FundsTable.js"></script>
+<script src="../../../ib/funds-app/widgets/tables/AssetsTable/AssetsTable.js"></script>
+<script src="../../../ib/funds-app/widgets/modals/AddFundEntityFromUcpModal/AddFundEntityFromUcpModal.js"></script>
+<script src="../../../ib/funds-app/widgets/modals/EditFundModal/EditFundModal.js"></script>
+<script src="../../../ib/funds-app/widgets/modals/DeleteFundModal/DeleteFundModal.js"></script>
+<script src="FundsFilters.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"FundsFilters","type":"table","base":"../..","hub":"../../../../index.html","states":["data"],"modes":["view"],"state":"data","mode":"view","width":1200,"scenario":true,"fixtures":{"_":"Фильтры списка фондов. Справочники — FUND_TYPE_LABELS и FUND_PRIORITY_LABELS из data/funds.js страницы FundsPipeline (подключаются витриной со страницы-хозяина). data — фильтры не заданы; filtered — заданы все три фильтра; empty — фондов нет, поля выключены (setDisabled); long — длинный запрос и все четыре типа (сводка «PE, +3»). Значения — FundFiltersDto фронтенда, но приоритеты — массивом priorityCodes (несколько приоритетов, решение 30.10.2026).","data":{"filters":{"smartSearch":"","typeCodes":[],"priorityCodes":[]}},"filtered":{"filters":{"smartSearch":"Интеррос","typeCodes":["PE","PE_VC"],"priorityCodes":["HIGH","LOW"]}},"empty":{"disabled":true,"filters":{"smartSearch":"","typeCodes":[],"priorityCodes":[]}},"long":{"filters":{"smartSearch":"Восток Инвестиции (ранее BVCP) — институциональные инвесторы","typeCodes":["PE","PE_VC","FAMILY_OFFICE","HOLDING"],"priorityCodes":["MEDIUM"]}}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<div class="lc-funds-filters" data-state="data" data-mode="view" role="group" aria-label="Фильтры списка фондов">
+  <!-- Ряд фильтров в тулбаре таблицы «Список фондов» (решение человека 30.10.2026: фильтры —
+       внутри таблицы, своей карточки нет). Три поля размера S (32px): тип и приоритет — одной
+       ширины, по самому длинному значению (data-ff-fit; поиск — не шире их двух вместе; ширины считает
+       FundsFilters.js по подписям справочника). Тип и приоритет — множественный выбор:
+       список с чекбоксами, выбранное — сводкой «Первое, +N». Опции строит FundsFilters.init из
+       справочников страницы; когда фондов нет, FundsFilters.setDisabled выключает все три поля. -->
+
+  <!-- smartSearch: InputText S с иконкой поиска и информером. Подсказка — своя разметка
+       Tooltip ДС (.tip внутри .tip-anchor): текст и строки атрибутов через <br>.
+       id тултипа и aria-describedby у информера ставит DSTooltip.bind в FundsFilters.init —
+       так у каждой копии виджета (витрина) свой тултип. -->
+  <div class="inp inp--s lc-funds-filters__search" data-ff-field="smartSearch">
+    <div class="inp__field">
+      <span class="inp__lead"><i data-icon="search"></i></span>
+      <input class="inp__control" type="text" placeholder="по атрибутам фонда..." aria-label="Поиск по атрибутам фонда" autocomplete="off">
+      <span class="inp__acts">
+        <span class="tip-anchor">
+          <button type="button" class="inp__act inp__act--static" aria-label="Подсказка" data-ff-tip><i data-icon="info-circle"></i></button>
+          <span class="tip tip--main tip--top tip--center tip--floating" role="tooltip">Поиск записей осуществляется по атрибутам:<br>•&nbsp;Название Фонда<br>•&nbsp;Псевдоним<br>•&nbsp;Бенефициар<br>•&nbsp;ИНН Фонда<span class="tip__arrow"></span></span>
+        </span>
+        <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+      </span>
+    </div>
+  </div>
+
+  <!-- typeCodes: InputAutocomplete S — сводка «PE, +1» (.inp__summary; вариант S ДС — только
+       сводкой), список с чекбоксами. Сводку вставляет FundsFilters.js перед полем ввода. -->
+  <div class="inp inp--s" data-ff-field="typeCodes" data-ff-fit>
+    <div class="inp__field">
+      <input class="inp__control" type="text" placeholder="Все типы" aria-label="Тип фонда" autocomplete="off">
+      <span class="inp__acts">
+        <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+        <button type="button" class="inp__act inp__act--chev" aria-label="Показать список типов"><i data-icon="chevron-down"></i></button>
+      </span>
+    </div>
+    <div class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true" aria-label="Типы фондов"></div>
+  </div>
+
+  <!-- priorityCodes: InputAutocomplete S — как тип: несколько приоритетов, чекбоксы, сводка
+       (решение человека 30.10.2026: «там можно выбрать несколько значений») -->
+  <div class="inp inp--s" data-ff-field="priorityCodes" data-ff-fit>
+    <div class="inp__field">
+      <input class="inp__control" type="text" placeholder="Все приоритеты" aria-label="Приоритет фонда" autocomplete="off">
+      <span class="inp__acts">
+        <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+        <button type="button" class="inp__act inp__act--chev" aria-label="Показать список приоритетов"><i data-icon="chevron-down"></i></button>
+      </span>
+    </div>
+    <div class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true" aria-label="Приоритеты фондов"></div>
+  </div>
+
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент FundsFilters — фильтры списка фондов.
+   Только внутренняя раскладка: ряд из трёх полей. Своей карточки нет — ряд стоит
+   в тулбаре таблицы «Список фондов» (FundsTable, слот data-fundstable-filters).
+   Поля — InputText и InputAutocomplete ДС размера S (.inp--s в разметке), подсказка
+   поиска — Tooltip ДС; их вид, отступы и состояния (в том числе выключенное поле)
+   задаёт ДС; здесь своих значений нет. Выключенные поля — атрибут disabled и класс
+   .inp--disabled, их ставит FundsFilters.setDisabled.
+
+   Ширина: поиск забирает свободное место ряда; поля с data-ff-fit — по самому
+   длинному значению справочника: ширину в px ставит FundsFilters.js (мерит подписи
+   шрифтом поля), оба одной ширины — по большему; CSS только не даёт им
+   растягиваться. Поиску скрипт ставит max-width — ширина типа + зазор +
+   ширина приоритета (дальше ряд не растёт, шестерёнка остаётся справа), и
+   min-width — ширину его плейсхолдера с обвязкой поля: уже он не сжимается,
+   и ряд переносит тип и приоритет на вторую строку (узкая панель сплиттера). */
+.lc-funds-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  min-width: 0;
+  width: 100%;
+}
+.lc-funds-filters__search { flex: 1 1 0; }
+.lc-funds-filters [data-ff-fit] { flex: none; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   FundsFilters.js — фильтры списка фондов (FundsFilters фронтенда,
+   tmp/funds-app/src/widgets/tables/FundsFilters/FundsFilters.tsx).
+
+   Глобальное имя: window.FundsFilters. Подключается страницей после
+   ds-body.js (нужны рантаймы ДС: DSDropdownList, DSInput, DSTooltip, dsIcons).
+   Версия 3.000: ряд в тулбаре таблицы без своей карточки; приоритет —
+   множественный выбор, как тип; тип и приоритет — по ширине самого длинного
+   значения.
+
+   API:
+     init(root, { types, priorities })
+       root       — корень виджета (.lc-funds-filters);
+       types      — справочник типов фонда { code: подпись } (FUND_TYPE_LABELS);
+       priorities — справочник приоритетов { code: подпись } (FUND_PRIORITY_LABELS).
+       Строит опции списков, привязывает поля к рантаймам ДС и ставит ширину
+       полей с data-ff-fit. Повторный вызов меняет справочники и сбрасывает значения.
+     fit(root)
+       Пересчитать ширину: тип и приоритет — одной ширины по большему; поиск —
+       от ширины своего плейсхолдера до суммы ширин типа и приоритета с зазором (виджет перенесли в видимое место,
+       догрузились шрифты). init и загрузка шрифтов зовут сами.
+     setDisabled(root, bool)
+       true — все три поля выключены: disabled у контролов и кнопок поля,
+       .inp--disabled на поле (вид ДС), открытый список закрывается.
+     value(root) → { smartSearch, typeCodes, priorityCodes }
+     setValue(root, filters, { silent })
+       Ставит значения кодом (демо витрины); silent — без события.
+
+   Событие с корня (CustomEvent, bubbles):
+     fundsfilters:change  detail: { smartSearch: string, typeCodes: string[],
+       priorityCodes: string[] }. smartSearch и typeCodes — имена FundFiltersDto
+       фронтенда; priorityCodes — массив вместо priorityCode фронтенда (решение
+       человека 30.10.2026: приоритетов можно выбрать несколько).
+       Поиск — по вводу с задержкой 300 мс; 1–2 символа событие не дают
+       (как во фронтенде: фильтр остаётся прежним); пустая строка — сброс.
+       Тип и приоритет — сразу по выбору.
+
+   Чего здесь нет: фильтрации строк — её делает FundsTable.applyFilters.
+   Открытие, позиционирование и клавиатура списков — DSDropdownList;
+   крестик очистки — DSInput; подсказка у информера — DSTooltip (своя
+   разметка .tip в фрагменте, привязка — bindTip в init).
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var MIN_SEARCH = 3;      /* FundsFilters.tsx: newValue.length < 3 — фильтр не меняется */
+  var DEBOUNCE = 300;      /* FundsFilters.tsx: useDebouncedCallback(…, 300) */
+  /* Поля множественного выбора: ключ состояния → поле разметки и событие */
+  var MULTI = {
+    types: { field: 'typeCodes', placeholder: 'Все типы' },
+    priority: { field: 'priorityCodes', placeholder: 'Все приоритеты' }
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  /* подсветка совпадения — .ddl__match ДС */
+  function mark(label, q) {
+    if (!q) return esc(label);
+    var i = label.toLowerCase().indexOf(q.toLowerCase());
+    if (i < 0) return esc(label);
+    return esc(label.slice(0, i)) + '<span class="ddl__match">' + esc(label.slice(i, i + q.length)) + '</span>' + esc(label.slice(i + q.length));
+  }
+  function entries(map) {
+    return Object.keys(map || {}).map(function (code) { return { code: code, name: map[code] }; });
+  }
+  function matches(name, q) { return !q || name.toLowerCase().indexOf(q.toLowerCase()) >= 0; }
+  function apply(scope) { if (window.dsIcons) window.dsIcons.apply(scope); }
+  function syncInp(inp) { if (window.DSInput) window.DSInput.sync(inp); }
+  function emptyRow() {
+    return '<div class="ddl__state ddl__state--empty"><span class="ddl__state-icon"><i data-icon="close-circle"></i></span><span class="ddl__state-text">Ничего не найдено</span></div>';
+  }
+  function cbMark(on) {
+    if (on === 'mixed') return '<i data-icon="minus"></i>';
+    return on ? '<i data-icon="check"></i>' : '';
+  }
+
+  /* ---------- состояние на корне ---------- */
+  function st(root) { return root.__fundsFilters; }
+
+  function detail(s) {
+    return { smartSearch: s.search, typeCodes: s.types.sel.slice(), priorityCodes: s.priority.sel.slice() };
+  }
+  function emit(root) {
+    root.dispatchEvent(new CustomEvent('fundsfilters:change', { bubbles: true, detail: detail(st(root)) }));
+  }
+
+  /* ---------- множественный выбор: список с чекбоксами + сводка ---------- */
+  function renderList(root, key, q) {
+    var m = st(root)[key], list = m.f.list;
+    var opts = m.opts.filter(function (o) { return matches(o.name, q); });
+    var html = '';
+    if (!opts.length) html = emptyRow();
+    else {
+      /* «Выбрать всё» — только без запроса и при четырёх опциях и больше (DropdownList) */
+      if (!q && m.opts.length >= 4) {
+        var on = m.sel.length;
+        var allSt = on === m.opts.length ? true : (on ? 'mixed' : false);
+        html += '<button type="button" class="ddl__item ddl__item--checkbox ddl__item--all" role="option" aria-checked="' + (allSt === 'mixed' ? 'mixed' : String(allSt)) + '">'
+          + '<span class="ddl__item-check"><span class="cb__box"><span class="cb__mark">' + cbMark(allSt) + '</span></span></span>'
+          + '<span class="ddl__item-body"><span class="ddl__item-label">Выбрать всё</span></span></button>'
+          + '<hr class="ddl__divider">';
+      }
+      html += opts.map(function (o) {
+        var checked = m.sel.indexOf(o.code) >= 0;
+        return '<button type="button" class="ddl__item ddl__item--checkbox" role="option" data-code="' + esc(o.code) + '" aria-checked="' + checked + '">'
+          + '<span class="ddl__item-check"><span class="cb__box"><span class="cb__mark">' + cbMark(checked) + '</span></span></span>'
+          + '<span class="ddl__item-body"><span class="ddl__item-label">' + mark(o.name, q) + '</span></span></button>';
+      }).join('');
+    }
+    list.innerHTML = html;
+    apply(list);
+  }
+  /* Сводка в поле «Первое, +N» (.inp__summary ДС): вариант S у InputAutocomplete —
+     только сводкой. Узел сводки есть, только когда выбор не пуст, иначе пустой
+     узел давал бы зазор перед плейсхолдером. */
+  function summaryOf(m, codes) {
+    if (!codes.length) return '';
+    var first = m.labels[codes[0]] || codes[0];
+    return codes.length > 1 ? first + ', +' + (codes.length - 1) : first;
+  }
+  function renderSummary(root, key) {
+    var m = st(root)[key], f = m.f;
+    var box = f.field.querySelector('.inp__summary');
+    var text = summaryOf(m, m.sel);
+    if (!text) { if (box) box.remove(); }
+    else {
+      if (!box) {
+        box = document.createElement('span');
+        box.className = 'inp__summary';
+        f.field.insertBefore(box, f.control);
+      }
+      box.textContent = text;
+    }
+    f.control.placeholder = text ? '' : MULTI[key].placeholder;
+    syncInp(f.inp);
+  }
+  function onToggle(root, key, it) {
+    var m = st(root)[key];
+    if (it.classList.contains('ddl__item--all')) {
+      m.sel = it.getAttribute('aria-checked') === 'true' ? m.opts.map(function (o) { return o.code; }) : [];
+    } else {
+      var shown = {};
+      Array.prototype.forEach.call(m.f.list.querySelectorAll('.ddl__item[data-code]'), function (r) {
+        shown[r.getAttribute('data-code')] = r.getAttribute('aria-checked') === 'true';
+      });
+      /* порядок значений — порядок справочника */
+      m.sel = m.opts.map(function (o) { return o.code; }).filter(function (code) {
+        return code in shown ? shown[code] : m.sel.indexOf(code) >= 0;
+      });
+    }
+    m.f.control.value = '';
+    renderSummary(root, key);
+    renderList(root, key, '');
+    emit(root);
+  }
+  function setSel(root, key, codes) {
+    var m = st(root)[key];
+    codes = codes || [];
+    m.sel = m.opts.map(function (o) { return o.code; }).filter(function (c) { return codes.indexOf(c) >= 0; });
+    m.f.control.value = '';
+    renderSummary(root, key);
+    renderList(root, key, '');
+  }
+
+  /* ---------- ширина по самому длинному значению (data-ff-fit) ----------
+     Ширина поля = «обвязка» поля (паддинги, бордер, иконки справа — мерится
+     на живом поле) + самое широкое содержимое: плейсхолдер или сводка
+     («Подпись, +N» для каждой подписи справочника) с зазором поля и минимальной
+     шириной ввода после неё (поле ввода стоит за сводкой). Текст мерится шрифтом
+     поля через canvas. В скрытом поле (ширина 0) мерить нечего — fit ждёт показа. */
+  var canvas;
+  function textW(font, t) {
+    canvas = canvas || document.createElement('canvas');
+    var ctx = canvas.getContext && canvas.getContext('2d');
+    if (!ctx) return null; /* нет canvas (проверочная среда) — ширину не меряем, поле остаётся как есть */
+    ctx.font = font;
+    return ctx.measureText(t).width;
+  }
+  /* «Обвязка» поля — всё, кроме текста: паддинги и бордер поля, иконка слева,
+     кнопки справа и зазоры между ними. Считается по частям, а не как «поле минус
+     ввод»: сжатое поле ввод переполняет, и разность врёт. Сводка в обвязку не входит. */
+  function chromeOf(f) {
+    var fcs = getComputedStyle(f.field);
+    var gap = parseFloat(fcs.columnGap) || 0;
+    var w = ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce(function (sum, k) { return sum + (parseFloat(fcs[k]) || 0); }, 0);
+    var parts = Array.prototype.filter.call(f.field.children, function (el) {
+      return !el.classList.contains('inp__summary') && !el.hidden && getComputedStyle(el).display !== 'none';
+    });
+    parts.forEach(function (el) { if (el !== f.control) w += el.getBoundingClientRect().width; });
+    return { w: w + gap * Math.max(parts.length - 1, 0), gap: gap };
+  }
+  /* Поле на экране (не в скрытом предке). Ширина не годится: сжатый поиск — 0px. */
+  function shown(f) { return f.inp.getClientRects().length > 0 && f.inp.closest('[hidden]') === null; }
+  function fontOf(el) {
+    var cs = getComputedStyle(el);
+    return cs.font || (cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily);
+  }
+  /* Ширина, нужная полю множественного выбора: обвязка + самое широкое содержимое.
+     false — поле не на экране, null — мерить нечем (нет canvas), число — px. */
+  function needOf(m, key) {
+    var f = m.f;
+    if (!shown(f)) return false;
+    if (textW('', '') === null) return null;
+    var ch = chromeOf(f);
+    var font = fontOf(f.control);
+    var minCtl = parseFloat(getComputedStyle(f.control).minWidth) || 0;
+    var need = textW(font, MULTI[key].placeholder);
+    m.opts.forEach(function (o) {
+      var t = summaryOf(m, [o.code].concat(m.opts.filter(function (x) { return x !== o; }).map(function (x) { return x.code; })));
+      need = Math.max(need, textW(font, t) + ch.gap + minCtl);
+    });
+    return Math.ceil(ch.w + need);
+  }
+  /* Тип и приоритет — одной ширины, по большему из них (решение человека 30.10.2026).
+     Поиск тянется, но не шире двух этих полей с зазором между ними и не уже
+     своего плейсхолдера с обвязкой поля (иконка, информер). */
+  function fit(root) {
+    var s = root && st(root);
+    if (!s) return;
+    var needs = [needOf(s.types, 'types'), needOf(s.priority, 'priority')];
+    var hidden = needs.indexOf(false) >= 0 || !shown(s.f.search);
+    if (!hidden && needs.indexOf(null) < 0) {
+      var w = Math.max(needs[0], needs[1]);
+      s.types.f.inp.style.width = w + 'px';
+      s.priority.f.inp.style.width = w + 'px';
+      var gap = parseFloat(getComputedStyle(root).columnGap) || 0;
+      var f = s.f.search;
+      var min = Math.ceil(chromeOf(f).w + textW(fontOf(f.control), f.control.placeholder));
+      var max = 2 * w + gap;
+      f.inp.style.maxWidth = max + 'px';
+      f.inp.style.minWidth = Math.min(min, max) + 'px';
+    }
+    /* поле ещё не видно (витрина в скрытом табе, таблица в «Загрузке») — досчитать при показе */
+    if (hidden && window.ResizeObserver && !s.fitRO) {
+      s.fitRO = new ResizeObserver(function () {
+        if (root.getBoundingClientRect().width) { s.fitRO.disconnect(); s.fitRO = null; fit(root); }
+      });
+      s.fitRO.observe(root);
+    }
+  }
+
+  /* ---------- smartSearch ---------- */
+  function onSearchInput(root) {
+    var s = st(root);
+    clearTimeout(s.searchT);
+    s.searchT = setTimeout(function () {
+      var v = s.f.search.control.value.trim();
+      if (v && v.length < MIN_SEARCH) return;
+      if (v === s.search) return;
+      s.search = v;
+      emit(root);
+    }, DEBOUNCE);
+  }
+
+  /* Список закрылся (выбор, клик мимо, Esc) — набранный запрос стирается. */
+  function watchClose(list, onClose) {
+    new MutationObserver(function () {
+      var open = list.classList.contains('is-open');
+      if (list.__ffOpen && !open) onClose();
+      list.__ffOpen = open;
+    }).observe(list, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  function fieldOf(root, name) {
+    var inp = root.querySelector('[data-ff-field="' + name + '"]');
+    return {
+      inp: inp,
+      field: inp.querySelector('.inp__field'),
+      control: inp.querySelector('.inp__control'),
+      list: inp.querySelector('.ddl'),
+      api: null
+    };
+  }
+
+  function wireMulti(root, key) {
+    var m = st(root)[key], f = m.f;
+    var D = window.DSDropdownList;
+    if (D) f.api = D.bind(f.field, { list: f.list, multiple: true, onToggle: function (it) { onToggle(root, key, it); } });
+    f.control.addEventListener('input', function () {
+      renderList(root, key, f.control.value.trim());
+      if (f.api) f.api.open();
+    });
+    /* крестик поля стирает набранный запрос; выбор снимается в списке (чекбоксы, «Выбрать всё») */
+    f.inp.addEventListener('ds-input:clear', function () { renderList(root, key, ''); });
+    watchClose(f.list, function () {
+      if (f.control.value) { f.control.value = ''; syncInp(f.inp); }
+      renderList(root, key, '');
+    });
+  }
+
+  function wire(root) {
+    var s = st(root), f = s.f;
+    f.search.control.addEventListener('input', function () { onSearchInput(root); });
+    f.search.inp.addEventListener('ds-input:clear', function () {
+      clearTimeout(s.searchT);
+      if (s.search !== '') { s.search = ''; emit(root); }
+    });
+    wireMulti(root, 'types');
+    wireMulti(root, 'priority');
+    /* SB Sans догружается после init — ширина пересчитывается по настоящему шрифту */
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fit(root); });
+  }
+
+  /* Подсказка информера — своя разметка .tip рядом с кнопкой (текст со строками атрибутов,
+     у data-tooltip текст только строкой). Привязка с явным tip: DSTooltip.bind ставит
+     тултипу уникальный id и aria-describedby кнопке — у каждой копии виджета свой. */
+  function bindTip(root) {
+    var btn = root.querySelector('[data-ff-tip]');
+    var tip = btn && btn.closest('.tip-anchor') && btn.closest('.tip-anchor').querySelector('.tip');
+    if (btn && tip && window.DSTooltip) window.DSTooltip.bind(btn, { tip: tip });
+  }
+
+  /* ---------- API ---------- */
+  function init(root, opts) {
+    if (!root) return;
+    opts = opts || {};
+    var fresh = !root.__fundsFilters;
+    if (fresh) {
+      root.__fundsFilters = {
+        f: { search: fieldOf(root, 'smartSearch') },
+        types: { f: fieldOf(root, MULTI.types.field), sel: [] },
+        priority: { f: fieldOf(root, MULTI.priority.field), sel: [] },
+        search: '', searchT: null
+      };
+    }
+    var s = st(root);
+    s.types.labels = opts.types || {};
+    s.priority.labels = opts.priorities || {};
+    s.types.opts = entries(s.types.labels);
+    s.priority.opts = entries(s.priority.labels);
+    s.search = '';
+    s.f.search.control.value = '';
+    if (fresh) wire(root);
+    setSel(root, 'types', []);
+    setSel(root, 'priority', []);
+    syncInp(s.f.search.inp);
+    bindTip(root);
+    apply(root);
+    fit(root);
+  }
+
+  function setDisabled(root, off) {
+    var s = root && st(root);
+    if (!s) return;
+    off = !!off;
+    s.disabled = off;
+    [s.f.search, s.types.f, s.priority.f].forEach(function (f) {
+      if (off && f.api) f.api.close();
+      f.inp.classList.toggle('inp--disabled', off);
+      f.control.disabled = off;
+      Array.prototype.forEach.call(f.inp.querySelectorAll('button'), function (b) { b.disabled = off; });
+      /* поле-триггер списка фокусируется само (tabindex от DSDropdownList) — выключенное из обхода убирается */
+      if (f.api) {
+        f.field.setAttribute('tabindex', off ? '-1' : '0');
+        f.field.setAttribute('aria-disabled', String(off));
+      }
+    });
+  }
+
+  function value(root) { var s = root && st(root); return s ? detail(s) : null; }
+
+  function setValue(root, filters, o) {
+    var s = root && st(root);
+    if (!s) return;
+    filters = filters || {};
+    s.search = filters.smartSearch || '';
+    s.f.search.control.value = s.search;
+    syncInp(s.f.search.inp);
+    setSel(root, 'types', filters.typeCodes);
+    setSel(root, 'priority', filters.priorityCodes);
+    if (!(o && o.silent)) emit(root);
+  }
+
+  window.FundsFilters = { init: init, fit: fit, setDisabled: setDisabled, value: value, setValue: setValue };
+})();
+</script>
+</body>
+</html>

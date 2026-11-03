@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Договор и дополнительные соглашения — IBP</title>
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  /* Секции страницы: заголовок на фоне страницы, не в тайле (как на странице договора займа) */
+  .ia-sec { display: flex; flex-direction: column; gap: var(--space-8); }
+  .ia-sec__head { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-8); }
+  .ia-sec__title { margin: 0; font: var(--type-body-m-reg); color: var(--text-secondary); }
+
+  /* Минимальная высота тайла договора — как у тайлов страницы договора займа */
+  .screen__content .tile { min-height: 200px; }
+  .screen__content .tile-stack .tile { min-height: 0; }
+
+  @container screen (max-width: 1240px) {
+    .grid12 > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="MainPage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="Portfolio.html">Текущий портфель ДИД</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Сделка</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Договор займа</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Договор и дополнительные соглашения</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- #sec:head ── Шапка: «В инструмент» — обратно на страницу договора займа;
+           «Новое соглашение» в просмотре выключена разметкой (ia-new-btn) -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Договор и дополнительные соглашения</h1></div>
+            <span class="phead__return">
+              <button type="button" class="btn btn--outline btn--xs" id="ia-back-btn"><i data-icon="flip-backward"></i><span class="btn__label">В инструмент</span></button>
+            </span>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <button type="button" class="btn btn--accent btn--m" id="ia-new-btn" data-ia-act="NEW"><i data-icon="add"></i><span class="btn__label">Новое соглашение</span></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Договор -->
+      <div class="grid12">
+        <ds-include src="../widgets/tiles/ContractTile/ContractTile.html" class="col-4 colw-6" id="tile-contract" mode="edit"></ds-include>
+      </div>
+
+      <!-- Дополнительные соглашения: «Фильтр» и список карточек; без ДС — пустое состояние -->
+      <section class="ia-sec">
+        <div class="ia-sec__head">
+          <h2 class="ia-sec__title">Дополнительные соглашения</h2>
+          <!-- бар «Фильтр» рисует скрипт страницы: рантайм ДС убирает чип «Применено» из разметки
+               при сбросе, поэтому чип создаётся заново при каждой перерисовке -->
+          <div class="tfilter" role="group" aria-label="Фильтр дополнительных соглашений" id="ia-filter" hidden></div>
+        </div>
+
+        <div class="grid12">
+          <ds-include src="../widgets/tiles/AdditionalAgreementTile/AdditionalAgreementTile.html" class="col-12" id="aa-list"></ds-include>
+        </div>
+
+        <!-- пусто: ДС у договора нет вовсе -->
+        <!-- как на макете: заголовок без иллюстрации и заливная кнопка; кнопку рисует скрипт
+             страницы только при праве на правку — в просмотре её нет в разметке (Л235) -->
+        <div class="es es--m" id="ia-empty" role="status" aria-live="polite" hidden>
+          <div class="es__body">
+            <p class="es__title">Дополнительные соглашения отсутствуют</p>
+          </div>
+          <div class="es__actions" id="ia-empty-actions"></div>
+        </div>
+
+        <!-- пусто: фильтр ничего не нашёл -->
+        <div class="es es--m" id="ia-nothing" role="status" aria-live="polite" hidden>
+          <div class="es__body">
+            <p class="es__title">Ничего не найдено</p>
+            <p class="es__text">По заданному фильтру дополнительных соглашений нет.</p>
+          </div>
+          <div class="es__actions">
+            <button type="button" class="btn btn--outline btn--m" data-ia-act="CLEAR_FILTER"><span class="btn__label">Очистить фильтр</span></button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── Окна страницы. «Договор» открывает карандаш тайла (data-modal), окна ДС
+     и фильтра — страница вызовом PostModalAdditionalAgreement.open / …Filter.open;
+     «Документы по сделке» — окно ЭКД сделки. -->
+<ds-include src="../widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.html"></ds-include>
+<ds-include src="../widgets/modals/AdditionalAgreementModal/AdditionalAgreementModal.html"></ds-include>
+<ds-include src="../widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.html"></ds-include>
+<!-- Карточка контрагента — эталон разметки для списка участников окна «Документы по сделке» -->
+<ds-include src="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.html"></ds-include>
+<ds-include src="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.html"></ds-include>
+<ds-include src="../widgets/modals/CounterpartiesEcmModal/EcmModal/EcmModal.html"></ds-include>
+
+<script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
+<script src="../data/deals-store.js"></script>
+<script src="../data/mock-counterparties.js"></script>
+<script src="../data/post-api.js"></script>
+<script src="../data/counterparties-store.js"></script>
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/mock-fin-instruments.js"></script>
+<script src="../data/mock-deal-trees.js"></script>
+<script src="../data/product-tree-store.js"></script>
+<script src="../data/mock-loan-agreements.js"></script>
+<script src="../data/loan-agreement-store.js"></script>
+<script src="../data/tranche-context.js"></script>
+<script src="../data/instrument-context.js"></script>
+<script src="../data/loan-contract-fields.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../widgets/modals/InitialAndAdditionalAgreementsModal/InitialAndAdditionalAgreementsModal.js"></script>
+<script src="../widgets/tiles/ContractTile/ContractTile.js"></script>
+<script src="../widgets/tiles/AdditionalAgreementTile/AdditionalAgreementTile.js"></script>
+<script src="../widgets/modals/AdditionalAgreementModal/AdditionalAgreementModal.js"></script>
+<script src="../widgets/modals/AdditionalAgreementsFilterModal/AdditionalAgreementsFilterModal.js"></script>
+<script src="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script>
+/* Экранный скрипт: меню по каталогу ролей, тайл «Договор», список дополнительных соглашений (ДС),
+   окна ДС и фильтра. Данные — LoanAgreementStore (запись договора); режим правки —
+   LoanAgreementStore.isEditable(): статус сделки и погашение договора.
+   Адрес: InitialAndAdditionalAgreements.html?id=<сделка>&ins=<id узла договора>. */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'current-portfolio';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../index.html" aria-label="Хаб проектов"';
+
+  function ic(name) { return '<i data-icon="' + name + '"></i>'; }
+
+  function itemHTML(it) {
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="#"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span></a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+      + '</div><div class="nav__list">'
+      + '<a class="nav__item" href="MainPage.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    IBPHome.itemsFor(role).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>' + (window.IBPHome && window.IBPHome.footerHTML
+      ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">'
+        + '<a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">'
+        + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+        + '<span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span>'
+        + '<span class="nav__user-role">' + role + '</span></span></a>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>'
+        + '</div>');
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  }
+
+  var LAS = window.LoanAgreementStore;
+  var cps = window.CounterpartiesStore;
+  var ctx = null;
+  /* применённый фильтр ДС — в памяти страницы, как фильтры страницы «Финансовые метрики» */
+  var filter = {};
+  var filterCount = 0;
+
+  /* Страницы собирает ассемблер: соседние — Instrument.preview.html и т. п. */
+  var isPreview = /\.preview\.html$/.test(window.location.pathname);
+  function sibling(name) { return name + (isPreview ? '.preview.html' : '.html'); }
+
+  function $(id) { return document.getElementById(id); }
+  function show(el, on) { if (el) el.hidden = !on; }
+
+  function agreementViews() {
+    return LAS.agreements(filter).map(function (a) {
+      return {
+        id: a.id, number: LAS.agreementNumber(a), signDate: a.signDate,
+        changeTypeCode: a.changeTypeCode, keyChangeCodes: a.keyChangeCodes || [],
+        decisionDate: a.decisionDate, decisionNumber: a.decisionNumber,
+        approvalLevelCode: a.approvalLevelCode, comment: a.comment
+      };
+    });
+  }
+
+  function paintHead(editable) {
+    var node = LAS.instrument();
+    var label = node ? node.number + ' ' + node.name : ctx.instrumentLabel;
+    document.title = 'Договор и дополнительные соглашения — IBP';
+    window.InstrumentContext.paintCrumbs(document.querySelector('[data-breadcrumbs]'), [
+      null, { href: 'Portfolio.html' }, { text: ctx.dealLabel, href: sibling('Deal') + ctx.dealQuery },
+      { text: label, href: sibling('Instrument') + ctx.instrumentQuery }, null
+    ]);
+    /* «Новое соглашение» в шапке в просмотре выключена разметкой */
+    var btn = $('ia-new-btn');
+    btn.disabled = !editable;
+    if (editable) btn.removeAttribute('aria-disabled'); else btn.setAttribute('aria-disabled', 'true');
+  }
+
+  function paint() {
+    if (!ctx) return;
+    var editable = LAS.isEditable();
+    var mode = editable ? 'edit' : 'view';
+    var rec = LAS.get();
+    paintHead(editable);
+
+    window.PostTileContract.render($('tile-contract'), {
+      mode: mode, variant: 'loan-ncl', data: rec.contract, plannedRepaymentDate: LAS.plannedRepaymentDate()
+    });
+
+    var total = LAS.agreements().length;
+    var items = agreementViews();
+    /* фильтр есть, только когда есть что фильтровать (так на макете «нет доп. соглашений») */
+    $('ia-filter').innerHTML = '<button type="button" class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false" data-ia-filter-open>'
+      + '<i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>'
+      + (filterCount > 0
+        ? '<span class="chip chip--edit chip--m tfilter__applied" tabindex="0"><span class="chip__label">Применено: ' + filterCount + '</span>'
+          + '<span class="chip__remove" role="button" aria-label="Сбросить все фильтры"><i data-icon="close"></i></span></span>'
+        : '');
+    show($('ia-filter'), total > 0);
+
+    window.PostTileAdditionalAgreement.renderList($('aa-list'), { mode: mode, items: items });
+    show($('aa-list'), items.length > 0);
+
+    show($('ia-empty'), total === 0);
+    /* кнопки «Новое соглашение» в пустом состоянии в просмотре нет в разметке */
+    $('ia-empty-actions').innerHTML = editable
+      ? '<button type="button" class="btn btn--accent btn--m" data-ia-act="NEW"><i data-icon="add"></i><span class="btn__label">Новое соглашение</span></button>'
+      : '';
+    show($('ia-empty-actions'), editable);
+    show($('ia-nothing'), total > 0 && items.length === 0);
+
+    if (window.dsIcons) window.dsIcons.apply(document);
+    if (window.DSModal && window.DSModal.bindAll) window.DSModal.bindAll(document);
+  }
+
+  function openAgreement(id) {
+    if (!LAS.isEditable() || !window.PostModalAdditionalAgreement) return;
+    window.PostModalAdditionalAgreement.open(id ? { id: id } : { nextSeqNumber: LAS.nextSeqNumber() });
+  }
+
+  /* Действия тайлов: тайл шлёт 'loanaction', что делать — знает страница. */
+  document.addEventListener('loanaction', function (e) {
+    var d = e.detail || {};
+    if (!ctx) return;
+    switch (d.action) {
+      case 'DOCS':
+        /* Кнопка открывает окно программно, без data-modal, — слушатель клика
+           CounterpartiesEcmModal не срабатывает. Refresh до открытия: карточки
+           участников встают в окно до того, как рантайм поставит в них фокус. */
+        if (window.DSModal && $('deal-ecm-scrim')) {
+          if ($('deal-ecm-scrim').__dealEcmApi) $('deal-ecm-scrim').__dealEcmApi.refresh();
+          window.DSModal.open($('deal-ecm-scrim'));
+        }
+        break;
+      case 'EDIT_AGREEMENT': openAgreement(d.id); break;
+    }
+  });
+
+  /* «Новое соглашение», «Очистить фильтр» */
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest('[data-ia-act]');
+    if (!el || el.disabled || !ctx) return;
+    var act = el.getAttribute('data-ia-act');
+    if (act === 'NEW') openAgreement(null);
+    else if (act === 'CLEAR_FILTER') { filter = {}; filterCount = 0; paint(); }
+  });
+
+  /* «Фильтр»: окно открывает страница, применённый фильтр отдаёт ему при каждом открытии */
+  $('ia-filter').addEventListener('click', function (e) {
+    if (!e.target.closest || !e.target.closest('[data-ia-filter-open]')) return;
+    if (window.PostModalAdditionalAgreementsFilter) window.PostModalAdditionalAgreementsFilter.open(filter);
+  });
+
+  /* Результат окна: «Сохранить» → фильтр и счётчик применённых полей */
+  document.addEventListener('agreementsfilter', function (e) {
+    var d = e.detail || {};
+    filter = d.filter || {};
+    filterCount = d.count || 0;
+    paint();
+  });
+
+  /* Крестик чипа «Применено: N» сбрасывает фильтр целиком (штатное событие ДС) */
+  $('ia-filter').addEventListener('tfilter:reset', function () {
+    filter = {};
+    filterCount = 0;
+    paint();
+  });
+
+  $('ia-back-btn').addEventListener('click', function () {
+    if (ctx) window.location.href = sibling('Instrument') + ctx.instrumentQuery;
+  });
+
+  function init() {
+    ctx = window.InstrumentContext.resolve(window.location.search);
+    if (!ctx) {
+      document.querySelector('.phead__title').textContent = 'Договор займа не найден';
+      return null;
+    }
+    return cps.use(ctx.openedId).then(function () {
+      LAS.use(ctx.openedId, ctx.instrument.id);
+      if (window.PostDealEcmModal) {
+        window.PostDealEcmModal.bind($('deal-ecm-scrim'), $('deal-ecm-docs-scrim'), {
+          members: function () { return String(cps.dealId()) === String(ctx.openedId) ? cps.members() : null; }
+        });
+      }
+      /* перерисовка: запись договора (договор, ДС), статус сделки */
+      LAS.on('change', paint);
+      window.DealsStore.on('change', paint);
+      paint();
+    });
+  }
+
+  buildNav();
+  Promise.all([window.ProductTreeStore.ready, LAS.ready, cps.ready]).then(init);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

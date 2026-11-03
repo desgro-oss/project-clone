@@ -26,7 +26,7 @@
 
   /* section */
 
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
 
   
   .row { display:flex; flex-wrap:wrap; align-items:center; gap:28px; }
@@ -41,14 +41,14 @@
       linear-gradient(var(--bg-tile),var(--bg-tile)) padding-box,
       repeating-conic-gradient(#f2f5f5 0% 25%, #fbfcfc 0% 50%) 0 / 22px 22px; }
   .pg__previewbox { border:1px dashed var(--border-primary); border-radius:10px; padding:16px 20px; background: var(--bg-tile); max-width:100%; overflow:hidden; }
-  .pg__caption { font: var(--type-body-xs); color: var(--text-inactive); text-align:center; }
+  .pg__caption { font: var(--type-body-xs-reg); color: var(--text-inactive); text-align:center; }
 
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
 
-  .toggle { display:inline-flex; align-items:center; gap:11px; padding:9px 12px; border:1px solid var(--border-light); border-radius:9px; font: var(--type-body-m); color: var(--text-primary); cursor:pointer; user-select:none; background: var(--bg-tile); transition:.12s; }
+  .toggle { display:inline-flex; align-items:center; gap:11px; padding:9px 12px; border:1px solid var(--border-light); border-radius:9px; font: var(--type-body-m-reg); color: var(--text-primary); cursor:pointer; user-select:none; background: var(--bg-tile); transition:.12s; }
 
-  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+  .pg__code { margin-top:4px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* select control */
   /* range slider */
@@ -62,9 +62,9 @@
   @media (max-width:760px){ .anat { grid-template-columns:1fr; } }
   .anat__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:56px 32px; display:flex; justify-content:center; align-items:center; min-height:150px; overflow:hidden; }
   .anat__legend { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; counter-reset:a; }
-  .anat__legend li { display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m); color: var(--text-primary); }
-  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center; }
-  .anat__legend li .t .k { font: var(--type-body-m-strong); color: var(--text-primary); }
+  .anat__legend li { display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m-reg); color: var(--text-primary); }
+  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center; }
+  .anat__legend li .t .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
 
   /* ---------- header mock ---------- */
   .header-mock { background: var(--bg-tile); border:1px solid var(--border-light); border-radius:12px; padding:16px 22px; overflow:hidden; }
@@ -72,29 +72,29 @@
   /* ---------- states list ---------- */
   .state-row { display:grid; grid-template-columns: 200px minmax(0,1fr); gap:24px; align-items:center; padding:18px 0; }
   .state-row + .state-row { border-top:1px solid var(--border-light); }
-  .state-row__label { font: var(--type-body-m-strong); color: var(--text-primary); }
-  .state-row__cap { font: var(--type-body-s); color: var(--text-inactive); margin-top:2px; }
+  .state-row__label { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
+  .state-row__cap { font: var(--type-body-s-reg); color: var(--text-inactive); margin-top:2px; }
   .state-row__stage { min-height:24px; overflow:hidden; min-width:0; max-width:100%; }
 
   /* ---------- do / don't ---------- */
   .guide { display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap:20px; }
   @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
   .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
-  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
-  .guide-card__body { padding:22px 20px; flex:1; font: var(--type-body-m); color: var(--text-primary); overflow:hidden; }
-  .guide-card__cap { padding:0 20px 20px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong-smb); padding:14px 20px 0; }
+  .guide-card__body { padding:22px 20px; flex:1; font: var(--type-body-m-reg); color: var(--text-primary); overflow:hidden; }
+  .guide-card__cap { padding:0 20px 20px; font: var(--type-body-xs-reg); color: var(--text-inactive); text-wrap:pretty; }
 
   /* ---------- reference tables ---------- */
-  .ref-table th, .ref-table td { text-align:left; padding:16px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); vertical-align:middle; }
+  .ref-table th, .ref-table td { text-align:left; padding:16px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); vertical-align:middle; }
 
   @media (max-width:760px){ .color-ref { grid-template-columns:1fr; } }
   
-  .cref-group > h3 { font: var(--type-h5-strong); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
+  .cref-group > h3 { font: var(--type-h5-strong-smb); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
   .cref-row { display:grid; grid-template-columns: 36px 1fr auto; gap:14px; align-items:center; padding:9px 22px; }
   .cref-sw .cf { position:absolute; inset:0; }
 
   /* ---------- developer handoff ---------- */
-  .subhead { font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px; }
+  .subhead { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0 0 16px; }
   .subhead.mt { margin-top: 34px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
@@ -181,7 +181,7 @@
   <section class="section" data-screen-label="Sizes">
     <h2>Размеры</h2>
     <p class="desc">Компонент сам держит зону над контентом страницы: высота <b>44&nbsp;px</b> = 16&nbsp;px сверху + строка 16&nbsp;px + 12&nbsp;px снизу, поля по бокам — 24&nbsp;px, те же, что у контентной области экрана: крошки и заголовок страницы выровнены по одной вертикали. Отступ до контента — 0: экран ничего к зоне не добавляет (см. <a class="link link--accent" href="../../../foundations/Layout/Layout.html">Каркас экрана</a>).</p>
-    <p class="desc">У текста единственный размер — <b>S</b> (<code class="tok">--type-body-s</code>, 14/16). Второго размера нет: крошки — вспомогательная навигация над заголовком страницы и не должны конкурировать с ним по весу, поэтому размер не варьируется. Строка зоны ровно 16&nbsp;px, поэтому ни одно звено — включая кнопку «…» — не имеет вертикальных паддингов.</p>
+    <p class="desc">У текста единственный размер — <b>S</b> (<code class="tok">--type-body-s-reg</code>, 14/16). Второго размера нет: крошки — вспомогательная навигация над заголовком страницы и не должны конкурировать с ним по весу, поэтому размер не варьируется. Строка зоны ровно 16&nbsp;px, поэтому ни одно звено — включая кнопку «…» — не имеет вертикальных паддингов.</p>
     <div class="panel" style="margin-bottom:20px;"><div class="row" id="sizes-row" style="gap:40px; align-items:flex-start;"></div></div>
     <div class="panel" style="padding:0;overflow:hidden;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.68fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Размер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="typo-table"></div></div>
@@ -282,7 +282,7 @@
     <h2>Типографика</h2>
     <p class="desc">Единственный размер компонента набирается гарнитурой <b>SB Sans Text</b>.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Пункт пути</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Текущая страница</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-strong</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-strong)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Пункт пути</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.17fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Текущая страница</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-strong-smb</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-strong-smb)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
   </section>
 
@@ -499,8 +499,8 @@ function renderCrumbs(host, items) {
   min-height: 44px;
   width: 100%;
   list-style: none;
-  font: var(--type-body-s); /* Body S — 14/16, единственный размер компонента */
-  letter-spacing: 0;
+  font: var(--type-body-s-reg); /* Body S — 14/16, единственный размер компонента */
+  letter-spacing: var(--type-ls);
   min-width: 0;
   overflow: hidden;         /* трейл не переносится на вторую строку — лишнее схлопывается в «…» */
 }
@@ -575,7 +575,7 @@ function renderCrumbs(host, items) {
    .menu__item из components/molecules/ContextMenu/ContextMenu.css): список страниц, клик по строке
    переходит на неё */
 .crumbs__popup.menu { min-width: 160px; max-width: 320px; padding: 6px 0; }
-.crumbs__popup .menu__item { min-height: 36px; font: var(--type-body-s); }</script>
+.crumbs__popup .menu__item { min-height: 36px; font: var(--type-body-s-reg); }</script>
 <script src="../../../../apps/proto-panel.js"></script>
 </body>
 </html>

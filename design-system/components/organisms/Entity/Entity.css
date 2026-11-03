@@ -28,10 +28,10 @@
   --e-row-gap:     6px;    /* внутри строки Label         */
   --e-head-gap:    2px;    /* Header ↔ Label              */
   --e-block-gap:   6px;    /* Label ↔ Subheaders ↔ Chips  */
-  --e-font-header: var(--type-body-xs);
-  --e-font-label:  var(--type-body-m-strong);
-  --e-font-affix:  var(--type-body-m);
-  --e-font-sub:    var(--type-body-s);
+  --e-font-header: var(--type-body-xs-reg);
+  --e-font-label:  var(--type-body-m-reg);
+  --e-font-affix:  var(--type-body-m-reg);
+  --e-font-sub:    var(--type-body-s-reg);
   --e-bookmark:    18px;
 
   display: flex;
@@ -54,21 +54,21 @@
 .entity--s .entity__main { gap: 5px; }
 .entity--s .entity__icon { width: 32px; height: 32px; border-radius: var(--radius-l); }
 .entity--s .entity__icon > :is(svg,[data-icon]){ width: 18px; height: 18px; }
-.entity--s .entity__label { font: var(--type-body-s-strong); }
-.entity--s .entity__prefix, .entity--s .entity__postfix { font: var(--type-body-s); }
-.entity--s .entity__subs { font: var(--type-body-xs); }
+.entity--s .entity__label { font: var(--type-body-s-reg); }
+.entity--s .entity__prefix, .entity--s .entity__postfix { font: var(--type-body-s-reg); }
+.entity--s .entity__subs { font: var(--type-body-xs-reg); }
 .entity--s .entity__bookmark { width: 16px; height: 16px; }
 
-.entity--l { gap: 16px; }
-.entity--l .entity__titles { gap: 3px; }
-.entity--l .entity__main { gap: 8px; }
-.entity--l .entity__icon { width: 96px; height: 96px; border-radius: var(--radius-5xl); }
-.entity--l .entity__icon > :is(svg,[data-icon]){ width: 48px; height: 48px; }
-.entity--l .entity__header { font: var(--type-body-s); }
-.entity--l .entity__label { font: var(--type-body-xl-strong); }
-.entity--l .entity__prefix, .entity--l .entity__postfix { font: var(--type-body-xl); }
-.entity--l .entity__subs { font: var(--type-body-m); }
-.entity--l .entity__bookmark { width: 22px; height: 22px; }
+.entity--xl { gap: 16px; }
+.entity--xl .entity__titles { gap: 3px; }
+.entity--xl .entity__main { gap: 8px; }
+.entity--xl .entity__icon { width: 96px; height: 96px; border-radius: var(--radius-5xl); }
+.entity--xl .entity__icon > :is(svg,[data-icon]){ width: 48px; height: 48px; }
+.entity--xl .entity__header { font: var(--type-body-s-reg); }
+.entity--xl .entity__label { font: var(--type-h4-strong-smb); }
+.entity--xl .entity__prefix, .entity--xl .entity__postfix { font: var(--type-body-xl-reg); }
+.entity--xl .entity__subs { font: var(--type-body-m-reg); }
+.entity--xl .entity__bookmark { width: 22px; height: 22px; }
 
 /* =========================================================================
    Ведущий элемент — иконка в скруглённом контейнере / аватар / чекбокс / грип

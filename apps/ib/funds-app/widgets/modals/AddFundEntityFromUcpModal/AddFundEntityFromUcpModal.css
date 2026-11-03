@@ -1,0 +1,103 @@
+/* Локальный компонент AddFundEntityFromUcpModal («Добавить фонд», шаг 1 — поиск).
+   Только внутренняя раскладка тела окна и показ своих блоков по состоянию.
+   Геометрия окна — Modal ДС (modal--w9, тело modal__body--flush), карточки — Card
+   (tile--card), поля — InputText и ReadOnlyField, разделители — Divider. Цвета,
+   шрифты, отступы — токены ДС; своих значений здесь нет. Состояния компонентов ДС
+   отсюда не переопределяются. */
+
+/* ── Раскладка: колонки тела ─────────────────────────────────────────────
+   Пропорции — по макету (340 · 333 · 690 на 1366): параметры 1, найдено 1,
+   детали 2. Разделители — Divider ДС (dvd--v) отдельными треками. */
+.lc-afe__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 2fr);
+}
+.lc-afe__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+  padding: var(--space-16) var(--space-24) var(--space-24);
+}
+.lc-afe__params { grid-column: 1; }
+.lc-afe__results { grid-column: 3; padding-left: var(--space-16); padding-right: var(--space-16); }
+.lc-afe__dvd-detail { grid-column: 4; }
+.lc-afe__detail { grid-column: 5; }
+/* idle, empty, error — один блок на месте двух правых колонок */
+.lc-afe__wide { grid-column: 3 / -1; padding-left: var(--space-16); }
+
+.lc-afe__idle { justify-content: center; align-items: center; }
+.lc-afe__note { color: var(--text-secondary); }
+
+/* ── Колонка «Найдено»: группы и карточки ──────────────────────────────── */
+.lc-afe__list { display: flex; flex-direction: column; gap: var(--space-16); }
+.lc-afe__group { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-afe__group-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
+.lc-afe__group-title { color: var(--text-secondary); }
+.lc-afe__cards { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-afe__card { cursor: pointer; }
+
+/* Реквизиты карточки клиента: подпись ↔ значение в одну строку. Плотного
+   инлайнового ReadOnlyField в ДС нет — он ставит подпись над значением (как у
+   карточки контрагента модуля postrade). */
+.lc-afe__kv {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--space-4) var(--space-16);
+  margin: 0;
+}
+.lc-afe__kv dt { font: var(--type-body-s-reg); color: var(--text-inactive); }
+.lc-afe__kv dd { font: var(--type-body-s-reg); color: var(--text-secondary); margin: 0; overflow-wrap: anywhere; }
+
+.lc-afe__loading { display: none; flex-direction: column; gap: var(--space-8); }
+.lc-afe__sk-card { --sk-w: 100%; --sk-h: var(--space-64); }
+
+/* ── Колонка деталей ───────────────────────────────────────────────────── */
+.lc-afe__info { display: none; flex-direction: column; gap: var(--space-16); }
+.lc-afe__info-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-16); }
+.lc-afe__info-head > .btn { flex: none; }
+.lc-afe__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
+.lc-afe__fields--single { grid-template-columns: minmax(0, 1fr); }
+.lc-afe__full { grid-column: 1 / -1; }
+.lc-afe__team { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-afe__team-row { grid-template-columns: var(--space-8) minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1.6fr) var(--space-8); }
+
+/* ── Что видно в каком состоянии (data-state на .modal) ──────────────────
+   idle — подсказка; loading — скелетоны в колонках результатов и деталей;
+   data — найдено; empty — ничего не найдено; error — ошибка поиска. */
+.lc-afe__idle,
+.lc-afe__notfound,
+.lc-afe__error,
+.lc-afe__results,
+.lc-afe__dvd-detail,
+.lc-afe__detail { display: none; }
+
+.lc-afe[data-state="idle"] .lc-afe__idle,
+.lc-afe[data-state="empty"] .lc-afe__notfound,
+.lc-afe[data-state="error"] .lc-afe__error,
+.lc-afe[data-state="data"] .lc-afe__results,
+.lc-afe[data-state="data"] .lc-afe__detail,
+.lc-afe[data-state="loading"] .lc-afe__results,
+.lc-afe[data-state="loading"] .lc-afe__detail,
+.lc-afe[data-state="loading"] .lc-afe__loading { display: flex; }
+.lc-afe[data-state="data"] .lc-afe__dvd-detail,
+.lc-afe[data-state="loading"] .lc-afe__dvd-detail { display: block; }
+
+.lc-afe[data-state="loading"] .lc-afe__list { display: none; }
+
+/* Детали — по тому, что выбрано (data-detail на .modal) */
+.lc-afe[data-state="data"][data-detail="fund"] .lc-afe__info--fund,
+.lc-afe[data-state="data"][data-detail="client"] .lc-afe__info--client { display: flex; }
+
+/* Пустая группа результатов прячется атрибутом hidden (правило ДС): в базе фондов
+   могло не найтись ничего, а в ЕПК — найтись, и наоборот. */
+
+/* Узкое окно (вьюпорт уже шага w9 — Modal ограничивает ширину calc(100vw − 48px)):
+   колонки встают друг под другом, вертикальные разделители не нужны. Перестроение —
+   по ширине тела окна, а не вьюпорта. */
+.lc-afe .modal__body { container-type: inline-size; }
+@container (max-width: 900px) {
+  .lc-afe__grid { grid-template-columns: minmax(0, 1fr); }
+  .lc-afe__grid > * { grid-column: 1; }
+  .lc-afe[data-state] .lc-afe__grid > .dvd--v { display: none; }
+}

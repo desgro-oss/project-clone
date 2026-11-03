@@ -53,7 +53,7 @@
    обёртки с кеглем родителя. */
 .lc-knr__name {
   min-width: 0;
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -63,7 +63,7 @@
 }
 
 .lc-knr__more {
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
   cursor: default;
 }
@@ -71,7 +71,7 @@
 /* ── Не заполнено, прав на правку нет ───────────────────────────────── */
 .lc-knr__empty {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-inactive);
 }
 

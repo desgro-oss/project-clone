@@ -49,7 +49,9 @@
    снимков с подписями столбцов и строк (виды тайла «данные × права»), id по
    строкам, rows необязателен, пустая клетка — `_`. `<!-- snaps: cols=2 a b -->` —
    столбцы задаёт автор. Цветной блок — цитата `> [!warning] …`. Образец чипа в таблице — `{chip:success Текст}`
-   (success | error | dark …). Блок ```scenario — схема сценария со стрелками
+   (success | error | dark …), скруглённый. Шаги сценария (список под «Шаги сценария») — у пункта id
+   `step-N`; ссылка `{steps:7-9}` / `{steps:2-4,11}` ведёт на них, в тексте со ссылкой — кнопка «← Назад».
+   Пункт «не решено» — `{?}` в начале (жёлтый кружок «?»; в md — `**(?)**`). Блок ```scenario — схема сценария со стрелками
    и условиями (формат — parseScenario); в html узел ведёт к снимку, кнопка
    «К схеме сценария» возвращает, в md схема уходит блоком mermaid. Разделы
    «Коротко», «Сценарий», «Экраны», «Новые локальные компоненты», «Тексты» — обязательные
@@ -57,6 +59,16 @@
    Окна в сетке — по ширине в шагах ДС: до `modal--w4` три в ряд, `w5`–`w9` два, `w10`–`w12` один. Заголовок таблицы — `#####`.
    Необязательное поле front matter `stage` — подпись вкладки версии: спеки с
    одним названием страница показывает вкладками версий.
+
+   Правки человека (RE0042): дизайнер правит `<Spec>.dev-spec.md` в редакторе.
+   Последняя версия агента — поле `src` генерата (исходник целиком; в выгрузку
+   не идёт: страница берёт `md` и `html`). `--diff` сравнивает файл с `src` по
+   блокам (заголовок, абзац, пункт, строка таблицы, цитата, код, маркер) и
+   печатает только изменённое: путь раздела, «было → стало» по словам, причину.
+   Причина — необязательный комментарий `<!-- почему: … -->` сразу под правкой;
+   в md для разработки он не попадает. `--check`, `--text` и съёмка говорят
+   замечанием, что правки не разобраны: вердикт от этого не меняется. Разбор —
+   команда `/spec-edits`, скилл dev-spec; после него `--text` обновляет `src`.
 
    Коды:
      СР1 — файл и front matter: место, имя, разбор YAML, поля
@@ -75,6 +87,7 @@
          --only — переснять часть снимков, остальные берутся из генерата;
          --out — дополнительно записать папку <Spec>/ с двумя файлами
      node .agents/tools/dev-spec.mjs <spec.dev-spec.md> --text    пересобрать текст без съёмки
+     node .agents/tools/dev-spec.mjs <spec.dev-spec.md> --diff    правки человека с последней версии агента
      node .agents/tools/dev-spec.mjs --selftest
    Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1; без манифеста — 2.
    Шага в гейте нет (как у карты экранов): проверка — здесь.
@@ -431,7 +444,26 @@ export function checkSpec(P, core, specAbs, lazyDs) {
 
 /* ---------------- markdown → html ---------------- */
 
-/** Строчная разметка: `код`, **жирный**, *курсив*, [ссылка](адрес), образец чипа {chip:success Текст}. */
+/** Ссылка на шаги сценария `{steps:7-9}`, `{steps:2-4,11}` — «шаги 7–9», «шаги 2–4, 11», «шаг 11». */
+const STEPS_RX = /\{steps:(\d+(?:\s*[-–]\s*\d+)?(?:\s*,\s*\d+(?:\s*[-–]\s*\d+)?)*)\}/g;
+
+/** Части ссылки на шаги: [{ from, to }] и слово «шаг» / «шаги». */
+function stepParts(list) {
+  const parts = list.split(',').map((p) => { const [a, b] = p.split(/[-–]/).map((x) => Number(x.trim())); return { from: a, to: b === undefined ? a : b }; });
+  return { parts, word: parts.length > 1 || parts[0].to !== parts[0].from ? 'шаги' : 'шаг' };
+}
+
+/** Ссылка на шаги простым текстом — для заголовков, оглавления и md. */
+export const stepsPlain = (list) => { const { parts, word } = stepParts(list); return word + ' ' + parts.map((p) => (p.to === p.from ? p.from : p.from + '–' + p.to)).join(', '); };
+
+/** Ссылка на шаги с якорями: каждое число ведёт к своему шагу `#step-N`. */
+const stepsHtml = (list) => {
+  const { parts, word } = stepParts(list);
+  const a = (n) => '<a href="#step-' + n + '">' + n + '</a>';
+  return word + ' ' + parts.map((p) => (p.to === p.from ? a(p.from) : a(p.from) + '–' + a(p.to))).join(', ');
+};
+
+/** Строчная разметка: `код`, **жирный**, *курсив*, [ссылка](адрес), образец чипа {chip:success Текст}, шаги {steps:7-9}, «не решено» {?}. */
 export function inline(s) {
   const codes = [];
   let t = String(s).replace(/`([^`]+)`/g, (m, c) => { codes.push('<code>' + esc(c) + '</code>'); return '\u0000' + (codes.length - 1) + '\u0000'; });
@@ -439,7 +471,9 @@ export function inline(s) {
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, txt, href) => '<a href="' + href + '">' + txt + '</a>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?!\w)/g, '$1<em>$2</em>')
-    .replace(/\{chip:(\w+)\s+([^}]+)\}/g, '<span class="chip chip--s chip--fit chip--$1"><span class="chip__label">$2</span></span>');
+    .replace(/\{chip:(\w+)\s+([^}]+)\}/g, '<span class="chip chip--s chip--fit chip--rounded chip--$1"><span class="chip__label">$2</span></span>')
+    .replace(STEPS_RX, (m, list) => stepsHtml(list))
+    .replace(/\{\?\}/g, '<span class="sp-q" role="img" aria-label="Не решено" title="Не решено">?</span>');
   return t.replace(/\u0000(\d+)\u0000/g, (m, i) => codes[Number(i)]);
 }
 
@@ -480,7 +514,8 @@ export function mdToHtml(md, ctx = {}) {
   const seen = ctx.seen || new Set();
   const out = [];
   let i = 0;
-  const blockStart = (l) => /^\s*```/.test(l) || /^#{1,6}\s/.test(l) || /^\s*>/.test(l) || LIST_RX.test(l) || /^\s*\|/.test(l) || /^\s*<!--/.test(l) || /^\s*(-{3,}|\*{3,})\s*$/.test(l);
+  let lastHead = '';
+  const blockStart =(l) => /^\s*```/.test(l) || /^#{1,6}\s/.test(l) || /^\s*>/.test(l) || LIST_RX.test(l) || /^\s*\|/.test(l) || /^\s*<!--/.test(l) || /^\s*(-{3,}|\*{3,})\s*$/.test(l);
   while (i < lines.length) {
     const l = lines[i];
     if (!l.trim()) { i++; continue; }
@@ -503,8 +538,10 @@ export function mdToHtml(md, ctx = {}) {
     const h = /^(#{1,6})\s+(.*?)\s*#*\s*$/.exec(l);
     if (h) {
       const level = h[1].length;
-      const id = slugOf(h[2], seen);
-      heads.push({ level, id, text: h[2] });
+      const plain = h[2].replace(STEPS_RX, (m, list) => stepsPlain(list));   // в оглавлении и якоре — простой текст, ссылок в заголовке там нет
+      const id = slugOf(plain, seen);
+      lastHead = plain;
+      heads.push({ level, id, text: plain });
       out.push('<h' + level + ' id="' + id + '">' + inline(h[2]) + '</h' + level + '>');
       i++;
       continue;
@@ -534,7 +571,7 @@ export function mdToHtml(md, ctx = {}) {
       continue;
     }
     if (LIST_RX.test(l)) {
-      const r = list(lines, i, ctx, seen);
+      const r = list(lines, i, ctx, seen, lastHead === 'Шаги сценария');
       out.push(r.html);
       i = r.next;
       continue;
@@ -546,7 +583,8 @@ export function mdToHtml(md, ctx = {}) {
   return out.join('\n');
 }
 
-function list(lines, i, ctx, seen) {
+/** stepIds — список шагов сценария: у пункта id `step-N` (N — его номер), на него ведут `{steps:…}`. */
+function list(lines, i, ctx, seen, stepIds = false) {
   const first = LIST_RX.exec(lines[i]);
   const indent = first[1].length;
   const ordered = /\d/.test(first[2]);
@@ -574,7 +612,7 @@ function list(lines, i, ctx, seen) {
     const plain = body.every((b) => !LIST_RX.test(b) && !/^\s*(\||>|```|<!--)/.test(b) && b.trim() !== '');
     /* у шагов (нумерованный список) текст остаётся абзацем: страница рисует шаги путём и ограничивает его ширину */
     const textOf = (s) => (ordered ? '<p>' + s + '</p>' : s);
-    items.push('<li>' + (plain ? textOf(inline(body.map((b) => b.trim()).join(' '))) : (() => {
+    items.push('<li' + (stepIds && ordered && indent === 0 ? ' id="step-' + parseInt(m[2], 10) + '"' : '') + '>' + (plain ? textOf(inline(body.map((b) => b.trim()).join(' '))) : (() => {
       const h = mdToHtml(body.join('\n'), { ...ctx, heads: [], seen });
       return ordered ? h : h.replace(/^<p>([\s\S]*?)<\/p>/, '$1');
     })()) + '</li>');
@@ -757,7 +795,10 @@ export function exportMd(spec, body, capture) {
     return '> **Снимок ' + num[id] + '** — ' + (s ? s.title : id) + ' · ' + sizeOf(capture && capture.snaps[id]) + ' (`' + file + '#snap-' + id + '`)';
   };
   const text = body.replace(/\r\n?/g, '\n')
+    .replace(/^[ \t]*<!--\s*почему\s*:[\s\S]*?-->[ \t]*\n?/gim, '')   // причина правки — для агента, разработке не нужна
     .replace(/\{chip:\w+\s+([^}]+)\}/g, '$1')
+    .replace(STEPS_RX, (m, list) => stepsPlain(list))
+    .replace(/\{\?\}/g, '**(?)**')
     .replace(/^(\s*>\s*)\[!(warning|info|error|success)\]/gim, (m, a, k) => a + '[!' + k.toUpperCase() + ']')
     .replace(/^([ \t]*)```scenario[ \t]*\n([\s\S]*?)^[ \t]*```[ \t]*$/gm, (m, pad, block) => mermaidOf(parseScenario(block.split('\n')), pad));
   let lines = text.split('\n');
@@ -969,26 +1010,26 @@ export function exportHtml(spec, body, capture, inspector) {
 const PAGE_CSS = [
   '*,*::before,*::after{box-sizing:border-box}',
   'html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth}',
-  'body{margin:0;background:var(--bg-page);color:var(--text-primary);font:var(--type-body-m);font-family:var(--font-text),system-ui,sans-serif}',
+  'body{margin:0;background:var(--bg-page);color:var(--text-primary);font:var(--type-body-m-reg);font-family:var(--font-text),system-ui,sans-serif}',
   '.sp{display:grid;grid-template-columns:288px minmax(0,1fr);min-height:100vh}',
   '.sp-toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:var(--space-24) var(--space-16);background:var(--bg-tile);border-right:1px solid var(--border-light)}',
-  '.sp-toc__title{font:var(--type-body-m-strong);margin:0 0 var(--space-16) var(--space-8)}',
+  '.sp-toc__title{font:var(--type-body-m-strong-smb);margin:0 0 var(--space-16) var(--space-8)}',
   '.sp-toc nav{display:flex;flex-direction:column;gap:var(--space-2)}',
-  '.sp-toc__link{display:block;padding:var(--space-4) var(--space-8);border-radius:var(--radius-s);color:var(--text-primary);text-decoration:none;font:var(--type-body-s);cursor:pointer}',
+  '.sp-toc__link{display:block;padding:var(--space-4) var(--space-8);border-radius:var(--radius-s);color:var(--text-primary);text-decoration:none;font:var(--type-body-s-reg);cursor:pointer}',
   '.sp-toc__link:hover{background:var(--secondary-bg-light)}',
   '.sp-toc__link--3{padding-left:var(--space-24);color:var(--text-secondary)}',
-  '.sp-toc__link--4{padding-left:var(--space-40);color:var(--text-secondary);font:var(--type-body-xs)}',
-  '.sp-toc__link--active{background:var(--primary-bg);color:var(--text-primary);font:var(--type-body-s-strong)}',
+  '.sp-toc__link--4{padding-left:var(--space-40);color:var(--text-secondary);font:var(--type-body-xs-reg)}',
+  '.sp-toc__link--active{background:var(--primary-bg);color:var(--text-primary);font:var(--type-body-s-strong-smb)}',
   '.sp-main{padding:var(--space-32) var(--space-48) var(--space-96);min-width:0;max-width:1600px}',
   '.sp-head{margin-bottom:var(--space-32)}',
-  '.sp-head__kicker{font:var(--type-body-s);color:var(--text-secondary);margin-bottom:var(--space-4)}',
-  '.sp-head__meta{font:var(--type-body-s);color:var(--text-secondary);margin:var(--space-4) 0 0}',
-  'h1{font:var(--type-h2);margin:0 0 var(--space-8)}',
+  '.sp-head__kicker{font:var(--type-body-s-reg);color:var(--text-secondary);margin-bottom:var(--space-4)}',
+  '.sp-head__meta{font:var(--type-body-s-reg);color:var(--text-secondary);margin:var(--space-4) 0 0}',
+  'h1{font:var(--type-h2-light);margin:0 0 var(--space-8)}',
   'h2,h3,h4,h5,.sp-snap,.sp-flow{scroll-margin-top:var(--space-24)}',
-  'h2{font:var(--type-h3-strong);margin:var(--space-96) 0 var(--space-24);padding-top:var(--space-24);border-top:1px solid var(--border-light)}',
-  'h3{font:var(--type-h4-strong);margin:var(--space-64) 0 var(--space-16)}',
-  'h4{font:var(--type-h5-strong);margin:var(--space-40) 0 var(--space-12)}',
-  'h5{font:var(--type-h6-strong);margin:var(--space-32) 0 var(--space-8)}',
+  'h2{font:var(--type-h3-strong-smb);margin:var(--space-96) 0 var(--space-24);padding-top:var(--space-24);border-top:1px solid var(--border-light)}',
+  'h3{font:var(--type-h4-strong-smb);margin:var(--space-64) 0 var(--space-16)}',
+  'h4{font:var(--type-h5-strong-smb);margin:var(--space-40) 0 var(--space-12)}',
+  'h5{font:var(--type-h6-strong-smb);margin:var(--space-32) 0 var(--space-8)}',
   'h2+h3,h3+h4,h4+h5{margin-top:var(--space-24)}',
   'p{margin:0 0 var(--space-12);max-width:960px}',
   'ul,ol{margin:0 0 var(--space-12);padding-left:var(--space-24);max-width:960px}',
@@ -997,7 +1038,7 @@ const PAGE_CSS = [
   'ol{list-style:none;padding:0;max-width:none}',
   'ol>li{position:relative;margin:0;padding:0 0 var(--space-40) calc(var(--space-48) + var(--space-8))}',
   'ol>li:last-child{padding-bottom:0}',
-  'ol>li::before{content:counter(list-item);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;background:var(--primary);color:var(--text-on-primary,#fff);font:var(--type-body-m-strong);display:flex;align-items:center;justify-content:center}',
+  'ol>li::before{content:counter(list-item);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;background:var(--primary);color:var(--text-on-primary,#fff);font:var(--type-body-m-strong-smb);display:flex;align-items:center;justify-content:center}',
   'ol>li::after{content:"";position:absolute;left:15px;top:36px;bottom:4px;width:2px;background:var(--border-primary)}',
   'ol>li:last-child::after{display:none}',
   'ol>li>p:first-child{margin-top:0;padding-top:var(--space-4)}',
@@ -1010,10 +1051,10 @@ const PAGE_CSS = [
   'blockquote p:last-child{margin:0}',
   'hr{border:0;border-top:1px solid var(--border-light);margin:var(--space-24) 0}',
   '.sp-table{overflow-x:auto;margin:0 0 var(--space-16)}',
-  'table{border-collapse:collapse;width:100%;background:var(--bg-tile);font:var(--type-body-s)}',
+  'table{border-collapse:collapse;width:100%;background:var(--bg-tile);font:var(--type-body-s-reg)}',
   'th,td{border:1px solid var(--border-light);padding:var(--space-8) var(--space-12);text-align:left;vertical-align:top}',
   'td .chip{vertical-align:middle}',
-  'th{background:var(--secondary-bg-light);font:var(--type-body-s-strong)}',
+  'th{background:var(--secondary-bg-light);font:var(--type-body-s-strong-smb)}',
   /* снимки: карточка, рамка кадра, подпись */
   '.sp-snap{display:flex;flex-direction:column;margin:0 0 var(--space-24);padding:var(--space-12);background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-card);min-width:0}',
   '.sp-snap__frame{display:block;width:100%;padding:0;border:0;background:var(--bg-page);cursor:zoom-in;overflow:hidden;position:relative;text-align:left}',
@@ -1023,9 +1064,9 @@ const PAGE_CSS = [
      скругление и тень — токенами окна ДС: своя тень окна срезана краем кадра (RE0037) */
   '.sp-snap--modal iframe,.sp-zoom__stage--modal iframe{background:transparent;border-radius:var(--radius-modal);box-shadow:var(--shadow-modal-form)}',
   '.sp-snap__frame iframe{pointer-events:none}',
-  'figcaption{font:var(--type-body-s);color:var(--text-secondary);margin-top:var(--space-8)}',
+  'figcaption{font:var(--type-body-s-reg);color:var(--text-secondary);margin-top:var(--space-8)}',
   '.sp-snap figcaption{margin-top:auto;padding-top:var(--space-8)}',
-  '.sp-snap__num{font:var(--type-body-s-strong);color:var(--text-primary)}',
+  '.sp-snap__num{font:var(--type-body-s-strong-smb);color:var(--text-primary)}',
   '.sp-snap__note{display:block;margin-top:var(--space-4);color:var(--text-primary)}',
   '.sp-snap__empty{padding:var(--space-24);text-align:center;color:var(--text-secondary);background:var(--bg-page)}',
   /* окно — на скриме, как в продукте */
@@ -1034,13 +1075,13 @@ const PAGE_CSS = [
   '.sp-gallery,.sp-matrix{display:grid;grid-template-columns:repeat(var(--cols,1),minmax(0,1fr));gap:var(--space-24);align-items:stretch;margin:0 0 var(--space-24)}',
   '.sp-gallery .sp-snap,.sp-matrix .sp-snap{margin:0;height:100%}',
   '.sp-matrix--rows{grid-template-columns:minmax(96px,152px) repeat(var(--cols,1),minmax(0,1fr))}',
-  '.sp-matrix__col,.sp-matrix__row{font:var(--type-body-s-strong);color:var(--text-primary);align-self:center}',
+  '.sp-matrix__col,.sp-matrix__row{font:var(--type-body-s-strong-smb);color:var(--text-primary);align-self:center}',
   '.sp-matrix__col{padding:0 var(--space-4)}',
   '.sp-matrix__row{padding-right:var(--space-8)}',
   '.sp-matrix__empty{display:block;min-height:64px;border:1px dashed var(--border-light);border-radius:var(--radius-card)}',
   /* схема сценария: связи окрашены по тому, куда ведут */
   '.sp-flow{position:relative;margin:0 0 var(--space-32);padding:var(--space-16);background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-card)}',
-  '.sp-flow__full{position:absolute;top:var(--space-12);right:var(--space-12);z-index:2;font:var(--type-body-s);padding:var(--space-4) var(--space-12);border:1px solid var(--border-primary);border-radius:var(--radius-control);background:var(--bg-tile);color:var(--text-primary);cursor:pointer}',
+  '.sp-flow__full{position:absolute;top:var(--space-12);right:var(--space-12);z-index:2;font:var(--type-body-s-reg);padding:var(--space-4) var(--space-12);border:1px solid var(--border-primary);border-radius:var(--radius-control);background:var(--bg-tile);color:var(--text-primary);cursor:pointer}',
   '.sp-flow__full:hover{background:var(--secondary-bg-light)}',
   '.sp-flow__scroll{overflow-x:auto;padding-top:var(--space-32)}',
   '.sp-flow__sizer{position:relative}',
@@ -1058,13 +1099,13 @@ const PAGE_CSS = [
   '.sp-flow__head--ok{fill:var(--st-green)}',
   '.sp-flow__head--warn{fill:var(--st-orange)}',
   '.sp-flow__head--back{fill:var(--st-grey)}',
-  '.sp-flow__label{position:absolute;transform:translate(-50%,-50%);max-width:120px;padding:2px var(--space-8);background-color:var(--bg-tile);border:1px solid;border-radius:var(--radius-xs);font:var(--type-body-xs);text-align:center;line-height:1.3;pointer-events:none;transition:opacity .15s}',
+  '.sp-flow__label{position:absolute;transform:translate(-50%,-50%);max-width:120px;padding:2px var(--space-8);background-color:var(--bg-tile);border:1px solid;border-radius:var(--radius-xs);font:var(--type-body-xs-reg);text-align:center;line-height:1.3;pointer-events:none;transition:opacity .15s}',
   '.sp-flow__label--info{background-image:linear-gradient(var(--st-blue-light),var(--st-blue-light));color:var(--st-blue-dark);border-color:var(--st-blue)}',
   '.sp-flow__label--error{background-image:linear-gradient(var(--st-red-light),var(--st-red-light));color:var(--st-red-dark);border-color:var(--st-red)}',
   '.sp-flow__label--ok{background-image:linear-gradient(var(--st-green-light),var(--st-green-light));color:var(--st-green-dark);border-color:var(--st-green)}',
   '.sp-flow__label--warn{background-image:linear-gradient(var(--st-orange-light),var(--st-orange-light));color:var(--st-orange-dark);border-color:var(--st-orange)}',
   '.sp-flow__label--back{background-image:linear-gradient(var(--st-grey-light),var(--st-grey-light));color:var(--st-grey-dark);border-color:var(--st-grey)}',
-  '.sp-flow__legend{display:flex;flex-wrap:wrap;gap:var(--space-8) var(--space-24);margin-top:var(--space-16);font:var(--type-body-xs);color:var(--text-secondary)}',
+  '.sp-flow__legend{display:flex;flex-wrap:wrap;gap:var(--space-8) var(--space-24);margin-top:var(--space-16);font:var(--type-body-xs-reg);color:var(--text-secondary)}',
   '.sp-flow__nkey{display:inline-flex;align-items:center;gap:var(--space-8)}',
   '.sp-flow__nkey::before{content:"";box-sizing:border-box;width:22px;height:14px;background:var(--bg-page);border:1px solid var(--border-light);border-left:4px solid var(--primary);border-radius:var(--radius-xs)}',
   '.sp-flow__nkey--modal::before{border-left:1px solid var(--border-primary);border-top:5px solid var(--st-grey);border-radius:var(--radius-s);box-shadow:3px 3px 0 var(--st-grey-light);background:var(--bg-tile)}',
@@ -1100,8 +1141,8 @@ const PAGE_CSS = [
   '.sp-node--modal.sp-node--ok{--tone:var(--st-green)}',
   '.sp-node--modal.sp-node--warn{--tone:var(--st-orange)}',
   '.sp-node--modal::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:var(--tone)}',
-  '.sp-node__hint{font:var(--type-body-xs);color:var(--text-secondary)}',
-  '.sp-node__title{font:var(--type-body-s-strong);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
+  '.sp-node__hint{font:var(--type-body-xs-reg);color:var(--text-secondary)}',
+  '.sp-node__title{font:var(--type-body-s-strong-smb);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
   /* алерт в тексте: «> [!warning] …» */
   '.sp-alert{margin:0 0 var(--space-16);padding:var(--space-12) var(--space-16);border-left:4px solid var(--info);border-radius:var(--radius-s);background:var(--info-bg);max-width:960px}',
   '.sp-alert--warning{border-left-color:var(--warning);background:var(--warning-bg)}',
@@ -1109,16 +1150,18 @@ const PAGE_CSS = [
   '.sp-alert--success{border-left-color:var(--st-green);background:var(--st-green-light)}',
   '.sp-alert p:last-child{margin:0}',
   '.sp-flash{outline:2px solid var(--primary);outline-offset:4px}',
-  '.sp-back{position:fixed;right:var(--space-24);bottom:var(--space-24);z-index:9;font:var(--type-body-s-strong);padding:var(--space-8) var(--space-16);border:0;border-radius:var(--radius-control);background:var(--primary);color:var(--text-on-primary,#fff);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.24)}',
+  /* «не решено»: жёлтый кружок с вопросом перед текстом спорного места */
+  '.sp-q{display:inline-flex;align-items:center;justify-content:center;width:1.25em;height:1.25em;margin-right:var(--space-4);border-radius:50%;background:var(--warning);color:var(--text-on-warning,#fff);font-size:.85em;font-weight:600;line-height:1;vertical-align:text-bottom}',
+  '.sp-back{position:fixed;right:var(--space-24);bottom:var(--space-24);z-index:9;font:var(--type-body-s-strong-smb);padding:var(--space-8) var(--space-16);border:0;border-radius:var(--radius-control);background:var(--primary);color:var(--text-on-primary,#fff);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.24)}',
   '.sp-back[hidden]{display:none}',
   /* снимок в натуральную величину */
   '.sp-zoom{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;background:var(--bg-page)}',
   '.sp-zoom[hidden]{display:none}',
   '.sp-zoom__bar{display:flex;align-items:center;justify-content:space-between;gap:var(--space-16);padding:var(--space-12) var(--space-24);background:var(--bg-tile);border-bottom:1px solid var(--border-light)}',
-  '.sp-zoom__title{font:var(--type-body-m-strong)}',
+  '.sp-zoom__title{font:var(--type-body-m-strong-smb)}',
   '.sp-zoom__actions,.sp-zoom__tools{display:flex;align-items:center;gap:var(--space-8)}',
   '.sp-zoom__tools[hidden]{display:none}',
-  '.sp-zoom__btn{font:var(--type-body-s);padding:var(--space-6) var(--space-12);border:1px solid var(--border-primary);border-radius:var(--radius-control);background:var(--bg-tile);color:var(--text-primary);cursor:pointer}',
+  '.sp-zoom__btn{font:var(--type-body-s-reg);padding:var(--space-6) var(--space-12);border:1px solid var(--border-primary);border-radius:var(--radius-control);background:var(--bg-tile);color:var(--text-primary);cursor:pointer}',
   '.sp-zoom__btn[aria-pressed="true"]{background:var(--primary-bg);border-color:var(--primary)}',
   '.sp-zoom__body{flex:1;min-height:0;overflow:auto;padding:var(--space-24)}',
   '.sp-zoom__tips{position:fixed;inset:0;z-index:11;pointer-events:none;overflow:hidden}',
@@ -1460,7 +1503,10 @@ function viewer() {
     e.preventDefault();
     if (a.hasAttribute('data-flow-to')) {   // узел схемы: запомнить, откуда прыгнули (в оверлее — исходную схему страницы)
       var origin = a.closest('.sp-zoom') ? (zs && zs.flow) : a.closest('.sp-flow');
-      if (origin) { from = { flow: origin, node: origin.querySelector('[data-node="' + a.getAttribute('data-node') + '"]') }; back.hidden = false; }
+      if (origin) { from = { flow: origin, node: origin.querySelector('[data-node="' + a.getAttribute('data-node') + '"]') }; back.textContent = '← К схеме сценария'; back.hidden = false; }
+    } else if (a.closest('.sp-main')) {   // ссылка в тексте (шаг, раздел): вернуться к месту, откуда прыгнули
+      var spot = a.closest('li,p,td,h1,h2,h3,h4,h5,h6');
+      if (spot) { from = { flow: spot, node: null }; back.textContent = '← Назад'; back.hidden = false; }
     }
     if (!z.hidden) close();
     jump(id);
@@ -1874,7 +1920,7 @@ function serve(P, specAbs, checked, opts) {
           const capture = mergeCapture(results, { taken: new Date().toISOString(), viewport: spec.viewport, userAgent: body.userAgent }, root, opts.port, prev);
           const out = writeAll(P, checked, capture, opts);
           const defects = fails.map((r) => 'СР6 снимок ' + r.id + ' — ' + r.fail).concat(jsErr.map((r) => 'СР6 снимок ' + r.id + ' — ошибки JS на странице: ' + r.errors.join('; ')));
-          console.log(report('dev-spec', { defects, written: out.written, stats: out.stats }));
+          console.log(report('dev-spec', { defects, written: out.written, stats: out.stats, notes: out.notes }));
           send(200, TYPES['.json'], JSON.stringify({ ok: !defects.length, text: out.stats.join(' · ') + (defects.length ? ' · ' + defects.length + ' замечаний — см. консоль' : '') }));
           setTimeout(() => server.close(() => process.exit(defects.length ? 1 : 0)), 200);
           return;
@@ -1907,15 +1953,19 @@ function serve(P, specAbs, checked, opts) {
 
 const HEADER = '/* СГЕНЕРИРОВАН dev-spec.mjs (RE0016) из refs/';
 
-/** Прежний генерат → capture (для --text и --only) или null. */
-export function readGenerat(dataAbs, name) {
+/** Запись спеки из прежнего генерата или null. */
+export function readRecord(dataAbs, name) {
   const file = path.join(dataAbs, name + '.dev-spec.js');
   if (!existsSync(file)) return null;
   const win = { DEV_SPECS: [] };
   try { vm.runInNewContext(readFileSync(file, 'utf8'), { window: win }); } catch { return null; }
-  const rec = win.DEV_SPECS.find((x) => x.id === name);
-  if (!rec) return null;
-  return captureFromHtml(rec.html);
+  return win.DEV_SPECS.find((x) => x.id === name) || null;
+}
+
+/** Прежний генерат → capture (для --text и --only) или null. */
+export function readGenerat(dataAbs, name) {
+  const rec = readRecord(dataAbs, name);
+  return rec ? captureFromHtml(rec.html) : null;
 }
 
 /** Данные снимков из автономного html → capture. */
@@ -1930,7 +1980,8 @@ export function captureFromHtml(html) {
 
 function generatText(spec, md, html, P, specAbs, capture) {
   const rec = { id: spec.spec, title: spec.title, module: spec.module, version: spec.version, stage: spec.stage, date: spec.date, designer: spec.designer,
-    snaps: spec.snaps.filter((s) => capture.snaps[s.id]).length, viewport: capture.viewport, taken: capture.taken, md, html };
+    snaps: spec.snaps.filter((s) => capture.snaps[s.id]).length, viewport: capture.viewport, taken: capture.taken, md, html,
+    src: normText(readFileSync(specAbs, 'utf8')) };   // последняя версия агента: с ней --diff сравнивает правки человека (в выгрузку не идёт)
   return HEADER + spec.spec + '/' + spec.spec + SUFFIX + '. Руками не править. */\n'
     + '/* Источник: ' + P.rel(specAbs) + '; пересборка — node .agents/tools/dev-spec.mjs ' + P.rel(specAbs) + ' */\n'
     + 'window.DEV_SPECS = window.DEV_SPECS || [];\n'
@@ -1951,6 +2002,11 @@ function indexText(names) {
 
 function writeAll(P, checked, capture, opts) {
   const { spec, body, place } = checked;
+  /* сборка принимает файл за последнюю версию агента: правки человека, не разобранные до неё, из --diff пропадут */
+  const pending = humanEdits(P, opts.specAbs);
+  const notes = pending.base && pending.count
+    ? ['ВНИМАНИЕ: сборка приняла ' + pending.count + ' неразобранных правок человека как версию агента — `--diff` их больше не покажет; сперва `--diff` и /spec-edits ' + spec.spec]
+    : [];
   const md = exportMd(spec, body, capture);
   const html = exportHtml(spec, body, capture, inspectorRuntime(P));
   mkdirSync(place.dataAbs, { recursive: true });
@@ -1969,7 +2025,262 @@ function writeAll(P, checked, capture, opts) {
   }
   const kb = (s) => Math.round(Buffer.byteLength(s) / 1024) + ' КБ';
   const missing = spec.snaps.filter((s) => !capture.snaps[s.id]).map((s) => s.id);
-  return { written, stats: ['снимков ' + (spec.snaps.length - missing.length) + '/' + spec.snaps.length, 'html ' + kb(html), 'md ' + kb(md)].concat(missing.length ? ['не сняты: ' + missing.join(', ')] : []) };
+  return { written, notes, stats: ['снимков ' + (spec.snaps.length - missing.length) + '/' + spec.snaps.length, 'html ' + kb(html), 'md ' + kb(md)].concat(missing.length ? ['не сняты: ' + missing.join(', ')] : []) };
+}
+
+/* ---------------- правки человека: файл против последней версии агента (RE0042) ---------------- */
+
+const WHY_RX = /^\s*<!--\s*почему\s*:\s*([\s\S]*?)\s*-->\s*$/i;
+const BLOCK_NAMES = { head: 'заголовок', para: 'абзац', item: 'пункт', row: 'строка таблицы', quote: 'цитата', code: 'код', marker: 'маркер', hr: 'линия' };
+const CONTEXT_WORDS = 3;     // слов вокруг изменения в «было → стало»
+const SIMILAR_MIN = 0.3;     // доля общих слов, с которой удалённый и добавленный блок считаются одним изменённым
+
+/** Переводы строк и BOM к виду, в котором исходник лежит в генерате. */
+export function normText(s) { return String(s).replace(/^﻿/, '').replace(/\r\n?/g, '\n'); }
+
+const wordsOf = (s) => String(s).match(/\S+/g) || [];
+
+/** Общая подпоследовательность двух массивов строк → пары индексов [i, j] по возрастанию. */
+export function commonPairs(a, b) {
+  const n = a.length, m = b.length;
+  const dp = Array.from({ length: n + 1 }, () => new Uint32Array(m + 1));
+  for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+  const out = [];
+  let i = 0, j = 0;
+  while (i < n && j < m) {
+    if (a[i] === b[j]) { out.push([i, j]); i++; j++; } else if (dp[i + 1][j] >= dp[i][j + 1]) i++; else j++;
+  }
+  return out;
+}
+
+/**
+ * Текст после front matter → блоки [{ kind, line, text, key, path }]. Блок — то, что правят целиком:
+ * заголовок, абзац, пункт списка (с вложенным), строка таблицы, цитата, код, комментарий-маркер,
+ * комментарий «почему» (kind: 'why'). line — номер строки в файле (bodyLine — у первой строки текста);
+ * path — цепочка заголовков раздела `## … › ### … › ##### …`.
+ */
+export function blocksOf(body, bodyLine = 1) {
+  const lines = normText(body).split('\n');
+  const out = [];
+  const stack = [];
+  const push = (kind, from, to) => {
+    const text = lines.slice(from, to).join('\n').replace(/\s+$/, '');
+    out.push({ kind, line: bodyLine + from, text, key: text.replace(/\s+/g, ' ').trim(), path: stack.filter(Boolean).join(' › ') });
+  };
+  const starts = (l) => /^\s*```/.test(l) || /^#{1,6}\s/.test(l) || /^\s*>/.test(l) || LIST_RX.test(l) || /^\s*\|/.test(l) || /^\s*<!--/.test(l) || /^\s*(-{3,}|\*{3,})\s*$/.test(l);
+  const lead = (l) => l.length - l.trimStart().length;
+  let i = 0;
+  while (i < lines.length) {
+    const l = lines[i];
+    if (!l.trim()) { i++; continue; }
+    const from = i;
+    if (/^\s*```/.test(l)) {
+      i++;
+      while (i < lines.length && !/^\s*```/.test(lines[i])) i++;
+      i = Math.min(i + 1, lines.length);
+      push('code', from, i);
+      continue;
+    }
+    if (/^\s*<!--/.test(l)) {
+      while (i < lines.length && !/-->/.test(lines[i])) i++;
+      i = Math.min(i + 1, lines.length);
+      push(WHY_RX.test(lines.slice(from, i).join('\n')) ? 'why' : 'marker', from, i);
+      continue;
+    }
+    const h = /^(#{1,6})\s+(.*?)\s*#*\s*$/.exec(l);
+    if (h) {
+      const level = h[1].length;
+      if (level === 1) stack.length = 0; else { stack.length = level - 2; stack[level - 2] = h[2]; }
+      i++;
+      push('head', from, i);
+      continue;
+    }
+    if (/^\s*(-{3,}|\*{3,})\s*$/.test(l)) { i++; push('hr', from, i); continue; }
+    if (/^\s*\|/.test(l)) {
+      while (i < lines.length && /^\s*\|/.test(lines[i])) { if (!isTableSep(lines[i])) push('row', i, i + 1); i++; }
+      continue;
+    }
+    if (/^\s*>/.test(l)) {
+      while (i < lines.length && /^\s*>/.test(lines[i])) i++;
+      push('quote', from, i);
+      continue;
+    }
+    if (LIST_RX.test(l)) {
+      const indent = lead(l);
+      i++;
+      while (i < lines.length) {
+        const ln = lines[i];
+        if (!ln.trim()) {
+          const nx = lines.slice(i + 1).find((x) => x.trim());
+          if (nx !== undefined && lead(nx) > indent) { i++; continue; }
+          break;
+        }
+        if (lead(ln) > indent || (!LIST_RX.test(ln) && !starts(ln))) { i++; continue; }
+        break;
+      }
+      push('item', from, i);
+      continue;
+    }
+    i++;
+    while (i < lines.length && lines[i].trim() && !starts(lines[i])) i++;
+    push('para', from, i);
+  }
+  return out;
+}
+
+/** «Было → стало» по словам: `[-удалено-]{+добавлено+}`, неизменное длиннее контекста сворачивается в «…». */
+export function wordDiff(before, after) {
+  const x = wordsOf(before), y = wordsOf(after);
+  const runs = [];
+  const add = (t, w) => { if (!w.length) return; const last = runs[runs.length - 1]; if (last && last.t === t) last.w.push(...w); else runs.push({ t, w: [...w] }); };
+  let xi = 0, yi = 0;
+  for (const [px, py] of commonPairs(x, y).concat([[x.length, y.length]])) {
+    add('-', x.slice(xi, px));
+    add('+', y.slice(yi, py));
+    if (px < x.length) add('=', [x[px]]);
+    xi = px + 1; yi = py + 1;
+  }
+  return runs.map((r, k) => {
+    if (r.t === '-') return '[-' + r.w.join(' ') + '-]';
+    if (r.t === '+') return '{+' + r.w.join(' ') + '+}';
+    const head = k > 0 ? r.w.slice(0, CONTEXT_WORDS) : [];
+    const tail = k < runs.length - 1 ? r.w.slice(-CONTEXT_WORDS) : [];
+    if (k === 0) return (r.w.length > CONTEXT_WORDS ? '… ' : '') + tail.join(' ');
+    if (k === runs.length - 1) return head.join(' ') + (r.w.length > CONTEXT_WORDS ? ' …' : '');
+    return r.w.length > 2 * CONTEXT_WORDS ? head.join(' ') + ' … ' + tail.join(' ') : r.w.join(' ');
+  }).filter(Boolean).join(' ');
+}
+
+function similarity(a, b) {
+  const A = new Set(wordsOf(a)), B = new Set(wordsOf(b));
+  let n = 0;
+  for (const w of A) if (B.has(w)) n++;
+  return n / Math.max(1, A.size + B.size - n);
+}
+
+/** Комментарии «почему» уходят из блоков: каждый привязан к блоку над ним (первый — к следующему). */
+export function stripWhys(blocks) {
+  const kept = [], whys = [];
+  for (const b of blocks) {
+    if (b.kind === 'why') whys.push({ index: Math.max(0, kept.length - 1), line: b.line, text: WHY_RX.exec(b.text)[1].replace(/\s+/g, ' ') });
+    else kept.push(b);
+  }
+  return { blocks: kept, whys };
+}
+
+/**
+ * Блоки базы и файла → правки [{ kind: 'changed' | 'added' | 'removed', old, new, at, why }].
+ * at — индекс блока файла (у удалённого — блока перед пропажей). Причина — из комментария
+ * под блоком; у удаления — из комментария под блоком, после которого он пропал.
+ */
+export function diffBlocks(base, cur, whys = []) {
+  const pairs = commonPairs(base.map((b) => b.key), cur.map((b) => b.key));
+  const edits = [];
+  let bi = 0, ci = 0;
+  const flush = (bEnd, cEnd) => {
+    const removed = base.slice(bi, bEnd), added = cur.slice(ci, cEnd);
+    if (!removed.length && !added.length) return;
+    const match = new Map();
+    let from = 0;
+    removed.forEach((r, k) => {
+      for (let a = from; a < added.length; a++) {
+        if (r.kind === added[a].kind && similarity(r.key, added[a].key) >= SIMILAR_MIN) { match.set(k, a); from = a + 1; break; }
+      }
+    });
+    let a = 0;
+    const addedEdit = (k) => ({ kind: 'added', new: added[k], at: ci + k });
+    removed.forEach((r, k) => {
+      if (match.has(k)) {
+        const ma = match.get(k);
+        while (a < ma) edits.push(addedEdit(a++));
+        edits.push({ kind: 'changed', old: r, new: added[ma], at: ci + ma });
+        a = ma + 1;
+      } else edits.push({ kind: 'removed', old: r, at: ci - 1, near: cur[ci] || null });
+    });
+    while (a < added.length) edits.push(addedEdit(a++));
+  };
+  for (const [pb, pc] of pairs) { flush(pb, pc); bi = pb + 1; ci = pc + 1; }
+  flush(base.length, cur.length);
+  const taken = new Set();
+  const claim = (e) => { const w = whys.find((x, k) => x.index === e.at && !taken.has(k)); if (w) { taken.add(whys.indexOf(w)); e.why = w; } };
+  edits.filter((e) => e.kind !== 'removed').forEach(claim);
+  edits.filter((e) => e.kind === 'removed').forEach(claim);
+  return { edits, loose: whys.filter((w, k) => !taken.has(k)) };
+}
+
+/** Поля front matter (строки верхнего уровня `ключ:` и всё под ними) → Map. */
+function fmChunks(fm) {
+  const m = new Map();
+  let key = null;
+  for (const l of normText(fm).split('\n')) {
+    const k = /^([A-Za-z_][\w-]*)\s*:/.exec(l);
+    if (k) { key = k[1]; m.set(key, []); }
+    if (key) m.get(key).push(l.replace(/\s+$/, ''));
+  }
+  return m;
+}
+
+function fmChanged(baseFm, curFm) {
+  const a = fmChunks(baseFm), b = fmChunks(curFm);
+  return [...new Set([...a.keys(), ...b.keys()])].filter((k) => (a.has(k) ? a.get(k).join('\n') : null) !== (b.has(k) ? b.get(k).join('\n') : null));
+}
+
+/**
+ * Правки человека в спеке: { base: false } — в генерате нет `src`; { error } — не прочитать;
+ * иначе { base: true, fields, edits, loose, whys, count }. Читает файл и генерат, ничего не пишет.
+ */
+export function humanEdits(P, specAbs) {
+  const place = placeOf(specAbs, P);
+  if (place.error) return { error: place.error };
+  if (!existsSync(specAbs)) return { error: 'файла нет' };
+  const cur = splitSource(readFileSync(specAbs, 'utf8'));
+  if (cur.error) return { error: cur.error };
+  const rec = readRecord(place.dataAbs, path.basename(specAbs).slice(0, -SUFFIX.length));
+  const curBlocks = stripWhys(blocksOf(cur.body, cur.bodyLine));
+  const allWhys = curBlocks.whys;
+  if (!rec) return { base: false, missing: true, whys: allWhys, count: 0 };
+  if (typeof rec.src !== 'string') return { base: false, missing: false, whys: allWhys, count: 0 };
+  const base = splitSource(rec.src);
+  if (base.error) return { base: false, missing: false, whys: allWhys, count: 0 };
+  const same = normText(rec.src) === normText(readFileSync(specAbs, 'utf8'));
+  const fields = same ? [] : fmChanged(base.fm, cur.fm);
+  const { edits, loose } = same ? { edits: [], loose: allWhys } : diffBlocks(stripWhys(blocksOf(base.body, base.bodyLine)).blocks, curBlocks.blocks, allWhys);
+  return { base: true, fields, edits, loose, whys: allWhys, count: edits.length + (fields.length ? 1 : 0) };
+}
+
+const clip = (s, n = 400) => (s.length > n ? s.slice(0, n) + '…' : s).replace(/\s*\n\s*/g, ' ');
+
+/** Строки отчёта `--diff`. */
+export function diffLines(res) {
+  const out = [];
+  if (res.error) return ['  не прочитать: ' + res.error];
+  if (!res.base) return ['  базы нет: в генерате ' + (res.missing ? 'спеки нет' : 'нет исходника (src)') + ' — сначала `--text` (или съёмка) от версии агента'];
+  if (res.fields.length) out.push('Поля front matter изменены: ' + res.fields.join(', '));
+  let shown = null;
+  for (const e of res.edits) {
+    const blk = e.new || e.old;
+    const where = e.kind === 'removed' ? (e.near ? e.near.path : blk.path) : blk.path;
+    if (where !== shown) { out.push('§ ' + (where || '(до первого раздела)')); shown = where; }
+    const label = BLOCK_NAMES[blk.kind] || blk.kind;
+    if (e.kind === 'changed') out.push('  изменён · ' + label + ' · строка ' + e.new.line + ': ' + wordDiff(e.old.text, e.new.text));
+    else if (e.kind === 'added') out.push('  добавлен · ' + label + ' · строка ' + e.new.line + ': ' + clip(e.new.text));
+    else out.push('  удалён · ' + label + ' · ' + (e.near ? 'перед строкой ' + e.near.line : 'в конце текста') + ': ' + clip(e.old.text));
+    if (e.why) out.push('    почему: ' + e.why.text);
+  }
+  for (const w of res.loose) out.push('Причина без правки рядом · строка ' + w.line + ': ' + w.text);
+  out.push(res.count ? 'правок ' + res.count : 'правок нет');
+  return out;
+}
+
+/** Замечания о неразобранных правках — для --check, --text и съёмки. Вердикт они не меняют. */
+export function editNotes(res, specName) {
+  if (!res || res.error) return [];
+  const notes = [];
+  const run = '/spec-edits ' + specName;
+  if (res.base && res.count) notes.push('ЗАМЕЧАНИЕ: есть неразобранные правки человека (' + res.count + ') — `--diff`, разбор: ' + run);
+  if (res.whys.length) notes.push('ЗАМЕЧАНИЕ: в исходнике остались комментарии «почему» (' + res.whys.length + ') — разбор: ' + run);
+  if (!res.base && !res.missing) notes.push('ЗАМЕЧАНИЕ: в генерате нет исходника (src) — правки человека сравнить не с чем; пересоберите `--text`');
+  return notes;
 }
 
 /* ---------------- отчёт и запуск ---------------- */
@@ -1979,6 +2290,7 @@ function report(title, res) {
   for (const w of res.written || []) out.push('записан ' + w);
   for (const s of res.stats || []) out.push('  ' + s);
   for (const d of res.defects) out.push('  ' + d);
+  for (const n of res.notes || []) out.push(n);
   out.push('ВЕРДИКТ: ' + (res.defects.length ? 'FAIL — ' + res.defects.length + ' замечаний' : 'OK'));
   return out.join('\n');
 }
@@ -1993,7 +2305,7 @@ function main() {
   if (args.includes('--selftest') || args.includes('--self-test')) return selftest();
   const file = args.find((a) => !a.startsWith('--') && a.endsWith(SUFFIX));
   if (!file) {
-    console.log('Использование:\n  dev-spec.mjs <…/refs/<Spec>/<Spec>' + SUFFIX + '> [--check | --text] [--port 8766] [--settle 700] [--only id,id] [--out <папка>]\n  dev-spec.mjs --selftest');
+    console.log('Использование:\n  dev-spec.mjs <…/refs/<Spec>/<Spec>' + SUFFIX + '> [--check | --text | --diff] [--port 8766] [--settle 700] [--only id,id] [--out <папка>]\n  dev-spec.mjs --selftest');
     process.exit(1);
   }
   const P = need('dev-spec', HERE);
@@ -2002,13 +2314,18 @@ function main() {
   let ds = null;
   const lazyDs = () => (ds === null ? (ds = dsCorpus(P)) : ds);
   const specAbs = path.resolve(file);
+  if (args.includes('--diff')) {
+    const res = humanEdits(P, specAbs);
+    console.log(['dev-spec --diff ' + P.rel(specAbs)].concat(diffLines(res), ['ВЕРДИКТ: ' + (res.error ? 'FAIL — ' + res.error : 'OK')]).join('\n'));
+    process.exit(res.error ? 1 : 0);
+  }
   const checked = checkSpec(P, core, specAbs, lazyDs);
   const opts = {
     specAbs, port: Number(option(args, '--port', 8766)), settle: Number(option(args, '--settle', 700)),
     only: option(args, '--only', '').split(',').map((x) => x.trim()).filter(Boolean), out: option(args, '--out', null),
   };
   if (checked.defects.length || args.includes('--check')) {
-    console.log(report('dev-spec --check ' + P.rel(specAbs), { defects: checked.defects }));
+    console.log(report('dev-spec --check ' + P.rel(specAbs), { defects: checked.defects, notes: editNotes(humanEdits(P, specAbs), path.basename(specAbs).slice(0, -SUFFIX.length)) }));
     process.exit(checked.defects.length ? 1 : 0);
   }
   const unknown = opts.only.filter((id) => !checked.spec.snaps.some((s) => s.id === id));
@@ -2018,7 +2335,7 @@ function main() {
     if (!capture) { console.log(report('dev-spec --text', { defects: ['СР6 генерата ' + checked.spec.spec + '.dev-spec.js нет или он не читается: нужна съёмка (без --text)'] })); process.exit(1); }
     const out = writeAll(P, checked, capture, opts);
     const missing = checked.spec.snaps.filter((s) => !capture.snaps[s.id]).map((s) => 'СР6 снимок ' + s.id + ' не снят: досъёмка — --only ' + s.id);
-    console.log(report('dev-spec --text', { defects: missing, written: out.written, stats: out.stats }));
+    console.log(report('dev-spec --text', { defects: missing, written: out.written, stats: out.stats, notes: out.notes }));
     process.exit(missing.length ? 1 : 0);
   }
   serve(P, specAbs, checked, opts);
@@ -2229,8 +2546,21 @@ function selftest() {
     const fl = flowHtml(sc, {});
     assert.ok(fl.includes('sp-flow__key--warn') && fl.includes('sp-flow__full') && fl.includes('data-node="w"'));
   });
+  t('ссылки на шаги {steps:…} и «не решено» {?}: якоря step-N, простой текст в заголовке и md', () => {
+    assert.equal(inline('{steps:7-9}'), 'шаги <a href="#step-7">7</a>–<a href="#step-9">9</a>');
+    assert.equal(inline('{steps:2-4,11}'), 'шаги <a href="#step-2">2</a>–<a href="#step-4">4</a>, <a href="#step-11">11</a>');
+    assert.equal(inline('{steps:11}'), 'шаг <a href="#step-11">11</a>');
+    assert.ok(inline('{?} Неизвестно').startsWith('<span class="sp-q"'));
+    const heads = [];
+    const html = mdToHtml('### Шаги сценария\n\n1. Один\n2. Два\n\n#### Ветка ({steps:2})\n\n1. Чужой список\n', { heads });
+    assert.ok(html.includes('<li id="step-1">') && html.includes('<li id="step-2">'), 'у шагов сценария есть id');
+    assert.ok(!html.includes('<li id="step-1">Чужой'), 'id только у списка под «Шаги сценария»');
+    assert.equal(heads[1].text, 'Ветка (шаг 2)', 'в оглавлении — простой текст');
+    const md = exportMd(fm.spec, '# Д\n\n## 1. Коротко\nСм. {steps:7-9}. {?} Открыто.\n', capture);
+    assert.ok(md.includes('См. шаги 7–9. **(?)** Открыто.'), md);
+  });
   t('образец чипа и сетки в выгрузке', () => {
-    assert.equal(inline('{chip:success Обработан}'), '<span class="chip chip--s chip--fit chip--success"><span class="chip__label">Обработан</span></span>');
+    assert.equal(inline('{chip:success Обработан}'), '<span class="chip chip--s chip--fit chip--rounded chip--success"><span class="chip__label">Обработан</span></span>');
     assert.ok(exportMd(fm.spec, '# Д\n\n| А |\n|---|\n| {chip:error Не обработан} |\n', capture).includes('| Не обработан |'));
     const body = '# Д\n\n## 4. Новые\n<!-- matrix: cols="Один|Два" rows="Ряд" ids="tile-a tile-a" -->\n';
     const html = exportHtml(fm.spec, body, capture);
@@ -2299,6 +2629,75 @@ function selftest() {
     const out = pickCss(css);
     assert.ok(out.includes('.pp-insp__box{color:red}') && out.includes('@media (a){.pp-tip__x{y:2}\n}') && out.includes('.pp-tok--a{b:c}'));
     assert.ok(!out.includes('pp-other') && !out.includes('pp-hand') && !out.includes('keyframes') && !out.includes('pp-nope'));
+  });
+  /* ---- правки человека (RE0042) ---- */
+  const AGENT = [
+    '# Демо', '', '## 1. Коротко', 'Платёж связывают с плановым и пересчитывают метрики.', '',
+    '## 3. Экраны', '### Состав', '- Тайл **Платежи** показывает список', '- Тайл метрик', '  - вложенный пункт', '',
+    '##### Колонки таблицы «Платежи»', '| Колонка | Формат |', '|---|---|', '| Дата | `ДД.ММ.ГГГГ` |', '| Сумма | `1 000,00` |', '',
+    '> [!info] Подсказка про остаток', '', '```scenario', 'a | Один | page', '```', '', '<!-- snap: page-b -->', '',
+  ].join('\n');
+  const HUMAN = AGENT
+    .replace('и пересчитывают метрики.', 'и пересчитывают остатки.')
+    .replace('| Сумма | `1 000,00` |\n', '')
+    .replace('  - вложенный пункт\n', '  - вложенный пункт\n- Новый пункт про остаток\n<!-- почему: остаток нужен разработчику -->\n');
+  const blocksAgent = blocksOf(AGENT);
+  t('правки: блоки — заголовок, абзац, пункт с вложенным, строка таблицы, цитата, код, маркер; путь раздела', () => {
+    assert.deepEqual(blocksAgent.map((b) => b.kind), ['head', 'head', 'para', 'head', 'head', 'item', 'item', 'head', 'row', 'row', 'row', 'quote', 'code', 'marker']);
+    const metric = blocksAgent.find((b) => b.key.startsWith('- Тайл метрик'));
+    assert.ok(metric.text.includes('вложенный пункт'), 'вложенный пункт — часть родителя');
+    assert.equal(metric.path, '3. Экраны › Состав');
+    assert.equal(blocksAgent.find((b) => b.key === '| Дата | `ДД.ММ.ГГГГ` |').path, '3. Экраны › Состав › Колонки таблицы «Платежи»');
+    assert.equal(blocksAgent.find((b) => b.kind === 'para').line, 4, 'номер строки — в файле');
+    assert.ok(!blocksAgent.some((b) => b.key.startsWith('|---')), 'разделитель таблицы — не правка');
+  });
+  t('правки: --diff — только изменённое, с путём, «было → стало» и причиной; тот же текст — пусто', () => {
+    const none = diffBlocks(stripWhys(blocksAgent).blocks, stripWhys(blocksAgent).blocks);
+    assert.equal(none.edits.length, 0);
+    const cur = stripWhys(blocksOf(HUMAN));
+    const { edits, loose } = diffBlocks(stripWhys(blocksAgent).blocks, cur.blocks, cur.whys);
+    assert.deepEqual(edits.map((e) => e.kind), ['changed', 'added', 'removed'], 'абзац изменён, пункт добавлен, строка таблицы удалена');
+    assert.equal(loose.length, 0, 'причина привязана к правке');
+    assert.equal(edits[1].why.text, 'остаток нужен разработчику', 'причина — под добавленным пунктом');
+    const lines = diffLines({ base: true, fields: [], edits, loose, count: edits.length });
+    assert.ok(lines.some((l) => l.includes('изменён · абзац') && l.includes('[-метрики.-]') && l.includes('{+остатки.+}')));
+    assert.ok(lines.includes('§ 1. Коротко') && lines.includes('§ 3. Экраны › Состав'), 'путь раздела печатается');
+    assert.ok(lines.some((l) => l.includes('удалён · строка таблицы') && l.includes('Сумма')));
+    assert.ok(!lines.some((l) => l.includes('Дата')), 'нетронутые блоки не печатаются');
+    assert.equal(lines[lines.length - 1], 'правок 3');
+  });
+  t('правки: слова — добавление в конец, длинное неизменное по краям сворачивается в «…»', () => {
+    assert.equal(wordDiff('а б в', 'а б в г'), 'а б в {+г+}');
+    assert.equal(wordDiff('раз два три четыре пять шесть семь восемь девять десять', 'раз два три четыре пять шесть семь восемь девять ДЕСЯТЬ'), '… семь восемь девять [-десять-] {+ДЕСЯТЬ+}');
+    const long = wordDiff('а '.repeat(20) + 'б ' + 'в '.repeat(20), 'а '.repeat(20) + 'Б ' + 'в '.repeat(20));
+    assert.ok(long.startsWith('… ') && long.endsWith(' …') && long.includes('[-б-] {+Б+}'), 'неизменное по краям не раздувает вывод');
+  });
+  t('правки: удаление без соседей по тексту — причина под блоком над ним; причина вне правок не теряется', () => {
+    const base = stripWhys(blocksOf('# Д\n\n## 1. Раздел\nПервый абзац.\n\nВторой абзац.\n\nТретий абзац.\n')).blocks;
+    const cur = stripWhys(blocksOf('# Д\n\n## 1. Раздел\nПервый абзац.\n<!-- почему: второй лишний -->\n\nТретий абзац.\n<!-- почему: просто так -->\n'));
+    const r = diffBlocks(base, cur.blocks, cur.whys);
+    assert.deepEqual(r.edits.map((e) => e.kind), ['removed']);
+    assert.equal(r.edits[0].why.text, 'второй лишний');
+    assert.deepEqual(r.loose.map((w) => w.text), ['просто так']);
+  });
+  t('правки: front matter — меняются только названные поля; CRLF и BOM не считаются правкой', () => {
+    assert.deepEqual(fmChanged('spec: A\ntitle: Один\nsnaps:\n  - id: a', 'spec: A\ntitle: Два\nsnaps:\n  - id: a'), ['title']);
+    assert.deepEqual(fmChanged('spec: A\nsnaps:\n  - id: a', 'spec: A\nsnaps:\n  - id: a\n  - id: b'), ['snaps']);
+    assert.equal(normText('﻿а\r\nб\rв'), 'а\nб\nв');
+  });
+  t('правки: «почему» в md для разработки не попадает, остальные комментарии и текст — как были', () => {
+    const md = exportMd(fm.spec, '# Д\n\n## 1. Коротко\nТекст.\n<!-- почему: причина\nв две строки -->\n\n  <!-- почему: во вложении -->\nЕщё.\n', capture);
+    assert.ok(!md.includes('почему') && !md.includes('причина'), 'причина вырезана');
+    assert.ok(md.includes('Текст.\n\nЕщё.'), 'текст рядом цел');
+  });
+  t('правки: замечания — о правках, о причинах, о генерате без src; разобранное молчит', () => {
+    assert.deepEqual(editNotes({ base: true, count: 0, whys: [] }, 'S'), []);
+    assert.equal(editNotes({ base: true, count: 2, whys: [] }, 'S').length, 1);
+    assert.ok(editNotes({ base: true, count: 2, whys: [] }, 'S')[0].includes('/spec-edits S'));
+    assert.equal(editNotes({ base: true, count: 0, whys: [{}, {}] }, 'S').length, 1);
+    assert.equal(editNotes({ base: false, missing: false, whys: [], count: 0 }, 'S').length, 1);
+    assert.deepEqual(editNotes({ base: false, missing: true, whys: [], count: 0 }, 'S'), [], 'спеку ещё не собирали — напоминать нечего');
+    assert.deepEqual(editNotes({ error: 'x' }, 'S'), []);
   });
   console.log('dev-spec --selftest');
   for (const c of cases) console.log('  ok  ' + c);

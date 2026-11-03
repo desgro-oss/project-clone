@@ -319,7 +319,7 @@ whenReady(function () {
 (function () {
   const single = document.getElementById('content-single');
   if (single) {
-    single.innerHTML = '<span style="font: var(--type-body-m); color: var(--text-inactive);">— компонент не показывается (страница первого уровня)</span>';
+    single.innerHTML = '<span style="font: var(--type-body-m-reg); color: var(--text-inactive);">— компонент не показывается (страница первого уровня)</span>';
   }
   const longParent = document.getElementById('content-longparent');
   if (longParent) {
@@ -362,7 +362,7 @@ whenReady(function () {
 (function () {
   const tb = document.querySelector('#typo-table');
   if (!tb) return;
-  tb.innerHTML = '<div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.68fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">S (единственный размер)</span></span></div><div class="tc"><code>--type-body-s</code></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc" id="typo-sample-s"></div><div class="tc tc--separator"></div></div>';
+  tb.innerHTML = '<div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.68fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">S (единственный размер)</span></span></div><div class="tc"><code>--type-body-s-reg</code></div><div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc" id="typo-sample-s"></div><div class="tc tc--separator"></div></div>';
   const cell = document.getElementById('typo-sample-s');
   if (cell) {
     cell.style.maxWidth = '260px';

@@ -9,7 +9,7 @@
 }
 .lead-worklist p, .lead-worklist h3, .lead-pv-task p { margin: 0; }
 .lead-worklist__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-12); flex-wrap: wrap; }
-.lead-worklist__hint { font: var(--type-body-xs); color: var(--text-secondary); }
+.lead-worklist__hint { font: var(--type-body-xs-reg); color: var(--text-secondary); }
 .lead-worklist__items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-8); }
 .lead-worklist__item { display: flex; align-items: center; gap: var(--space-12); padding: var(--space-12); border-radius: var(--radius-m); }
 .lead-worklist__item[data-work-state="next"] { background: var(--bg-tile); box-shadow: var(--shadow-card-hover); }
@@ -29,14 +29,14 @@
 .lead-comments p, .lead-comments h3, .lead-comments h4 { margin: 0; }
 .lead-comments__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-16); flex-wrap: wrap; }
 .lead-comments__head > div { display: flex; flex-direction: column; gap: var(--space-4); }
-.lead-comments__head .ds-body-xs { color: var(--text-secondary); }
+.lead-comments__head .ds-body-xs-reg { color: var(--text-secondary); }
 .lead-comments__day, .lead-comments__feed { display: flex; flex-direction: column; gap: var(--space-16); }
-.lead-comments__date { font: var(--type-body-xs); color: var(--text-secondary); padding-bottom: var(--space-8); border-bottom: 1px solid var(--border-light); }
+.lead-comments__date { font: var(--type-body-xs-reg); color: var(--text-secondary); padding-bottom: var(--space-8); border-bottom: 1px solid var(--border-light); }
 .lead-comments__entry { display: flex; align-items: flex-start; gap: var(--space-12); }
 .lead-comments__entry > .av { flex: none; }
 .lead-comments__message { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: var(--space-4); }
 .lead-comments__meta { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-12); flex-wrap: wrap; }
-.lead-comments__meta time, .lead-comments__role { font: var(--type-body-xs); color: var(--text-secondary); }
+.lead-comments__meta time, .lead-comments__role { font: var(--type-body-xs-reg); color: var(--text-secondary); }
 .lead-comments__text { padding-top: var(--space-4); white-space: pre-wrap; overflow-wrap: anywhere; }
 .lead-comments__entry[data-comment-system] { padding: var(--space-12); border-radius: var(--radius-m); background: var(--bg-page); }
 .lead-comments__system-icon { display: flex; align-items: center; justify-content: center; flex: none; width: var(--space-24); height: var(--space-24); color: var(--tertiary-dark); }
@@ -56,7 +56,7 @@
 .lead-fact > .tile__body { display: flex; flex-direction: column; gap: var(--space-8); }
 .lead-fact p { margin: 0; }
 .lead-fact__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); min-height: var(--space-24); }
-.lead-fact__label, .lead-fact__meta, .lead-fact__value .ds-body-s { color: var(--text-secondary); }
+.lead-fact__label, .lead-fact__meta, .lead-fact__value .ds-body-s-reg { color: var(--text-secondary); }
 .lead-fact__value { display: flex; align-items: baseline; gap: var(--space-6); }
 .lead-fact__chips { display: flex; flex-wrap: wrap; gap: var(--space-4); }
 .lead-fact__person { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-8) var(--space-16); }
@@ -66,5 +66,5 @@
 
 /* Решение пользователя 21.10.2026: у иконки клиента в шапке превью скругление
    Card (16px) вместо 28px Entity L; инициалы в аватарах превью — Regular. */
-.lead-pv-head .entity--l .entity__icon { border-radius: var(--radius-card); }
+.lead-pv-head .entity--xl .entity__icon { border-radius: var(--radius-card); }
 #lead-preview .av__text { font-weight: var(--weight-regular); }

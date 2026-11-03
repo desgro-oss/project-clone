@@ -25,8 +25,8 @@
       repeating-conic-gradient(#f2f5f5 0% 25%, #fbfcfc 0% 50%) 0 / 22px 22px; }
   .pg__stagebox { width:100%; max-width:440px; }
   .ctl { display:flex; flex-direction:column; gap:10px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
-  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .pg__code { margin-top:4px; font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* ---------- anatomy ---------- */
   .anat { display:grid; grid-template-columns: minmax(280px,1fr) minmax(240px,340px); gap:40px; align-items:center; }
@@ -34,7 +34,7 @@
   .anat__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:36px 28px; display:flex; justify-content:center; width:100%; }
   .anat__legend { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; counter-reset:a; }
   .anat__legend li { display:flex; gap:14px; align-items:flex-start; }
-  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center; }
+  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center; }
 
   /* ---------- layout-only helpers (раскладка, не токены) ---------- */
   .demo-grid { display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start; }
@@ -196,7 +196,7 @@
   <!-- TYPOGRAPHY -->
   <section class="section" data-screen-label="Typography">
     <h2>Типографика</h2>
-    <p class="desc">M — заголовок <code class="tok">--type-body-l-strong</code> (18/24, SB Sans Text), текст <code class="tok">--type-body-m</code> (16/20). L — заголовок <code class="tok">--type-h4-strong</code> (22/24, SB Sans Display), текст <code class="tok">--type-body-l</code> (18/24, SB Sans Text).</p>
+    <p class="desc">M — заголовок <code class="tok">--type-body-l-strong-smb</code> (18/24, SB Sans Text), текст <code class="tok">--type-body-m-reg</code> (16/20). L — заголовок <code class="tok">--type-h4-strong-smb</code> (22/24, SB Sans Display), текст <code class="tok">--type-body-l-reg</code> (18/24, SB Sans Text).</p>
   </section>
 
   <!-- COLORS -->
@@ -611,16 +611,16 @@ function renderIllu() { if (window.DSIllustrations) window.DSIllustrations.rende
 .es--m { gap: 20px; padding: 48px 24px; }
 .es--m .es__illu { width: 96px; height: 96px; }
 .es--m .es__body { gap: 8px; max-width: 360px; }
-.es--m .es__title { font: var(--type-body-l-strong); }
-.es--m .es__text { font: var(--type-body-m); }
+.es--m .es__title { font: var(--type-body-l-strong-smb); }
+.es--m .es__text { font: var(--type-body-m-reg); }
 .es--m .es__actions { margin-top: 4px; }
 
 /* ---------- размер L — полноэкранное состояние (404/500, отдельная страница) ---------- */
 .es--l { gap: 24px; padding: 80px 24px; }
 .es--l .es__illu { width: 160px; height: 160px; }
 .es--l .es__body { gap: 10px; max-width: 420px; }
-.es--l .es__title { font: var(--type-h4-strong); }
-.es--l .es__text { font: var(--type-body-l); }
+.es--l .es__title { font: var(--type-h4-strong-smb); }
+.es--l .es__text { font: var(--type-body-l-reg); }
 .es--l .es__actions { margin-top: 6px; }
 
 /* ---------- поверхность-карточка: своя рамка/фон, когда компонент стоит

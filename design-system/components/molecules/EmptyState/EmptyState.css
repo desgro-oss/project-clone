@@ -21,16 +21,16 @@
 .es--m { gap: 20px; padding: 48px 24px; }
 .es--m .es__illu { width: 96px; height: 96px; }
 .es--m .es__body { gap: 8px; max-width: 360px; }
-.es--m .es__title { font: var(--type-body-l-strong); }
-.es--m .es__text { font: var(--type-body-m); }
+.es--m .es__title { font: var(--type-body-l-strong-smb); }
+.es--m .es__text { font: var(--type-body-m-reg); }
 .es--m .es__actions { margin-top: 4px; }
 
 /* ---------- размер L — полноэкранное состояние (404/500, отдельная страница) ---------- */
 .es--l { gap: 24px; padding: 80px 24px; }
 .es--l .es__illu { width: 160px; height: 160px; }
 .es--l .es__body { gap: 10px; max-width: 420px; }
-.es--l .es__title { font: var(--type-h4-strong); }
-.es--l .es__text { font: var(--type-body-l); }
+.es--l .es__title { font: var(--type-h4-strong-smb); }
+.es--l .es__text { font: var(--type-body-l-reg); }
 .es--l .es__actions { margin-top: 6px; }
 
 /* ---------- поверхность-карточка: своя рамка/фон, когда компонент стоит

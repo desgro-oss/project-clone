@@ -1,0 +1,41 @@
+/* Локальный компонент AssetsTable «Активы фонда».
+   Только внутренняя раскладка и показ своих блоков по состоянию и режиму.
+   Цвета, шрифты, отступы, радиусы, тени — токены ДС; своих значений здесь нет.
+   Состояния компонентов ДС отсюда не переопределяются.
+   Высота: корень — .dtable--fill, тянется на высоту панели сплиттера (её
+   flex-колонку задаёт страница); тело скроллится внутри по обеим осям. */
+
+/* Что видно в каком состоянии. База — «данные есть» (и «заполнено частично» —
+   та же таблица, пустые значения прочерком). */
+.lc-assets-table__loading,
+.lc-assets-table__empty,
+.lc-assets-table__error { display: none; }
+
+.lc-assets-table[data-state="loading"] .lc-assets-table__data,
+.lc-assets-table[data-state="empty"] .lc-assets-table__data,
+.lc-assets-table[data-state="error"] .lc-assets-table__data { display: none; }
+
+.lc-assets-table[data-state="loading"] .lc-assets-table__loading { display: grid; }
+.lc-assets-table[data-state="error"] .lc-assets-table__error { display: block; }
+
+/* Пустое состояние — EmptyState по центру тела во всю его высоту
+   (макет «Fund assets empty»). */
+.lc-assets-table[data-state="empty"] .lc-assets-table__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+/* Ошибка — Alert в поле контента тела */
+.lc-assets-table__error { padding: var(--space-16) var(--space-20); }
+
+/* шестерёнка настройки в пустом и загружаемом состоянии не рисуются
+   (скрипт ставит hidden; правило — для переключения оси в витрине) */
+.lc-assets-table[data-state="empty"] .lc-assets-table__setup,
+.lc-assets-table[data-state="loading"] .lc-assets-table__setup,
+.lc-assets-table[data-state="error"] .lc-assets-table__setup { display: none; }
+
+/* Режим прав: в просмотре точки входа в правку не рисуются (скрипт ставит
+   hidden на «Добавить актив»; правило — для переключения оси в витрине) */
+.lc-assets-table[data-mode="view"] .lc-assets-table__add { display: none; }

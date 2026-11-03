@@ -154,12 +154,21 @@
   function leadHref(id) { return nav.href('lead', { id: id, mode: 'after' }); }
   function values(l) { return [l.id,l.clientName,l.basis.map(function (b) { return stages.basis[b.type].title + ' ' + b.sourceId; }).join('; '),l.idea,money(l.amountMln),stages.get(l.stage).title,l.reasons.join('; '),l.client.quarterPlan || '—',owner(l),date(l.createdAt),date(l.lastActivityAt),clientStatus(l).title]; }
   function clientStatus(l) { return stages.clientStatus[l.clientStatus] || stages.clientStatus.ACTIVE; }
+  /* «Мои проекты» — один набор для главной (доска и таблица) и вкладки раздела «Лиды»
+     (решение пользователя 26.10.2026): мои лиды и лиды подборки в стадиях доски —
+     рабочих и двух исходах «Передано в Pipeline», «Клиент отказался». */
+  function myProject(l) {
+    var onBoard = stages.working.some(function (s) { return s.code === l.stage; }) || l.stage === 'PIPELINE' || l.stage === 'DECLINED';
+    return onBoard && (l.picked || l.owner === '04127');
+  }
   // skipBasis — без выбранного основания: так считаются счётчики сегментов текущей вкладки.
   function filtered(skipBasis) {
     var rows = store.all().filter(function (l) {
-      if (page === 'HomeBoard') return l.picked || l.stage !== 'REVIEW' && l.stage !== 'NOT_TAKEN' && l.owner === '04127';
+      if (page === 'HomeBoard') return myProject(l);
       if (tab === 'picks') return l.picked && l.stage === 'REVIEW';
-      if (tab === 'work') return !stages.get(l.stage).final && l.stage !== 'REVIEW' && l.owner === '04127';
+      if (tab === 'work') return myProject(l);
+      // «Проекты моего деска» — в работе у сотрудников деска пользователя (деск ответственного)
+      if (tab === 'desk') return !stages.get(l.stage).final && l.stage !== 'REVIEW' && (window.IBPR.employee(l.owner) || {}).deskId === (window.IBPR.employee('04127') || {}).deskId;
       if (tab === 'archive') return stages.get(l.stage).final;
       return !stages.get(l.stage).final;
     });
@@ -182,7 +191,7 @@
   function card(l, picked) {
     var s = stages.get(l.stage), basis = l.basis[0];
     var actions = picked ? btn('Беру','take',l.id,'accent',true) + btn('Не беру','not-taken',l.id,null,true) + '<button type="button" class="btn btn--transparent btn--s" data-popover="lead-reasons" data-reasons-for="' + esc(l.id) + '"><span class="btn__label">Почему?</span></button>' : '<button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Действия с лидом" data-menu="lead-card-menu" data-menu-lead="' + esc(l.id) + '"><i data-icon="more-dots"></i></button>';
-    if (picked) return '<article class="tile tile--card" data-lead-id="'+esc(l.id)+'"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">'+esc(l.clientName)+'</h3></div><div class="tile__chiplist">'+basisChip(basis.type)+'</div></div></header><div class="tile__body"><div class="lead-toolbar__group"><span class="ds-body-s">'+money(l.amountMln)+' млн RUB</span>'+link(l.id,leadHref(l.id))+'</div><div class="lead-pick-footer">'+actions+'</div></div></article>';
+    if (picked) return '<article class="tile tile--card" data-lead-id="'+esc(l.id)+'"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">'+esc(l.clientName)+'</h3></div><div class="tile__chiplist">'+basisChip(basis.type)+'</div></div></header><div class="tile__body"><div class="lead-toolbar__group"><span class="ds-body-s-reg">'+money(l.amountMln)+' млн RUB</span>'+link(l.id,leadHref(l.id))+'</div><div class="lead-pick-footer">'+actions+'</div></div></article>';
     return '<article class="tile tile--card' + (picked ? '' : ' kbcard') + '" tabindex="0" data-lead-id="' + esc(l.id) + '"' + (picked ? '' : ' data-kb-card="' + esc(l.id) + '"') + '><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">' + esc(l.clientName) + '</h3></div><div class="tile__chiplist">' + basisChip(basis.type) + (l.client.keyClient ? chip('Ключевой клиент','orange') : '') + '</div></div>' + (!picked ? '<div class="tile__actions">' + actions + '</div>' : '') + '</header><div class="tile__body"><div class="kbcard__fields">' + [['Продукт',l.products.join(', ') || l.idea],['Объём, млн RUB',money(l.amountMln)],['Следующий шаг',l.nextStep.title],['Срок',date(l.nextStep.dueDate)]].map(function (x) { return '<div class="kbcard__field"><span class="kbcard__flabel">' + esc(x[0]) + '</span><span class="kbcard__fvalue" title="' + esc(x[1]) + '">' + esc(x[1]) + '</span></div>'; }).join('') + '</div><div class="kbcard__meta"><span class="kbcard__stat">' + days(l) + ' дн. на стадии' + (days(l)>14 ? ' · Без движения' : '') + '</span><span class="kbcard__stat">Встречи: ' + l.meetings.length + '</span></div><div class="kbcard__foot"><span class="kbcard__id">' + link(l.id,leadHref(l.id)) + '</span><span class="av av--circular av--s" title="' + esc(owner(l)) + '"><span class="av__text">' + esc((window.IBPR.employee(l.owner) || {}).initials || 'КА') + '</span></span></div>' + (picked ? '<div class="lead-pick-footer">' + actions + '</div>' : '') + (l.opportunityId ? link('Сделка ' + l.opportunityId,nav.href('opportunity',{id:l.opportunityId,source:'pipeline',mode:'after'})) : '') + '</div></article>';
   }
   function renderTable(rows) {
@@ -286,7 +295,14 @@
       return '<div class="tc' + (i === 4 ? ' tc--numbers' : parent && i === 1 ? ' tc--tree' : '') + '"' + (parent && i === 1 ? ' style="--tc-level:1"' : '') + ' data-col="c' + i + '" data-sort-value="' + esc(i === 4 ? l.amountMln : i === 9 ? l.createdAt : i === 10 ? l.lastActivityAt : v) + '">' + (parent && i === 1 ? '<span class="tc__twisty tc__twisty--leaf" aria-hidden="true"></span>' : '') + '<span class="tc__row"><span class="tc__text tc__text--truncate">' + inside + '</span></span></div>';
     }).join('') + '<div class="tc tc--separator"></div></div>';
   }
-  function updateBulk() { if (!el('lead-bulk')) return; el('lead-bulk').hidden = !selected.size; if (el('lead-bulk-divider')) el('lead-bulk-divider').hidden = !selected.size; put('lead-bulk-count','Выбрано строк: <b>' + selected.size + '</b>'); }
+  function updateBulk() {
+    if (!el('lead-bulk')) return; el('lead-bulk').hidden = !selected.size; if (el('lead-bulk-divider')) el('lead-bulk-divider').hidden = !selected.size; put('lead-bulk-count','Выбрано строк: <b>' + selected.size + '</b>');
+    /* «Взять в работу» и «Не беру» — решения по Рассмотрению: в наборах без него
+       (главная, «Мои проекты», «Проекты моего деска», «Архив») кнопок нет — запрет
+       разметкой, а не ошибкой после клика */
+    var review = page !== 'HomeBoard' && (tab === 'picks' || tab === 'all');
+    document.querySelectorAll('[data-lead-action="bulk-take"],[data-lead-action="bulk-decline"]').forEach(function (b) { b.hidden = !review; });
+  }
   // Все группировки показывают один набор проектов: рабочие стадии и исходы текущей доски.
   function boardGroups(rows) {
     var statuses = stages.working.concat([stages.get('PIPELINE'),stages.get('DECLINED')]);
@@ -352,7 +368,7 @@
     if (!scrim) {
       document.body.insertAdjacentHTML('beforeend','<div class="modal-scrim" id="lead-board-settings" hidden><div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="lead-board-settings-title"><header class="modal__head"><h2 class="modal__title" id="lead-board-settings-title">Настройка доски</h2><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button></header><div class="modal__body"><div class="rb-group" role="radiogroup" aria-labelledby="lead-board-group-title"><p class="rb-group__title" id="lead-board-group-title">Группировать проекты</p><div class="rb-group__items">' + boardGroupingOptions.map(function (option) {
         return '<label class="rb"><input type="radio" class="rb__input" name="lead-board-grouping" value="' + option.value + '"><span class="rb__box"><i class="rb__mark" data-icon="radio-button-checked"></i></span><span class="rb__content"><span class="rb__label">' + option.label + '</span></span></label>';
-      }).join('') + '</div></div><p class="ds-body-s">По деску ответственного. Если деск не указан, проект отображается в колонке «Без деска».</p><p class="ds-body-s">В группировках по клиенту и деску перенос карточек отключён. Изменить статус можно из карточки проекта.</p></div><footer class="modal__foot"><div class="modal__foot-right"><button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button><button type="button" class="btn btn--accent btn--m" data-lead-board-settings-apply><span class="btn__label">Применить</span></button></div></footer></div></div>');
+      }).join('') + '</div></div><p class="ds-body-s-reg">По деску ответственного. Если деск не указан, проект отображается в колонке «Без деска».</p><p class="ds-body-s-reg">В группировках по клиенту и деску перенос карточек отключён. Изменить статус можно из карточки проекта.</p></div><footer class="modal__foot"><div class="modal__foot-right"><button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button><button type="button" class="btn btn--accent btn--m" data-lead-board-settings-apply><span class="btn__label">Применить</span></button></div></footer></div></div>');
       scrim = el('lead-board-settings');
       scrim.querySelector('[data-lead-board-settings-apply]').addEventListener('click',function () {
         var picked = Array.from(scrim.querySelectorAll('input[name="lead-board-grouping"]')).find(function (radio) { return radio.checked; });
@@ -393,7 +409,7 @@
     /* Отложено пользователем: сводка и план квартала. Сохранено для дальнейшей проработки.
     var all = store.all(), active = all.filter(function (l) { return l.owner === '04127' && l.stage !== 'REVIEW' && !stages.get(l.stage).final; });
     var summary = [['В подборке',all.filter(function (l) { return l.picked && l.stage === 'REVIEW'; }).length,'picks'],['В работе',active.length,'work'],['Без движения более 14 дней',active.filter(function (l) { return days(l)>14; }).length,'stale']];
-    put('lead-summary',summary.map(function (x) { return '<section class="tile col-4" style="grid-column:span 4"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">' + esc(x[0]) + '</h3></div></div></header><div class="tile__body">' + fields([rof('Неделя 42', '<span class="ds-h3-strong">' + x[1] + '</span>'),rof('Действие',btn('Показать','summary-' + x[2],null,null,true))],2) + '</div></section>'; }).join(''));
+    put('lead-summary',summary.map(function (x) { return '<section class="tile col-4" style="grid-column:span 4"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">' + esc(x[0]) + '</h3></div></div></header><div class="tile__body">' + fields([rof('Неделя 42', '<span class="ds-h3-strong-smb">' + x[1] + '</span>'),rof('Действие',btn('Показать','summary-' + x[2],null,null,true))],2) + '</div></section>'; }).join(''));
     var plan = window.IBPR.clients().filter(function (c) { return c.inQuarterPlan; });
     var withLeads = plan.filter(function (c) { return active.some(function (l) { return l.clientId === c.id; }); }).length;
     var meetings = window.IBPR.meetings('MY').filter(function (m) { return m.date >= '2026-10-12' && m.date <= '2026-10-18'; }).length;
@@ -427,14 +443,14 @@
     put('lead-page-chips',chip(s.title,s.tone)+basisHtml(l));
     put('lead-page-subtitle','<span class="phead__meta">Ответственный: '+esc(owner(l))+' · Появился '+date(l.createdAt)+' · '+days(l)+' дн. на стадии</span>');
     put('lead-page-actions',btn('Путь лида','path-expand')+(!s.final ? btn('Клиент отказался','decline') : '')+btn(l.stage==='MEETING_DONE' && l.repeatNeeded && l.meetings.some(function(m){return m.statusCode==='SCHEDULED';})?'Итоги повторной встречи':s.action,'primary',l.id,'accent'));
-    put('lead-stage-track',stages.workflow.map(function (stage,i) { return '<span class="lead-stage-track__item">'+stageMark(stage,i,index)+'<span class="ds-body-s">'+esc(stage.title)+'</span></span>'; }).join(''));
+    put('lead-stage-track',stages.workflow.map(function (stage,i) { return '<span class="lead-stage-track__item">'+stageMark(stage,i,index)+'<span class="ds-body-s-reg">'+esc(stage.title)+'</span></span>'; }).join(''));
     put('lead-client-body',fields([rof('Клиент',link(l.clientName,nav.href('client',{id:l.clientId,mode:'after'})),true),rof('Холдинг',esc(l.holdingName),true),rof('ИНН',esc(l.client.inn)),rof('Приоритет',esc(l.client.quarterPlan || '—'))]));
     document.querySelector('[data-lead-basis-body]').innerHTML = renderBasis(l);
-    document.querySelector('[data-lead-stage-body]').innerHTML = fields([rof('Стадия',chip(s.title,s.tone)),rof('Дней на стадии',String(days(l))),rof('Следующий шаг',esc(l.nextStep.title),true),rof('Срок',date(l.nextStep.dueDate)),rof('Подборка',l.picked?'Неделя 42':'Все лиды')]) + '<div class="lead-pick-footer">'+btn('Почему рекомендован','reasons',l.id,null,true)+'</div>';
+    document.querySelector('[data-lead-stage-body]').innerHTML = fields([rof('Стадия',chip(s.title,s.tone)),rof('Дней на стадии',String(days(l))),rof('Следующий шаг',esc(l.nextStep.title),true),rof('Срок',date(l.nextStep.dueDate)),rof('Подборка',l.picked?'Неделя 42':'Все проекты')]) + '<div class="lead-pick-footer">'+btn('Почему рекомендован','reasons',l.id,null,true)+'</div>';
     put('lead-idea-body',fields([rof('Идея сделки',esc(l.idea||'—'),true),rof('Продукты',l.products.map(function (p) { return chip(p,'lblue'); }).join(' ') || '—',true),rof('Объём, млн RUB',money(l.amountMln)),rof('Валюта',chip('RUB','grey'))],4));
     put('lead-timing-body',fields([rof('Появился',date(l.createdAt)),rof('Последняя активность',date(l.lastActivityAt)),rof('Срок следующего шага',date(l.nextStep.dueDate),true)]));
-    put('lead-meetings-body',(l.meetings.length ? simpleTable(['Встреча','Дата','Статус','Повестка'],l.meetings.map(function (m) { return [link(m.id,nav.href('meetings',{id:m.id,mode:'after'})),date(m.date),esc(window.IBPR.lbl.meetingStatus(m.statusCode)),esc(m.agenda.map(function (x) { return x.title; }).join('; '))]; })) : empty('Встреч пока нет','Назначьте встречу из карточки лида.')) + (l.protocol ? '<p class="ds-body-s">Итоги: '+esc(l.protocol)+'</p>' : '') + (l.stage==='MEETING_DONE' ? btn('Повторная встреча','repeat',l.id) : ''));
-    put('lead-tasks-body',simpleTable(['Задача клиента','Статус'],l.tasks.map(function (t) { return [link(t.title||t.name||String(t.id),nav.href('tasks',{id:t.id,mode:'after'})),esc(window.IBPR.lbl.taskStatus(t.statusCode))]; }))+(l.comments.length ? l.comments.map(function (c) { return '<p class="ds-body-s">'+esc(typeof c === 'string' ? c : c.text)+'</p>'; }).join('') : '<p class="note note--s"><span class="note__text">Комментариев по лиду пока нет. Задачи выше показаны в контексте клиента.</span></p>'));
+    put('lead-meetings-body',(l.meetings.length ? simpleTable(['Встреча','Дата','Статус','Повестка'],l.meetings.map(function (m) { return [link(m.id,nav.href('meetings',{id:m.id,mode:'after'})),date(m.date),esc(window.IBPR.lbl.meetingStatus(m.statusCode)),esc(m.agenda.map(function (x) { return x.title; }).join('; '))]; })) : empty('Встреч пока нет','Назначьте встречу из карточки лида.')) + (l.protocol ? '<p class="ds-body-s-reg">Итоги: '+esc(l.protocol)+'</p>' : '') + (l.stage==='MEETING_DONE' ? btn('Повторная встреча','repeat',l.id) : ''));
+    put('lead-tasks-body',simpleTable(['Задача клиента','Статус'],l.tasks.map(function (t) { return [link(t.title||t.name||String(t.id),nav.href('tasks',{id:t.id,mode:'after'})),esc(window.IBPR.lbl.taskStatus(t.statusCode))]; }))+(l.comments.length ? l.comments.map(function (c) { return '<p class="ds-body-s-reg">'+esc(typeof c === 'string' ? c : c.text)+'</p>'; }).join('') : '<p class="note note--s"><span class="note__text">Комментариев по лиду пока нет. Задачи выше показаны в контексте клиента.</span></p>'));
     var f = l.source.financials;
     put('lead-finance-body',f ? fields([rof('Общий объём, млн RUB',money(f.totalVolume)),rof('Итоговый доход, млн RUB',money(f.totalIncome)),rof('Процентный доход, млн RUB',money(f.interestIncome)),rof('Комиссионный доход, млн RUB',money(f.commissionIncome))],2) : '<p class="note note--s"><span class="note__text">В источнике нет финансовых метрик. '+link('Открыть финпоказатели клиента',nav.href('client',{id:l.clientId,tab:'ClientInfoFinancials',mode:'after'}))+'</span></p>');
     put('lead-team-body',fields([rof('Ответственный',esc(owner(l)),true),rof('Дески',esc((l.source.desks||[]).map(function (d) { return window.IBPR.lbl.desk(d.deskId); }).join('; ') || 'SMB Природные ресурсы +6'),true),rof('Связи',l.opportunityId ? link('Сделка '+l.opportunityId,nav.href('opportunity',{id:l.opportunityId,source:'pipeline',mode:'after'})) : 'Передачи в Pipeline пока нет',true)]));
@@ -457,7 +473,7 @@
     var current=stageIndex(l), check=stages.checks(l), missing=check.filter(function (c) { return !c.done && !c.optional; });
     var pathStages=stages.workflow.filter(function (s) { return !s.final; });
     document.querySelector('[data-path-label]').textContent='Путь лида · '+Math.min(current+1,pathStages.length)+' из '+pathStages.length+' · '+stages.get(l.stage).title+' · '+missing.length+' осталось';
-    document.querySelector('[data-path-body]').innerHTML=pathStages.map(function (s,i) { return '<div class="lc-lead-path__step">'+stageMark(s,i,current)+'<div><div class="ds-body-s-strong">'+esc(s.title)+'</div>'+(i===current ? '<p class="ds-body-s">'+esc(s.goal)+'</p>'+check.map(function (c) { return '<p class="ds-body-s">'+(c.done?'✓ ':'○ ')+esc(c.title)+' '+(!c.done?btn('Заполнить',c.action,l.id,'transparent',true):'')+'</p>'; }).join('') : '')+'</div></div>'; }).join('');
+    document.querySelector('[data-path-body]').innerHTML=pathStages.map(function (s,i) { return '<div class="lc-lead-path__step">'+stageMark(s,i,current)+'<div><div class="ds-body-s-strong-smb">'+esc(s.title)+'</div>'+(i===current ? '<p class="ds-body-s-reg">'+esc(s.goal)+'</p>'+check.map(function (c) { return '<p class="ds-body-s-reg">'+(c.done?'✓ ':'○ ')+esc(c.title)+' '+(!c.done?btn('Заполнить',c.action,l.id,'transparent',true):'')+'</p>'; }).join('') : '')+'</div></div>'; }).join('');
     var button=document.querySelector('[data-path-next]'), next=stages.next(l);
     button.disabled=stages.get(l.stage).final || missing.length>0 || !next;
     button.querySelector('.btn__label').textContent=next?'К «'+stages.get(next).title+'»':'Работа завершена';
@@ -483,11 +499,14 @@
     if (c.didGrowthCompany) chips.push(T.chip('Компания роста ДИД', { icon: 'trend-up' }));
     if (c.topClient) chips.push(T.chip('Топ клиент', { icon: 'star' }));
     if (c.keyClient) chips.push(T.chip('Ключевой клиент'));
-    return '<a class="entity entity--l entity--interactive" href="' + esc(nav.href('client', { id: l.clientId, mode: 'after' })) + '" aria-label="Карточка клиента ' + esc(l.clientName) + '">'
+    /* Интерактивная Entity — в .entity-list и в одиночку: штатный контейнер ДС для
+       строк с подложкой hover, выносимой наружу на 8/10px; поля под выноску даёт
+       родитель — шапка шторки (Entity, Б33). */
+    return '<div class="entity-list"><a class="entity entity--xl entity--interactive" href="' + esc(nav.href('client', { id: l.clientId, mode: 'after' })) + '" aria-label="Карточка клиента ' + esc(l.clientName) + '">'
       + '<div class="entity__lead"><span class="entity__icon lead-pv-client-icon" aria-hidden="true"><i data-icon="factory-01"></i></span></div>'
       + '<div class="entity__main"><div class="entity__titles"><p class="entity__header">' + esc(l.holdingName) + '</p>'
       + '<div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-tooltip="' + esc(l.clientName) + '" data-tooltip-truncated="only">' + esc(l.clientName) + '</span></div></div>'
-      + '<div class="entity__chips">' + chips.join('') + '</div></div></a>';
+      + '<div class="entity__chips">' + chips.join('') + '</div></div></a></div>';
   }
   // Команда клиента в банке — менеджеры без фото (инициалы), как получатели доступа в AI Pitcher v02.
   function pvTeam(l) {
@@ -537,7 +556,7 @@
   function pvPath(l) {
     var s = stages.get(l.stage), checks = stages.checks(l);
     var step = nextStep(l);
-    if (!checks.length) return '<section class="lead-worklist" aria-label="Roadmap"><h3 class="ds-body-m-strong">Roadmap</h3><p class="ds-body-s">' + esc(s.goal) + '</p>' + btn(step.label, step.action, l.id, 'outline', true) + '</section>';
+    if (!checks.length) return '<section class="lead-worklist" aria-label="Roadmap"><h3 class="ds-body-m-strong-smb">Roadmap</h3><p class="ds-body-s-reg">' + esc(s.goal) + '</p>' + btn(step.label, step.action, l.id, 'outline', true) + '</section>';
     var required = checks.filter(function (c) { return !c.optional; });
     var done = required.filter(function (c) { return c.done; }).length;
     var pending = checks.filter(function (c) { return !c.done && !c.optional; });
@@ -547,14 +566,14 @@
     function item(c) {
       var state = c.done ? 'done' : c === next ? 'next' : 'pending';
       return '<li class="lead-worklist__item" data-work-state="' + state + '"><span class="lead-worklist__mark" aria-hidden="true"><i data-icon="' + (c.done ? 'check' : c === next ? 'arrow-right' : 'circle') + '"></i></span>'
-        + '<div class="lead-worklist__copy"><span class="ds-body-s-strong">' + esc(c.title) + '</span><span class="lead-worklist__hint">' + (c.done ? 'Выполнено' : c.optional ? 'Необязательно' : c === next ? 'Следующее действие' : 'Осталось сделать') + '</span></div>'
+        + '<div class="lead-worklist__copy"><span class="ds-body-s-strong-smb">' + esc(c.title) + '</span><span class="lead-worklist__hint">' + (c.done ? 'Выполнено' : c.optional ? 'Необязательно' : c === next ? 'Следующее действие' : 'Осталось сделать') + '</span></div>'
         + (!c.done && !s.final ? btn(c.action === 'basis' ? 'Открыть' : 'Заполнить', c.action, l.id, c === next ? 'accent' : 'transparent', true) : '') + '</li>';
     }
     var meter = required.length ? '<div class="pbar pbar--accent" role="progressbar" aria-label="Готовность текущей стадии" aria-valuemin="0" aria-valuemax="' + required.length + '" aria-valuenow="' + done + '" aria-valuetext="Выполнено ' + done + ' из ' + required.length + '"><div class="pbar__head"><span class="pbar__label">Готовность стадии</span><span class="pbar__value">' + done + ' из ' + required.length + '</span></div><div class="pbar__track"><div class="pbar__fill" style="width:' + Math.round(done / required.length * 100) + '%"></div></div></div>' : '';
     var body = pending.concat(optional).length ? '<ul class="lead-worklist__items">' + pending.concat(optional).map(item).join('') + '</ul>' : '';
     if (completed.length) body += '<div class="lead-worklist__completed"><p class="lead-worklist__hint">Сделано · ' + completed.length + '</p><ul class="lead-worklist__items">' + completed.map(item).join('') + '</ul></div>';
-    if (required.length && !pending.length && !s.final) body += '<div class="lead-worklist__ready"><span class="ds-body-s">Всё готово к следующему шагу</span>' + btn(step.label, step.action, l.id, 'accent', true) + '</div>';
-    return '<section class="lead-worklist" aria-label="Roadmap"><div class="lead-worklist__head"><h3 class="ds-body-m-strong">Roadmap</h3><span class="lead-worklist__hint">Текущая стадия</span></div><p class="ds-body-s">' + esc(s.goal) + '</p>' + meter + body + '</section>';
+    if (required.length && !pending.length && !s.final) body += '<div class="lead-worklist__ready"><span class="ds-body-s-reg">Всё готово к следующему шагу</span>' + btn(step.label, step.action, l.id, 'accent', true) + '</div>';
+    return '<section class="lead-worklist" aria-label="Roadmap"><div class="lead-worklist__head"><h3 class="ds-body-m-strong-smb">Roadmap</h3><span class="lead-worklist__hint">Текущая стадия</span></div><p class="ds-body-s-reg">' + esc(s.goal) + '</p>' + meter + body + '</section>';
   }
   // Связь только по объекту, без подмешивания остальных задач клиента.
   function pvRelatedTasks(l) {
@@ -574,28 +593,28 @@
      дашборд с блоками-карточками): стадия и срок · объём и продукты · ответственный и даты. */
   function pvFacts(l, s) {
     function card(cls, body) { return '<section class="tile tile--inset tile--headless lead-fact' + cls + '"><div class="tile__body">' + body + '</div></section>'; }
-    function top(label, addon) { return '<div class="lead-fact__top"><span class="ds-body-xs lead-fact__label">' + esc(label) + '</span>' + (addon || '') + '</div>'; }
+    function top(label, addon) { return '<div class="lead-fact__top"><span class="ds-body-xs-reg lead-fact__label">' + esc(label) + '</span>' + (addon || '') + '</div>'; }
     var who = owner(l), initials = who.split(/\s+/).slice(0, 2).map(function (w) { return w.charAt(0); }).join('');
     var d = days(l);
     return '<div class="lead-facts">'
       + card('', top('Стадия', chip(s.title, s.tone))
-        + '<div class="lead-fact__value"><span class="ds-h3-strong">' + d + '</span><span class="ds-body-s">дн. на стадии</span></div>'
-        + '<p class="ds-body-xs lead-fact__meta">Срок шага · ' + date(l.nextStep.dueDate) + '</p>')
+        + '<div class="lead-fact__value"><span class="ds-h3-strong-smb">' + d + '</span><span class="ds-body-s-reg">дн. на стадии</span></div>'
+        + '<p class="ds-body-xs-reg lead-fact__meta">Срок шага · ' + date(l.nextStep.dueDate) + '</p>')
       + card('', top('Объём')
-        + '<div class="lead-fact__value"><span class="ds-h3-strong">' + money(l.amountMln) + '</span><span class="ds-body-s">млн RUB</span></div>'
-        + (l.products.length ? '<div class="lead-fact__chips">' + l.products.map(function (p) { return chip(p, 'lblue'); }).join('') + '</div>' : '<p class="ds-body-xs lead-fact__meta">Продукт не выбран</p>'))
-      + card(' lead-fact--wide', top('Ответственный', '<span class="ds-body-xs lead-fact__label">' + (l.picked ? 'Подборка · Неделя 42' : 'Все лиды') + '</span>')
-        + '<div class="lead-fact__person"><span class="lead-fact__who"><span class="av av--circular av--m" aria-hidden="true"><span class="av__text">' + esc(initials) + '</span></span><span class="ds-body-m-strong">' + esc(who) + '</span></span>'
-        + '<span class="lead-fact__dates"><span class="ds-body-xs"><span class="lead-fact__label">Появился</span> ' + date(l.createdAt) + '</span><span class="ds-body-xs"><span class="lead-fact__label">Активность</span> ' + date(l.lastActivityAt) + '</span></span></div>')
+        + '<div class="lead-fact__value"><span class="ds-h3-strong-smb">' + money(l.amountMln) + '</span><span class="ds-body-s-reg">млн RUB</span></div>'
+        + (l.products.length ? '<div class="lead-fact__chips">' + l.products.map(function (p) { return chip(p, 'lblue'); }).join('') + '</div>' : '<p class="ds-body-xs-reg lead-fact__meta">Продукт не выбран</p>'))
+      + card(' lead-fact--wide', top('Ответственный', '<span class="ds-body-xs-reg lead-fact__label">' + (l.picked ? 'Подборка · Неделя 42' : 'Все проекты') + '</span>')
+        + '<div class="lead-fact__person"><span class="lead-fact__who"><span class="av av--circular av--m" aria-hidden="true"><span class="av__text">' + esc(initials) + '</span></span><span class="ds-body-m-strong-smb">' + esc(who) + '</span></span>'
+        + '<span class="lead-fact__dates"><span class="ds-body-xs-reg"><span class="lead-fact__label">Появился</span> ' + date(l.createdAt) + '</span><span class="ds-body-xs-reg"><span class="lead-fact__label">Активность</span> ' + date(l.lastActivityAt) + '</span></span></div>')
       + '</div>';
   }
   function pvTasks(items, l) {
     if (!items.length) return empty('Связанных задач пока нет', 'Здесь появятся задачи, связанные с этим лидом или его основанием.');
     return '<div class="lead-pv-task-list">' + items.map(function (t) {
       var o = t.linkedObject || {}, employee = window.IBPR.employee(t.executorId) || {};
-      return '<article class="lead-pv-task"><div class="ds-body-s-strong">' + link(t.title || t.name || String(t.id), nav.href('tasks', { id: t.id, mode: 'after' })) + '</div>'
-        + '<div class="lead-pv-task__meta"><span class="ds-body-xs">№ ' + esc(t.id) + '</span><span class="ds-body-xs">До ' + date(t.dueDate) + '</span><span class="ds-body-xs">' + esc(window.IBPR.lbl.taskStatus(t.statusCode)) + '</span></div>'
-        + '<p class="ds-body-xs">' + esc(employee.fullName || 'Исполнитель не указан') + '</p><p class="lead-worklist__hint">' + esc(o.number ? 'Основание: ' + (o.name || o.number) : 'Лид: ' + l.id) + '</p></article>';
+      return '<article class="lead-pv-task"><div class="ds-body-s-strong-smb">' + link(t.title || t.name || String(t.id), nav.href('tasks', { id: t.id, mode: 'after' })) + '</div>'
+        + '<div class="lead-pv-task__meta"><span class="ds-body-xs-reg">№ ' + esc(t.id) + '</span><span class="ds-body-xs-reg">До ' + date(t.dueDate) + '</span><span class="ds-body-xs-reg">' + esc(window.IBPR.lbl.taskStatus(t.statusCode)) + '</span></div>'
+        + '<p class="ds-body-xs-reg">' + esc(employee.fullName || 'Исполнитель не указан') + '</p><p class="lead-worklist__hint">' + esc(o.number ? 'Основание: ' + (o.name || o.number) : 'Лид: ' + l.id) + '</p></article>';
     }).join('') + '</div>';
   }
   function pvComments(l) {
@@ -607,7 +626,7 @@
       if (!group) { group = { day: day, entries: [] }; groups.push(group); }
       group.entries.push(c);
     });
-    var header = '<div class="lead-comments__head"><div><h3 class="ds-body-m-strong">Обсуждение лида</h3><p class="ds-body-xs">Договорённости, вопросы и контекст команды</p></div>' + tbtn('Добавить', 'comment', l.id, 'add') + '</div>';
+    var header = '<div class="lead-comments__head"><div><h3 class="ds-body-m-strong-smb">Обсуждение лида</h3><p class="ds-body-xs-reg">Договорённости, вопросы и контекст команды</p></div>' + tbtn('Добавить', 'comment', l.id, 'add') + '</div>';
     if (!entries.length) return header + empty('Комментариев пока нет', 'Добавьте вопрос или договорённость для команды.');
     return '<div class="lead-comments">' + header + groups.map(function (g) {
       return '<section class="lead-comments__day"><h4 class="lead-comments__date">' + esc(g.day) + '</h4><div class="lead-comments__feed">' + g.entries.map(function (c) {
@@ -615,9 +634,9 @@
         var name = c.system ? 'Система' : author ? author.fullName : 'Автор не указан';
         var time = c.createdAt ? new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Moscow', hour: '2-digit', minute: '2-digit' }).format(new Date(c.createdAt)) : '';
         var avatar = c.system ? '<span class="lead-comments__system-icon" aria-hidden="true"><i data-icon="file-basic"></i></span>' : '<span class="av av--circular av--s" aria-hidden="true"><span class="av__text">' + esc(author ? author.initials : '—') + '</span></span>';
-        return '<article class="lead-comments__entry"' + (c.system ? ' data-comment-system' : '') + '>' + avatar + '<div class="lead-comments__message"><header class="lead-comments__meta"><span class="ds-body-s-strong">' + esc(name) + '</span>'
-          + (time ? '<time class="ds-body-xs" datetime="' + esc(c.createdAt) + '">' + time + '</time>' : '') + '</header>'
-          + (author ? '<p class="lead-comments__role">' + esc(author.position) + '</p>' : '') + '<p class="lead-comments__text ds-body-s">' + esc(c.text) + '</p></div></article>';
+        return '<article class="lead-comments__entry"' + (c.system ? ' data-comment-system' : '') + '>' + avatar + '<div class="lead-comments__message"><header class="lead-comments__meta"><span class="ds-body-s-strong-smb">' + esc(name) + '</span>'
+          + (time ? '<time class="ds-body-xs-reg" datetime="' + esc(c.createdAt) + '">' + time + '</time>' : '') + '</header>'
+          + (author ? '<p class="lead-comments__role">' + esc(author.position) + '</p>' : '') + '<p class="lead-comments__text ds-body-s-reg">' + esc(c.text) + '</p></div></article>';
       }).join('') + '</div></section>';
     }).join('') + '</div>';
   }
@@ -627,7 +646,7 @@
     var basis = dsec('', dgrid(basisRows(l).map(function (r) { return drof(r[0], r[1], r[2]); })));
     var meetings = dsec('', l.meetings.length ? simpleTable(['Встреча', 'Дата', 'Статус'], l.meetings.map(function (m) {
       return [link(m.id, nav.href('meetings', { id: m.id, mode: 'after' })), date(m.date), esc(window.IBPR.lbl.meetingStatus(m.statusCode))];
-    })) : empty('Встреч пока нет', 'Назначьте встречу из тулбара панели.')) + (l.protocol ? dsec('Итоги', '<p class="ds-body-s">' + esc(l.protocol) + '</p>') : '');
+    })) : empty('Встреч пока нет', 'Назначьте встречу из тулбара панели.')) + (l.protocol ? dsec('Итоги', '<p class="ds-body-s-reg">' + esc(l.protocol) + '</p>') : '');
     var history = dsec('', l.history.length ? simpleTable(['Дата', 'Событие'], l.history.map(function (h) { return [date(h.date), esc(h.title)]; }))
       : empty('Нет событий', 'История появится после первого решения по лиду.'));
     var tasks = pvRelatedTasks(l);
@@ -688,7 +707,7 @@
   }
   function transfer(id) {
     var l=store.get(id),missing=store.missing(id,'PIPELINE'); formState={action:'transfer',id:id};transferLeadId=id;
-    put('lead-transfer-body','<p class="ds-body-m">'+esc(l.id+' · '+l.clientName)+'</p><p class="note note--s"><span class="note__text">Будет создана сделка в Pipeline со стадией «Проработка идеи сделки».</span></p>'+stages.checks(Object.assign({},l,{stage:'DOCUMENTS'})).map(function(c){return '<p class="ds-body-s">'+(c.done?'✓ ':'○ ')+esc(c.title)+(c.done?'':' '+btn('Заполнить',c.action,id,'transparent',true))+'</p>';}).join(''));
+    put('lead-transfer-body','<p class="ds-body-m-reg">'+esc(l.id+' · '+l.clientName)+'</p><p class="note note--s"><span class="note__text">Будет создана сделка в Pipeline со стадией «Проработка идеи сделки».</span></p>'+stages.checks(Object.assign({},l,{stage:'DOCUMENTS'})).map(function(c){return '<p class="ds-body-s-reg">'+(c.done?'✓ ':'○ ')+esc(c.title)+(c.done?'':' '+btn('Заполнить',c.action,id,'transparent',true))+'</p>';}).join(''));
     el('lead-transfer-confirm').disabled=missing.length>0;
     bind(el('lead-transfer-modal')); if(window.DSModal) window.DSModal.open(el('lead-transfer-modal'),{nested:!!window.DSModal.current()});
   }
@@ -717,7 +736,7 @@
     if(action==='revive') { var shot=store.snapshot(); store.revive(id);notify('Лид возвращён в работу',shot);return; }
     if(action==='open-deal') { window.location.href=nav.href('opportunity',{id:l.opportunityId,source:'pipeline',mode:'after'});return; }
     if(action==='basis') { store.markBasis(id); window.location.href=store.basisHref(l.basis[0]);return; }
-    if(action==='reasons') { put('lead-reasons-body',l.reasons.map(function(r){return '<p class="ds-body-s">'+esc(r)+'</p>';}).join('')); return; }
+    if(action==='reasons') { put('lead-reasons-body',l.reasons.map(function(r){return '<p class="ds-body-s-reg">'+esc(r)+'</p>';}).join('')); return; }
     if(action==='path-expand'||action==='path-collapse'||action==='path-hide') { pathState(action==='path-expand'?'expanded':action==='path-hide'?'hidden':'collapsed');if(action==='path-expand') el('lead-path').querySelector('[data-lead-action="path-collapse"]').focus();else if(action==='path-collapse')el('lead-path').querySelector('[data-lead-action="path-expand"]').focus();else document.querySelector('#lead-page-actions [data-lead-action="path-expand"]').focus();return; }
     if(action==='filter-clear') { el('lead-filter').querySelectorAll('input').forEach(function(n){n.value='';n.dataset.value='';n.checked=false;});if(window.DSInput)window.DSInput.syncAll(el('lead-filter'));return; }
     if(action==='filter-apply') { filters={};['client','holding','owner','stage','product','industry','bank','min','max','created'].forEach(function(k){var value=fieldValue('filter-'+k);if(value)filters[k]=value;});if(el('lead-filter').querySelector('[name="filter-plan"]').checked)filters.plan=true;pageNumber=1;selected.clear();window.DSModal.closeTop();render();return; }
@@ -765,7 +784,7 @@
     if (transferLeadId && el('lead-transfer-modal') && !el('lead-transfer-modal').hidden) {
       var transferLead=store.get(transferLeadId);
       el('lead-transfer-confirm').disabled=store.missing(transferLeadId,'PIPELINE').length>0;
-      put('lead-transfer-body','<p class="ds-body-m">'+esc(transferLead.id+' · '+transferLead.clientName)+'</p>'+stages.checks(Object.assign({},transferLead,{stage:'DOCUMENTS'})).map(function(c){return '<p class="ds-body-s">'+(c.done?'✓ ':'○ ')+esc(c.title)+(c.done?'':' '+btn('Заполнить',c.action,transferLeadId,'transparent',true))+'</p>';}).join(''));
+      put('lead-transfer-body','<p class="ds-body-m-reg">'+esc(transferLead.id+' · '+transferLead.clientName)+'</p>'+stages.checks(Object.assign({},transferLead,{stage:'DOCUMENTS'})).map(function(c){return '<p class="ds-body-s-reg">'+(c.done?'✓ ':'○ ')+esc(c.title)+(c.done?'':' '+btn('Заполнить',c.action,transferLeadId,'transparent',true))+'</p>';}).join(''));
     }
     // Открытая панель просмотра перерисовывается вместе с данными: действие из её тулбара сразу видно в ней.
     if(previewId && el('lead-preview') && !el('lead-preview').hidden){var pl=store.get(previewId);if(pl)renderPreview(pl);}
@@ -818,7 +837,7 @@
     el('lead-action-form').addEventListener('submit',submit);
     document.addEventListener('click',function(e){
       var action=e.target.closest('[data-lead-action]'),row=e.target.closest('[data-lead-row]'),reason=e.target.closest('[data-reasons-for]');
-      if(reason){put('lead-reasons-body',store.get(reason.dataset.reasonsFor).reasons.map(function(r){return '<p class="ds-body-s">'+esc(r)+'</p>';}).join(''));}
+      if(reason){put('lead-reasons-body',store.get(reason.dataset.reasonsFor).reasons.map(function(r){return '<p class="ds-body-s-reg">'+esc(r)+'</p>';}).join(''));}
       if(action){e.preventDefault();e.stopPropagation();try{act(action.dataset.leadAction,action.dataset.leadId);}catch(err){error(err.message);}return;}
       if(row&&!e.target.closest('a,button,input,label'))preview(row.dataset.leadRow);
     });

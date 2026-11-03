@@ -11,8 +11,8 @@ body.ds-has-toc { padding-right: var(--ds-toc-w); }
 
 /* ---------- reference tables (Цвета / Типографика) — единый вид ---------- */
 .ref-table--cols { width:100%; border-collapse:collapse; }
-.ref-table--cols th, .ref-table--cols td { text-align:left; padding:12px 16px; border-bottom:1px solid var(--border-light); font:var(--type-body-s); color:var(--text-primary); vertical-align:middle; }
-.ref-table--cols th { font:var(--type-body-xs); color:var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; }
+.ref-table--cols th, .ref-table--cols td { text-align:left; padding:12px 16px; border-bottom:1px solid var(--border-light); font:var(--type-body-s-reg); color:var(--text-primary); vertical-align:middle; }
+.ref-table--cols th { font:var(--type-body-xs-reg); color:var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; }
 .ref-table--cols tr:last-child td { border-bottom:none; }
 .ref-table--cols code.tok { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; color:var(--primary); background:none; padding:0; }
 
@@ -56,7 +56,7 @@ body.ds-has-toc { padding-right: var(--ds-toc-w); }
   display: block;
   padding: 6px 10px 6px 13px;
   border-left: 2px solid var(--border-light);
-  font: var(--type-body-s);
+  font: var(--type-body-s-reg);
   color: var(--text-secondary);
   text-decoration: none;
   transition: color .12s ease, border-color .12s ease, background-color .12s ease;

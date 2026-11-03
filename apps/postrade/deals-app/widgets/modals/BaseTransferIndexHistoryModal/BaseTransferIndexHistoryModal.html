@@ -1,0 +1,48 @@
+<!-- Связанный артефакт страницы «Единая трансфертная ставка»: окно «История изменения базового индекса».
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать в конце body.
+
+     Окно-справка: одна таблица (Table ДС) с колонками «Дата изменения», «Базовый индекс (БИ)»,
+     «Значение, %» и кнопка «Закрыть» в подвале; правки в окне нет, поэтому оно доступно и в режиме
+     просмотра. Строки, сортировку и пагинацию ведёт BaseTransferIndexHistoryModal.js
+     (PostModalBaseTransferIndexHistory): на открытии читает LoanAgreementStore.baseIndexHistory().
+
+     В разметке — пустое состояние: шапка таблицы и «Нет данных» под ней (макет, верхнее окно).
+     Строки и пагинацию скрипт дописывает на открытии; для пустого списка пагинации нет.
+     Окно закрывают крестик, «Закрыть», Esc и клик мимо окна (полей ввода в нём нет).
+
+     Ширина modal--w5 — 747px, как окно на макете. Своего CSS у окна нет. -->
+
+<div class="modal-scrim" id="bih-scrim" data-state="empty" hidden>
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="bih-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="bih-title">История изменения базового индекса</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl" data-table>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(120px,1fr) minmax(120px,1fr) minmax(120px,1fr) 8px;">
+              <div class="th th--separator"></div>
+              <div class="th" data-col="changeDate" aria-sort="none"><span class="th__label">Дата изменения</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="changeDate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th" data-col="baseIndexCode" aria-sort="none"><span class="th__label">Базовый индекс (БИ)</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="baseIndexCode" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right" data-col="valuePercent" aria-sort="none"><span class="th__label">Значение, %</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="valuePercent" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+          </div>
+          <!-- данных нет: скрипт показывает блок, когда в списке нет строк, и прячет, когда они есть -->
+          <div class="dtable__empty" data-bih-empty><p class="dtable__empty-title">Нет данных</p></div>
+        </div>
+        <!-- пагинация: колонтитул строит DSPagination.footer, когда строки есть -->
+        <div class="dtable__footer" data-bih-footer hidden></div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

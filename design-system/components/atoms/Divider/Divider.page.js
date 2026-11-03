@@ -67,7 +67,7 @@ function classListFor(o){
 /* ---------- generic helpers for a sample “content row” ---------- */
 function textBlock(t, dim){
   const p = document.createElement('p');
-  p.style.cssText = 'margin:0; font:var(--type-body-m); color:var(' + (dim?'--text-inactive':'--text-primary') + ');';
+  p.style.cssText = 'margin:0; font:var(--type-body-m-reg); color:var(' + (dim?'--text-inactive':'--text-primary') + ');';
   p.textContent = t;
   return p;
 }
@@ -415,7 +415,7 @@ function textBlock(t, dim){
  * ===================================================================== */
 (function(){
   const rows = [
-    ['Подпись разделителя', 'Ещё 12 сделок', '--type-body-s', 'SB Sans Text', '14 / 16', 'dvd-text__label'],
+    ['Подпись разделителя', 'Ещё 12 сделок', '--type-body-s-reg', 'SB Sans Text', '14 / 16', 'dvd-text__label'],
   ];
   const tb = document.querySelector('#typo-table tbody');
   if(!tb) return;

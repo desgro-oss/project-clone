@@ -69,7 +69,7 @@ Modal w5 «Сведения о проекте»
 | Tooltip | ДС — `design-system/components/molecules/Tooltip/Tooltip.md` | тексты пояснений, `data-tooltip-multiline` |
 | Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Сохранить» — `btn--accent btn--m` |
 
-Подзаголовки секций — своя разметка на токенах (`--type-h6-strong`), как
+Подзаголовки секций — своя разметка на токенах (`--type-h6-strong-smb`), как
 подзаголовок окна «Документы по сделке».
 
 ## Поля (Fields)

@@ -165,7 +165,7 @@
       var si = stepInfo(f.step);
       chips += chip('step', null, si.ok ? t('comments.stateChip', { state: si.name, title: si.title }) : si.name, t('comments.removeState'));
     }
-    if (!chips) chips = '<span class="ds-body-xs pp-muted">' + esc(t('comments.whole')) + '</span>';
+    if (!chips) chips = '<span class="ds-body-xs-reg pp-muted">' + esc(t('comments.whole')) + '</span>';
     return '<section class="pp-new" aria-label="' + esc(t('comments.new')) + '">'
       + '<div class="inp inp--m inp--multiline inp--fullwidth"><label class="ds-label" for="pp-new-text"><span class="ds-label__text">' + esc(t('comments.new')) + '</span></label>'
       + '<div class="inp__field"><textarea class="inp__control" id="pp-new-text" rows="3" placeholder="' + esc(t('comments.placeholder')) + '" aria-describedby="pp-new-hint">' + esc(f.text) + '</textarea></div></div>'
@@ -186,8 +186,8 @@
       else { gone = true; if (!c.page) parts.push(si.name); }
     }
     var href = c.page ? new URL(c.page, ctx.pagesUrl).href : '#';
-    return '<p class="pp-comment__ctx ds-body-s"><a class="link link--accent link--s" href="' + esc(href) + '" data-pp-c="goto" data-pp-key="' + esc(keyOf(c)) + '">' + esc(parts.join(' · ')) + '</a>'
-      + (gone ? '<span class="pp-muted ds-body-xs"> · ' + esc(t('comments.stateGone')) + '</span>' : '') + '</p>';
+    return '<p class="pp-comment__ctx ds-body-s-reg"><a class="link link--accent link--s" href="' + esc(href) + '" data-pp-c="goto" data-pp-key="' + esc(keyOf(c)) + '">' + esc(parts.join(' · ')) + '</a>'
+      + (gone ? '<span class="pp-muted ds-body-xs-reg"> · ' + esc(t('comments.stateGone')) + '</span>' : '') + '</p>';
   }
 
   function locked(btn) {
@@ -218,18 +218,18 @@
         + '<div class="inp__field"><textarea class="inp__control" id="pp-edit-text" rows="4">' + esc(editing.text) + '</textarea></div></div>'
         + '<div class="pp-row"><button type="button" class="btn btn--accent btn--s" data-pp-c="save" data-pp-key="' + esc(key) + '"' + (saving ? ' disabled' : '') + '><span class="btn__label">' + esc(t('btn.save')) + '</span></button>'
         + '<button type="button" class="btn btn--transparent btn--s" data-pp-c="cancel"><span class="btn__label">' + esc(t('btn.cancel')) + '</span></button></div>'
-      : '<div class="pp-md ds-body-s">' + md(c.body) + '</div>';
+      : '<div class="pp-md ds-body-s-reg">' + md(c.body) + '</div>';
     return '<li class="pp-comment' + (c.draft ? ' pp-comment--draft' : '') + '">'
       + '<div class="pp-comment__head">'
-      + '<span class="ds-body-s-strong">' + esc(what) + '</span>'
+      + '<span class="ds-body-s-strong-smb">' + esc(what) + '</span>'
       + '<span class="chip chip--s chip--rounded' + tone + '"><span class="chip__label">' + esc(t(STATUS_LABEL[c.status])) + '</span></span>'
-      + (who ? '<span class="ds-body-xs pp-muted pp-comment__who">' + esc(who) + '</span>' : '')
+      + (who ? '<span class="ds-body-xs-reg pp-muted pp-comment__who">' + esc(who) + '</span>' : '')
       + '<span class="pp-comment__acts">' + (write ? edit : locked(edit)) + menu + '</span>'
       + '</div>'
       + contextLink(c)
       + body
-      + (c.resolution ? '<p class="pp-comment__res ds-body-s"><i data-icon="check-circle"></i><span>' + esc(t('comments.resolution', { text: c.resolution })) + '</span></p>' : '')
-      + (c.draft ? '<p class="pp-comment__draft ds-body-xs"><span>' + esc(t('comments.draftNote')) + '</span>'
+      + (c.resolution ? '<p class="pp-comment__res ds-body-s-reg"><i data-icon="check-circle"></i><span>' + esc(t('comments.resolution', { text: c.resolution })) + '</span></p>' : '')
+      + (c.draft ? '<p class="pp-comment__draft ds-body-xs-reg"><span>' + esc(t('comments.draftNote')) + '</span>'
         + '<button type="button" class="btn btn--transparent btn--xs" data-pp-c="draft-delete" data-pp-key="' + esc(key) + '"><span class="btn__label">' + esc(t('comments.deleteDraft')) + '</span></button></p>' : '')
       + '</li>';
   }
@@ -248,7 +248,7 @@
   function render(pane, c) {
     c.hideFloating();
     var d = store.data();
-    if (!d) { pane.innerHTML = '<p class="ds-body-m pp-muted">' + esc(t('flows.stub')) + '</p>'; return; }
+    if (!d) { pane.innerHTML = '<p class="ds-body-m-reg pp-muted">' + esc(t('flows.stub')) + '</p>'; return; }
     var u = store.ui();
     var filter = u.filter === 'all' ? 'all' : 'open';
     var only = !!u.onlyPage;
@@ -277,7 +277,7 @@
       html += '<div class="es es--m pp-empty"><span class="illu es__illu" data-illu="empty-check" aria-hidden="true"></span>'
         + '<div class="es__body"><p class="es__title">' + esc(t('comments.none.title')) + '</p><p class="es__text">' + esc(t('comments.none.text')) + '</p></div></div>';
     } else if (!shown.length) {
-      html += '<p class="ds-body-s pp-muted">' + esc(t(only ? 'comments.noneHere' : 'comments.noneOpen') + (filter === 'open' ? t('comments.noneOpenAll') : '')) + '</p>';
+      html += '<p class="ds-body-s-reg pp-muted">' + esc(t(only ? 'comments.noneHere' : 'comments.noneOpen') + (filter === 'open' ? t('comments.noneOpenAll') : '')) + '</p>';
     } else {
       html += '<ul class="pp-comments" aria-label="' + esc(t('comments.tab')) + '">' + shown.map(card).join('') + '</ul>';
     }

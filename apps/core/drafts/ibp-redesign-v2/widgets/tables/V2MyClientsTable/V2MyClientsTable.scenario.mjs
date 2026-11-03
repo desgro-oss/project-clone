@@ -1,0 +1,47 @@
+// Одинаковый сценарий для поиска на главной и в разделе «Клиенты».
+export default async function (page) {
+  const { document, window } = page;
+  const home = document.querySelector('[data-home-tab="clients"]');
+  if (home) await page.click('[data-home-tab="clients"]');
+  else await page.click('[data-tab-id="search"]');
+  const host = document.getElementById(home ? 'home-clients-table' : 'mc-table');
+  const table = window.IBPR_TABLE.get(host);
+  page.step('Действие перед названием клиента');
+  const columns = host.querySelectorAll('.tbl__row--head > [data-col]');
+  page.check(columns[0]?.dataset.col === 'takeClient' && columns[1]?.dataset.col === 'name', 'Первая колонка «В работу», следующая — «Клиент»');
+  page.check(!columns[0]?.querySelector('[data-sort]'), 'Действие не сортируется');
+  page.check(columns[0]?.querySelector('.th__label')?.hidden, 'В шапке нет видимого названия колонки действий');
+  page.check(columns[0]?.querySelector('.th__label')?.textContent === 'В работу', 'Название сохранено для настроек таблицы');
+  page.check(host.querySelector('.tbl__row--head')?.style.gridTemplateColumns.split(' ')[1] === '52px', 'Колонка действий имеет минимальную ширину 52px');
+  const button = host.querySelector('[data-mc-take][aria-label="Взять клиента в работу"]');
+  if (!page.check(!!button, 'Есть клиент, ещё не добавленный в «Мои клиенты»')) return;
+  const id = button.dataset.mcTake;
+  const count = window.IBPR.favoriteClients().length;
+  page.check(button.getAttribute('aria-label') === 'Взять клиента в работу', 'У кнопки доступное название');
+  page.check(button.classList.contains('ibtn--m') && !button.disabled, 'IconButton M доступна');
+  page.check(!!button.querySelector('[data-icon="folder-arrow-forward-02"] svg'), 'Иконка взятия в работу отрисована');
+  page.step('Взять клиента в работу');
+  await page.click('#' + host.id + ' [data-mc-take="' + id + '"]');
+  page.check(window.IBPR.isFavoriteClient(id), 'Клиент добавлен в список');
+  page.check(window.IBPR.favoriteClients().length === count + 1, 'Добавлен ровно один клиент');
+  const taken = host.querySelector('[data-mc-take="' + id + '"]');
+  page.check(taken && !taken.disabled && taken.classList.contains('ibtn--m'), 'Обратное действие доступно, размер M сохранён');
+  page.check(taken?.getAttribute('aria-label') === 'Отменить взятие клиента в работу', 'Подпись меняется на обратное действие');
+  page.check(!!taken?.querySelector('[data-icon="folder-close-x-02"] svg'), 'Иконка отмены отрисована');
+  page.step('Клиент в «Моих клиентах»');
+  table.setTab('my');
+  page.check(table.rows().some(c => c.id === id), 'Клиент входит в выборку «Мои клиенты»');
+  page.check(!host.querySelector('[data-mc-take]'), 'На вкладке «Мои клиенты» действия поиска нет');
+  table.setTab('search');
+  page.check(!!host.querySelector('[data-mc-take="' + id + '"] [data-icon="folder-close-x-02"]'), 'Состояние сохранено после переключения вкладок');
+  page.step('Отменить взятие в работу');
+  await page.click('#' + host.id + ' [data-mc-take="' + id + '"]');
+  page.check(!window.IBPR.isFavoriteClient(id) && window.IBPR.favoriteClients().length === count, 'Клиент убран из «Моих клиентов»');
+  const reverted = host.querySelector('[data-mc-take="' + id + '"]');
+  page.check(reverted && !reverted.disabled && reverted.getAttribute('aria-label') === 'Взять клиента в работу', 'Снова доступно взятие в работу');
+  page.check(!!reverted?.querySelector('[data-icon="folder-arrow-forward-02"] svg'), 'Исходная иконка возвращена');
+  table.setTab('my');
+  page.check(!table.rows().some(c => c.id === id), 'Отменённый клиент отсутствует в «Моих клиентах»');
+  table.setTab('search');
+  page.check(!!host.querySelector('[data-mc-take="' + id + '"] [data-icon="folder-arrow-forward-02"]'), 'Отмена сохранена после переключения вкладок');
+}

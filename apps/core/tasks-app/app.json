@@ -1,0 +1,8 @@
+{
+  "id": "tasks-app",
+  "track": "product",
+  "title": "Задачи",
+  "desc": "Задачи аналитика и его деска: реестр, предпросмотр и смена статуса",
+  "home": "pages/TasksPage.preview.html",
+  "icon": "tasks"
+}

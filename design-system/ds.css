@@ -83,3 +83,9 @@
    должны перебивать :root компонентов при равной специфичности. Без атрибута
    data-theme ни одно правило файла не действует; legacy как прежде. */
 @import url("foundations/Themes/Themes.css");
+
+/* Типографские темы (RE0048): тем же уровнем, что Themes.css — file:// и
+   вложенные импорты; после Typography.css, чтобы перебить её :root
+   (--type-ls: 0) при равной специфичности. Без атрибута
+   data-typography не действует ни одно правило; базовая тема как прежде. */
+@import url("foundations/Typography/Typography.themes.css");

@@ -255,6 +255,7 @@
     'theme.light': 'Светлая',
     'theme.dark': 'Тёмная',
     'theme.darkLabel': 'Тёмная тема',
+    'typo.title': 'Типографика',
     'fab.labelCount': 'Prototype panel, open comments on this page: {n}',
 
     /* кнопки */

@@ -28,8 +28,8 @@
   min-width: 19px;
   margin: 0;
   padding: 0 var(--space-4);
-  font: var(--type-body-xs);
-  letter-spacing: 0;
+  font: var(--type-body-xs-reg);
+  letter-spacing: var(--type-ls);
   text-align: center;
   white-space: nowrap;
   color: var(--text-secondary);
@@ -43,9 +43,9 @@
 /* ---------- sizes ---------------------------------------------------------
    Высота клавиши = строка текста размера + рамки 1 + 2; min-width равен
    высоте — клавиша из одной буквы квадратная. */
-.kbd--s { min-width: 19px; padding: 0 var(--space-4); font: var(--type-body-xs); }
-.kbd--m { min-width: 19px; padding: 0 var(--space-4); font: var(--type-body-s); }
-.kbd--l { min-width: 23px; padding: 0 var(--space-6); font: var(--type-body-m); }
+.kbd--s { min-width: 19px; padding: 0 var(--space-4); font: var(--type-body-xs-reg); }
+.kbd--m { min-width: 19px; padding: 0 var(--space-4); font: var(--type-body-s-reg); }
+.kbd--l { min-width: 23px; padding: 0 var(--space-6); font: var(--type-body-m-reg); }
 
 /* ---------- combo ---------------------------------------------------------
    Сочетание: «Shift + Enter». «+» — обычный текст между клавишами; обёртка

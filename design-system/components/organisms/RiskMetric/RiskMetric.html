@@ -32,7 +32,7 @@
 
   /* section */
 
-  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:76ch; text-wrap:pretty; }
+  .section > p.desc { font: var(--type-body-m-reg); color: var(--text-secondary); margin:0 0 28px; max-width:76ch; text-wrap:pretty; }
 
   
   .row { display:flex; flex-wrap:wrap; align-items:flex-start; gap:40px; }
@@ -47,7 +47,7 @@
   .docs-main .pg__controls > p { grid-column: 1 / -1; }
 
   .ctl { display:flex; flex-direction:column; gap:8px; }
-  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
 
   /* ---------- anatomy ---------- */
   .anat { display:grid; grid-template-columns: minmax(320px,1fr) minmax(260px,380px); gap:44px; align-items:center; }
@@ -55,40 +55,40 @@
   .anat__stage { background: var(--tertiary-light); border:1px solid var(--border-light); border-radius:14px; padding:44px; display:flex; justify-content:center; position:relative; overflow:visible; min-height:360px; }
   .anat__stage .pop { box-shadow:0 10px 30px rgba(40,50,55,.14); }
   .anat__legend { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; counter-reset:a; }
-  .anat__legend li { display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m); color: var(--text-primary); }
-  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong); display:flex; align-items:center; justify-content:center; }
-  .anat__legend li .t .k { font: var(--type-body-m-strong); color: var(--text-primary); }
+  .anat__legend li { display:flex; gap:14px; align-items:flex-start; font: var(--type-body-m-reg); color: var(--text-primary); }
+  .anat__legend li .n { counter-increment:a; flex:none; width:24px; height:24px; border-radius:50%; background: var(--primary); color:#fff; font: var(--type-body-s-strong-smb); display:flex; align-items:center; justify-content:center; }
+  .anat__legend li .t .k { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
 
   /* ---------- sizes ---------- */
 
   /* ---------- content variants table ---------- */
   .content-table { width:100%; border-collapse:collapse; }
-  .content-table th, .content-table td { text-align:left; padding:13px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); vertical-align:middle; }
-  .content-table th { font: var(--type-body-s-strong); color: var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; font-size:12px; }
+  .content-table th, .content-table td { text-align:left; padding:13px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); vertical-align:middle; }
+  .content-table th { font: var(--type-body-s-strong-smb); color: var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; font-size:12px; }
   .content-table tr:last-child td { border-bottom:none; }
-  .content-table td.dsc { color: var(--text-secondary); font: var(--type-body-s); }
+  .content-table td.dsc { color: var(--text-secondary); font: var(--type-body-s-reg); }
 
   /* ---------- usage: contragent table mock ---------- */
   .rm-usage-row { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:14px 4px; border-bottom:1px solid var(--border-light); }
   .rm-usage-row:last-child { border-bottom:none; }
-  .rm-usage-row__name { font: var(--type-body-m); color: var(--text-primary); }
+  .rm-usage-row__name { font: var(--type-body-m-reg); color: var(--text-primary); }
   .rm-usage-row__metric { position:relative; flex:none; }
 
   /* композиция поповера (.rm-body/.rm-block*/.rm-field*) вынесена в components/organisms/RiskMetric/RiskMetric.css */
 
   /* ---------- feeder blocks (standalone demo) ---------- */
   .feeder-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:22px; align-items:start; }
-  .feeder-col__cap { font: var(--type-body-s-strong); color: var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; font-size:11px; margin:0 0 12px; }
+  .feeder-col__cap { font: var(--type-body-s-strong-smb); color: var(--text-secondary); text-transform:uppercase; letter-spacing:.04em; font-size:11px; margin:0 0 12px; }
   .feeder-col__box { border:1px dashed var(--border-primary); border-radius:12px; padding:14px; }
 
   /* ---------- states matrix 4×4 ---------- */
   .rm-matrix { display:grid; grid-template-columns: 130px repeat(4, 1fr); gap:14px 10px; align-items:center; }
   @media (max-width:760px){ .rm-matrix { grid-template-columns: 90px repeat(4, 1fr); } }
-  .rm-matrix__colhead { font: var(--type-body-s-strong); color: var(--text-secondary); text-align:center; padding-bottom:6px; border-bottom:1px solid var(--border-light); }
-  .rm-matrix__rowhead { font: var(--type-body-s-strong); color: var(--text-inactive); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; }
+  .rm-matrix__colhead { font: var(--type-body-s-strong-smb); color: var(--text-secondary); text-align:center; padding-bottom:6px; border-bottom:1px solid var(--border-light); }
+  .rm-matrix__rowhead { font: var(--type-body-s-strong-smb); color: var(--text-inactive); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; }
   .rm-matrix__cell { display:flex; align-items:center; justify-content:center; min-height:40px; }
   .rm-matrix__cell--span { grid-column: span 4; justify-content:flex-start; gap:14px; }
-  .rm-matrix__note { font: var(--type-body-s); color: var(--text-inactive); }
+  .rm-matrix__note { font: var(--type-body-s-reg); color: var(--text-inactive); }
 
   /* ---------- states grid (loading/error) ---------- */
   .states { display:grid; grid-template-columns: repeat(2, 1fr); gap:30px 26px; }
@@ -98,17 +98,17 @@
   .single-open-demo { display:flex; flex-direction:column; }
 
   /* ---------- reference tables ---------- */
-  .ref-table th, .ref-table td { text-align:left; padding:14px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m); color: var(--text-primary); vertical-align:top; }
+  .ref-table th, .ref-table td { text-align:left; padding:14px 16px; border-bottom:1px solid var(--border-light); font: var(--type-body-m-reg); color: var(--text-primary); vertical-align:top; }
   kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; color: var(--text-primary); background: var(--bg-table-default-focus); border:1px solid var(--border-primary); border-radius:var(--radius-xs); padding:1px 7px; }
 
   @media (max-width:760px){ .color-ref { grid-template-columns:1fr; } }
   
-  .cref-group > h3 { font: var(--type-h5-strong); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
+  .cref-group > h3 { font: var(--type-h5-strong-smb); margin:0; color: var(--text-primary); padding:18px 22px; border-bottom:1px solid var(--border-light); }
   .cref-row { display:grid; grid-template-columns: 36px 1fr; gap:14px; align-items:center; padding:9px 22px; }
   .cref-sw .cf { position:absolute; inset:0; }
 
   /* ---------- developer handoff ---------- */
-  .subhead { font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px; }
+  .subhead { font: var(--type-body-m-strong-smb); color: var(--text-primary); margin:0 0 16px; }
   .subhead.mt { margin-top: 34px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 
@@ -311,7 +311,7 @@
     <h2>Типографика</h2>
     <p class="desc">Весь текст поповера — гарнитура <b>SB Sans Text</b>; выделенное значение (рейтинг) — strong.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 2.07fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 2.07fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Значение строки (.rm-block__value)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 2.07fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Значение выделенное (Зона / Рейтинг)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-strong</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m-strong)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 2.07fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Метка поля (.rm-field__label)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 2.07fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Значение поля (.rm-field__value)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 2.07fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 2.07fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Значение строки (.rm-block__value)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 2.07fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Значение выделенное (Зона / Рейтинг)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-strong-smb</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m-strong-smb)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 2.07fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Метка поля (.rm-field__label)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 2.07fr 1.35fr 0.99fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Значение поля (.rm-field__value)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s-reg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s-reg)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
     <table id="typo-table" style="display:none"><tbody></tbody></table>
   </section>
@@ -516,12 +516,12 @@ window.DS_SPLIT_SWITCH_LABELS = {
 .rm-blocks { display: flex; flex-direction: column; gap: 8px; }
 .rm-block { background: var(--bg-page); border-radius: var(--radius-m); padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; margin: 0; }
 .rm-block__row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.rm-block__label { font: var(--type-body-s); color: var(--text-secondary); overflow-wrap: break-word; }
-.rm-block__value { font: var(--type-body-s); color: var(--text-primary); text-align: right; min-width: 0; flex: 1 1 auto; overflow-wrap: break-word; }
-.rm-block__value--strong { font: var(--type-body-m-strong); color: var(--text-primary); }
+.rm-block__label { font: var(--type-body-s-reg); color: var(--text-secondary); overflow-wrap: break-word; }
+.rm-block__value { font: var(--type-body-s-reg); color: var(--text-primary); text-align: right; min-width: 0; flex: 1 1 auto; overflow-wrap: break-word; }
+.rm-block__value--strong { font: var(--type-body-m-strong-smb); color: var(--text-primary); }
 .rm-field { display: flex; flex-direction: column; gap: 4px; margin: 0; }
-.rm-field__label { margin: 0; font: var(--type-body-xs); color: var(--text-secondary); }
-.rm-field__value { margin: 0; font: var(--type-body-s); color: var(--text-primary); text-wrap: pretty; overflow-wrap: break-word; }</script>
+.rm-field__label { margin: 0; font: var(--type-body-xs-reg); color: var(--text-secondary); }
+.rm-field__value { margin: 0; font: var(--type-body-s-reg); color: var(--text-primary); text-wrap: pretty; overflow-wrap: break-word; }</script>
 <script src="../../../../apps/proto-panel.js"></script>
 </body>
 </html>

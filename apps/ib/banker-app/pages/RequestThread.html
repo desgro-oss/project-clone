@@ -58,7 +58,7 @@
   .hist__head    { flex: none; display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-4) var(--space-16) var(--space-12); border-bottom: 1px solid transparent; transition: border-color .15s ease; }
   .hist__head.is-scrolled { border-bottom-color: var(--border-light); }
   .hist__label-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
-  .hist__count   { flex: none; white-space: nowrap; font: var(--type-body-xs); color: var(--text-secondary); }
+  .hist__count   { flex: none; white-space: nowrap; font: var(--type-body-xs-reg); color: var(--text-secondary); }
   .hist__body    { flex: 1; min-height: 0; overflow-y: auto; scrollbar-gutter: stable; display: flex; flex-direction: column; gap: var(--space-16); padding: var(--space-4) calc(var(--space-16) - var(--space-8)) var(--space-16) var(--space-16); }
   .hist__list    { display: flex; flex-direction: column; gap: var(--space-4); }
 
@@ -71,7 +71,7 @@
   .hsearch__ico  { flex: none; display: flex; width: 16px; height: 16px; color: var(--text-secondary); transition: color .15s ease; }
   .hsearch__ico > [data-icon] { width: 100%; height: 100%; }
   .hsearch:focus-within .hsearch__ico { color: var(--primary); }
-  .hsearch__control { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; font: var(--type-body-s); color: var(--text-primary); }
+  .hsearch__control { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; font: var(--type-body-s-reg); color: var(--text-primary); }
   .hsearch__control::placeholder { color: var(--text-inactive); opacity: 1; }
   .hsearch__control::-webkit-search-cancel-button { display: none; }
   .hsearch__clear { flex: none; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: var(--radius-s); background: transparent; color: var(--text-secondary); cursor: pointer; }
@@ -79,7 +79,7 @@
   .hsearch__clear[hidden] { display: none; }
   .hsearch__clear > [data-icon] { width: 16px; height: 16px; }
   .hist__hl      { color: inherit; background: color-mix(in srgb, var(--primary) 18%, transparent); border-radius: var(--radius-2xs); box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 18%, transparent); }
-  .hist__empty   { display: flex; flex-direction: column; align-items: center; gap: var(--space-8); padding: var(--space-32) var(--space-16); text-align: center; font: var(--type-body-s); color: var(--text-secondary); }
+  .hist__empty   { display: flex; flex-direction: column; align-items: center; gap: var(--space-8); padding: var(--space-32) var(--space-16); text-align: center; font: var(--type-body-s-reg); color: var(--text-secondary); }
   .hist__empty[hidden] { display: none; }
   .hist__empty-ico { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--primary-bg); color: var(--primary); }
   .hist__empty-ico > [data-icon] { width: 20px; height: 20px; }
@@ -121,13 +121,13 @@
   .msg           { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
   .msg--user     { align-items: flex-end; }
   .msg__bubble   { display: flex; flex-direction: column; gap: var(--space-8); max-width: min(80%, 640px); padding: var(--space-10) var(--space-16); color: var(--text-primary); background: color-mix(in srgb, var(--primary) 9%, var(--bg-tile)); border-radius: var(--radius-3xl) var(--radius-3xl) var(--radius-s) var(--radius-3xl); }
-  .msg__bubble .ds-body-m { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .msg__time     { font: var(--type-body-xs); color: var(--text-inactive); }
+  .msg__bubble .ds-body-m-reg { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg__time     { font: var(--type-body-xs-reg); color: var(--text-inactive); }
   .msg--user > .msg__time { padding-right: var(--space-4); }
   .msg__meta     { display: flex; align-items: center; gap: var(--space-6); }
   .msg__ico      { display: flex; flex: none; width: 16px; height: 16px; color: var(--primary); }
   .msg__ico > [data-icon] { width: 100%; height: 100%; }
-  .msg__name     { font: var(--type-body-s-strong); color: var(--text-primary); }
+  .msg__name     { font: var(--type-body-s-strong-smb); color: var(--text-primary); }
   .msg__meta > .msg__time::before { content: "·"; margin-right: var(--space-6); }
   .msg__body     { display: flex; flex-direction: column; gap: var(--space-12); min-width: 0; }
   .msg.is-new    { animation: msgIn .4s cubic-bezier(.22, 1, .36, 1) both; }
@@ -143,13 +143,13 @@
      углы поворачиваемого квадрата расширяли прокручиваемую область нити,
      полоса прокрутки мигала и весь чат дёргался по горизонтали.
      В прототипе клик по строке завершает подготовку. */
-  .think         { display: inline-flex; align-items: center; gap: var(--space-10); align-self: flex-start; padding: var(--space-4) var(--space-8) var(--space-4) 0; font: var(--type-body-m); color: var(--text-secondary); text-align: left; cursor: pointer; background: none; border: 0; border-radius: var(--radius-m); }
+  .think         { display: inline-flex; align-items: center; gap: var(--space-10); align-self: flex-start; padding: var(--space-4) var(--space-8) var(--space-4) 0; font: var(--type-body-m-reg); color: var(--text-secondary); text-align: left; cursor: pointer; background: none; border: 0; border-radius: var(--radius-m); }
   .think:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   .think__loader { flex: none; display: block; width: 16px; height: 16px; contain: strict; }
   .think__loader::before { content: ""; display: block; box-sizing: border-box; width: 100%; height: 100%; border: 2px solid color-mix(in srgb, var(--primary) 20%, transparent); border-top-color: var(--primary); border-radius: var(--radius-full); animation: thinkSpin .9s linear infinite; }
   .think__text   { color: transparent; background: linear-gradient(90deg, var(--text-secondary) 0%, var(--text-secondary) 40%, var(--text-inactive) 50%, var(--text-secondary) 60%, var(--text-secondary) 100%); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; animation: thinkShimmer 3.2s ease-in-out infinite; transition: opacity .3s ease; }
   .think__text.is-out { opacity: 0; }
-  .think__time   { font: var(--type-body-xs); color: var(--text-inactive); font-variant-numeric: tabular-nums; }
+  .think__time   { font: var(--type-body-xs-reg); color: var(--text-inactive); font-variant-numeric: tabular-nums; }
   .think-row    { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-8); }
   @keyframes thinkSpin { to { transform: rotate(360deg); } }
   @keyframes thinkShimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
@@ -162,8 +162,8 @@
   .doc__ico      { flex: none; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-m); color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, var(--bg-tile)); }
   .doc__ico > [data-icon] { width: 22px; height: 22px; }
   .doc__main     { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-  .doc__title    { display: block; max-width: 100%; overflow: hidden; font: var(--type-body-m-strong); color: var(--text-primary); white-space: nowrap; text-overflow: ellipsis; }
-  .doc__meta     { overflow: hidden; font: var(--type-body-xs); color: var(--text-secondary); white-space: nowrap; text-overflow: ellipsis; }
+  .doc__title    { display: block; max-width: 100%; overflow: hidden; font: var(--type-body-m-strong-smb); color: var(--text-primary); white-space: nowrap; text-overflow: ellipsis; }
+  .doc__meta     { overflow: hidden; font: var(--type-body-xs-reg); color: var(--text-secondary); white-space: nowrap; text-overflow: ellipsis; }
   .doc__acts     { flex: none; display: flex; align-items: center; gap: var(--space-8); }
 
   @media (prefers-reduced-motion: reduce) {
@@ -211,7 +211,7 @@
     margin: 0;
     padding: var(--space-4) 0;
     border: 0;
-    font: var(--type-body-m);
+    font: var(--type-body-m-reg);
     letter-spacing: normal;
     white-space: pre-wrap;
     overflow-wrap: break-word;
@@ -227,11 +227,11 @@
   @keyframes cmpPop { from { opacity: 0; transform: scale(.6) rotate(-90deg); } }
   /* Срок подготовки — слева в ряду действий; занимает свободное место
      и на узкой колонке переносится, не выталкивая кнопки */
-  .cmp__note     { flex: 1; min-width: 0; margin: 0; display: flex; align-items: center; gap: var(--space-8); font: var(--type-body-s); color: var(--text-secondary); }
+  .cmp__note     { flex: 1; min-width: 0; margin: 0; display: flex; align-items: center; gap: var(--space-8); font: var(--type-body-s-reg); color: var(--text-secondary); }
   .cmp__note-ico { flex: none; display: flex; width: 18px; height: 18px; color: var(--primary); }
   .cmp__note-ico > [data-icon] { width: 100%; height: 100%; }
 
-  .cmp__hint     { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4) var(--space-16); font: var(--type-body-xs); color: var(--text-secondary); }
+  .cmp__hint     { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4) var(--space-16); font: var(--type-body-xs-reg); color: var(--text-secondary); }
   .cmp__hint kbd { display: inline-block; min-width: 18px; padding: 0 var(--space-4); font: inherit; text-align: center; color: var(--text-secondary); background: var(--bg-tile); border: 1px solid var(--border-light); border-bottom-width: 2px; border-radius: var(--radius-s); }
 
   /* Приветствие пустой нити: два абзаца текста — у тела пустого состояния
@@ -304,30 +304,33 @@
       <button class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
     </div>
     <div class="nav__list">
-      <a class="nav__item" href="index.html"><span class="nav__ico"><i data-icon="main-page"></i></span><span class="nav__label">Главная</span></a>
+      <a class="nav__item" href="../../../core/host-app/pages/HomePage.html?role=director_ib"><span class="nav__ico"><i data-icon="main-page"></i></span><span class="nav__label">Главная</span></a>
       <div class="nav__block">
         <div class="nav__block-label">Origination</div>
-        <a class="nav__item nav__item--selected" href="RequestThread.html" aria-current="page"><span class="nav__ico"><i data-icon="ai-stars"></i></span><span class="nav__label">AI Pitcher</span></a>
-        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="sales-projects"></i></span><span class="nav__label">Проекты продаж CIB</span></a>
         <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="dcm-potentials"></i></span><span class="nav__label">Потенциалы DCM</span></a>
-        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="calc"></i></span><span class="nav__label">Калькулятор</span></a>
-        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="funds"></i></span><span class="nav__label">Фонды</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="calc"></i></span><span class="nav__label">Прайсер облигаций</span></a>
+        <a class="nav__item" href="../../funds-app/pages/FundsPipeline.preview.html"><span class="nav__ico"><i data-icon="funds"></i></span><span class="nav__label">Фонды</span></a>
+        <a class="nav__item nav__item--selected" href="RequestThread.html" aria-current="page"><span class="nav__ico"><i data-icon="ai-stars"></i></span><span class="nav__label">AI Pitcher</span></a>
       </div>
       <div class="nav__block">
         <div class="nav__block-label">Pipeline</div>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="mna-pipeline"></i></span><span class="nav__label">M&amp;A Pipeline</span></a>
         <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="dcm-pipeline"></i></span><span class="nav__label">DCM Pipeline</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="ecm-pipeline"></i></span><span class="nav__label">ECM Pipeline</span></a>
         <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="payments-ib"></i></span><span class="nav__label">Реестр платежей IB</span></a>
       </div>
       <div class="nav__block">
         <div class="nav__block-label">Клиенты и задачи</div>
         <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="factory-01"></i></span><span class="nav__label">Клиенты</span></a>
-        <a class="nav__item" href="#" aria-label="Задачи, 7"><span class="nav__ico"><i data-icon="tasks"></i></span><span class="nav__label">Задачи</span><span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">7</span></span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="client-search"></i></span><span class="nav__label">Поиск клиентов в ЕПК</span></a>
+        <a class="nav__item" href="#" aria-label="Задачи, 12"><span class="nav__ico"><i data-icon="tasks"></i></span><span class="nav__label">Задачи</span><span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">12</span></span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="calendar"></i></span><span class="nav__label">Встречи</span></a>
       </div>
     </div>
     <div class="nav__footer">
       <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
         <span class="av av--circular av--m"><span class="av__text">АП</span></span>
-        <span class="nav__user-text"><span class="nav__user-name">Александров Пётр Константинович</span><span class="nav__user-role">Консультант-аналитик ДИД</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Пётр Константинович</span><span class="nav__user-role">Руководитель IB</span></span>
       </a>
       <button class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
     </div>
@@ -367,7 +370,7 @@
     <div class="screen screen--app">
 
       <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
-        <li class="crumbs__item"><a class="link link--muted" href="index.html">Главная</a></li>
+        <li class="crumbs__item"><a class="link link--muted" href="../../../core/host-app/pages/HomePage.html?role=director_ib">Главная</a></li>
         <li class="crumbs__item"><a class="link link--muted" href="RequestThread.html">AI Pitcher</a></li>
         <li class="crumbs__item crumbs__item--current">
           <span class="crumbs__current" aria-current="page">Новый отчёт</span>
@@ -497,7 +500,7 @@
       <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
     </header>
     <div class="modal__body">
-      <p class="ds-body-m">Вся история диалога, все версии материалов и приложенные файлы будут удалены.</p>
+      <p class="ds-body-m-reg">Вся история диалога, все версии материалов и приложенные файлы будут удалены.</p>
     </div>
     <footer class="modal__foot">
       <div class="modal__foot-right">
@@ -782,10 +785,10 @@
   }
 
   /* ── Текстовые блоки ──────────────────────────────────────────────────── */
-  function text(t) { return '<div class="thr__text"><p class="ds-body-m">' + t + '</p></div>'; }
+  function text(t) { return '<div class="thr__text"><p class="ds-body-m-reg">' + t + '</p></div>'; }
 
   function sources(list) {
-    return '<div class="thr__row"><span class="ds-body-xs">Источники:</span><div class="chiplist chiplist--s">' +
+    return '<div class="thr__row"><span class="ds-body-xs-reg">Источники:</span><div class="chiplist chiplist--s">' +
       list.map(function (s) { return '<span class="chip chip--s"><span class="chip__label">' + esc(s) + '</span></span>'; }).join('') +
       '</div></div>';
   }
@@ -920,14 +923,14 @@
     field.value = '';
     paint();
 
-    push('user', '<p class="ds-body-m">' + esc(q) + '</p>');
+    push('user', '<p class="ds-body-m-reg">' + esc(q) + '</p>');
 
     /* Пасхалка прототипа, в продукт не переносится: на «хот кореянки»
        (регистр и лишние пробелы не важны) вместо ответа — предупреждение
        и картинка под ним. Размер картинки задан атрибутами: место под неё
        занято сразу, и нить докручивается до её низа, не дожидаясь загрузки. */
     if (q.toLowerCase().replace(/\s+/g, ' ').indexOf('хот кореянки') !== -1) {
-      var i0 = push('agent', text('<span class="ds-body-m">Ищу данные…</span>'));
+      var i0 = push('agent', text('<span class="ds-body-m-reg">Ищу данные…</span>'));
       setTimeout(function () {
         typeAnswer(i0, 'Я вижу вы не работаете! Ваш запрос отправлен к вашему руководителю.',
           '<img class="thr__pic" src="../refs/girl.jpg" width="450" height="438" alt="Портрет девушки">');
@@ -959,7 +962,7 @@
       return;
     }
 
-    var i2 = push('agent', text('<span class="ds-body-m">Ищу данные…</span>'));
+    var i2 = push('agent', text('<span class="ds-body-m-reg">Ищу данные…</span>'));
     setTimeout(function () {
       typeAnswer(i2, ANSWER, sources(['Отчётность МСФО 2025', 'Раскрытие эмитента', 'Данные Банка', 'Отраслевой обзор 2026']) + answerActions(i2));
     }, 700);
@@ -1100,7 +1103,7 @@
     var d = DIALOGS[h.id];
     if (d) {
       S.msgs = [
-        { role: 'user', time: d.time, html: '<p class="ds-body-m">' + esc(d.q) + '</p>' },
+        { role: 'user', time: d.time, html: '<p class="ds-body-m-reg">' + esc(d.q) + '</p>' },
         { role: 'agent', time: d.time, html: text(esc(d.a)) + sources(d.src) + answerActions(1) }
       ];
       render();
@@ -1109,7 +1112,7 @@
     /* Нить запроса с отчётом: объект и фокус — из строки истории */
     if (h.object) OBJECT = h.object;
     S.msgs = [
-      { role: 'user', time: '11.09.2026, 14:02', html: '<p class="ds-body-m">' + esc(reportAsk(OBJECT, h.focus)) + '</p>' },
+      { role: 'user', time: '11.09.2026, 14:02', html: '<p class="ds-body-m-reg">' + esc(reportAsk(OBJECT, h.focus)) + '</p>' },
       { role: 'agent', time: '11.09.2026, 14:02', html:
         text(esc(acceptText(OBJECT)) + ' Это займёт до 30 минут.') }
     ];
@@ -1153,7 +1156,7 @@
     first.state = 'running';
     drawHist();
     if (first.object) OBJECT = first.object;
-    push('user', '<p class="ds-body-m">' + esc(reportAsk(OBJECT, first.focus)) + '</p>');
+    push('user', '<p class="ds-body-m-reg">' + esc(reportAsk(OBJECT, first.focus)) + '</p>');
     startRun(esc(acceptText(OBJECT)), { params: first.kind });
   } else if (params.get('id')) {
     var opened = HIST.filter(function (h) { return String(h.id) === params.get('id'); })[0];

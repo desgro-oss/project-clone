@@ -17,10 +17,15 @@
   .split-fill { flex: 1; min-height: 0; }
   .split-fill > .splitpane__a > * { flex: 1; min-width: 0; }
   .split-scroll { flex: 1; min-width: 0; }
+  /* Splitter без своей рамки и подложки: карточки — сама таблица (.dtable) и
+     предпросмотр (Tile); тулбар таблицы — на фоне страницы, как в реестре
+     клиентов (решение пользователя 20.10.2026). */
+  .split-fill { background: transparent; border: 0; border-radius: 0; }
+  .split-fill > .splitpane__panel { background: transparent; }
 </style>
-<link rel="stylesheet" href="../widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.css">
-<link rel="stylesheet" href="../widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.css">
-<link rel="stylesheet" href="../widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.css">
+<link rel="stylesheet" href="../../../clients-app/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.css">
+<link rel="stylesheet" href="../../../clients-app/widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.css">
+<link rel="stylesheet" href="../../../tasks-app/widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.css">
 </head>
 <body>
 <div class="nav-layout">
@@ -43,7 +48,7 @@
 
   <div class="screen screen--app">
     <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
-      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="../../../host-app/pages/HomePage.html">Главная</a></li>
       <li class="crumbs__item crumbs__item--current">
         <span class="crumbs__current" aria-current="page">Встречи: Мои встречи</span>
       </li>
@@ -76,8 +81,18 @@
           <!-- Локальный компонент «Реестр встреч» — таблица встреч с выбором строки.
      Таблицу рисует общий рендер data/registry-table.js; значения и ячейки —
      скрипт виджета (LcMeetingsProtocolsList.mount). Выбор строки открывает предпросмотр в правой
-     панели сплиттера страницы. Вшивается меткой <ds-include>. -->
-<section class="tile tile--headless lc-meetings-list" id="mt-list" data-state="data" data-mode="view" data-widget="MeetingsProtocolsList" data-widget-group="tables" data-widget-src="../widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.html">
+     панели сплиттера страницы. Вшивается меткой <ds-include>.
+     Тулбар — над таблицей (Table, вариант .dtable-toolbar); карточка — сама
+     .dtable, без тайла-подложки (решение пользователя 20.10.2026). -->
+<div class="lc-meetings-list" id="mt-list" data-state="data" data-mode="view" data-widget="MeetingsProtocolsList" data-widget-group="tables" data-widget-src="../../../clients-app/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.html">
+  <div class="dtable-toolbar">
+    <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+      <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+    </div>
+    <div class="dtable__toolbar-right">
+      <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+    </div>
+  </div>
   <div class="alert alert--error alert--m lc-meetings-list__error" role="alert">
     <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
     <div class="alert__body">
@@ -86,16 +101,6 @@
     </div>
   </div>
   <div class="dtable dtable--fill">
-    <div class="dtable__toolbar">
-      <div class="dtable__toolbar-left">
-        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
-          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
-        </div>
-      </div>
-      <div class="dtable__toolbar-right">
-        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
-      </div>
-    </div>
     <div class="dtable__body">
       <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
       <div class="dtable__empty" data-rt-empty hidden>
@@ -105,7 +110,7 @@
     </div>
     <div class="dtable__footer" data-rt-footer></div>
   </div>
-</section>
+</div>
         </div>
         <div class="spl" role="separator" aria-orientation="vertical" aria-valuemin="35" aria-valuemax="75" aria-valuenow="55" aria-label="Изменить ширину панелей" tabindex="0">
           <span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>
@@ -119,7 +124,7 @@
      (Встречи.png) и Pixso «Встречи – Предпросмотр». Страница вшивает меткой
      <ds-include> и заполняет: LcMeetingsProtocolsDetails.render(host, { meeting, onAction }).
      Статическое содержимое — демо M-8904. -->
-<section class="tile lc-meeting-details" id="mt-details" data-state="data" data-mode="view" data-widget="MeetingsProtocolsDetails" data-widget-group="tiles" data-widget-src="../widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.html">
+<section class="tile lc-meeting-details" id="mt-details" data-state="data" data-mode="view" data-widget="MeetingsProtocolsDetails" data-widget-group="tiles" data-widget-src="../../../clients-app/widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.html">
   <header class="tile__header">
     <div class="tile__header-main">
       <div class="tile__title-row">
@@ -219,7 +224,7 @@
      Вшивается в конец страницы меткой ds-include; страницу связывает скрипт:
      LcChangeTaskStatusModal.open({ task, action, onConfirm }); окно само меняет
      задачу в хранилище и открывается слоем Modal ДС. -->
-<div class="modal-scrim" id="task-change-scrim" hidden data-widget="ChangeTaskStatusModal" data-widget-group="modals" data-widget-src="../widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.html">
+<div class="modal-scrim" id="task-change-scrim" hidden data-widget="ChangeTaskStatusModal" data-widget-group="modals" data-widget-src="../../../tasks-app/widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.html">
   <div class="modal modal--w4 lc-task-change" role="dialog" aria-modal="true" aria-labelledby="task-change-title">
     <header class="modal__head">
       <h2 class="modal__title" id="task-change-title">Смена статуса задачи</h2>
@@ -259,9 +264,9 @@
 <script src="../data/store.js"></script>
 <script src="../data/nav-links.js"></script>
 <script src="../data/registry-table.js"></script>
-<script src="../widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.js"></script>
-<script src="../widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.js"></script>
-<script src="../widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.js"></script>
+<script src="../../../clients-app/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.js"></script>
+<script src="../../../clients-app/widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.js"></script>
+<script src="../../../tasks-app/widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.js"></script>
 <script>
 /* Экранный скрипт: меню — data/nav-links.js; слева — MeetingsProtocolsList,
    справа — MeetingsProtocolsDetails выбранной встречи (Splitter ДС). */

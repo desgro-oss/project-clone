@@ -3,7 +3,7 @@
 .lc-refuse-opp { min-width: 0; }
 
 .lc-refuse-opp__text {
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-primary);
   margin: 0;
 }

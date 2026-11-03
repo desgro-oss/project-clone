@@ -31,12 +31,12 @@
     "dir": "apps/local-components", "registry": "apps/local-components/kit-data.js", "id": "local-kit",
     "title": "Локальные компоненты", "desc": "Тайлы, окна и поповеры модулей: как работают, из чего собраны, зачем",
     "icon": "layout-grid-01",
-    "categories": ["Общие", "Сделка", "Финансовые отчеты сделки", "Транш", "Расчет FV", "Другое"],
+    "categories": ["Общие", "Сделка", "Финансовые отчеты сделки", "НКЛ", "Транш", "Расчет FV", "Другое"],
     "kits": [
       { "id": "local-kit-post", "section": "postrade", "title": "Локальные компоненты Post", "desc": "Тайлы, окна и поповеры модулей Post: как работают, из чего собраны, зачем", "icon": "layout-grid-01" },
       { "id": "local-kit-pre", "section": "pretrade", "title": "Локальные компоненты Pre", "desc": "Тайлы, окна и поповеры модулей Pre: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Другое"] },
       { "id": "local-kit-core", "section": "core", "title": "Локальные компоненты Core", "desc": "Тайлы, окна и поповеры модулей Core: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Сделка", "Инструменты", "Другое"] },
-      { "id": "local-kit-ib", "section": "ib", "title": "Локальные компоненты IB", "desc": "Тайлы, окна и поповеры модулей IB: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Другое"] },
+      { "id": "local-kit-ib", "section": "ib", "title": "Локальные компоненты IB", "desc": "Тайлы, окна и поповеры модулей IB: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Фонды", "Другое"] },
       { "id": "local-kit-common", "section": "common", "title": "Локальные компоненты Общие", "desc": "Тайлы, окна и поповеры, общие для разделов: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Другое"] }
     ]
   },
@@ -52,7 +52,15 @@
     "dir": "apps/screen-map",
     "maps": [
       { "id": "screen-map-post", "section": "postrade", "title": "Карта Post", "desc": "Все страницы Post в один клик: от главной до транша и расчета FV", "icon": "tree-view", "after": "deals-app" },
-      { "id": "screen-map-ib", "section": "ib", "title": "Карта IB", "desc": "Все страницы AI Pitcher в один клик: от главной до нити запроса", "icon": "tree-view", "after": "banker-app" }
+      { "id": "screen-map-ib", "section": "ib", "title": "Карта IB", "desc": "Все страницы IB в один клик: от главной до нити запроса AI Pitcher", "icon": "tree-view", "after": "banker-app" }
+    ]
+  },
+
+  "roleHomes": {
+    "app": "core/host-app", "page": "HomePage.html",
+    "entries": [
+      { "id": "home-pre-analyst", "section": "pretrade", "role": "analyst", "title": "Главная — Аналитик ДИД", "desc": "Главная роли «Аналитик ДИД»: Origination, Pipeline, портфель, отчёты, клиенты и задачи", "icon": "main-page" },
+      { "id": "home-ib", "section": "ib", "role": "director_ib", "title": "Главная — Руководитель IB", "desc": "Главная роли «Руководитель IB»: разделы IB, AI Pitcher и разделы других команд", "icon": "main-page" }
     ]
   },
 

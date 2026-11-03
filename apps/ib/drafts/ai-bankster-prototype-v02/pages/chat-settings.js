@@ -184,10 +184,10 @@
       var label = menu.querySelector('.menu__label');
       if (label) menu.insertBefore(label, menu.firstChild);
       document.body.insertAdjacentHTML('beforeend', modal('share', 'Поделиться чатом',
-        '<p class="ds-body-m" id="share-chat"></p>' + field('share-people', 'Пользователи', 'Введите имя или фамилию', false) +
+        '<p class="ds-body-m-reg" id="share-chat"></p>' + field('share-people', 'Пользователи', 'Введите имя или фамилию', false) +
         field('share-desks', 'Дески', 'Выберите один или несколько десков', true) +
         '<span class="ds-helper ds-helper--left">Все пользователи выбранных десков увидят этот чат и его владельца в своей истории чатов. Доступ — для просмотра.</span>' +
-        '<p class="ds-body-s" id="share-summary" role="status" aria-live="polite"></p>', 'Сохранить', 4));
+        '<p class="ds-body-s-reg" id="share-summary" role="status" aria-live="polite"></p>', 'Сохранить', 4));
       peopleApi = window.DSDropdownList.bind(el('share-people-field'), { list: el('share-people-list'), multiple: true, onToggle: function (item) {
         var id = item.getAttribute('data-value');
         draft.users = draft.users.filter(function (value) { return value !== id; });

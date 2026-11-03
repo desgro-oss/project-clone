@@ -1,0 +1,820 @@
+{
+  "_": "Список фондов: funds — строки FundItemDto (data/funds.js), selected — objectId выбранного фонда, filters — FundFiltersDto. «Заполнено частично» — у РФПИ нет псевдонима, бенефициаров и числа активов, у фонда не из ЕПК нет ИНН/КПП, типов и приоритета. «Фонд выбран» — выбран Интеррос (строка подсвечена). «Ничего не найдено» — фильтр без совпадений. «Данных нет» — фондов нет. long — длинные названия, четыре бенефициара, три типа.",
+  "data": {
+    "funds": [
+      {
+        "objectId": "fnd-001",
+        "name": "Интеррос",
+        "alias": "Интеррос — Потанин",
+        "inn": "7706419639",
+        "kpp": "1157746316598",
+        "partyId": "pty-1001",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Владимир Потанин"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE",
+            "name": "PE"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 12,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-002",
+        "name": "USM",
+        "alias": "USM — Усманов",
+        "inn": "7706559639",
+        "kpp": "1157746316598",
+        "partyId": "pty-1002",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Алишер Усманов"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE",
+            "name": "PE"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 3,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-003",
+        "name": "РТ-Развитие бизнеса",
+        "alias": "Ростех — РТ РБ",
+        "inn": "7706559640",
+        "kpp": "1157746316598",
+        "partyId": "pty-1003",
+        "keyBeneficiaries": [
+          {
+            "displayName": "ГК Ростех"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE_VC",
+            "name": "PE / VC"
+          }
+        ],
+        "priority": {
+          "code": "MEDIUM",
+          "name": "Средний"
+        },
+        "aumAssetsCount": 2,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-004",
+        "name": "РФПИ",
+        "alias": "РФПИ — госинвестиции",
+        "inn": "7706559641",
+        "kpp": "1157746316598",
+        "partyId": "pty-1004",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Государство"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE_VC",
+            "name": "PE / VC"
+          }
+        ],
+        "priority": {
+          "code": "LOW",
+          "name": "Низкий"
+        },
+        "aumAssetsCount": 0,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-005",
+        "name": "Киевская площадь",
+        "alias": "КП — недвижимость",
+        "inn": "7706559642",
+        "kpp": "1157746316598",
+        "partyId": "pty-1005",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Год Нисанов"
+          },
+          {
+            "displayName": "Зарах Илиев"
+          }
+        ],
+        "types": [
+          {
+            "code": "FAMILY_OFFICE",
+            "name": "FamilyOffice"
+          }
+        ],
+        "priority": {
+          "code": "LOW",
+          "name": "Низкий"
+        },
+        "aumAssetsCount": 3,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-006",
+        "name": "Группа Альянс",
+        "alias": "Альянс — внутренний фонд",
+        "inn": "7706559643",
+        "kpp": "1157746316598",
+        "partyId": "pty-1006",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Муса Бажаев"
+          }
+        ],
+        "types": [
+          {
+            "code": "HOLDING",
+            "name": "Холдинг"
+          }
+        ],
+        "priority": {
+          "code": "LOW",
+          "name": "Низкий"
+        },
+        "aumAssetsCount": 2,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-008",
+        "name": "Это пример фонда не из ЕПК",
+        "alias": "Это пример фонда не из ЕПК",
+        "inn": null,
+        "kpp": null,
+        "partyId": null,
+        "keyBeneficiaries": [],
+        "types": [
+          {
+            "code": "PE",
+            "name": "PE"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 2,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-010",
+        "name": "Восход",
+        "alias": "Восход — венчур",
+        "inn": "7706559646",
+        "kpp": "1157746316598",
+        "partyId": "pty-1010",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Владимир Потанин"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE_VC",
+            "name": "PE / VC"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 3,
+        "contacts": [],
+        "comment": null
+      }
+    ]
+  },
+  "partial": {
+    "funds": [
+      {
+        "objectId": "fnd-001",
+        "name": "Интеррос",
+        "alias": "Интеррос — Потанин",
+        "inn": "7706419639",
+        "kpp": "1157746316598",
+        "partyId": "pty-1001",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Владимир Потанин"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE",
+            "name": "PE"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 12,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-004",
+        "name": "РФПИ",
+        "alias": null,
+        "inn": "7706559641",
+        "kpp": "1157746316598",
+        "partyId": "pty-1004",
+        "keyBeneficiaries": [],
+        "types": [
+          {
+            "code": "PE_VC",
+            "name": "PE / VC"
+          }
+        ],
+        "priority": {
+          "code": "LOW",
+          "name": "Низкий"
+        },
+        "aumAssetsCount": null,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-008",
+        "name": "Это пример фонда не из ЕПК",
+        "alias": "Это пример фонда не из ЕПК",
+        "inn": null,
+        "kpp": null,
+        "partyId": null,
+        "keyBeneficiaries": [],
+        "types": [],
+        "priority": null,
+        "aumAssetsCount": 2,
+        "contacts": [],
+        "comment": null
+      }
+    ]
+  },
+  "selected": {
+    "funds": [
+      {
+        "objectId": "fnd-001",
+        "name": "Интеррос",
+        "alias": "Интеррос — Потанин",
+        "inn": "7706419639",
+        "kpp": "1157746316598",
+        "partyId": "pty-1001",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Владимир Потанин"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE",
+            "name": "PE"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 12,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-002",
+        "name": "USM",
+        "alias": "USM — Усманов",
+        "inn": "7706559639",
+        "kpp": "1157746316598",
+        "partyId": "pty-1002",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Алишер Усманов"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE",
+            "name": "PE"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 3,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-003",
+        "name": "РТ-Развитие бизнеса",
+        "alias": "Ростех — РТ РБ",
+        "inn": "7706559640",
+        "kpp": "1157746316598",
+        "partyId": "pty-1003",
+        "keyBeneficiaries": [
+          {
+            "displayName": "ГК Ростех"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE_VC",
+            "name": "PE / VC"
+          }
+        ],
+        "priority": {
+          "code": "MEDIUM",
+          "name": "Средний"
+        },
+        "aumAssetsCount": 2,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-004",
+        "name": "РФПИ",
+        "alias": "РФПИ — госинвестиции",
+        "inn": "7706559641",
+        "kpp": "1157746316598",
+        "partyId": "pty-1004",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Государство"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE_VC",
+            "name": "PE / VC"
+          }
+        ],
+        "priority": {
+          "code": "LOW",
+          "name": "Низкий"
+        },
+        "aumAssetsCount": 0,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-005",
+        "name": "Киевская площадь",
+        "alias": "КП — недвижимость",
+        "inn": "7706559642",
+        "kpp": "1157746316598",
+        "partyId": "pty-1005",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Год Нисанов"
+          },
+          {
+            "displayName": "Зарах Илиев"
+          }
+        ],
+        "types": [
+          {
+            "code": "FAMILY_OFFICE",
+            "name": "FamilyOffice"
+          }
+        ],
+        "priority": {
+          "code": "LOW",
+          "name": "Низкий"
+        },
+        "aumAssetsCount": 3,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-006",
+        "name": "Группа Альянс",
+        "alias": "Альянс — внутренний фонд",
+        "inn": "7706559643",
+        "kpp": "1157746316598",
+        "partyId": "pty-1006",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Муса Бажаев"
+          }
+        ],
+        "types": [
+          {
+            "code": "HOLDING",
+            "name": "Холдинг"
+          }
+        ],
+        "priority": {
+          "code": "LOW",
+          "name": "Низкий"
+        },
+        "aumAssetsCount": 2,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-008",
+        "name": "Это пример фонда не из ЕПК",
+        "alias": "Это пример фонда не из ЕПК",
+        "inn": null,
+        "kpp": null,
+        "partyId": null,
+        "keyBeneficiaries": [],
+        "types": [
+          {
+            "code": "PE",
+            "name": "PE"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 2,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-010",
+        "name": "Восход",
+        "alias": "Восход — венчур",
+        "inn": "7706559646",
+        "kpp": "1157746316598",
+        "partyId": "pty-1010",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Владимир Потанин"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE_VC",
+            "name": "PE / VC"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 3,
+        "contacts": [],
+        "comment": null
+      }
+    ],
+    "selected": "fnd-001"
+  },
+  "notfound": {
+    "funds": [
+      {
+        "objectId": "fnd-001",
+        "name": "Интеррос",
+        "alias": "Интеррос — Потанин",
+        "inn": "7706419639",
+        "kpp": "1157746316598",
+        "partyId": "pty-1001",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Владимир Потанин"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE",
+            "name": "PE"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 12,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-002",
+        "name": "USM",
+        "alias": "USM — Усманов",
+        "inn": "7706559639",
+        "kpp": "1157746316598",
+        "partyId": "pty-1002",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Алишер Усманов"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE",
+            "name": "PE"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 3,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-003",
+        "name": "РТ-Развитие бизнеса",
+        "alias": "Ростех — РТ РБ",
+        "inn": "7706559640",
+        "kpp": "1157746316598",
+        "partyId": "pty-1003",
+        "keyBeneficiaries": [
+          {
+            "displayName": "ГК Ростех"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE_VC",
+            "name": "PE / VC"
+          }
+        ],
+        "priority": {
+          "code": "MEDIUM",
+          "name": "Средний"
+        },
+        "aumAssetsCount": 2,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-004",
+        "name": "РФПИ",
+        "alias": "РФПИ — госинвестиции",
+        "inn": "7706559641",
+        "kpp": "1157746316598",
+        "partyId": "pty-1004",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Государство"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE_VC",
+            "name": "PE / VC"
+          }
+        ],
+        "priority": {
+          "code": "LOW",
+          "name": "Низкий"
+        },
+        "aumAssetsCount": 0,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-005",
+        "name": "Киевская площадь",
+        "alias": "КП — недвижимость",
+        "inn": "7706559642",
+        "kpp": "1157746316598",
+        "partyId": "pty-1005",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Год Нисанов"
+          },
+          {
+            "displayName": "Зарах Илиев"
+          }
+        ],
+        "types": [
+          {
+            "code": "FAMILY_OFFICE",
+            "name": "FamilyOffice"
+          }
+        ],
+        "priority": {
+          "code": "LOW",
+          "name": "Низкий"
+        },
+        "aumAssetsCount": 3,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-006",
+        "name": "Группа Альянс",
+        "alias": "Альянс — внутренний фонд",
+        "inn": "7706559643",
+        "kpp": "1157746316598",
+        "partyId": "pty-1006",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Муса Бажаев"
+          }
+        ],
+        "types": [
+          {
+            "code": "HOLDING",
+            "name": "Холдинг"
+          }
+        ],
+        "priority": {
+          "code": "LOW",
+          "name": "Низкий"
+        },
+        "aumAssetsCount": 2,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-008",
+        "name": "Это пример фонда не из ЕПК",
+        "alias": "Это пример фонда не из ЕПК",
+        "inn": null,
+        "kpp": null,
+        "partyId": null,
+        "keyBeneficiaries": [],
+        "types": [
+          {
+            "code": "PE",
+            "name": "PE"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 2,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-010",
+        "name": "Восход",
+        "alias": "Восход — венчур",
+        "inn": "7706559646",
+        "kpp": "1157746316598",
+        "partyId": "pty-1010",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Владимир Потанин"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE_VC",
+            "name": "PE / VC"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 3,
+        "contacts": [],
+        "comment": null
+      }
+    ],
+    "filters": {
+      "smartSearch": "Северсталь",
+      "typeCodes": [],
+      "priorityCode": null
+    }
+  },
+  "empty": {
+    "funds": []
+  },
+  "long": {
+    "funds": [
+      {
+        "objectId": "fnd-001",
+        "name": "Акционерное общество «Интеррос Капитал — управление прямыми инвестициями и венчурными фондами»",
+        "alias": "Интеррос — Потанин, прямые инвестиции в металлургию, туризм, финансовый сектор и технологии",
+        "inn": "7706419639",
+        "kpp": "1157746316598",
+        "partyId": "pty-1001",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Владимир Олегович Потанин"
+          },
+          {
+            "displayName": "Наталья Николаевна Потанина"
+          },
+          {
+            "displayName": "Сергей Батехин"
+          },
+          {
+            "displayName": "Андрей Бугров"
+          }
+        ],
+        "types": [
+          {
+            "code": "PE",
+            "name": "PE"
+          },
+          {
+            "code": "PE_VC",
+            "name": "PE / VC"
+          },
+          {
+            "code": "HOLDING",
+            "name": "Холдинг"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 1240,
+        "contacts": [
+          {
+            "name": "Иванова Мария Сергеевна"
+          },
+          {
+            "name": "Петров Константин Александрович"
+          }
+        ],
+        "comment": "Приоритетный фонд на 2027 год: обсудить участие в финансировании нового горнолыжного кластера и рефинансирование долга группы"
+      },
+      {
+        "objectId": "fnd-005",
+        "name": "Киевская площадь",
+        "alias": "КП — недвижимость",
+        "inn": "7706559642",
+        "kpp": "1157746316598",
+        "partyId": "pty-1005",
+        "keyBeneficiaries": [
+          {
+            "displayName": "Год Нисанов"
+          },
+          {
+            "displayName": "Зарах Илиев"
+          }
+        ],
+        "types": [
+          {
+            "code": "FAMILY_OFFICE",
+            "name": "FamilyOffice"
+          },
+          {
+            "code": "PE",
+            "name": "PE"
+          }
+        ],
+        "priority": {
+          "code": "LOW",
+          "name": "Низкий"
+        },
+        "aumAssetsCount": 3,
+        "contacts": [],
+        "comment": null
+      },
+      {
+        "objectId": "fnd-008",
+        "name": "Это пример фонда не из ЕПК",
+        "alias": "Это пример фонда не из ЕПК",
+        "inn": null,
+        "kpp": null,
+        "partyId": null,
+        "keyBeneficiaries": [],
+        "types": [
+          {
+            "code": "PE",
+            "name": "PE"
+          }
+        ],
+        "priority": {
+          "code": "HIGH",
+          "name": "Высокий"
+        },
+        "aumAssetsCount": 2,
+        "contacts": [],
+        "comment": null
+      }
+    ]
+  }
+}

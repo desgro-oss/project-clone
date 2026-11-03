@@ -87,10 +87,10 @@
    Раньше эти правила жили в локальном <style> каждой страницы: новая страница
    копировала разметку .lbl/.pg__stage/.readout и оставалась без стиля
    (Layout.html, 20.08.2026). Теперь они часть kit-а. */
-.pg__controls .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform: uppercase; letter-spacing: .05em; font-size: 11px; }
+.pg__controls .ctl > .lbl { font: var(--type-body-s-strong-smb); color: var(--text-inactive); text-transform: uppercase; letter-spacing: .05em; font-size: 11px; }
 .pg__controls .readout { display: flex; flex-direction: column; gap: 6px; padding-top: 4px; border-top: 1px solid var(--border-light); }
 .pg__controls .readout .r { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.pg__controls .readout .r .k { font: var(--type-body-s); color: var(--text-inactive); }
-.pg__controls .readout .r .v { font: var(--type-body-m-strong); color: var(--text-primary); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; text-align: right; }
+.pg__controls .readout .r .k { font: var(--type-body-s-reg); color: var(--text-inactive); }
+.pg__controls .readout .r .v { font: var(--type-body-m-strong-smb); color: var(--text-primary); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; text-align: right; }
 .pg__controls .readout .r .v.tokv { color: var(--primary); }
 .panel.pg > .pg__stage { padding: 24px; min-height: 320px; background: var(--bg-tile); overflow: hidden; min-width: 0; }

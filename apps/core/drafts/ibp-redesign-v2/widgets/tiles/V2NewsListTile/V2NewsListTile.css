@@ -1,0 +1,43 @@
+/* Локальный компонент V2NewsListTile — лента новостей.
+   Тайл заполняет высоту панели сплиттера, прокручивается тело (.ds-scroll).
+   Строка — кнопка: состояния наведения, фокуса и выбора — токены строки
+   Entity ДС (--bg-table-default-hover, --primary, --primary-bg). */
+.lc-v2-news-list-tile { flex: 1; min-height: 0; }
+.lc-v2-news-list-tile [hidden] { display: none; }
+.tile--headless > .lc-v2-news-list-tile__body { flex: 1; min-height: 0; overflow-y: auto; padding: var(--space-8); }
+.lc-v2-news-list-tile__list { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.lc-v2-news-list-tile__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+  padding: var(--space-20) var(--space-24);
+  border: 0;
+  border-radius: var(--radius-m);
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color .15s ease;
+}
+.lc-v2-news-list-tile__item:hover { background: var(--bg-table-default-hover); }
+.lc-v2-news-list-tile__item:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.lc-v2-news-list-tile__item[aria-current="true"] { background: var(--primary-bg); }
+
+.lc-v2-news-list-tile__meta time { white-space: nowrap; }
+.lc-v2-news-list-tile__meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); font: var(--type-body-xs-reg); color: var(--text-secondary); }
+.lc-v2-news-list-tile__source { color: var(--primary); text-transform: uppercase; }
+.lc-v2-news-list-tile__title { font: var(--type-body-m-strong-smb); }
+.lc-v2-news-list-tile__summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font: var(--type-body-m-reg);
+  color: var(--text-secondary);
+}
+.lc-v2-news-list-tile__client { display: flex; align-items: center; gap: var(--space-8); min-width: 0; font: var(--type-body-xs-reg); color: var(--text-secondary); }
+.lc-v2-news-list-tile__client [data-icon] { flex: none; width: var(--space-16); height: var(--space-16); color: var(--secondary); }
+.lc-v2-news-list-tile__client span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

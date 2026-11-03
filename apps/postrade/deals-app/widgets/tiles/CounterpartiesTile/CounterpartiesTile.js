@@ -13,15 +13,37 @@
        segment, profile } или null (рейтинг не рассчитан — чип без данных).
        Первые два КНР — строками, остальные — строкой «и ещё N КНР» с
        тултипом-списком (multiline: иначе рантайм режет список в одну строку).
-     PostTileKNR.render(tile, list)
+     PostTileKNR.render(tile, list[, opts])
        Заменяет строки в .lc-knr__list (шапка колонок остаётся) и ставит
        data-state: data — КНР есть, empty — нет. Монтирует RiskMetric, иконки
-       и тултип.
+       и тултип. Без opts — вариант страницы сделки, как раньше.
+       opts.variant — вариант тайла:
+         'instrument' — страница договора (инструмента): заголовок «Контрагент»,
+                        ровно одна строка (берётся первая запись списка), без
+                        строки «и ещё N КНР». Ставит data-variant="instrument"
+                        на корень тайла (.lc-knr) — по нему окно и страница
+                        отличают вариант;
+         любое другое значение (например 'deal') — вернуть вариант сделки:
+                        атрибут снимается, заголовок «КНР».
+     PostTileKNR.renderInstrument(tile, record)
+       Вариант «Контрагент» одним вызовом: record — запись базы контрагентов
+       (CounterpartiesStore.byId(id): name, risk) или null — контрагент у
+       договора не выбран, тайл в empty. Страница договора зовёт его с
+       LoanAgreementStore.counterparty():
+         PostTileKNR.renderInstrument(tile, LoanAgreementStore.counterparty());
+       Режим (data-mode) ставит страница; кнопки шапки открывают то же окно
+       (data-modal="knr-scrim"), которое страница переводит в тот же вариант:
+       PostModalCounterparties.use({ variant: 'instrument', … }).
+     PostTileKNR.setVariant(tile, 'instrument'|'deal')
+       Только вариант (атрибут и заголовок), без данных: чтобы тайл в loading
+       уже назывался «Контрагент», пока запись договора грузится.
    ============================================================ */
 (function () {
   'use strict';
 
   var SHOWN = 2;
+  var TITLE_DEAL = 'КНР';
+  var TITLE_INSTRUMENT = 'Контрагент';
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -55,9 +77,26 @@
     return s;
   }
 
-  function render(tile, list) {
+  /* Вариант тайла: атрибут на корне и заголовок. Без opts.variant тайл не
+     трогаем — страница сделки зовёт render(tile, list) и ничего не меняется. */
+  function applyVariant(tile, variant) {
+    var title = tile.querySelector('.tile__title');
+    if (variant === 'instrument') {
+      tile.setAttribute('data-variant', 'instrument');
+      if (title) title.textContent = TITLE_INSTRUMENT;
+    } else {
+      tile.removeAttribute('data-variant');
+      if (title) title.textContent = TITLE_DEAL;
+    }
+  }
+
+  function render(tile, list, opts) {
     if (!tile) return;
     list = list || [];
+    var variant = opts && opts.variant;
+    if (variant) applyVariant(tile, variant);
+    /* контрагент договора — один: лишние записи не показываем */
+    if (tile.getAttribute('data-variant') === 'instrument') list = list.slice(0, 1);
     var box = tile.querySelector('.lc-knr__list');
     if (box) {
       Array.prototype.slice.call(box.children).forEach(function (el) {
@@ -73,5 +112,9 @@
     if (window.DSTooltip) window.DSTooltip.bindAll(tile);
   }
 
-  window.PostTileKNR = { rowsHTML: rowsHTML, render: render };
+  function renderInstrument(tile, record) {
+    render(tile, record ? [record] : [], { variant: 'instrument' });
+  }
+
+  window.PostTileKNR = { rowsHTML: rowsHTML, render: render, renderInstrument: renderInstrument, setVariant: applyVariant };
 })();

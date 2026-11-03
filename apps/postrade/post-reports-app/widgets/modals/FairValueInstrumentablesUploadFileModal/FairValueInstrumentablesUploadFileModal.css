@@ -15,7 +15,7 @@
 }
 .lc-fv-upload__hint {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-secondary);
 }
 
@@ -23,7 +23,7 @@
    бесконечно: тело окна скроллится само. */
 .lc-fv-upload__xml {
   margin: 0;
-  font: var(--type-body-m);
+  font: var(--type-body-m-reg);
   color: var(--text-primary);
   white-space: pre-wrap;
   overflow-wrap: anywhere;

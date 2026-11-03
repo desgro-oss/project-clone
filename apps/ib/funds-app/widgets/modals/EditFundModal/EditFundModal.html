@@ -1,0 +1,119 @@
+<!-- Локальный компонент «Форма фонда» (EditFundModal) — окно добавления фонда из ЕПК,
+     создания нового фонда и редактирования фонда (макеты «Add-Edit-funds», 30.10.2026).
+     Вшивается в конец страницы меткой ds-include; страница связывает скриптом:
+     EditFundModal.open('editFundModal', { mode, source, client, fund, name, priorities, onSave }).
+     Заголовок, подписи кнопок, значения полей, выключенные поля, ряд ИНН | КПП и
+     предупреждение ЕПК ставит скрипт окна по варианту (паспорт, variants).
+     Состояние данных — data-state на .modal: data · partial · loading · updating. -->
+<div class="modal-scrim" id="editFundModal" hidden>
+  <div class="modal modal--w5 lc-edit-fund-modal" role="dialog" aria-modal="true" aria-labelledby="efm-title" data-state="data" data-variant="add-ucp">
+    <header class="modal__head">
+      <h2 class="modal__title" id="efm-title" data-efm-title>Добавить фонд</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <!-- фонд не из ЕПК (вариант edit-custom): предупреждение уровня окна; «Привязать» —
+         воркфлоу не делается (решение 30.10.2026), обработчика у кнопки нет -->
+    <div class="modal__alert" data-efm-ucp-alert hidden>
+      <div class="alert alert--warning alert--m alert--row alert--flush" role="status">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Клиент не привязан к базе юр. лиц Сбера (ЕПК).</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--warning" data-efm-link-ucp><span class="btn__label">Привязать</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <!-- fieldset — для состояния «Обновление»: правило Modal «поля в <fieldset disabled>» -->
+      <fieldset class="lc-edit-fund-modal__fields" aria-labelledby="efm-title" data-efm-fields>
+
+        <div class="inp inp--m inp--disabled" data-efm-field="name">
+          <label class="ds-label ds-label--disabled" for="efm-name"><span class="ds-label__text">Название фонда</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-name" type="text" autocomplete="off" disabled value="ИП «Интер О.С.»">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m" data-efm-field="alias">
+          <label class="ds-label" for="efm-alias"><span class="ds-label__text">Псевдоним</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-alias" type="text" autocomplete="off" value="Большой перспективный фонд">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m" data-efm-field="beneficiaries">
+          <label class="ds-label" for="efm-beneficiaries"><span class="ds-label__text">Бенефициар</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="efm-beneficiaries" type="text" autocomplete="off" value="Иванов Сергей Петрович">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--multiline" data-efm-field="comment">
+          <label class="ds-label" for="efm-comment"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <textarea class="inp__control" id="efm-comment" rows="2">Текст комментария</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ИНН | КПП — только у фонда из ЕПК, всегда выключены -->
+        <div class="lc-edit-fund-modal__row" data-efm-requisites>
+          <div class="inp inp--m inp--disabled" data-efm-field="inn">
+            <label class="ds-label ds-label--disabled" for="efm-inn"><span class="ds-label__text">ИНН</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="efm-inn" type="text" autocomplete="off" disabled value="7706419639">
+              </div>
+            </div>
+          </div>
+          <div class="inp inp--m inp--disabled" data-efm-field="kpp">
+            <label class="ds-label ds-label--disabled" for="efm-kpp"><span class="ds-label__text">КПП</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="efm-kpp" type="text" autocomplete="off" disabled value="1157746314274">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Приоритет — одиночный выбор, половина ширины; список заполняет скрипт окна -->
+        <div class="lc-edit-fund-modal__row">
+          <div class="inp inp--m" data-efm-field="priorityCode">
+            <label class="ds-label" for="efm-priority"><span class="ds-label__text">Приоритет</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="efm-priority-list">
+                <input class="inp__control" id="efm-priority" type="text" autocomplete="off" value="Высокий">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button>
+                  <button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button>
+                </span>
+              </div>
+            </div>
+            <div id="efm-priority-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-label="Приоритет фонда" data-efm-priority-list>
+              <button type="button" class="ddl__item" role="option" aria-selected="true" data-code="HIGH"><span class="ddl__item-body"><span class="ddl__item-label">Высокий</span></span></button>
+              <button type="button" class="ddl__item" role="option" aria-selected="false" data-code="MEDIUM"><span class="ddl__item-body"><span class="ddl__item-label">Средний</span></span></button>
+              <button type="button" class="ddl__item" role="option" aria-selected="false" data-code="LOW"><span class="ddl__item-body"><span class="ddl__item-label">Низкий</span></span></button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close data-efm-cancel><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-efm-save><span class="btn__label" data-efm-save-label>Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+{
+  "_": "Демо-данные: компонент наполняет скрипт страницы EventsPage из data/events.js (IBPR_EVENTS); ключи — состояния данных.",
+  "data": { "eventId": "E-1001" },
+  "partial": { "eventId": "E-1008" },
+  "empty": {},
+  "error": { "message": "" },
+  "long": { "eventId": "E-1007" }
+}
