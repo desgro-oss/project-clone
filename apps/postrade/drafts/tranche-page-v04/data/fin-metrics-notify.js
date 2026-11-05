@@ -14,10 +14,9 @@
                          и один зелёный «Фиксация ЭПС/ВБС выполнена» / «ФИ: …» (текст зелёного —
                          решение агента: на макетах его нет, вопрос 32 задачи RE0033)
      exportDone()      — снек success «Файл выгружен» (текст придуман: на макетах успеха нет, Э8)
-     rasFixed(date)    — снек success «Фиксация РСБУ сохранена» (тайл «Процентные платежи» транша,
-                         RE0034 концепт v4; текст придуман, решение агента 29)
      paymentsRecalculated(res) — итог FinMetricsStore.recalcPayments(): success «Платежи пересчитаны»,
-                         при фиксации — «Создано корректировок РСБУ: N» (текст придуман)
+                         пересчёт с фиксацией — «Создано корректировок РСБУ: N», обычный — без строки
+                         о корректировках (тексты придуманы; RE0034 → RE0050)
      exportFailed()    — снек error «Ошибка» / «Не удалось выгрузить файл. Попробуйте еще раз.» (макет)
    }
 
@@ -119,25 +118,20 @@
     window.DSSnack.show({ tone: 'error', title: 'Ошибка', text: 'Не удалось выгрузить файл. Попробуйте еще раз.' });
   }
 
-  /* ── Фиксация РСБУ и пересчёт платежей (RE0034, концепт v4) ──────── */
-
-  function rasFixed(date) {
-    if (!window.DSSnack) return;
-    window.DSSnack.show({ tone: 'success', title: 'Фиксация РСБУ сохранена', text: 'Начисленные проценты зафиксированы по ' + fmtDate(date) });
-  }
+  /* ── Пересчёт платежей и корректировки РСБУ (RE0034 → RE0050) ────── */
 
   function paymentsRecalculated(res) {
     if (!window.DSSnack || !res || res.busy) return;
     window.DSSnack.show({
       tone: 'success', title: 'Платежи пересчитаны',
-      text: res.hadFixation ? 'Создано корректировок РСБУ: ' + res.created : 'Процентные платежи транша пересчитаны'
+      text: res.withFixation ? 'Создано корректировок РСБУ: ' + res.created : 'Процентные платежи транша пересчитаны'
     });
   }
 
   window.FinMetricsNotify = {
     calculation: calculation, fixationNotLast: fixationNotLast, fixationRemoved: fixationRemoved,
     fixationStarted: fixationStarted, fixationRule: fixationRule, fixationResult: fixationResult,
-    exportDone: exportDone, exportFailed: exportFailed, rasFixed: rasFixed,
+    exportDone: exportDone, exportFailed: exportFailed,
     paymentsRecalculated: paymentsRecalculated
   };
 })();

@@ -54,8 +54,10 @@
    Пункт «не решено» — `{?}` в начале (жёлтый кружок «?»; в md — `**(?)**`). Блок ```scenario — схема сценария со стрелками
    и условиями (формат — parseScenario); в html узел ведёт к снимку, кнопка
    «К схеме сценария» возвращает, в md схема уходит блоком mermaid. Разделы
-   «Коротко», «Сценарий», «Экраны», «Новые локальные компоненты», «Тексты» — обязательные
+   «Коротко», «Сценарий», «Экраны», «Виджеты», «Тексты» — обязательные
    разделы шаблона, «Данные и API» и «Открытые вопросы» — по желанию; номера подряд (SECTIONS ниже).
+   Раздел «Виджеты» показывает новые виджеты и изменения существующих; старый заголовок
+   «Новые локальные компоненты» принимается как алиас — спеки до 05.11.2026 не ломаются.
    Окна в сетке — по ширине в шагах ДС: до `modal--w4` три в ряд, `w5`–`w9` два, `w10`–`w12` один. Заголовок таблицы — `#####`.
    Необязательное поле front matter `stage` — подпись вкладки версии: спеки с
    одним названием страница показывает вкладками версий.
@@ -111,7 +113,8 @@ const SPEC_RX = /^[A-Z][A-Za-z0-9]*$/;
 const VIEWPORT_RX = /^(\d{3,4})x(\d{3,4})$/;
 const FIELDS = ['spec', 'title', 'module', 'version', 'stage', 'date', 'designer', 'sources', 'viewport', 'snaps'];
 const SNAP_FIELDS = ['id', 'title', 'page', 'target', 'mark', 'height', 'note', 'do'];
-const SECTIONS = ['Коротко', 'Сценарий', 'Экраны', 'Новые локальные компоненты', 'Данные и API', 'Тексты', 'Открытые вопросы'];
+const SECTIONS = ['Коротко', 'Сценарий', 'Экраны', 'Виджеты', 'Данные и API', 'Тексты', 'Открытые вопросы'];
+const SECTION_ALIASES = { 'Новые локальные компоненты': 'Виджеты' };   // старое имя раздела — не ломать прежние спеки
 const OPTIONAL_SECTIONS = ['Данные и API', 'Открытые вопросы'];   // API разработке не нужен; решения и ответы живут в задаче
 const MARK_RX = /<!--\s*(snaps?|matrix)\s*:\s*([^>]*?)\s*-->/g;
 const SCENARIO_KINDS = { page: 'Экран', modal: 'Окно', state: 'Состояние', error: 'Ошибка', ok: 'Готово', warn: 'Под вопросом' };
@@ -338,8 +341,13 @@ export function bodyDefects(spec, body, bodyLine) {
   const h1 = lines.findIndex((l) => /^#\s+\S/.test(l));
   if (h1 < 0) out.push({ code: 'СР5', line: bodyLine, text: 'нет заголовка «# <название>» — первой строкой текста' });
   const heads = lines.map((l, i) => ({ m: /^##\s+(\d+)\.\s+(.+?)\s*$/.exec(l), line: bodyLine + i })).filter((x) => x.m);
-  /* обязательные разделы есть, идут в порядке шаблона, номера — подряд с 1 (необязательный раздел сдвигает следующие) */
-  const found = SECTIONS.map((name) => ({ name, h: heads.find((x) => x.m[2].replace(/\s*\(.*\)$/, '') === name) }));
+  /* обязательные разделы есть, идут в порядке шаблона, номера — подряд с 1 (необязательный раздел сдвигает следующие);
+     старое имя «Новые локальные компоненты» читается как «Виджеты» */
+  const sectionName = (raw) => {
+    const name = raw.replace(/\s*\(.*\)$/, '').trim();
+    return SECTION_ALIASES[name] || name;
+  };
+  const found = SECTIONS.map((name) => ({ name, h: heads.find((x) => sectionName(x.m[2]) === name) }));
   found.forEach(({ name, h }) => {
     if (!h && !OPTIONAL_SECTIONS.includes(name)) out.push({ code: 'СР5', line: bodyLine, text: 'нет раздела «## N. ' + name + '» — обязательные разделы шаблона: ' + SECTIONS.filter((s) => !OPTIONAL_SECTIONS.includes(s)).join(', ') + '; нечего сказать — строка «Нет.»' });
   });
@@ -946,7 +954,7 @@ export function exportHtml(spec, body, capture, inspector) {
     const cap = '<figcaption><span class="sp-snap__num">Снимок ' + num[id] + '</span> · ' + esc(s ? s.title : id) + ' · <span class="sp-snap__size">' + sizeOf(c) + '</span>'
       + (s && s.note ? '<span class="sp-snap__note">' + inline(s.note) + '</span>' : '') + '</figcaption>';
     if (!c) return '<figure class="sp-snap sp-snap--missing" id="snap-' + esc(id) + '"><div class="sp-snap__empty">Снимок не снят</div>' + cap + '</figure>';
-    return '<figure class="sp-snap' + (isModalSnap(s) ? ' sp-snap--modal' : '') + '" id="snap-' + esc(id) + '" data-snap="' + esc(id) + '"><button type="button" class="sp-snap__frame" aria-label="Открыть снимок ' + num[id] + ' в натуральную величину"><span class="sp-snap__scale"></span></button>' + cap + '</figure>';
+    return '<figure class="sp-snap' + (isModalSnap(s) ? ' sp-snap--modal' : '') + '" id="snap-' + esc(id) + '" data-snap="' + esc(id) + '"><div class="sp-snap__frame" role="button" tabindex="0" aria-label="Открыть снимок ' + num[id] + ' в натуральную величину"><span class="sp-snap__scale"></span></div>' + cap + '</figure>';
   };
   /* сколько снимков в ряд. Окна — по ширине в колонках сетки: до 4 колонок — три в ряд, 5–9 — два, 10–12 — один.
      Остальные кадры (тайлы, страницы) — по пикселям: до 520 — три, до 760 — два, шире — по одному. */
@@ -1063,7 +1071,7 @@ const PAGE_CSS = [
   /* кадр окна: фон прозрачный — под скруглёнными углами видно скрим рамки, а не плашку фона;
      скругление и тень — токенами окна ДС: своя тень окна срезана краем кадра (RE0037) */
   '.sp-snap--modal iframe,.sp-zoom__stage--modal iframe{background:transparent;border-radius:var(--radius-modal);box-shadow:var(--shadow-modal-form)}',
-  '.sp-snap__frame iframe{pointer-events:none}',
+  '.sp-snap__frame iframe{pointer-events:auto}',
   'figcaption{font:var(--type-body-s-reg);color:var(--text-secondary);margin-top:var(--space-8)}',
   '.sp-snap figcaption{margin-top:auto;padding-top:var(--space-8)}',
   '.sp-snap__num{font:var(--type-body-s-strong-smb);color:var(--text-primary)}',
@@ -1183,7 +1191,64 @@ function viewer() {
   /* Инспектор окна (RE0032): рантайм лежит в странице текстом и запускается только внутри кадра открытого окна.
      Кадр изолирован (sandbox без allow-same-origin), скрипт идёт по nonce, всё остальное из разметки снимка CSP режет. */
   var INSP = document.getElementById('devspec-insp'), INSP_CSS = document.getElementById('devspec-insp-css');
-  function srcdoc(s, live) {
+  /* Тултипы в кадре снимка: снимок — frozen DOM без скриптов, но открытый кадр
+     получает этот маленький рантайм. Наведение или фокус на триггере показывает
+     сохранённый .tip; в миниатюре тултип остаётся статичным. */
+  function tipRuntime() {
+    function init() {
+      function tipOf(el) {
+        var id = el.getAttribute && el.getAttribute('aria-describedby');
+        if (id) { var byId = document.getElementById(id); if (byId && byId.classList.contains('tip')) return byId; }
+        var inside = el.querySelector && el.querySelector('.tip');
+        if (inside) return inside;
+        var a = el.closest && el.closest('.tip-anchor');
+        if (a) { var t = a.querySelector('.tip'); if (t) return t; }
+        var n = el.nextElementSibling;
+        return n && n.classList.contains('tip') ? n : null;
+      }
+      function make(el) {
+        var text = el.getAttribute('data-tooltip') || el.getAttribute('title');
+        if (!text) return null;
+        var t = document.createElement('span');
+        t.className = 'tip tip--main tip--top tip--center tip--floating';
+        t.setAttribute('role', 'tooltip');
+        t.textContent = text;
+        (el.closest('.tip-anchor') || el.parentNode).appendChild(t);
+        return t;
+      }
+      function hide(t) { t.classList.remove('is-visible'); t.style.display = 'none'; }
+      function show(t, el) {
+        t.style.display = '';
+        t.classList.add('is-visible');
+        var r = el.getBoundingClientRect();
+        t.style.position = 'fixed';
+        t.style.left = Math.max(8, r.left + r.width / 2 - t.offsetWidth / 2) + 'px';
+        t.style.top = Math.max(8, r.top - t.offsetHeight - 8) + 'px';
+      }
+      var seen = [];
+      Array.prototype.forEach.call(document.querySelectorAll('[data-tooltip], .tip-anchor'), function (el) {
+        if (seen.indexOf(el) >= 0) return;
+        seen.push(el);
+        /* у disabled-кнопки без ФИ якорь с aria-describedby и tabindex=0; при ФИ — tabindex=-1 */
+        if (!el.hasAttribute('data-tooltip') && !el.getAttribute('aria-describedby') && el.tabIndex < 0) return;
+        var t = tipOf(el) || (el.hasAttribute('data-tooltip') ? make(el) : null);
+        if (!t) return;
+        hide(t);
+        el.addEventListener('mouseenter', function () { show(t, el); });
+        el.addEventListener('mouseleave', function () { hide(t); });
+        el.addEventListener('focus', function () { show(t, el); });
+        el.addEventListener('blur', function () { hide(t); });
+      });
+      /* снимок мог быть снят с уже показанным тултипом — в кадре он ждёт наведения */
+      Array.prototype.forEach.call(document.querySelectorAll('.tip'), function (t) {
+        if (!t.style.display) hide(t);
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  }
+
+  function srcdoc(s, mode) {
     var css = FREEZE;
     if (s.crop) {
       css += data.frame.crop;   // фон снимка прозрачный: под углами окна показывает скрим рамки, а не фон страницы
@@ -1192,26 +1257,36 @@ function viewer() {
         + '[data-snap-anc]{background:transparent!important;box-shadow:none!important}';
     }
     css += '[data-snap-mark]{outline:2px solid var(--primary)!important;outline-offset:-2px!important}';
+    /* Запасной показ тултипов без JS: в снимке .tip лежит рядом с триггером,
+       а не в плавающем слое; при наведении/фокусе показываем его над триггером. */
+    css += '\n.tip-anchor[aria-describedby]:hover > .tip,.tip-anchor[aria-describedby]:focus-within > .tip,[data-tooltip]:hover > .tip,[data-tooltip]:focus > .tip{'
+      + 'display:flex!important;visibility:visible!important;opacity:1!important;position:absolute!important;'
+      + 'width:max-content!important;max-width:var(--tip-max,280px)!important;'
+      + 'left:50%!important;bottom:calc(100% + 8px)!important;top:auto!important;right:auto!important;'
+      + 'transform:translateX(-50%)!important;pointer-events:none!important;z-index:2147483647!important}';
     var head = '', run = '';
-    if (live) {
+    if (mode) {
       var rnd = new Uint8Array(16);
       crypto.getRandomValues(rnd);
       var nonce = btoa(String.fromCharCode.apply(null, rnd));
       head = '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; img-src data: blob:; font-src data:; style-src \'unsafe-inline\'; script-src \'nonce-' + nonce + '\'">';
-      run = '<script nonce="' + nonce + '">' + INSP.textContent + '<' + '/script>';
-      css += '\n' + INSP_CSS.textContent + '\n.pp-tips .pp-tip{visibility:hidden!important}';   // карточки рисует окно (мост ниже), свои у кадра скрыты
+      if (mode === 'zoom' && INSP) run += '<script nonce="' + nonce + '">' + INSP.textContent + '<' + '/script>';
+      run += '<script nonce="' + nonce + '">(' + tipRuntime.toString() + ')();<' + '/script>';
+      /* миниатюра: тултипы при наведении и клик по кадру — открыть увеличенный снимок */
+      if (mode === 'thumb') run += '<script nonce="' + nonce + '">document.addEventListener("click",function(){parent.postMessage({devspecZoom:1},"*")},true);<' + '/script>';
+      if (mode === 'zoom' && INSP_CSS) css += '\n' + INSP_CSS.textContent + '\n.pp-tips .pp-tip{visibility:hidden!important}';   // карточки рисует окно (мост ниже), свои у кадра скрыты
     }
     return '<!DOCTYPE html><html ' + s.htmlAttrs + '><head><meta charset="UTF-8">' + head + run + '<style>' + FONTS + '\n' + SHARED + '\n' + s.local + '\n' + css + '</style></head>' + s.body + '</html>';
   }
-  /* live — кадр окна: со скриптом инспектора; миниатюры остаются без скриптов */
-  function frame(s, live) {
+  /* mode: 'thumb' — миниатюра с тултипами и мостом клика; 'zoom' — увеличенный кадр с инспектором; false — статичный кадр */
+  function frame(s, mode) {
     var f = document.createElement('iframe');
-    f.setAttribute('sandbox', live ? 'allow-scripts' : '');
+    f.setAttribute('sandbox', mode ? 'allow-scripts' : '');
     f.setAttribute('loading', 'lazy');
     f.setAttribute('title', 'Снимок ' + s.n + ': ' + s.title);
     f.width = s.w;
     f.height = s.h;
-    f.srcdoc = srcdoc(s, live);
+    f.srcdoc = srcdoc(s, mode);
     return f;
   }
   function px(el, a, b) { var cs = getComputedStyle(el); return parseFloat(cs[a]) + parseFloat(cs[b]); }
@@ -1231,12 +1306,24 @@ function viewer() {
     if (!s) return;
     var btn = fig.querySelector('.sp-snap__frame');
     var scale = fig.querySelector('.sp-snap__scale');
-    scale.appendChild(frame(s));
+    var f = frame(s, 'thumb');
+    scale.appendChild(f);
     var grid = fig.parentNode;
     var wide = !(grid.classList.contains('sp-gallery') || grid.classList.contains('sp-matrix')) || grid.getAttribute('data-cols') === '1';
     if (wide) fig.style.maxWidth = 'calc(' + s.w + 'px + 2 * var(--space-12) + 2px' + (s.modal ? ' + 2 * var(--space-32)' : '') + ')';   // узкий снимок не тянет карточку
-    figs.push({ s: s, btn: btn, scale: scale });
+    figs.push({ s: s, btn: btn, scale: scale, frame: f });
     btn.addEventListener('click', function () { zoom(s); });
+    btn.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); zoom(s); }
+    });
+  });
+  /* клик внутри миниатюры (кадр с мостом) открывает увеличенный снимок */
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (!d || !d.devspecZoom) return;
+    for (var i = 0; i < figs.length; i++) {
+      if (figs[i].frame && figs[i].frame.contentWindow === e.source) { zoom(figs[i].s); return; }
+    }
   });
   var flows = Array.prototype.map.call(document.querySelectorAll('.sp-flow'), function (el) {
     return { el: el, c: el.querySelector('.sp-flow__canvas'), sizer: el.querySelector('.sp-flow__sizer'), scroll: el.querySelector('.sp-flow__scroll') };
@@ -1295,7 +1382,7 @@ function viewer() {
     var scale = document.createElement('div');
     scale.className = 'sp-snap__scale';
     var has = !!(INSP && INSP_CSS);
-    var f = frame(s, has);
+    var f = frame(s, 'zoom');
     scale.appendChild(f);
     stage.appendChild(scale);
     zb.appendChild(stage);
@@ -2378,7 +2465,7 @@ function selftest() {
     '2. Шаг два',
     '   - вложенный',
     '<!-- snaps: tile-a page-b -->',
-    '## 3. Экраны', 'Нет.', '## 4. Новые локальные компоненты', '| A | B |', '|---|---|', '| `a|b` | 2 |',
+    '## 3. Экраны', 'Нет.', '## 4. Виджеты', '| A | B |', '|---|---|', '| `a|b` | 2 |',
     '## 5. Данные и API', 'Нет.', '## 6. Тексты', 'Нет.', '## 7. Открытые вопросы', 'Нет.',
   ].join('\n');
 
@@ -2403,6 +2490,8 @@ function selftest() {
   });
   t('текст: разделы и маркеры (СР5)', () => {
     assert.deepEqual(bodyDefects(fm.spec, split.body, split.bodyLine), []);
+    const legacy = bodyDefects(fm.spec, split.body.replace('## 4. Виджеты', '## 4. Новые локальные компоненты'), split.bodyLine);
+    assert.deepEqual(legacy, [], 'старое имя раздела читается как «Виджеты»');
     const lost = bodyDefects(fm.spec, split.body.replace('## 6. Тексты', '## 6. Подписи').replace('<!-- snap: page-b -->', '<!-- snap: page-x -->'), split.bodyLine);
     assert.ok(lost.some((e) => /«## N\. Тексты»/.test(e.text)));
     assert.ok(lost.some((e) => /page-x/.test(e.text)));
@@ -2506,7 +2595,7 @@ function selftest() {
     assert.ok(html.includes('sp-node--modal sp-node--state') && html.includes('sp-node--modal sp-node--error') && html.includes('sp-node--page sp-node--plain'), 'формы в разметке');
     assert.ok(html.includes('Окно · состояние · снимок 1') && html.includes('Экран · снимок 2'), 'подсказка называет форму');
     const spec3 = { ...fm.spec, snaps: [{ id: 'win', title: 'О', page: 'p.html', target: '#s .modal', do: [], at: {}, line: 1 }, { id: 'scr', title: 'Э', page: 'p.html', do: [], at: {}, line: 1 }] };
-    const body3 = (nodes) => '# Д\n\n## 1. Коротко\n```scenario\n' + nodes + '\n```\n<!-- snaps: win scr -->\n## 2. Сценарий\nНет.\n## 3. Экраны\nНет.\n## 4. Новые локальные компоненты\nНет.\n## 5. Тексты\nНет.\n';
+    const body3 = (nodes) => '# Д\n\n## 1. Коротко\n```scenario\n' + nodes + '\n```\n<!-- snaps: win scr -->\n## 2. Сценарий\nНет.\n## 3. Экраны\nНет.\n## 4. Виджеты\nНет.\n## 5. Тексты\nНет.\n';
     assert.deepEqual(bodyDefects(spec3, body3('a | Окно | modal | win\nb | Экран | page | scr\nc | Ошибка окна | error | win'), 1), []);
     const wrong = bodyDefects(spec3, body3('a | Список | page | win\nb | Экран | modal | scr'), 1);
     assert.ok(wrong.some((e) => /«a» помечен экраном.*окно/.test(e.text)) && wrong.some((e) => /«b» помечен окном/.test(e.text)), wrong.map((e) => e.text).join('; '));

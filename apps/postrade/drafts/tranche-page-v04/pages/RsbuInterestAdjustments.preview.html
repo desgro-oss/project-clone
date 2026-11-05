@@ -17,6 +17,11 @@
   body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
 
   .screen__content { gap: var(--space-12); }
+  /* Пустое состояние: тело таблицы — колонка, «Нет данных» занимает остаток высоты и центрируется
+     по вертикали и горизонтали; шапка таблицы остаётся сверху */
+  .dtable--fill .dtable__body { display: flex; flex-direction: column; }
+  #rh-tbl { flex: 0 0 auto; }
+  #rh-empty { flex: 1 1 auto; min-height: 0; }
 </style>
 <link rel="stylesheet" href="../widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.css">
 </head>
@@ -60,11 +65,11 @@
       <div class="dtable dtable--fill">
         <div class="dtable__body">
           <div class="tbl" data-table data-sort-rows id="rh-tbl">
-              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 72px 144px 144px 176px 176px 176px 176px 176px 176px 176px 280px 64px minmax(8px,1fr);">
+              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 72px 144px 176px 176px 176px 176px 176px 176px 176px 176px 280px 64px minmax(8px,1fr);">
                 <div class="th th--separator"></div>
                 <div class="th th--right" data-col="num"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th" data-col="startDate"><span class="th__label">Исходная дата</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="startDate" aria-label="Сортировать: Исходная дата"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
-                <div class="th" data-col="endDate"><span class="th__label">Целевая дата</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="endDate" aria-label="Сортировать: Целевая дата"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="endDate"><span class="th__label">Целевая дата корректировки</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="endDate" aria-label="Сортировать: Целевая дата корректировки"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th th--right" data-col="adjustmentAmount"><span class="th__label">Сумма корректировки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th th--right" data-col="currentInterest"><span class="th__label">Текущие начисленные проценты</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th th--right" data-col="currentInterestCap"><span class="th__label">Кап. текущие начисленные проценты</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
@@ -77,9 +82,18 @@
                 <div class="th th--separator"></div>
               </div>
           </div>
+          <!-- Empty: при пустом списке под шапкой видно .dtable__empty (Table ДС, «Empty»);
+               иллюстрация, текст и действие «Внести корректировку» — как кнопка в шапке страницы -->
+          <div class="dtable__empty" id="rh-empty" hidden>
+            <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+            <p class="dtable__empty-title">Корректировок пока нет</p>
+            <p class="dtable__empty-text">Они появятся здесь после пересчёта процентных платежей с фиксацией — или внесите корректировку вручную.</p>
+            <button type="button" class="btn btn--outline btn--m" id="rh-empty-add"><i data-icon="add"></i><span class="btn__label">Внести корректировку</span></button>
+          </div>
         </div>
-        <!-- Пагинация (макет: «Показывать строк: 50»): колонтитул строит скрипт (DSPagination.footer) -->
-        <div class="dtable__footer" id="rh-footer" hidden></div>
+        <!-- Пагинация (макет: «Показывать строк: 50»): колонтитул строит скрипт (DSPagination.footer);
+             виден всегда, в том числе без строк — атрибута hidden у него нет -->
+        <div class="dtable__footer" id="rh-footer"></div>
       </div>
     </main>
   </div>
@@ -120,7 +134,7 @@
             <div class="inp__field"><input class="inp__control" id="rsbu-adj-start" name="startDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
           </div>
           <div class="inp inp--m">
-            <label class="ds-label ds-label--wrap" for="rsbu-adj-end"><span class="ds-label__text">Целевая дата</span></label>
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-end"><span class="ds-label__text">Целевая дата корректировки</span></label>
             <div class="inp__field"><input class="inp__control" id="rsbu-adj-end" name="endDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
           </div>
         </div>
@@ -216,8 +230,9 @@
 /* Экранный скрипт: меню по каталогу ролей, таблица корректировок процентов РСБУ, окно ручной
    корректировки и удаление. Форматирование — только при выводе: суммы «1 000 000,00» (можно со
    знаком «-»), даты ДД.ММ.ГГГГ. Корректировки живут в FinMetricsStore (хранилище браузера, RE0034,
-   концепт v4): строки из дельт создаёт «Пересчитать платежи» на транше, их видят отчёт РСБУ и тайл
-   транша. Адрес ?rasAdj= задаёт состояние для панели прототипа. */
+   концепт v4): строки из дельт создаёт «Пересчитать с фиксацией» на транше (RE0050), их видят отчёт
+   РСБУ и тайл транша; повторные пересчёты добавляют строки, прежние остаются. Адрес ?rasAdj=
+   задаёт состояние для панели прототипа. */
 (function () {
   'use strict';
   var role = window.IBPHome.defaultRole;
@@ -278,8 +293,18 @@
 
   function loadRows() { rows = fiId ? store.rasAdjustments(fiId) : []; }
 
-  var GRID = '8px 72px 144px 144px 176px 176px 176px 176px 176px 176px 176px 280px 64px minmax(8px,1fr)';
+  /* «Целевая дата корректировки» — 176px: шапка в две строки иначе обрезается (05.11.2026) */
+  var GRID = '8px 72px 144px 176px 176px 176px 176px 176px 176px 176px 176px 280px 64px minmax(8px,1fr)';
+  /* Без права редактирования колонки «Действия» нет: строка короче на 64px */
+  var GRID_VIEW = '8px 72px 144px 176px 176px 176px 176px 176px 176px 176px 176px 280px minmax(8px,1fr)';
+  var VIEW_MODE = /[?&]hardsMode=view/.test(location.search);
+  if (VIEW_MODE) {
+    GRID = GRID_VIEW;
+    document.getElementById('rh-add').hidden = true;
+    document.getElementById('rh-empty-add').hidden = true;
+  }
   var tbl = document.getElementById('rh-tbl');
+  var emptyBox = document.getElementById('rh-empty');
 
   function cell(key, text, num, sortValue) {
     return '<div class="tc' + (num ? ' tc--numbers' : '') + '" data-col="' + key + '"' + (sortValue != null ? ' data-sort-value="' + sortValue + '"' : '') + '>'
@@ -298,13 +323,20 @@
       + cell('adjustmentAmount', money(r.adjustmentAmount), true)
       + PARTS.map(function (k) { return cell(k, money(r.parts[k] || 0), true); }).join('')
       + cell('comment', r.comment || '—', false)
-      + ROW_ACTIONS + '<div class="tc tc--separator"></div></div>';
+      + (VIEW_MODE ? '' : ROW_ACTIONS) + '<div class="tc tc--separator"></div></div>';
   }
 
-  /* шапка — в разметке; перерисовываются только строки данных */
+  /* шапка — в разметке; в просмотре из неё убирается колонка «Действия», перерисовываются только строки данных */
+  if (VIEW_MODE) {
+    var actionsTh = tbl.querySelector('.tbl__row--head [data-col="actions"]');
+    if (actionsTh) actionsTh.parentNode.removeChild(actionsTh);
+    tbl.querySelector('.tbl__row--head').style.gridTemplateColumns = GRID;
+  }
   function render() {
     tbl.querySelectorAll('.tbl__row:not(.tbl__row--head)').forEach(function (r) { r.remove(); });
     tbl.insertAdjacentHTML('beforeend', rows.map(rowHTML).join(''));
+    /* Пустой список — тело показывает .dtable__empty «Корректировок пока нет»; шапка колонок остаётся */
+    emptyBox.hidden = rows.length > 0;
     if (window.dsIcons) window.dsIcons.apply(tbl);
     if (window.DSTable) {
       window.DSTable.wireAll(tbl.parentNode);
@@ -316,15 +348,16 @@
 
   /* ---------- пагинация: корректировок могут быть сотни (ответ человека 28.10.2026) ----------
      Строки страницы — по порядку в DOM (после сортировки он другой), остальные скрыты (hidden).
-     Колонтитул — DSPagination.footer, без левой сводки, как на макете; пока строк нет — скрыт. */
+     Колонтитул — DSPagination.footer, без левой сводки, как на макете; показывается всегда,
+     в том числе без строк — с фактическими данными. */
   var footerHost = document.getElementById('rh-footer');
   var view = { page: 1, pageSize: 50 };
   function dataRows() { return Array.prototype.slice.call(tbl.querySelectorAll('.tbl__row:not(.tbl__row--head)')); }
   function applyView() {
     var all = dataRows();
     var total = all.length;
-    footerHost.hidden = total === 0;
-    if (!total || !window.DSPagination) return;
+    footerHost.hidden = false;
+    if (!window.DSPagination) return;
     var pages = window.DSPagination.totalPages(total, view.pageSize);
     if (view.page > pages) view.page = pages;
     var size = view.pageSize === 'all' ? total : view.pageSize;
@@ -351,7 +384,14 @@
      Форму, итог, проверку и тексты ошибок ведёт окно; страница даёт ему валюту
      и принимает проверенную запись. */
   var modal = window.PostModalRsbuAdjustment.bind(document.getElementById('rsbu-adj-scrim'), {
-    options: function () { return { currencyCode: data.currencyCode }; },
+    options: function () {
+      var fix = fiId ? store.rasLastFixation(fiId) : null;
+      return {
+        currencyCode: data.currencyCode,
+        reportDates: fiId ? store.rasReportDates(fiId) : null,
+        fixationDate: fix ? fix.periodTo : null
+      };
+    },
     save: function (rec) {
       store.addRasAdjustment({ fiId: fiId, startDate: rec.startDate, endDate: rec.endDate, parts: rec.parts, comment: rec.comment });
       toast('Корректировка добавлена');
@@ -359,6 +399,7 @@
   });
 
   document.getElementById('rh-add').addEventListener('click', function () { if (fiId) modal.open(); });
+  document.getElementById('rh-empty-add').addEventListener('click', function () { if (fiId) modal.open(); });
 
   /* ---------- удаление с подтверждением ----------
      Корректировка входит в каждый пересчёт метрик: без неё исходная дата после следующего
@@ -423,6 +464,7 @@
       fiId = store.fiOfTranche(ctx.tranche.id);
       /* «Внести корректировку» доступна, только когда известен ФИ транша (уроки Л235, Л268) */
       document.getElementById('rh-add').disabled = !fiId;
+      document.getElementById('rh-empty-add').disabled = !fiId;
       store.on('change', refresh);
       refresh();
       /* ?open=add — страница открыта кнопкой «Внести корректировку» с тайла: модалка поднята сразу */

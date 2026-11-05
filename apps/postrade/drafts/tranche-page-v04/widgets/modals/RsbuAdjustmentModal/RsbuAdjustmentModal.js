@@ -3,20 +3,25 @@
    (RE0034, концепт v4).
 
    Делает то, чего нет в рантаймах ДС, и только это:
-   1) форматирует шесть сумм при вводе: знак «-» только первым, разряды неразрывным
-      пробелом, запятая, не более двух знаков;
+   1) форматирует шесть сумм при вводе: в поле вводится только число — буквы и прочий
+      мусор отбрасываются, знак «-» только первым, разряды неразрывным пробелом,
+      запятая, не более двух знаков;
    2) считает «Сумму корректировки» (только чтение) — сумму шести полей — при каждом вводе;
    3) проверяет форму по «Добавить» и показывает ошибку в Alert вверху окна с подсветкой
-      полей; правка поля снимает его подсветку.
+      полей; правка поля снимает его подсветку. Правила дат (ответ человека 05.11.2026):
+      исходная дата — дата отчёта РСБУ, не позже конца последней фиксации; целевая дата
+      корректировки — строго позже исходной.
    Окно только добавляет: правки строк в v4 нет (решение человека 28.10.2026). Корректировка
-   вычитает сумму с исходной даты и прибавляет её на целевую при каждом пересчёте метрик.
+   вычитает сумму с исходной даты и прибавляет её на целевую дату корректировки при каждом
+   пересчёте метрик.
 
    Открытие, фокус, Esc, крестик, календарь и маску даты делают рантаймы ДС.
    Транш и таблицу окно не знает: параметры берёт у страницы, проверенную запись отдаёт ей же.
 
    API:
      PostModalRsbuAdjustment.bind(scrim, { options, save }) → api
-       options()      → { currencyCode } — валюта ФИ транша
+       options()      → { currencyCode, reportDates, fixationDate } — валюта ФИ транша, даты
+                        отчёта РСБУ и конец последней фиксации (ISO; null — границы нет)
        save(rec)      — принять запись { startDate, endDate, parts: { <ключ>: число }, comment }
                         (даты ISO; ключи частей — PARTS ниже, как FinMetricsStore.rasParts())
        api.open()     — очистить окно и открыть
@@ -110,9 +115,13 @@
     });
     form.addEventListener('focusout', function (e) {
       var inp = e.target;
-      if (inp.hasAttribute && inp.hasAttribute('data-amount') && inp.value !== '') {
-        var n = parseMoney(inp.value);
-        if (!isNaN(n)) inp.value = money(n);
+      if (inp.hasAttribute && inp.hasAttribute('data-amount')) {
+        /* в поле суммы вводится только число: без цифр («-», «,») — незаконченный ввод, он не значение */
+        if (!/\d/.test(inp.value)) inp.value = '';
+        if (inp.value !== '') {
+          var n = parseMoney(inp.value);
+          if (!isNaN(n)) inp.value = money(n);
+        }
       }
       paintTotal();
     });
@@ -131,19 +140,25 @@
       if (window.DSInput) window.DSInput.syncAll(scrim);
     }
 
-    /* Тексты ошибок придуманы агентом (решение 29 задачи RE0034). */
+    /* Тексты ошибок придуманы агентом (решение 29 задачи RE0034); правила дат — ответ
+       человека 05.11.2026. */
     function validate() {
       clearErrors();
       var start = parseDate(field('startDate').value), end = parseDate(field('endDate').value);
       var bad = [];
       if (!start) bad.push('startDate');
       if (!end) bad.push('endDate');
-      if (bad.length) { showError('Введите исходную и целевую даты в формате ДД.ММ.ГГГГ.', bad); return false; }
-      if (start === end) { showError('Исходная и целевая даты не должны совпадать.', ['startDate', 'endDate']); return false; }
-      var p = parts();
-      var nan = PARTS.filter(function (k) { return isNaN(p[k]); });
-      if (nan.length) { showError('Введите суммы числом.', nan); return false; }
-      if (PARTS.every(function (k) { return !p[k]; })) { showError('Укажите сумму хотя бы одного вида процентов.', PARTS); return false; }
+      if (bad.length) { showError('Введите исходную дату и целевую дату корректировки в формате ДД.ММ.ГГГГ.', bad); return false; }
+      var now = params();
+      if (now.reportDates && now.reportDates.indexOf(start) === -1) {
+        showError('Исходная дата должна быть датой отчёта РСБУ.', ['startDate']); return false;
+      }
+      if (now.fixationDate && start > now.fixationDate) {
+        showError('Исходная дата не может быть позже даты фиксации (' + date(now.fixationDate) + ').', ['startDate']); return false;
+      }
+      if (end <= start) { showError('Целевая дата корректировки должна быть позже исходной.', ['startDate', 'endDate']); return false; }
+      var amounts = parts();
+      if (PARTS.every(function (k) { return !amounts[k]; })) { showError('Укажите сумму хотя бы одного вида процентов.', PARTS); return false; }
       return true;
     }
 

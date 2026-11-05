@@ -47,7 +47,7 @@
      целиком: сохранённый список перекрывает демо-карточки сделки;
    – расчёт метрик — calculation (DealMetricsCalculationRsDto) и fixations
      (EirIbsvFixationRsDto[], mock-fin-metrics-calc.js) целиком: сохранённое
-     перекрывает демо-запись сделки; ras — фиксация РСБУ и корректировки процентов (концепт v4: { fixation, gen, adjustments, snapshot })
+     перекрывает демо-запись сделки; ras — корректировки процентов РСБУ (концепт v4, RE0050: { gen, adjustments, snapshot })
     дельт ({ state, fiId, moves }, RE0034).
    ========================================================================= */
 (function () {

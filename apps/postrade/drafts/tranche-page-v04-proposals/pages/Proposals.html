@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Предложения к v4 — IBP</title>
+<style>
+  /* только раскладка экрана, на токенах ДС */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  .pr-lead { margin: 0; max-width: 960px; }
+  .pr-card .tile__body { display: flex; flex-direction: column; gap: var(--space-12); }
+  .pr-card p { margin: 0; }
+
+  @container screen (max-width: 1240px) {
+    .tile-row > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+  <nav class="nav nav--rail" aria-label="Главное меню">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list">
+      <a class="nav__item" href="../../../../../index.html"><span class="nav__ico"><i data-icon="main-page"></i></span><span class="nav__label">Главная</span></a>
+      <div class="nav__block">
+        <div class="nav__block-label">Origination</div>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="corporate-transactions"></i></span><span class="nav__label">Сделки</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="tasks"></i></span><span class="nav__label">Задачи</span></a>
+      </div>
+    </div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span><span class="nav__user-role">Аналитик ДИД</span></span>
+      </a>
+      <button class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки">
+      <li class="crumbs__item"><a class="link link--muted" href="../../../../../index.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="../../../../../index.html">Концепты</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="../../../../../index.html">Корректировки РСБУ</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Предложения к v4</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Предложения к v4</h1></div>
+            <div class="phead__chips"><span class="chip chip--rounded chip--s chip--grey"><span class="chip__label">На обсуждении</span></span></div>
+            <span class="phead__return">
+              <a class="btn btn--outline btn--xs" href="../../../../../index.html">
+                <i data-icon="flip-backward"></i><span class="btn__label">На хаб</span></a>
+            </span>
+          </div>
+          <div class="phead__subtitle">Корректировки процентов РСБУ — предложения на обсуждение</div>
+        </div>
+      </div>
+
+      <div class="tile-row">
+        <section class="tile tile--headless col-12">
+          <div class="tile__body">
+            <p class="pr-lead ds-body-m-reg">Три предложения к концепту v4 остаются на обсуждении с коллегами.
+              Отклонённые и уже выполненные из списка убраны — их решения записаны в задаче RE0050.</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="tile-group">
+        <div class="tile-row">
+          <section class="tile col-6 colw-12 pr-card">
+            <header class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row">
+                  <h3 class="tile__title">Источник строки</h3>
+                  <span class="tile__title-add"><span class="chip chip--rounded chip--s chip--grey"><span class="chip__label">Обсуждается</span></span></span>
+                </div>
+              </div>
+            </header>
+            <div class="tile__body">
+              <p class="ds-body-m-reg"><span class="ds-body-s-strong-smb">Проблема.</span> Строки из пересчёта и ручные различаются
+                только комментарием: перед удалением трудно понять, что создано автоматически, а что вносили руками.</p>
+              <p class="ds-body-m-reg"><span class="ds-body-s-strong-smb">Предложение.</span> Чип или колонка «Пересчёт» / «Вручную»
+                в строке; в фильтре — отбор по источнику.</p>
+              <p class="ds-body-m-reg"><span class="ds-body-s-strong-smb">Что даёт.</span> Видно, какие строки можно удалить как
+                ошибку пересчёта, а какие вносил человек.</p>
+            </div>
+          </section>
+
+          <section class="tile col-6 colw-12 pr-card">
+            <header class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row">
+                  <h3 class="tile__title">Дублировать корректировку</h3>
+                  <span class="tile__title-add"><span class="chip chip--rounded chip--s chip--grey"><span class="chip__label">Обсуждается</span></span></span>
+                </div>
+              </div>
+            </header>
+            <div class="tile__body">
+              <p class="ds-body-m-reg"><span class="ds-body-s-strong-smb">Проблема.</span> Правки строки нет: чтобы исправить
+                автоматическую корректировку, её удаляют и вводят новую вручную с нуля — шесть сумм и две даты.</p>
+              <p class="ds-body-m-reg"><span class="ds-body-s-strong-smb">Предложение.</span> Действие «Дублировать» в строке открывает
+                окно «Корректировка процентов» с уже заполненными датами и шестью суммами; человек меняет нужные значения, сохраняет
+                новую строку и удаляет исходную.</p>
+              <p class="ds-body-m-reg"><span class="ds-body-s-strong-smb">Что даёт.</span> Путь «удалить и создать заново» становится
+                управляемым, без ручного переноса шести сумм.</p>
+            </div>
+          </section>
+        </div>
+
+        <div class="tile-row">
+          <section class="tile col-6 colw-12 pr-card">
+            <header class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row">
+                  <h3 class="tile__title">Выбор и удаление нескольких корректировок</h3>
+                  <span class="tile__title-add"><span class="chip chip--rounded chip--s chip--grey"><span class="chip__label">Обсуждается</span></span></span>
+                </div>
+              </div>
+            </header>
+            <div class="tile__body">
+              <p class="ds-body-m-reg"><span class="ds-body-s-strong-smb">Проблема.</span> Если корректировки одного пересчёта
+                неверны, удалять их по одной долго.</p>
+              <p class="ds-body-m-reg"><span class="ds-body-s-strong-smb">Предложение.</span> Первой колонкой — чекбоксы:
+                выбрать несколько корректировок или все. Фильтр — даты «с» и «по» и отбор «только ручные» / «только
+                автоматические». Суммы пока не добавляем.</p>
+              <p class="ds-body-m-reg"><span class="ds-body-s-strong-smb">Что даёт.</span> Можно быстро отобрать и удалить
+                нужные строки; прежние пересчёты не затрагиваются.</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js"></script>
+</body>
+</html>

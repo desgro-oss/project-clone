@@ -182,17 +182,19 @@
               </header>
               <div class="tile__body"><p class="tr-status">Заполнено</p></div>
             </section>
-            <!-- Процентные платежи: фиксация РСБУ и пересчёт платежей (RE0034, концепт v4) -->
+            <!-- Процентные платежи: пересчёт и пересчёт с фиксацией РСБУ (RE0034 → RE0050) -->
             <section class="tile col-3 colw-6" id="tile-interest-payments">
               <header class="tile__header">
-                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Процентные платежи</h3><span class="tile__title-add"><span class="chip chip--s chip--grey"><span class="chip__label">Демо</span></span></span></div></div>
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Процентные платежи</h3></div></div>
                 <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Развернуть: Процентные платежи"><i data-icon="maximize"></i></button></div>
               </header>
               <div class="tile__body"><p class="tr-status">Заполнено</p>
-                <p class="tr-status" data-rsbu-fixed hidden>Дата фиксации РСБУ: <span data-rsbu-fixed-date></span></p>
                 <div class="tr-actions">
-                  <button type="button" class="btn btn--outline btn--s" id="ip-fix" hidden disabled><span class="btn__label">Зафиксировать РСБУ</span></button>
-                  <button type="button" class="btn btn--outline btn--s" id="ip-recalc" disabled><span class="btn__label">Пересчитать платежи</span></button>
+                  <button type="button" class="btn btn--outline btn--s" id="ip-recalc" disabled><span class="btn__label">Пересчитать</span></button>
+                  <!-- обёртка .tip-anchor: у disabled-кнопки pointer-events:none, тултип ведём от якоря -->
+                  <span class="tip-anchor" id="ip-fix-anchor" aria-label="Пересчитать с фиксацией">
+                    <button type="button" class="btn btn--transparent btn--s" id="ip-fix-recalc" hidden disabled><span class="btn__label">Пересчитать с фиксацией</span></button>
+                  </span>
                 </div></div>
             </section>
             <ds-include src="../widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.html" class="col-3 colw-6" id="tile-rsbu-adjustments"></ds-include>
@@ -270,7 +272,7 @@
   </div>
 </div>
 
-<!-- #sec:modals ── Окно «Фиксация РСБУ» тайла «Процентные платежи» (RE0034, концепт v4) -->
+<!-- #sec:modals ── Окно «Пересчет с фиксацией» тайла «Процентные платежи» (RE0034 → RE0050) -->
 <ds-include src="../widgets/modals/RsbuFixationModal/RsbuFixationModal.html"></ds-include>
 
 <script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
@@ -418,13 +420,52 @@
     if (window.dsIcons) window.dsIcons.apply(document.getElementById('tile-rsbu-adjustments'));
   }
 
-  /* ---------- Тайл «Процентные платежи»: фиксация РСБУ и пересчёт платежей (RE0034, концепт v4) ----------
-     «Зафиксировать РСБУ» — только если транш прикреплён к ФИ, сделка в «Ввод изменений» и есть право
-     (?hardsMode=view — без права). Недоступная кнопка скрыта и выключена разметкой (урок Л235).
-     ?open=fix — окно фиксации открыто сразу (сценарии панели прототипа). */
-  var ipTile = document.getElementById('tile-interest-payments');
-  var ipFix = document.getElementById('ip-fix');
+  /* ---------- Тайл «Процентные платежи»: пересчёт и пересчёт с фиксацией (RE0034 → RE0050) ----------
+     «Пересчитать с фиксацией» без ФИ видна, но заблокирована: без ФИ нечего корректировать
+     в отчёте РСБУ, сами процентные платежи пересчитать можно (решение человека 05.11.2026).
+     Без права на пересчёт (?hardsMode=view) нет ни одной из двух кнопок. Окно всегда открывается
+     пустым, «Пересчитать» в нём сразу запускает пересчёт с созданием корректировок из дельт
+     зафиксированного периода. Недоступная кнопка остаётся в разметке (урок Л235). ?open=fix —
+     окно открыто сразу, только если транш привязан к ФИ (сценарии панели прототипа). */
+  var ipFix = document.getElementById('ip-fix-recalc');
+  var ipFixAnchor = document.getElementById('ip-fix-anchor');
   var ipRecalc = document.getElementById('ip-recalc');
+  /* кнопка, запустившая пересчёт: лоадер стоит на ней, вторая просто выключена */
+  var busyBtn = null;
+  var ipFixTip = null;
+  var fixHasFi = false;
+
+  /* Явный выключатель тултипа: при привязанном ФИ гасим события на якоре, а не полагаемся
+     на проверку усечения. Слушатели ставятся до DSTooltip.bind и идут первыми. */
+  function blockFixTip(e) { if (fixHasFi) e.stopImmediatePropagation(); }
+  if (ipFixAnchor) {
+    ipFixAnchor.addEventListener('mouseenter', blockFixTip, true);
+    ipFixAnchor.addEventListener('focus', blockFixTip, true);
+  }
+
+  /* У disabled-кнопки pointer-events:none, поэтому тултип ведём от .tip-anchor: он ловит
+     наведение и фокус, кнопка остаётся выключенной. Без ФИ якорь фокусируется и получает
+     имя кнопки и описание причины; с ФИ — tabindex −1 и описание снято. */
+  function syncFixTip(fiId) {
+    if (!ipFixAnchor || !window.DSTooltip) return;
+    fixHasFi = !!fiId;
+    if (!ipFixTip) {
+      ipFixTip = window.DSTooltip.bind(ipFixAnchor, {
+        text: 'Транш не привязан к финансовому инструменту — корректировки РСБУ недоступны',
+        placement: 'top'
+      });
+    }
+    if (!ipFixTip) return;
+    ipFixAnchor.setAttribute('aria-label', 'Пересчитать с фиксацией');
+    if (fiId) {
+      ipFixTip.hide(true);
+      ipFixAnchor.tabIndex = -1;
+      ipFixAnchor.removeAttribute('aria-describedby');
+    } else {
+      ipFixAnchor.tabIndex = 0;
+      ipFixAnchor.setAttribute('aria-describedby', ipFixTip.tip.id);
+    }
+  }
 
   /* Лоадер на кнопке — разметка Buttons ДС (btn--loading + spin--current), как у тайла метрик. */
   function setLoading(btn, on) {
@@ -441,47 +482,56 @@
     if (on) btn.setAttribute('aria-busy', 'true'); else btn.removeAttribute('aria-busy');
   }
 
-  function paymentsState(ctx, fiId) {
+  function paymentsState(fiId) {
     var store = window.FinMetricsStore;
-    var canFix = !!fiId && !VIEW_MODE && !!(ctx && ctx.deal && ctx.deal.status === 'Ввод изменений');
-    ipFix.hidden = !canFix;
-    ipFix.disabled = !canFix || store.paymentsBusy();
-    var fx = fiId ? store.rasFixation(fiId) : null;
-    ipTile.querySelector('[data-rsbu-fixed]').hidden = !fx;
-    ipTile.querySelector('[data-rsbu-fixed-date]').textContent = fx ? date(fx.fixationDate) : '';
-    setLoading(ipRecalc, store.paymentsBusy());
-    /* транш без ФИ — пересчитывать нечего: кнопка выключена разметкой (уроки Л235, Л268) */
-    if (!fiId) ipRecalc.disabled = true;
+    var busy = store.paymentsBusy();
+    /* Без права на пересчёт нет обеих кнопок: право — на любое действие пересчёта. Без ФИ вторая
+       кнопка остаётся на месте и блокируется (решение человека 05.11.2026). */
+    ipRecalc.hidden = VIEW_MODE;
+    ipFix.hidden = VIEW_MODE;
+    ipFixAnchor.hidden = VIEW_MODE;
+    syncFixTip(fiId);
+    setLoading(ipRecalc, busy && busyBtn === ipRecalc);
+    setLoading(ipFix, busy && busyBtn === ipFix);
+    /* disabled — состояние операции, а не лоадера: setLoading пишет его ради aria-busy, поэтому
+       оба действия блока выключаются одним правилом после обоих вызовов (находка приёмки RE0050) */
+    ipRecalc.disabled = busy;
+    ipFix.disabled = !fiId || busy;
+    if (!busy) busyBtn = null;
   }
 
   function bindPayments(fiId) {
     var store = window.FinMetricsStore;
+    /* окно всегда открывается пустым: период фиксации живёт только внутри пересчёта (RE0050) */
     var modal = window.PostModalRsbuFixation.bind(document.getElementById('rsbu-fix-scrim'), {
-      check: function (rec) { return store.checkRasFixation({ fiId: fiId, fixationDate: rec.fixationDate, adjustmentDate: rec.adjustmentDate }); },
+      check: function (rec) { return store.checkRasFixation({ fiId: fiId, periodFrom: rec.periodFrom, periodTo: rec.periodTo, adjustmentDate: rec.adjustmentDate }); },
       save: function (rec) {
-        var res = store.fixRas({ fiId: fiId, fixationDate: rec.fixationDate, adjustmentDate: rec.adjustmentDate });
-        if (res.ok && window.FinMetricsNotify) window.FinMetricsNotify.rasFixed(rec.fixationDate);
+        busyBtn = ipFix;
+        store.recalcPayments(fiId, { periodFrom: rec.periodFrom, periodTo: rec.periodTo, adjustmentDate: rec.adjustmentDate }).then(function (res) {
+          if (window.FinMetricsNotify) window.FinMetricsNotify.paymentsRecalculated(res);
+        });
       }
     });
-    ipFix.addEventListener('click', function () { if (modal) modal.open(store.rasFixation(fiId)); });
+    ipFix.addEventListener('click', function () { if (fiId && modal) modal.open(null); });
     ipRecalc.addEventListener('click', function () {
+      busyBtn = ipRecalc;
       store.recalcPayments(fiId).then(function (res) {
         if (window.FinMetricsNotify) window.FinMetricsNotify.paymentsRecalculated(res);
       });
     });
-    if (/[?&]open=fix/.test(location.search) && !ipFix.hidden && modal) modal.open(store.rasFixation(fiId));
+    if (/[?&]open=fix/.test(location.search) && fiId && !ipFix.hidden && modal) modal.open(null);
   }
 
-  /* Фиксация, пересчёт платежей и корректировки лежат в FinMetricsStore (RE0034): сторы открываются
-     на сделке транша после дерева, тайлы перерисовываются при любом их изменении. */
+  /* Пересчёт платежей (в том числе с фиксацией) и корректировки лежат в FinMetricsStore (RE0034, RE0050):
+     сторы открываются на сделке транша после дерева, тайлы перерисовываются при любом их изменении. */
   function openStores(ctx) {
     var store = window.FinMetricsStore;
-    if (!ctx) { rsbuState(ctx, null); ipFix.hidden = true; ipFix.disabled = true; ipRecalc.disabled = true; return; }
+    if (!ctx) { rsbuState(ctx, null); ipRecalc.hidden = VIEW_MODE; ipFix.hidden = true; ipFixAnchor.hidden = true; ipFix.disabled = true; ipRecalc.disabled = true; if (ipFixTip) ipFixTip.hide(true); return; }
     Promise.all([window.FinInstrumentsStore.ready, store.ready]).then(function () {
       window.FinInstrumentsStore.use(ctx.openedId);
       store.use(ctx.openedId);
       var fiId = store.fiOfTranche(ctx.tranche.id);
-      function paint() { rsbuState(ctx, fiId); paymentsState(ctx, fiId); }
+      function paint() { rsbuState(ctx, fiId); paymentsState(fiId); }
       store.on('change', paint);
       paint();
       bindPayments(fiId);

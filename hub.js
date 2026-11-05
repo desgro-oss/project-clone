@@ -359,13 +359,25 @@ window.IBPHub = [
     id: 'tranche-page-v04',
     group: 'concepts',
     title: 'Post — Корректировки РСБУ v4',
-    desc: 'Транш: фиксация РСБУ на тайле процентных платежей, корректировки из дельт после пересчёта платежей, отметка в отчёте РСБУ (RE0034)',
+    desc: 'Транш: пересчёт с фиксацией на тайле процентных платежей (период и целевая дата корректировки одной операцией), корректировки из дельт накапливаются, отчёт РСБУ — помесячная сетка 2025–2027 (RE0034, RE0050)',
     href: 'apps/postrade/drafts/tranche-page-v04/pages/Deal.preview.html',
     root: 'apps/postrade/drafts/tranche-page-v04',
     icon: 'folder',
     shelf: 'actual',
     concept: 'Корректировки РСБУ',
     version: 'v4'
+  },
+  {
+    id: 'tranche-page-v04-proposals',
+    group: 'concepts',
+    title: 'Post — Корректировки РСБУ v4 — Предложения',
+    desc: 'Предложения по интерфейсу корректировок РСБУ к версии v4: три предложения на обсуждении — источник строки, дублирование, выбор и удаление нескольких корректировок',
+    href: 'apps/postrade/drafts/tranche-page-v04-proposals/pages/Proposals.html',
+    root: 'apps/postrade/drafts/tranche-page-v04-proposals',
+    icon: 'folder',
+    shelf: 'actual',
+    concept: 'Корректировки РСБУ',
+    version: 'Предложения к v4'
   },
   {
     id: 'kb-glossary',
@@ -407,6 +419,16 @@ window.IBPHubSpecs = [
     stage: 'Концепт v3',
     date: '23.10.2026',
     href: 'apps/postrade/drafts/dev-specs/pages/Spec.html?spec=RsbuInterestAdjustments',
+    root: 'apps/postrade/drafts/dev-specs'
+  },
+  {
+    id: 'RsbuInterestAdjustmentsV4',
+    title: 'Корректировки процентов РСБУ',
+    module: 'postrade/drafts/tranche-page-v04',
+    version: '3.100',
+    stage: 'Концепт v4',
+    date: '05.11.2026',
+    href: 'apps/postrade/drafts/dev-specs/pages/Spec.html?spec=RsbuInterestAdjustmentsV4',
     root: 'apps/postrade/drafts/dev-specs'
   }
 ];
