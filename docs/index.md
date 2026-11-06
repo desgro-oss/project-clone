@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 1087.
+Документов: 1091.
 
 ## Корень (4)
 
@@ -257,7 +257,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (787)
+## Приложения (790)
 
 | Документ | Аннотация |
 |---|---|
@@ -1028,6 +1028,7 @@
 | [apps/postrade/drafts/dev-specs/refs/EarlyInterestPaymentsV3/EarlyInterestPaymentsV3.dev-spec.md](../apps/postrade/drafts/dev-specs/refs/EarlyInterestPaymentsV3/EarlyInterestPaymentsV3.dev-spec.md) | Досрочное погашение процентов |
 | [apps/postrade/drafts/dev-specs/refs/RsbuInterestAdjustments/RsbuInterestAdjustments.dev-spec.md](../apps/postrade/drafts/dev-specs/refs/RsbuInterestAdjustments/RsbuInterestAdjustments.dev-spec.md) | Корректировки процентов РСБУ |
 | [apps/postrade/drafts/dev-specs/refs/RsbuInterestAdjustmentsV4/RsbuInterestAdjustmentsV4.dev-spec.md](../apps/postrade/drafts/dev-specs/refs/RsbuInterestAdjustmentsV4/RsbuInterestAdjustmentsV4.dev-spec.md) | Корректировки процентов РСБУ |
+| [apps/postrade/drafts/dev-specs/refs/RsbuInterestAdjustmentsV4Neo/RsbuInterestAdjustmentsV4Neo.dev-spec.md](../apps/postrade/drafts/dev-specs/refs/RsbuInterestAdjustmentsV4Neo/RsbuInterestAdjustmentsV4Neo.dev-spec.md) | Корректировки процентов РСБУ |
 
 ### apps/postrade/drafts/early-interest
 
@@ -1174,6 +1175,8 @@
 | [apps/postrade/drafts/tranche-page-v04/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/FixationModal/FixationModalTile/FixationModalTile.md) | Карточка фиксации ЭПС/ВБС |
 | [apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuAdjustmentModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuAdjustmentModal/CHANGELOG.md) | Модальное окно внесения корректировки (RsbuAdjustmentModal) — журнал изменений |
 | [apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.md) | Модальное окно корректировки процентов |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuAdjustmentsFilterModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuAdjustmentsFilterModal/CHANGELOG.md) | Фильтр корректировок РСБУ (RsbuAdjustmentsFilterModal) — журнал изменений |
+| [apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuAdjustmentsFilterModal/RsbuAdjustmentsFilterModal.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuAdjustmentsFilterModal/RsbuAdjustmentsFilterModal.md) | Фильтр корректировок РСБУ |
 | [apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuFixationModal/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuFixationModal/CHANGELOG.md) | Окно «Пересчет с фиксацией» (RsbuFixationModal) — журнал изменений |
 | [apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuFixationModal/RsbuFixationModal.md](../apps/postrade/drafts/tranche-page-v04/widgets/modals/RsbuFixationModal/RsbuFixationModal.md) | Окно «Пересчет с фиксацией» |
 | [apps/postrade/drafts/tranche-page-v04/widgets/tables/DealCounterpartiesTable/CHANGELOG.md](../apps/postrade/drafts/tranche-page-v04/widgets/tables/DealCounterpartiesTable/CHANGELOG.md) | Контрагенты сделки (DealCounterpartiesTable) — журнал изменений |
@@ -1314,7 +1317,7 @@
 |---|---|
 | [apps/screen-map/README.md](../apps/screen-map/README.md) | Карта экранов |
 
-## Задачи и заметки (163)
+## Задачи и заметки (164)
 
 | Документ | Аннотация |
 |---|---|
@@ -1447,6 +1450,7 @@
 | [docs/tasks/RE0048-ds-typography-kit-neo.review.md](tasks/RE0048-ds-typography-kit-neo.review.md) | RE0048 — повторная приёмка типографского кита и типографских тем NEO |
 | [docs/tasks/RE0049-tranche-page.md](tasks/RE0049-tranche-page.md) | Страница транша: погашение, разделы НКЛ и общая информация, аккордеоны витрины |
 | [docs/tasks/RE0050-rsbu-recalc-fixation.md](tasks/RE0050-rsbu-recalc-fixation.md) | Корректировки РСБУ v4: пересчёт с фиксацией одной операцией, помесячная сетка отчёта РСБУ |
+| [docs/tasks/RE0051-spec-style-neo.md](tasks/RE0051-spec-style-neo.md) | Спеки на разработку: нейтральный стиль — эксперимент на копии v4-NEO |
 | [docs/tasks/README.md](tasks/README.md) | Задачи: как заводить, какие файлы бывают, как считать затраты |
 
 ### Снимки задач

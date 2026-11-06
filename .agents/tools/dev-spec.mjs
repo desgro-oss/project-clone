@@ -54,13 +54,13 @@
    Пункт «не решено» — `{?}` в начале (жёлтый кружок «?»; в md — `**(?)**`). Блок ```scenario — схема сценария со стрелками
    и условиями (формат — parseScenario); в html узел ведёт к снимку, кнопка
    «К схеме сценария» возвращает, в md схема уходит блоком mermaid. Разделы
-   «Коротко», «Сценарий», «Экраны», «Виджеты», «Тексты» — обязательные
-   разделы шаблона, «Данные и API» и «Открытые вопросы» — по желанию; номера подряд (SECTIONS ниже).
+   «Коротко», «Сценарий», «Виджеты», «Тексты» — обязательные
+   разделы шаблона, «Экраны», «Данные и API» и «Открытые вопросы» — по желанию; номера подряд (SECTIONS ниже).
    Раздел «Виджеты» показывает новые виджеты и изменения существующих; старый заголовок
    «Новые локальные компоненты» принимается как алиас — спеки до 05.11.2026 не ломаются.
    Окна в сетке — по ширине в шагах ДС: до `modal--w4` три в ряд, `w5`–`w9` два, `w10`–`w12` один. Заголовок таблицы — `#####`.
-   Необязательное поле front matter `stage` — подпись вкладки версии: спеки с
-   одним названием страница показывает вкладками версий.
+   Необязательное поле front matter `stage` — подпись версии: спеки с одним названием хаб
+   показывает строками аккордеона; в просмотрщике `Spec.html` вкладок версий нет (05.11.2026).
 
    Правки человека (RE0042): дизайнер правит `<Spec>.dev-spec.md` в редакторе.
    Последняя версия агента — поле `src` генерата (исходник целиком; в выгрузку
@@ -89,6 +89,8 @@
          --only — переснять часть снимков, остальные берутся из генерата;
          --out — дополнительно записать папку <Spec>/ с двумя файлами
      node .agents/tools/dev-spec.mjs <spec.dev-spec.md> --text    пересобрать текст без съёмки
+     node .agents/tools/dev-spec.mjs <spec.dev-spec.md> --from <Спека>   сборка без съёмки:
+         снимки берутся из генерата указанной спеки (копия спеки без пересъёмки, RE0051)
      node .agents/tools/dev-spec.mjs <spec.dev-spec.md> --diff    правки человека с последней версии агента
      node .agents/tools/dev-spec.mjs --selftest
    Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1; без манифеста — 2.
@@ -115,7 +117,7 @@ const FIELDS = ['spec', 'title', 'module', 'version', 'stage', 'date', 'designer
 const SNAP_FIELDS = ['id', 'title', 'page', 'target', 'mark', 'height', 'note', 'do'];
 const SECTIONS = ['Коротко', 'Сценарий', 'Экраны', 'Виджеты', 'Данные и API', 'Тексты', 'Открытые вопросы'];
 const SECTION_ALIASES = { 'Новые локальные компоненты': 'Виджеты' };   // старое имя раздела — не ломать прежние спеки
-const OPTIONAL_SECTIONS = ['Данные и API', 'Открытые вопросы'];   // API разработке не нужен; решения и ответы живут в задаче
+const OPTIONAL_SECTIONS = ['Экраны', 'Данные и API', 'Открытые вопросы'];   // экраны описаны сценарием; API разработке не нужен; решения и ответы живут в задаче
 const MARK_RX = /<!--\s*(snaps?|matrix)\s*:\s*([^>]*?)\s*-->/g;
 const SCENARIO_KINDS = { page: 'Экран', modal: 'Окно', state: 'Состояние', error: 'Ошибка', ok: 'Готово', warn: 'Под вопросом' };
 const EMPTY_CELL = '_';   // пустая клетка в ids сетки matrix
@@ -464,15 +466,15 @@ function stepParts(list) {
 /** Ссылка на шаги простым текстом — для заголовков, оглавления и md. */
 export const stepsPlain = (list) => { const { parts, word } = stepParts(list); return word + ' ' + parts.map((p) => (p.to === p.from ? p.from : p.from + '–' + p.to)).join(', '); };
 
-/** Ссылка на шаги с якорями: каждое число ведёт к своему шагу `#step-N`. */
-const stepsHtml = (list) => {
+/** Ссылка на шаги с якорями: каждое число ведёт к своему шагу `#step-N` (сценарий 1) или `#step-M-N`. */
+const stepsHtml = (list, scenario = 1) => {
   const { parts, word } = stepParts(list);
-  const a = (n) => '<a href="#step-' + n + '">' + n + '</a>';
+  const a = (n) => '<a href="#step-' + (scenario > 1 ? scenario + '-' : '') + n + '">' + n + '</a>';
   return word + ' ' + parts.map((p) => (p.to === p.from ? a(p.from) : a(p.from) + '–' + a(p.to))).join(', ');
 };
 
 /** Строчная разметка: `код`, **жирный**, *курсив*, [ссылка](адрес), образец чипа {chip:success Текст}, шаги {steps:7-9}, «не решено» {?}. */
-export function inline(s) {
+export function inline(s, scenario = 1) {
   const codes = [];
   let t = String(s).replace(/`([^`]+)`/g, (m, c) => { codes.push('<code>' + esc(c) + '</code>'); return '\u0000' + (codes.length - 1) + '\u0000'; });
   t = esc(t)
@@ -480,7 +482,7 @@ export function inline(s) {
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?!\w)/g, '$1<em>$2</em>')
     .replace(/\{chip:(\w+)\s+([^}]+)\}/g, '<span class="chip chip--s chip--fit chip--rounded chip--$1"><span class="chip__label">$2</span></span>')
-    .replace(STEPS_RX, (m, list) => stepsHtml(list))
+    .replace(STEPS_RX, (m, list) => stepsHtml(list, scenario))
     .replace(/\{\?\}/g, '<span class="sp-q" role="img" aria-label="Не решено" title="Не решено">?</span>');
   return t.replace(/\u0000(\d+)\u0000/g, (m, i) => codes[Number(i)]);
 }
@@ -512,6 +514,22 @@ export function slugOf(text, seen) {
   return s;
 }
 
+/** Счётчик нумерации заголовков: свой на верхний рендер (mdToHtml, exportMd), вложенные вызовы его не трогают. */
+export const newHeadCounter = () => [0, 0, 0, 0, 0, 0, 0];
+
+/**
+ * Показ номера заголовка: h2 → «N.», h3 → «N.N.», h4 → «N.N.N.», глубже номера нет
+ * (RE0051). Счётчик[уровень]++ и сброс глубже. У h2 номер исходника для показа
+ * срезается (иначе было бы «1. 1. Коротко»); якорь-слаг считают от исходного текста,
+ * поэтому внутренние ссылки от нумерации не зависят. → { num: '2.1.', rest } | null.
+ */
+export function headNumber(cnt, level, text) {
+  if (level < 2 || level > 4) return null;
+  cnt[level] += 1;
+  for (let i = level + 1; i < cnt.length; i++) cnt[i] = 0;
+  return { num: cnt.slice(2, level + 1).join('.') + '.', rest: level === 2 ? text.replace(/^\d+\.\s+/, '') : text };
+}
+
 /**
  * Markdown → html. ctx: { snap(marker) → html — маркер снимка, heads — куда
  * складывать заголовки для оглавления [{ level, id, text }], seen — занятые id }.
@@ -523,6 +541,16 @@ export function mdToHtml(md, ctx = {}) {
   const out = [];
   let i = 0;
   let lastHead = '';
+  let scenario = ctx.scenario || 1;
+  /* нумерация заголовков и обёртки «Виджетов» — только верхний рендер:
+     вложенные вызовы (цитаты, тела пунктов) передают top: false и ничего не считают */
+  const top = ctx.top !== false;
+  const cnt = ctx.cnt || newHeadCounter();
+  const wst = { sec: false, group: false, sub: false };
+  const wrapClose = () => {
+    if (wst.sub) { out.push('</section>'); wst.sub = false; }
+    if (wst.group) { out.push('</section>'); wst.group = false; }
+  };
   const blockStart =(l) => /^\s*```/.test(l) || /^#{1,6}\s/.test(l) || /^\s*>/.test(l) || LIST_RX.test(l) || /^\s*\|/.test(l) || /^\s*<!--/.test(l) || /^\s*(-{3,}|\*{3,})\s*$/.test(l);
   while (i < lines.length) {
     const l = lines[i];
@@ -546,11 +574,31 @@ export function mdToHtml(md, ctx = {}) {
     const h = /^(#{1,6})\s+(.*?)\s*#*\s*$/.exec(l);
     if (h) {
       const level = h[1].length;
+      const hm = /^(?:Сценарий|Ветки сценария)\s+(\d+)/.exec(h[2]);
+      if (hm) scenario = Number(hm[1]);
       const plain = h[2].replace(STEPS_RX, (m, list) => stepsPlain(list));   // в оглавлении и якоре — простой текст, ссылок в заголовке там нет
       const id = slugOf(plain, seen);
       lastHead = plain;
-      heads.push({ level, id, text: plain });
-      out.push('<h' + level + ' id="' + id + '">' + inline(h[2]) + '</h' + level + '>');
+      let num = null, rest = plain;
+      if (top) {
+        /* номер показа: «2.», «2.1.», «2.1.1.» — глубже нет; у h2 номер исходника срезан */
+        const n = headNumber(cnt, level, plain);
+        if (n) { num = n.num; rest = n.rest; }
+        /* «Виджеты»: тайл (###) — группа, зависимое окно (####) — вложенный подпункт (RE0051) */
+        if (level <= 2) { wrapClose(); wst.sec = level === 2 && plain.replace(/^\d+\.\s+/, '') === 'Виджеты'; }
+        else if (level === 3) {
+          if (wst.sub) { out.push('</section>'); wst.sub = false; }
+          if (wst.group) { out.push('</section>'); wst.group = false; }
+          if (wst.sec) { out.push('<section class="sp-wgroup">'); wst.group = true; }
+        } else if (level === 4) {
+          if (wst.sub) { out.push('</section>'); wst.sub = false; }
+          if (wst.sec && wst.group) { out.push('<section class="sp-wsub">'); wst.sub = true; }
+        }
+      }
+      heads.push({ level, id, text: plain, num, rest });
+      /* показ: номер + исходная markdown-строка (у h2 — без её ручного номера) */
+      const show = num ? (level === 2 ? h[2].replace(/^\d+\.\s+/, '') : h[2]) : h[2];
+      out.push('<h' + level + ' id="' + id + '">' + inline(num ? num + ' ' + show : show, scenario) + '</h' + level + '>');
       i++;
       continue;
     }
@@ -561,7 +609,7 @@ export function mdToHtml(md, ctx = {}) {
       i += 2;
       const rows = [];
       while (i < lines.length && /^\s*\|/.test(lines[i])) rows.push(cells(lines[i++]));
-      const td = (tag, c, k) => '<' + tag + (align[k] ? ' style="text-align:' + align[k] + '"' : '') + '>' + inline(c) + '</' + tag + '>';
+      const td = (tag, c, k) => '<' + tag + (align[k] ? ' style="text-align:' + align[k] + '"' : '') + '>' + inline(c, scenario) + '</' + tag + '>';
       out.push('<div class="sp-table"><table><thead><tr>' + head.map((c, k) => td('th', c, k)).join('') + '</tr></thead><tbody>'
         + rows.map((r) => '<tr>' + head.map((x, k) => td('td', r[k] == null ? '' : r[k], k)).join('') + '</tr>').join('') + '</tbody></table></div>');
       continue;
@@ -572,27 +620,30 @@ export function mdToHtml(md, ctx = {}) {
       const am = /^\[!(warning|info|error|success)\]\s*/i.exec(buf[0] || '');
       if (am) {   // цитата вида «> [!warning] текст» — цветной блок-алерт
         buf[0] = buf[0].slice(am[0].length);
-        out.push('<div class="sp-alert sp-alert--' + am[1].toLowerCase() + '" role="note">' + mdToHtml(buf.join('\n'), { ...ctx, heads: [], seen }) + '</div>');
+        out.push('<div class="sp-alert sp-alert--' + am[1].toLowerCase() + '" role="note">' + mdToHtml(buf.join('\n'), { ...ctx, heads: [], seen, scenario, top: false }) + '</div>');
         continue;
       }
-      out.push('<blockquote>' + mdToHtml(buf.join('\n'), { ...ctx, heads: [], seen }) + '</blockquote>');
+      out.push('<blockquote>' + mdToHtml(buf.join('\n'), { ...ctx, heads: [], seen, scenario, top: false }) + '</blockquote>');
       continue;
     }
     if (LIST_RX.test(l)) {
-      const r = list(lines, i, ctx, seen, lastHead === 'Шаги сценария');
+      const mode = lastHead === 'Шаги сценария' ? 'steps' : lastHead.replace(/^\d+\.\s+/, '') === 'Коротко' ? 'brief' : null;
+      const r = list(lines, i, ctx, seen, mode, scenario);
       out.push(r.html);
       i = r.next;
       continue;
     }
     const buf = [];
     while (i < lines.length && lines[i].trim() && !(buf.length && blockStart(lines[i]))) buf.push(lines[i++].trim());
-    out.push('<p>' + inline(buf.join(' ')) + '</p>');
+    out.push('<p>' + inline(buf.join(' '), scenario) + '</p>');
   }
+  if (top) wrapClose();
   return out.join('\n');
 }
 
-/** stepIds — список шагов сценария: у пункта id `step-N` (N — его номер), на него ведут `{steps:…}`. */
-function list(lines, i, ctx, seen, stepIds = false) {
+/** mode — «steps»: у пункта id `step-N` (сценарий 1) или `step-M-N`, на него ведут `{steps:…}`;
+    «brief»: пункты раздела «Коротко» — карточки в один столбец (RE0051). */
+function list(lines, i, ctx, seen, mode = null, scenario = 1) {
   const first = LIST_RX.exec(lines[i]);
   const indent = first[1].length;
   const ordered = /\d/.test(first[2]);
@@ -620,8 +671,8 @@ function list(lines, i, ctx, seen, stepIds = false) {
     const plain = body.every((b) => !LIST_RX.test(b) && !/^\s*(\||>|```|<!--)/.test(b) && b.trim() !== '');
     /* у шагов (нумерованный список) текст остаётся абзацем: страница рисует шаги путём и ограничивает его ширину */
     const textOf = (s) => (ordered ? '<p>' + s + '</p>' : s);
-    items.push('<li' + (stepIds && ordered && indent === 0 ? ' id="step-' + parseInt(m[2], 10) + '"' : '') + '>' + (plain ? textOf(inline(body.map((b) => b.trim()).join(' '))) : (() => {
-      const h = mdToHtml(body.join('\n'), { ...ctx, heads: [], seen });
+    items.push('<li' + (mode === 'steps' && ordered && indent === 0 ? ' id="step-' + (scenario > 1 ? scenario + '-' : '') + parseInt(m[2], 10) + '"' : '') + '>' + (plain ? textOf(inline(body.map((b) => b.trim()).join(' '), scenario)) : (() => {
+      const h = mdToHtml(body.join('\n'), { ...ctx, heads: [], seen, scenario, top: false });
       return ordered ? h : h.replace(/^<p>([\s\S]*?)<\/p>/, '$1');
     })()) + '</li>');
     while (i < lines.length && !lines[i].trim()) {
@@ -632,7 +683,8 @@ function list(lines, i, ctx, seen, stepIds = false) {
     }
   }
   const tag = ordered ? 'ol' : 'ul';
-  return { html: '<' + tag + (ordered && start !== 1 ? ' start="' + start + '"' : '') + '>' + items.join('') + '</' + tag + '>', next: i };
+  const cls = !ordered && mode === 'brief' ? ' class="sp-brief"' : '';
+  return { html: '<' + tag + cls + (ordered && start !== 1 ? ' start="' + start + '"' : '') + '>' + items.join('') + '</' + tag + '>', next: i };
 }
 
 /* ---------------- схема сценария: раскладка и разметка ---------------- */
@@ -810,6 +862,19 @@ export function exportMd(spec, body, capture) {
     .replace(/^(\s*>\s*)\[!(warning|info|error|success)\]/gim, (m, a, k) => a + '[!' + k.toUpperCase() + ']')
     .replace(/^([ \t]*)```scenario[ \t]*\n([\s\S]*?)^[ \t]*```[ \t]*$/gm, (m, pad, block) => mermaidOf(parseScenario(block.split('\n')), pad));
   let lines = text.split('\n');
+  /* нумерация заголовков в md — как на странице (RE0051): h2 → «N.», h3 → «N.N.», h4 → «N.N.N.», глубже без номеров */
+  {
+    const cnt = newHeadCounter();
+    let fence = false;
+    lines = lines.map((l) => {
+      if (/^\s*```/.test(l)) fence = !fence;
+      if (fence) return l;
+      const m = /^(#{1,6})\s+(.+?)\s*#*\s*$/.exec(l);
+      if (!m) return l;
+      const n = headNumber(cnt, m[1].length, m[2]);
+      return n ? m[1] + ' ' + n.num + ' ' + n.rest : l;
+    });
+  }
   let inCode = false;
   lines = lines.flatMap((l) => {
     if (/^\s*```/.test(l)) inCode = !inCode;
@@ -981,9 +1046,27 @@ export function exportHtml(spec, body, capture, inspector) {
     snap: (m) => (m.kind === 'snaps' ? gallery(m.ids, m.cols) : m.kind === 'matrix' ? matrix(m) : m.ids.map(figure).join('')),
     scenario: (lines) => flowHtml(parseScenario(lines), num, ++flows, (id) => isModalSnap(byId.get(id))),
   });
-  const toc = heads.filter((h) => h.level >= 2 && h.level <= 4)
-    .map((h) => '<a class="sp-toc__link sp-toc__link--' + h.level + '" href="#' + h.id + '">' + inline(h.text) + '</a>').join('')
-    + '<a class="sp-toc__link sp-toc__link--2" href="#snaps">Снимки</a>';
+  /* оглавление — дерево (RE0051): подпункты вложены, линии-границы поддеревьев рисует CSS;
+     приложение «Снимки» — последний пункт без номера */
+  const tocLink = (h) => '<a class="sp-toc__link sp-toc__link--' + h.level + '" href="#' + h.id + '">' + (h.num ? h.num + ' ' : '') + inline(h.rest || h.text) + '</a>';
+  const tocHeads = heads.filter((h) => h.level >= 2 && h.level <= 4).concat([{ level: 2, id: 'snaps', text: 'Снимки' }]);
+  let toc = '<ul class="sp-toc__tree">';
+  const tstack = [];
+  let pending = 0;   // открытый li без подпунктов (h4): закрывается перед соседом и при закрытии родительского ul
+  for (const th of tocHeads) {
+    while (tstack.length && tstack[tstack.length - 1].level >= th.level) {
+      toc += (pending ? '</li>' : '') + '</ul></li>';
+      pending = 0;
+      tstack.pop();
+    }
+    if (pending >= th.level) { toc += '</li>'; pending = 0; }
+    toc += '<li>' + tocLink(th);
+    if (th.level < 4) { toc += '<ul>'; tstack.push({ level: th.level }); }
+    else pending = th.level;
+  }
+  while (tstack.length) { toc += (pending ? '</li>' : '') + '</ul></li>'; pending = 0; tstack.pop(); }
+  toc += '</ul>';
+  toc = toc.replace(/<ul><\/ul>/g, '');   // у пункта не оказалось подпунктов
   const list = [...spec.snaps].sort((a, b) => num[a.id] - num[b.id]).map((s) => '<tr><td>' + num[s.id] + '</td><td><a href="#snap-' + esc(s.id) + '">' + esc(s.title) + '</a></td><td><code>' + esc(s.page) + '</code></td><td>' + esc(frameOf(s)) + '</td><td>' + sizeOf(capture.snaps[s.id]) + '</td></tr>').join('');
   const data = {
     fonts: capture.fonts,
@@ -1014,167 +1097,197 @@ export function exportHtml(spec, body, capture, inspector) {
     + '<script>(' + viewer.toString() + ')();</script>\n</body>\n</html>\n';
 }
 
-/* Стиль страницы спеки — на токенах ДС (:root-правила снимков вшиты выше). */
+/* Стиль страницы спеки — нейтральный, самодостаточный: свои токены --sp-* (RE0051),
+   токены ДС не используются — снимки-состояния при этом несут свои :root-правила ДС (вшиты выше). */
 const PAGE_CSS = [
+  ':root{--sp-bg:#f5f6f8;--sp-card:#ffffff;--sp-fg:#1b1f24;--sp-fg-2:#5b6470;--sp-fg-3:#98a1ad;'
+    + '--sp-line:#e4e7ec;--sp-line-2:#cdd3db;--sp-hover:#eceff3;'
+    + '--sp-accent:#2e6be6;--sp-accent-bg:#eaf1fe;'
+    + '--sp-info:#2e6be6;--sp-info-bg:#eaf1fe;--sp-info-dark:#1d4fae;'
+    + '--sp-ok:#1f9d61;--sp-ok-bg:#e7f6ee;--sp-ok-dark:#187248;'
+    + '--sp-warn:#e08a00;--sp-warn-bg:#fdf3e0;--sp-warn-dark:#9c6206;'
+    + '--sp-err:#d64541;--sp-err-bg:#fdecea;--sp-err-dark:#a92e2a;'
+    + '--sp-grey:#98a2b3;--sp-grey-bg:#eef1f5;--sp-grey-dark:#5b6470;'
+    + '--sp-radius:10px;--sp-radius-s:7px;--sp-radius-modal:12px;'
+    + '--sp-shadow-modal:0 16px 48px rgba(15,23,42,.22),0 2px 8px rgba(15,23,42,.12);'
+    + '--sp-font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;',
+  '}',
   '*,*::before,*::after{box-sizing:border-box}',
   'html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth}',
-  'body{margin:0;background:var(--bg-page);color:var(--text-primary);font:var(--type-body-m-reg);font-family:var(--font-text),system-ui,sans-serif}',
+  'body{margin:0;background:var(--sp-bg);color:var(--sp-fg);font:15px/1.6 var(--sp-font)}',
   '.sp{display:grid;grid-template-columns:288px minmax(0,1fr);min-height:100vh}',
-  '.sp-toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:var(--space-24) var(--space-16);background:var(--bg-tile);border-right:1px solid var(--border-light)}',
-  '.sp-toc__title{font:var(--type-body-m-strong-smb);margin:0 0 var(--space-16) var(--space-8)}',
-  '.sp-toc nav{display:flex;flex-direction:column;gap:var(--space-2)}',
-  '.sp-toc__link{display:block;padding:var(--space-4) var(--space-8);border-radius:var(--radius-s);color:var(--text-primary);text-decoration:none;font:var(--type-body-s-reg);cursor:pointer}',
-  '.sp-toc__link:hover{background:var(--secondary-bg-light)}',
-  '.sp-toc__link--3{padding-left:var(--space-24);color:var(--text-secondary)}',
-  '.sp-toc__link--4{padding-left:var(--space-40);color:var(--text-secondary);font:var(--type-body-xs-reg)}',
-  '.sp-toc__link--active{background:var(--primary-bg);color:var(--text-primary);font:var(--type-body-s-strong-smb)}',
-  '.sp-main{padding:var(--space-32) var(--space-48) var(--space-96);min-width:0;max-width:1600px}',
-  '.sp-head{margin-bottom:var(--space-32)}',
-  '.sp-head__kicker{font:var(--type-body-s-reg);color:var(--text-secondary);margin-bottom:var(--space-4)}',
-  '.sp-head__meta{font:var(--type-body-s-reg);color:var(--text-secondary);margin:var(--space-4) 0 0}',
-  'h1{font:var(--type-h2-light);margin:0 0 var(--space-8)}',
-  'h2,h3,h4,h5,.sp-snap,.sp-flow{scroll-margin-top:var(--space-24)}',
-  'h2{font:var(--type-h3-strong-smb);margin:var(--space-96) 0 var(--space-24);padding-top:var(--space-24);border-top:1px solid var(--border-light)}',
-  'h3{font:var(--type-h4-strong-smb);margin:var(--space-64) 0 var(--space-16)}',
-  'h4{font:var(--type-h5-strong-smb);margin:var(--space-40) 0 var(--space-12)}',
-  'h5{font:var(--type-h6-strong-smb);margin:var(--space-32) 0 var(--space-8)}',
-  'h2+h3,h3+h4,h4+h5{margin-top:var(--space-24)}',
-  'p{margin:0 0 var(--space-12);max-width:960px}',
-  'ul,ol{margin:0 0 var(--space-12);padding-left:var(--space-24);max-width:960px}',
-  'li{margin:var(--space-4) 0}',
-  /* шаги сценария — вертикальный путь: номер белым в зелёном круге, между кругами линия */
+  /* оглавление: фон страницы, дерево с линиями-границами пунктов */
+  '.sp-toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:28px 18px 32px 24px}',
+  '.sp-toc__title{font:700 14px/1.4 var(--sp-font);margin:0 0 14px}',
+  '.sp-toc__tree,.sp-toc__tree ul{list-style:none;margin:0;padding:0}',
+  '.sp-toc__tree ul{margin-left:11px}',
+  '.sp-toc__tree li{position:relative}',
+  '.sp-toc__tree li li{padding-left:13px}',
+  '.sp-toc__tree li li::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;border-radius:1px;background:var(--sp-line-2)}',
+  '.sp-toc__tree li li:last-child::before{bottom:auto;height:13px}',
+  '.sp-toc__tree li li::after{content:"";position:absolute;left:0;top:12px;width:9px;height:2px;background:var(--sp-line-2)}',
+  '.sp-toc__link{display:block;padding:5px 8px;border-radius:var(--sp-radius-s);color:var(--sp-fg);text-decoration:none;font:500 13.5px/1.35 var(--sp-font);cursor:pointer}',
+  '.sp-toc__link:hover{background:var(--sp-hover)}',
+  '.sp-toc__link--3{font-size:13px;color:var(--sp-fg-2)}',
+  '.sp-toc__link--4{font-size:12.5px;color:var(--sp-fg-2)}',
+  '.sp-toc__link--active{background:var(--sp-accent-bg);color:var(--sp-accent);font-weight:600}',
+  '.sp-main{padding:40px 56px 96px;min-width:0;max-width:1600px}',
+  '.sp-head{margin-bottom:36px}',
+  '.sp-head__kicker{font:600 12px/1.4 var(--sp-font);letter-spacing:.08em;text-transform:uppercase;color:var(--sp-fg-2);margin-bottom:6px}',
+  '.sp-head__meta{font:400 13px/1.5 var(--sp-font);color:var(--sp-fg-2);margin:6px 0 0}',
+  'h1{font:700 28px/1.2 var(--sp-font);letter-spacing:-.01em;margin:0 0 10px}',
+  'h2,h3,h4,h5,.sp-snap,.sp-flow{scroll-margin-top:24px}',
+  /* иерархия уровней: размер, вес и воздух — чем глубже, тем меньше и теснее */
+  'h2{font:700 21px/1.3 var(--sp-font);margin:72px 0 20px;padding-top:20px;border-top:1px solid var(--sp-line)}',
+  'h3{font:650 17px/1.35 var(--sp-font);margin:48px 0 14px}',
+  'h4{font:700 15px/1.4 var(--sp-font);margin:32px 0 10px}',
+  'h5{font:700 12.5px/1.4 var(--sp-font);letter-spacing:.07em;text-transform:uppercase;color:var(--sp-fg-2);margin:26px 0 8px}',
+  'h2+h3,h3+h4,h4+h5{margin-top:22px}',
+  'p{margin:0 0 12px;max-width:960px}',
+  'ul,ol{margin:0 0 12px;padding-left:24px;max-width:960px}',
+  'li{margin:4px 0}',
+  /* «Коротко»: пункты — карточки в один столбец */
+  '.sp-brief{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}',
+  '.sp-brief>li{margin:0;background:var(--sp-card);border:1px solid var(--sp-line);border-radius:var(--sp-radius);padding:12px 16px}',
+  '.sp-brief>li>p:first-child{margin-top:0}',
+  '.sp-brief>li>p:last-child{margin-bottom:0}',
+  /* «Виджеты»: зависимое окно (####) вложено в свой тайл (###) — отступ и линия-коннектор */
+  '.sp-wgroup{display:block;margin:0}',
+  '.sp-wsub{margin:6px 0 0 4px;padding:0 0 4px 18px;border-left:2px solid var(--sp-line-2)}',
+  '.sp-wsub>h4:first-child{margin-top:16px}',
+  /* шаги сценария — вертикальный путь: номер белым в круге, между кругами линия */
   'ol{list-style:none;padding:0;max-width:none}',
-  'ol>li{position:relative;margin:0;padding:0 0 var(--space-40) calc(var(--space-48) + var(--space-8))}',
+  'ol>li{position:relative;margin:0;padding:0 0 40px 56px}',
   'ol>li:last-child{padding-bottom:0}',
-  'ol>li::before{content:counter(list-item);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;background:var(--primary);color:var(--text-on-primary,#fff);font:var(--type-body-m-strong-smb);display:flex;align-items:center;justify-content:center}',
-  'ol>li::after{content:"";position:absolute;left:15px;top:36px;bottom:4px;width:2px;background:var(--border-primary)}',
+  'ol>li::before{content:counter(list-item);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;background:var(--sp-accent);color:#fff;font:600 14px/1 var(--sp-font);display:flex;align-items:center;justify-content:center}',
+  'ol>li::after{content:"";position:absolute;left:14px;top:34px;bottom:4px;width:2px;background:var(--sp-line-2)}',
   'ol>li:last-child::after{display:none}',
-  'ol>li>p:first-child{margin-top:0;padding-top:var(--space-4)}',
-  'li>.sp-snap,li>.sp-gallery,li>.sp-matrix,li>.sp-flow,p+.sp-snap,p+.sp-gallery,p+.sp-matrix{margin-top:var(--space-24)}',
-  'a{color:var(--link)}',
-  'code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:var(--secondary-bg-light);border-radius:var(--radius-xs);padding:0 var(--space-4)}',
-  'pre{background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-card);padding:var(--space-12) var(--space-16);overflow-x:auto;margin:0 0 var(--space-16)}',
-  'pre code{background:none;padding:0;font-size:var(--space-12)}',
-  'blockquote{margin:0 0 var(--space-16);padding:var(--space-12) var(--space-16);background:var(--bg-tile);border-left:4px solid var(--border-primary);border-radius:var(--radius-s)}',
+  'ol>li>p:first-child{margin-top:0;padding-top:4px}',
+  'li>.sp-snap,li>.sp-gallery,li>.sp-matrix,li>.sp-flow,p+.sp-snap,p+.sp-gallery,p+.sp-matrix{margin-top:24px}',
+  'a{color:var(--sp-accent)}',
+  'code{font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:.9em;background:var(--sp-grey-bg);border-radius:5px;padding:1px 5px}',
+  'pre{background:var(--sp-card);border:1px solid var(--sp-line);border-radius:var(--sp-radius);padding:12px 16px;overflow-x:auto;margin:0 0 16px}',
+  'pre code{background:none;padding:0;font-size:12px}',
+  'blockquote{margin:0 0 16px;padding:12px 16px;background:var(--sp-card);border-left:4px solid var(--sp-line-2);border-radius:var(--sp-radius-s)}',
   'blockquote p:last-child{margin:0}',
-  'hr{border:0;border-top:1px solid var(--border-light);margin:var(--space-24) 0}',
-  '.sp-table{overflow-x:auto;margin:0 0 var(--space-16)}',
-  'table{border-collapse:collapse;width:100%;background:var(--bg-tile);font:var(--type-body-s-reg)}',
-  'th,td{border:1px solid var(--border-light);padding:var(--space-8) var(--space-12);text-align:left;vertical-align:top}',
+  'hr{border:0;border-top:1px solid var(--sp-line);margin:24px 0}',
+  '.sp-table{overflow-x:auto;margin:0 0 16px}',
+  'table{border-collapse:collapse;width:100%;background:var(--sp-card);font:13.5px/1.5 var(--sp-font);border:1px solid var(--sp-line);border-radius:var(--sp-radius-s)}',
+  'th,td{border:1px solid var(--sp-line);padding:8px 12px;text-align:left;vertical-align:top}',
   'td .chip{vertical-align:middle}',
-  'th{background:var(--secondary-bg-light);font:var(--type-body-s-strong-smb)}',
-  /* снимки: карточка, рамка кадра, подпись */
-  '.sp-snap{display:flex;flex-direction:column;margin:0 0 var(--space-24);padding:var(--space-12);background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-card);min-width:0}',
-  '.sp-snap__frame{display:block;width:100%;padding:0;border:0;background:var(--bg-page);cursor:zoom-in;overflow:hidden;position:relative;text-align:left}',
+  'th{background:var(--sp-grey-bg);font:600 13px/1.5 var(--sp-font)}',
+  /* снимки: лёгкая карточка, рамка кадра, подпись */
+  '.sp-snap{display:flex;flex-direction:column;margin:0 0 24px;padding:12px;background:var(--sp-card);border:1px solid var(--sp-line);border-radius:var(--sp-radius);min-width:0}',
+  '.sp-snap__frame{display:block;width:100%;padding:0;border:0;background:var(--sp-bg);cursor:zoom-in;overflow:hidden;position:relative;text-align:left}',
   '.sp-snap__scale{display:block;transform-origin:0 0}',
-  '.sp-snap iframe,.sp-zoom iframe{display:block;border:0;background:var(--bg-page)}',
-  /* кадр окна: фон прозрачный — под скруглёнными углами видно скрим рамки, а не плашку фона;
-     скругление и тень — токенами окна ДС: своя тень окна срезана краем кадра (RE0037) */
-  '.sp-snap--modal iframe,.sp-zoom__stage--modal iframe{background:transparent;border-radius:var(--radius-modal);box-shadow:var(--shadow-modal-form)}',
+  '.sp-snap iframe,.sp-zoom iframe{display:block;border:0;background:var(--sp-bg)}',
+  /* кадр окна: фон прозрачный — под скруглёнными углами видно скрим рамки, а не плашку фона (RE0037);
+     скругление и тень — свои токены (RE0051) */
+  '.sp-snap--modal iframe,.sp-zoom__stage--modal iframe{background:transparent;border-radius:var(--sp-radius-modal);box-shadow:var(--sp-shadow-modal)}',
   '.sp-snap__frame iframe{pointer-events:auto}',
-  'figcaption{font:var(--type-body-s-reg);color:var(--text-secondary);margin-top:var(--space-8)}',
-  '.sp-snap figcaption{margin-top:auto;padding-top:var(--space-8)}',
-  '.sp-snap__num{font:var(--type-body-s-strong-smb);color:var(--text-primary)}',
-  '.sp-snap__note{display:block;margin-top:var(--space-4);color:var(--text-primary)}',
-  '.sp-snap__empty{padding:var(--space-24);text-align:center;color:var(--text-secondary);background:var(--bg-page)}',
+  'figcaption{font:400 13px/1.5 var(--sp-font);color:var(--sp-fg-2);margin-top:8px}',
+  '.sp-snap figcaption{margin-top:auto;padding-top:8px}',
+  '.sp-snap__num{font:600 13px/1.5 var(--sp-font);color:var(--sp-fg)}',
+  '.sp-snap__note{display:block;margin-top:4px;color:var(--sp-fg)}',
+  '.sp-snap__empty{padding:24px;text-align:center;color:var(--sp-fg-2);background:var(--sp-bg)}',
   /* окно — на скриме, как в продукте */
-  '.sp-snap--modal .sp-snap__frame,.sp-zoom__stage--modal{background:linear-gradient(var(--modal-scrim,rgba(60,66,72,.48)),var(--modal-scrim,rgba(60,66,72,.48))),var(--bg-page);padding:var(--space-32)}',
+  '.sp-snap--modal .sp-snap__frame,.sp-zoom__stage--modal{background:linear-gradient(var(--modal-scrim,rgba(60,66,72,.48)),var(--modal-scrim,rgba(60,66,72,.48))),var(--sp-bg);padding:32px}',
   /* несколько снимков: сетка по ширине кадров, без «лесенки» */
-  '.sp-gallery,.sp-matrix{display:grid;grid-template-columns:repeat(var(--cols,1),minmax(0,1fr));gap:var(--space-24);align-items:stretch;margin:0 0 var(--space-24)}',
+  '.sp-gallery,.sp-matrix{display:grid;grid-template-columns:repeat(var(--cols,1),minmax(0,1fr));gap:24px;align-items:stretch;margin:0 0 24px}',
   '.sp-gallery .sp-snap,.sp-matrix .sp-snap{margin:0;height:100%}',
   '.sp-matrix--rows{grid-template-columns:minmax(96px,152px) repeat(var(--cols,1),minmax(0,1fr))}',
-  '.sp-matrix__col,.sp-matrix__row{font:var(--type-body-s-strong-smb);color:var(--text-primary);align-self:center}',
-  '.sp-matrix__col{padding:0 var(--space-4)}',
-  '.sp-matrix__row{padding-right:var(--space-8)}',
-  '.sp-matrix__empty{display:block;min-height:64px;border:1px dashed var(--border-light);border-radius:var(--radius-card)}',
+  '.sp-matrix__col,.sp-matrix__row{font:600 13px/1.5 var(--sp-font);color:var(--sp-fg);align-self:center}',
+  '.sp-matrix__col{padding:0 4px}',
+  '.sp-matrix__row{padding-right:8px}',
+  '.sp-matrix__empty{display:block;min-height:64px;border:1px dashed var(--sp-line-2);border-radius:var(--sp-radius)}',
   /* схема сценария: связи окрашены по тому, куда ведут */
-  '.sp-flow{position:relative;margin:0 0 var(--space-32);padding:var(--space-16);background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-card)}',
-  '.sp-flow__full{position:absolute;top:var(--space-12);right:var(--space-12);z-index:2;font:var(--type-body-s-reg);padding:var(--space-4) var(--space-12);border:1px solid var(--border-primary);border-radius:var(--radius-control);background:var(--bg-tile);color:var(--text-primary);cursor:pointer}',
-  '.sp-flow__full:hover{background:var(--secondary-bg-light)}',
-  '.sp-flow__scroll{overflow-x:auto;padding-top:var(--space-32)}',
+  '.sp-flow{position:relative;margin:0 0 32px;padding:16px;background:var(--sp-card);border:1px solid var(--sp-line);border-radius:var(--sp-radius)}',
+  '.sp-flow__full{position:absolute;top:12px;right:12px;z-index:2;font:400 13px/1.4 var(--sp-font);padding:4px 12px;border:1px solid var(--sp-line-2);border-radius:var(--sp-radius-s);background:var(--sp-card);color:var(--sp-fg);cursor:pointer}',
+  '.sp-flow__full:hover{background:var(--sp-hover)}',
+  '.sp-flow__scroll{overflow-x:auto;padding-top:32px}',
   '.sp-flow__sizer{position:relative}',
   '.sp-flow__canvas{position:absolute;left:0;top:0;transform-origin:0 0}',
   '.sp-flow svg{position:absolute;left:0;top:0;overflow:visible}',
   '.sp-flow__edge{fill:none;stroke-width:2;stroke-linejoin:round;transition:opacity .15s}',
-  '.sp-flow__edge--info,.sp-flow__head--info{stroke:var(--st-blue)}',
-  '.sp-flow__edge--error{stroke:var(--st-red)}',
-  '.sp-flow__edge--ok{stroke:var(--st-green)}',
-  '.sp-flow__edge--warn{stroke:var(--st-orange)}',
-  '.sp-flow__edge--back{stroke:var(--st-grey);stroke-dasharray:6 5}',
+  '.sp-flow__edge--info,.sp-flow__head--info{stroke:var(--sp-info)}',
+  '.sp-flow__edge--error{stroke:var(--sp-err)}',
+  '.sp-flow__edge--ok{stroke:var(--sp-ok)}',
+  '.sp-flow__edge--warn{stroke:var(--sp-warn)}',
+  '.sp-flow__edge--back{stroke:var(--sp-grey);stroke-dasharray:6 5}',
   '.sp-flow__head{stroke:none}',
-  '.sp-flow__head--info{fill:var(--st-blue)}',
-  '.sp-flow__head--error{fill:var(--st-red)}',
-  '.sp-flow__head--ok{fill:var(--st-green)}',
-  '.sp-flow__head--warn{fill:var(--st-orange)}',
-  '.sp-flow__head--back{fill:var(--st-grey)}',
-  '.sp-flow__label{position:absolute;transform:translate(-50%,-50%);max-width:120px;padding:2px var(--space-8);background-color:var(--bg-tile);border:1px solid;border-radius:var(--radius-xs);font:var(--type-body-xs-reg);text-align:center;line-height:1.3;pointer-events:none;transition:opacity .15s}',
-  '.sp-flow__label--info{background-image:linear-gradient(var(--st-blue-light),var(--st-blue-light));color:var(--st-blue-dark);border-color:var(--st-blue)}',
-  '.sp-flow__label--error{background-image:linear-gradient(var(--st-red-light),var(--st-red-light));color:var(--st-red-dark);border-color:var(--st-red)}',
-  '.sp-flow__label--ok{background-image:linear-gradient(var(--st-green-light),var(--st-green-light));color:var(--st-green-dark);border-color:var(--st-green)}',
-  '.sp-flow__label--warn{background-image:linear-gradient(var(--st-orange-light),var(--st-orange-light));color:var(--st-orange-dark);border-color:var(--st-orange)}',
-  '.sp-flow__label--back{background-image:linear-gradient(var(--st-grey-light),var(--st-grey-light));color:var(--st-grey-dark);border-color:var(--st-grey)}',
-  '.sp-flow__legend{display:flex;flex-wrap:wrap;gap:var(--space-8) var(--space-24);margin-top:var(--space-16);font:var(--type-body-xs-reg);color:var(--text-secondary)}',
-  '.sp-flow__nkey{display:inline-flex;align-items:center;gap:var(--space-8)}',
-  '.sp-flow__nkey::before{content:"";box-sizing:border-box;width:22px;height:14px;background:var(--bg-page);border:1px solid var(--border-light);border-left:4px solid var(--primary);border-radius:var(--radius-xs)}',
-  '.sp-flow__nkey--modal::before{border-left:1px solid var(--border-primary);border-top:5px solid var(--st-grey);border-radius:var(--radius-s);box-shadow:3px 3px 0 var(--st-grey-light);background:var(--bg-tile)}',
-  '.sp-flow__tkey{display:inline-flex;align-items:center;gap:var(--space-8)}',
+  '.sp-flow__head--info{fill:var(--sp-info)}',
+  '.sp-flow__head--error{fill:var(--sp-err)}',
+  '.sp-flow__head--ok{fill:var(--sp-ok)}',
+  '.sp-flow__head--warn{fill:var(--sp-warn)}',
+  '.sp-flow__head--back{fill:var(--sp-grey)}',
+  '.sp-flow__label{position:absolute;transform:translate(-50%,-50%);max-width:120px;padding:2px 8px;background-color:var(--sp-card);border:1px solid;border-radius:5px;font:400 12px/1.4 var(--sp-font);text-align:center;line-height:1.3;pointer-events:none;transition:opacity .15s}',
+  '.sp-flow__label--info{background-image:linear-gradient(var(--sp-info-bg),var(--sp-info-bg));color:var(--sp-info-dark);border-color:var(--sp-info)}',
+  '.sp-flow__label--error{background-image:linear-gradient(var(--sp-err-bg),var(--sp-err-bg));color:var(--sp-err-dark);border-color:var(--sp-err)}',
+  '.sp-flow__label--ok{background-image:linear-gradient(var(--sp-ok-bg),var(--sp-ok-bg));color:var(--sp-ok-dark);border-color:var(--sp-ok)}',
+  '.sp-flow__label--warn{background-image:linear-gradient(var(--sp-warn-bg),var(--sp-warn-bg));color:var(--sp-warn-dark);border-color:var(--sp-warn)}',
+  '.sp-flow__label--back{background-image:linear-gradient(var(--sp-grey-bg),var(--sp-grey-bg));color:var(--sp-grey-dark);border-color:var(--sp-grey)}',
+  '.sp-flow__legend{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:16px;font:400 12px/1.4 var(--sp-font);color:var(--sp-fg-2)}',
+  '.sp-flow__nkey{display:inline-flex;align-items:center;gap:8px}',
+  '.sp-flow__nkey::before{content:"";box-sizing:border-box;width:22px;height:14px;background:var(--sp-bg);border:1px solid var(--sp-line);border-left:4px solid var(--sp-accent);border-radius:5px}',
+  '.sp-flow__nkey--modal::before{border-left:1px solid var(--sp-line-2);border-top:5px solid var(--sp-grey);border-radius:var(--sp-radius-s);box-shadow:3px 3px 0 var(--sp-grey-bg);background:var(--sp-card)}',
+  '.sp-flow__tkey{display:inline-flex;align-items:center;gap:8px}',
   '.sp-flow__tkey::before{content:"";width:14px;height:14px;border-radius:3px;background:var(--tone)}',
-  '.sp-flow__tkey--state{--tone:var(--st-grey)}',
-  '.sp-flow__tkey--error{--tone:var(--st-red)}',
-  '.sp-flow__tkey--ok{--tone:var(--st-green)}',
-  '.sp-flow__tkey--warn{--tone:var(--st-orange)}',
-  '.sp-flow__key{display:inline-flex;align-items:center;gap:var(--space-8)}',
+  '.sp-flow__tkey--state{--tone:var(--sp-grey)}',
+  '.sp-flow__tkey--error{--tone:var(--sp-err)}',
+  '.sp-flow__tkey--ok{--tone:var(--sp-ok)}',
+  '.sp-flow__tkey--warn{--tone:var(--sp-warn)}',
+  '.sp-flow__key{display:inline-flex;align-items:center;gap:8px}',
   '.sp-flow__key::before{content:"";width:28px;height:0;border-top:2px solid var(--key)}',
-  '.sp-flow__key--info{--key:var(--st-blue)}',
-  '.sp-flow__key--error{--key:var(--st-red)}',
-  '.sp-flow__key--ok{--key:var(--st-green)}',
-  '.sp-flow__key--warn{--key:var(--st-orange)}',
-  '.sp-flow__key--back{--key:var(--st-grey)}',
+  '.sp-flow__key--info{--key:var(--sp-info)}',
+  '.sp-flow__key--error{--key:var(--sp-err)}',
+  '.sp-flow__key--ok{--key:var(--sp-ok)}',
+  '.sp-flow__key--warn{--key:var(--sp-warn)}',
+  '.sp-flow__key--back{--key:var(--sp-grey)}',
   '.sp-flow__key--back::before{border-top-style:dashed}',
   '.sp-flow--focus .sp-flow__edge:not(.is-on),.sp-flow--focus .sp-flow__label:not(.is-on),.sp-flow--focus .sp-node:not(.is-near){opacity:.2}',
-  '.sp-node{position:absolute;display:flex;flex-direction:column;justify-content:center;gap:var(--space-2);padding:var(--space-6) var(--space-10) var(--space-6) var(--space-12);background:var(--bg-page);border:1px solid var(--border-light);border-left:4px solid var(--primary);border-radius:var(--radius-s);color:var(--text-primary);text-decoration:none;overflow:hidden;transition:opacity .15s}',
+  '.sp-node{position:absolute;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:6px 10px 6px 12px;background:var(--sp-bg);border:1px solid var(--sp-line);border-left:4px solid var(--sp-accent);border-radius:var(--sp-radius-s);color:var(--sp-fg);text-decoration:none;overflow:hidden;transition:opacity .15s}',
   'a.sp-node{cursor:pointer}',
-  'a.sp-node:hover,a.sp-node:focus-visible{border-color:var(--primary);outline:0;background:var(--primary-bg)}',
+  'a.sp-node:hover,a.sp-node:focus-visible{border-color:var(--sp-accent);outline:0;background:var(--sp-accent-bg)}',
   /* форма узла: экран — плоская карточка, окно — «окно» со строкой заголовка, скруглением и тенью;
      тон узла (состояние, ошибка, готово, под вопросом) — цвет планки экрана или строки заголовка окна */
-  '.sp-node{--tone:var(--primary);border-left-color:var(--tone)}',
-  '.sp-node--state{--tone:var(--st-grey)}',
-  '.sp-node--error{--tone:var(--st-red)}',
-  '.sp-node--ok{--tone:var(--st-green)}',
-  '.sp-node--warn{--tone:var(--st-orange)}',
-  '.sp-node--page{border-radius:var(--radius-xs)}',
-  '.sp-node--modal{--tone:var(--st-grey);padding-top:var(--space-20);border-left:1px solid var(--border-primary);border-radius:var(--radius-card);background:var(--bg-tile);box-shadow:5px 5px 0 var(--st-grey-light)}',
-  '.sp-node--modal.sp-node--state{--tone:var(--st-grey)}',
-  '.sp-node--modal.sp-node--error{--tone:var(--st-red)}',
-  '.sp-node--modal.sp-node--ok{--tone:var(--st-green)}',
-  '.sp-node--modal.sp-node--warn{--tone:var(--st-orange)}',
+  '.sp-node{--tone:var(--sp-accent);border-left-color:var(--tone)}',
+  '.sp-node--state{--tone:var(--sp-grey)}',
+  '.sp-node--error{--tone:var(--sp-err)}',
+  '.sp-node--ok{--tone:var(--sp-ok)}',
+  '.sp-node--warn{--tone:var(--sp-warn)}',
+  '.sp-node--page{border-radius:5px}',
+  '.sp-node--modal{--tone:var(--sp-grey);padding-top:20px;border-left:1px solid var(--sp-line-2);border-radius:var(--sp-radius);background:var(--sp-card);box-shadow:5px 5px 0 var(--sp-grey-bg)}',
+  '.sp-node--modal.sp-node--state{--tone:var(--sp-grey)}',
+  '.sp-node--modal.sp-node--error{--tone:var(--sp-err)}',
+  '.sp-node--modal.sp-node--ok{--tone:var(--sp-ok)}',
+  '.sp-node--modal.sp-node--warn{--tone:var(--sp-warn)}',
   '.sp-node--modal::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:var(--tone)}',
-  '.sp-node__hint{font:var(--type-body-xs-reg);color:var(--text-secondary)}',
-  '.sp-node__title{font:var(--type-body-s-strong-smb);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
+  '.sp-node__hint{font:400 12px/1.4 var(--sp-font);color:var(--sp-fg-2)}',
+  '.sp-node__title{font:600 13px/1.4 var(--sp-font);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
   /* алерт в тексте: «> [!warning] …» */
-  '.sp-alert{margin:0 0 var(--space-16);padding:var(--space-12) var(--space-16);border-left:4px solid var(--info);border-radius:var(--radius-s);background:var(--info-bg);max-width:960px}',
-  '.sp-alert--warning{border-left-color:var(--warning);background:var(--warning-bg)}',
-  '.sp-alert--error{border-left-color:var(--st-red);background:var(--st-red-light)}',
-  '.sp-alert--success{border-left-color:var(--st-green);background:var(--st-green-light)}',
+  '.sp-alert{margin:0 0 16px;padding:12px 16px;border-left:4px solid var(--sp-info);border-radius:var(--sp-radius-s);background:var(--sp-info-bg);max-width:960px}',
+  '.sp-alert--warning{border-left-color:var(--sp-warn);background:var(--sp-warn-bg)}',
+  '.sp-alert--error{border-left-color:var(--sp-err);background:var(--sp-err-bg)}',
+  '.sp-alert--success{border-left-color:var(--sp-ok);background:var(--sp-ok-bg)}',
   '.sp-alert p:last-child{margin:0}',
-  '.sp-flash{outline:2px solid var(--primary);outline-offset:4px}',
+  '.sp-flash{outline:2px solid var(--sp-accent);outline-offset:4px}',
   /* «не решено»: жёлтый кружок с вопросом перед текстом спорного места */
-  '.sp-q{display:inline-flex;align-items:center;justify-content:center;width:1.25em;height:1.25em;margin-right:var(--space-4);border-radius:50%;background:var(--warning);color:var(--text-on-warning,#fff);font-size:.85em;font-weight:600;line-height:1;vertical-align:text-bottom}',
-  '.sp-back{position:fixed;right:var(--space-24);bottom:var(--space-24);z-index:9;font:var(--type-body-s-strong-smb);padding:var(--space-8) var(--space-16);border:0;border-radius:var(--radius-control);background:var(--primary);color:var(--text-on-primary,#fff);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.24)}',
+  '.sp-q{display:inline-flex;align-items:center;justify-content:center;width:1.25em;height:1.25em;margin-right:4px;border-radius:50%;background:var(--sp-warn);color:#fff;font-size:.85em;font-weight:600;line-height:1;vertical-align:text-bottom}',
+  '.sp-back{position:fixed;right:24px;bottom:24px;z-index:9;font:600 13px/1.4 var(--sp-font);padding:8px 16px;border:0;border-radius:var(--sp-radius-s);background:var(--sp-accent);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.24)}',
   '.sp-back[hidden]{display:none}',
   /* снимок в натуральную величину */
-  '.sp-zoom{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;background:var(--bg-page)}',
+  '.sp-zoom{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;background:var(--sp-bg)}',
   '.sp-zoom[hidden]{display:none}',
-  '.sp-zoom__bar{display:flex;align-items:center;justify-content:space-between;gap:var(--space-16);padding:var(--space-12) var(--space-24);background:var(--bg-tile);border-bottom:1px solid var(--border-light)}',
-  '.sp-zoom__title{font:var(--type-body-m-strong-smb)}',
-  '.sp-zoom__actions,.sp-zoom__tools{display:flex;align-items:center;gap:var(--space-8)}',
+  '.sp-zoom__bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 24px;background:var(--sp-card);border-bottom:1px solid var(--sp-line)}',
+  '.sp-zoom__title{font:600 14px/1.4 var(--sp-font)}',
+  '.sp-zoom__actions,.sp-zoom__tools{display:flex;align-items:center;gap:8px}',
   '.sp-zoom__tools[hidden]{display:none}',
-  '.sp-zoom__btn{font:var(--type-body-s-reg);padding:var(--space-6) var(--space-12);border:1px solid var(--border-primary);border-radius:var(--radius-control);background:var(--bg-tile);color:var(--text-primary);cursor:pointer}',
-  '.sp-zoom__btn[aria-pressed="true"]{background:var(--primary-bg);border-color:var(--primary)}',
-  '.sp-zoom__body{flex:1;min-height:0;overflow:auto;padding:var(--space-24)}',
+  '.sp-zoom__btn{font:400 13px/1.4 var(--sp-font);padding:6px 12px;border:1px solid var(--sp-line-2);border-radius:var(--sp-radius-s);background:var(--sp-card);color:var(--sp-fg);cursor:pointer}',
+  '.sp-zoom__btn[aria-pressed="true"]{background:var(--sp-accent-bg);border-color:var(--sp-accent)}',
+  '.sp-zoom__body{flex:1;min-height:0;overflow:auto;padding:24px}',
   '.sp-zoom__tips{position:fixed;inset:0;z-index:11;pointer-events:none;overflow:hidden}',
   '.sp-zoom__stage{overflow:hidden;position:relative}',
-  '.sp-zoom__stage--flow{padding:var(--space-24);background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-card)}',
+  '.sp-zoom__stage--flow{padding:24px;background:var(--sp-card);border:1px solid var(--sp-line);border-radius:var(--sp-radius)}',
 ].join('\n');
 
 /* Рантайм страницы спеки: выполняется в браузере (toString). Снимок — iframe
@@ -2392,7 +2505,7 @@ function main() {
   if (args.includes('--selftest') || args.includes('--self-test')) return selftest();
   const file = args.find((a) => !a.startsWith('--') && a.endsWith(SUFFIX));
   if (!file) {
-    console.log('Использование:\n  dev-spec.mjs <…/refs/<Spec>/<Spec>' + SUFFIX + '> [--check | --text | --diff] [--port 8766] [--settle 700] [--only id,id] [--out <папка>]\n  dev-spec.mjs --selftest');
+    console.log('Использование:\n  dev-spec.mjs <…/refs/<Spec>/<Spec>' + SUFFIX + '> [--check | --text | --diff] [--port 8766] [--settle 700] [--only id,id] [--out <папка>]\n  dev-spec.mjs <…> --from <Спека>   сборка без съёмки: снимки из генерата другой спеки\n  dev-spec.mjs --selftest');
     process.exit(1);
   }
   const P = need('dev-spec', HERE);
@@ -2410,6 +2523,7 @@ function main() {
   const opts = {
     specAbs, port: Number(option(args, '--port', 8766)), settle: Number(option(args, '--settle', 700)),
     only: option(args, '--only', '').split(',').map((x) => x.trim()).filter(Boolean), out: option(args, '--out', null),
+    from: option(args, '--from', null),
   };
   if (checked.defects.length || args.includes('--check')) {
     console.log(report('dev-spec --check ' + P.rel(specAbs), { defects: checked.defects, notes: editNotes(humanEdits(P, specAbs), path.basename(specAbs).slice(0, -SUFFIX.length)) }));
@@ -2423,6 +2537,17 @@ function main() {
     const out = writeAll(P, checked, capture, opts);
     const missing = checked.spec.snaps.filter((s) => !capture.snaps[s.id]).map((s) => 'СР6 снимок ' + s.id + ' не снят: досъёмка — --only ' + s.id);
     console.log(report('dev-spec --text', { defects: missing, written: out.written, stats: out.stats, notes: out.notes }));
+    process.exit(missing.length ? 1 : 0);
+  }
+  /* --from <Спека>: копия снимков из генерата другой спеки — сборка без съёмки (RE0051);
+     страницы у спек-копий совпадают, снимки переиспользуются целиком */
+  if (opts.from) {
+    if (opts.from === checked.spec.spec) { console.log(report('dev-spec --from', { defects: ['СР6 --from: спека копирует снимки из самой себя — укажите другую спеку'] })); process.exit(1); }
+    const capture = readGenerat(checked.place.dataAbs, opts.from);
+    if (!capture) { console.log(report('dev-spec --from', { defects: ['СР6 генерата ' + opts.from + '.dev-spec.js нет или он не читается: сначала соберите её (съёмка или --text)'] })); process.exit(1); }
+    const out = writeAll(P, checked, capture, opts);
+    const missing = checked.spec.snaps.filter((s) => !capture.snaps[s.id]).map((s) => 'СР6 снимка ' + s.id + ' нет в генерате ' + opts.from + ': досъёмка — --only ' + s.id);
+    console.log(report('dev-spec --from ' + opts.from, { defects: missing, written: out.written, stats: out.stats, notes: out.notes }));
     process.exit(missing.length ? 1 : 0);
   }
   serve(P, specAbs, checked, opts);
@@ -2527,12 +2652,38 @@ function selftest() {
     assert.ok(html.includes('id="snap-tile-a" data-snap="tile-a"'));
     assert.ok(html.includes('sp-snap--missing" id="snap-page-b"'));
     assert.ok(html.includes('href="#1-коротко"'), 'оглавление');
+    assert.ok(html.includes('<ul class="sp-toc__tree">'), 'оглавление — дерево (RE0051)');
+    assert.ok(html.includes('<a class="sp-toc__link sp-toc__link--2" href="#snaps">Снимки</a>'), 'приложение без номера');
+    assert.ok(!html.includes('<ul></ul>'), 'пустых контейнеров подпунктов нет');
     assert.ok(!/<\/script>[\s\S]*<\/script>[\s\S]*<\/script>[\s\S]*<\/script>/.test(html.split('id="devspec-data">')[1].split('</head>')[0]), 'JSON не рвёт тег script');
     const back = captureFromHtml(html);
     assert.equal(back.snaps['tile-a'].w, 300);
     assert.equal(back.snaps['tile-a'].body, capture.snaps['tile-a'].body);
     const again = exportHtml(fm.spec, split.body, back);
     assert.equal(captureFromHtml(again).snaps['tile-a'].local[0], '.x{}');
+  });
+  t('нумерация заголовков (RE0051): h2/h3/h4 показом, слаг от исходника, глубже — без номера', () => {
+    const body = '# Д\n\n## 1. Коротко\nтекст\n\n## 2. Сценарий\n### Сценарий 1. Ручной путь\n#### Шаги сценария\nшаги\n##### Колонки таблицы\nx\n';
+    const heads = [];
+    const html = mdToHtml(body, { heads, seen: new Set() });
+    assert.ok(html.includes('<h2 id="1-коротко">1. Коротко</h2>'), html);
+    assert.ok(html.includes('<h3 id="сценарий-1-ручной-путь">2.1. Сценарий 1. Ручной путь</h3>'), html);
+    assert.ok(html.includes('<h4 id="шаги-сценария">2.1.1. Шаги сценария</h4>'), html);
+    assert.ok(html.includes('<h5 id="колонки-таблицы">Колонки таблицы</h5>'), html);
+    assert.deepEqual(heads.map((x) => x.num), [null, '1.', '2.', '2.1.', '2.1.1.', null]);   // h1 без номера
+    const md = exportMd(fm.spec, body, capture);
+    assert.ok(md.includes('### 2.1. Сценарий 1. Ручной путь'), md);
+    assert.ok(md.includes('#### 2.1.1. Шаги сценария'), md);
+    assert.ok(md.includes('##### Колонки таблицы'), md);
+  });
+  t('«Коротко» — карточки; зависимое окно (####) — вложенная секция под тайлом (RE0051)', () => {
+    const body = '# Д\n\n## 1. Коротко\n- **Что.** Появляется окно\n- **Новое:**\n  - страница А\n\n## 2. Виджеты\n### Тайл Т (`TTile`)\nописание тайла\n#### Окно О (`OModal`)\nописание окна\n### Окно Ф (`FModal`)\nсамостоятельное\n\n## 3. Тексты\nНет.\n';
+    const html = mdToHtml(body, { heads: [], seen: new Set() });
+    assert.ok(html.includes('<ul class="sp-brief">'), html);
+    assert.ok(html.includes('<section class="sp-wgroup">'), html);
+    assert.ok(html.includes('<section class="sp-wsub">'), html);
+    assert.ok(html.includes('</section>\n</section>\n<section class="sp-wgroup">\n<h3 id="окно-ф-fmodal">'), 'самостоятельное окно — вне группы: ' + html.slice(-400));
+    assert.ok(html.includes('</section>\n<h2 id="3-тексты">'), 'группы закрыты перед следующим разделом: ' + html.slice(-200));
   });
   t('кадр окна: фон прозрачный, скругление и тень ДС (RE0037)', () => {
     const m = {
@@ -2545,8 +2696,8 @@ function selftest() {
     assert.ok(html.includes('class="sp-snap sp-snap--modal" id="snap-modal-a"'), 'окно — кадр со скримом');
     const rules = /\.sp-snap--modal iframe[^{]*\{([^}]*)\}/.exec(html.split('</script>')[0]);
     assert.ok(rules, 'правила кадра окна в CSS страницы');
-    assert.ok(/border-radius:var\(--radius-modal\)/.test(rules[1]), rules[1]);
-    assert.ok(/box-shadow:var\(--shadow-modal-form\)/.test(rules[1]), rules[1]);
+    assert.ok(/border-radius:var\(--sp-radius-modal\)/.test(rules[1]), rules[1]);
+    assert.ok(/box-shadow:var\(--sp-shadow-modal\)/.test(rules[1]), rules[1]);
     assert.ok(/background:transparent/.test(rules[1]), rules[1]);
     const data = JSON.parse(html.split('id="devspec-data">')[1].split('</script>')[0]);
     assert.ok(/html,body\{background:transparent!important\}/.test(data.frame.crop), 'фон снимка (html, body) прозрачный');
@@ -2645,6 +2796,9 @@ function selftest() {
     assert.ok(html.includes('<li id="step-1">') && html.includes('<li id="step-2">'), 'у шагов сценария есть id');
     assert.ok(!html.includes('<li id="step-1">Чужой'), 'id только у списка под «Шаги сценария»');
     assert.equal(heads[1].text, 'Ветка (шаг 2)', 'в оглавлении — простой текст');
+    const heads2 = [];
+    const html2 = mdToHtml('### Сценарий 2. Второй\n\n#### Шаги сценария\n\n1. Один\n\n#### Ветка ({steps:1})\n', { heads: heads2 });
+    assert.ok(html2.includes('<li id="step-2-1">') && html2.includes('href="#step-2-1"'), 'во втором сценарии номера с 1, якорь не пересекается с первым');
     const md = exportMd(fm.spec, '# Д\n\n## 1. Коротко\nСм. {steps:7-9}. {?} Открыто.\n', capture);
     assert.ok(md.includes('См. шаги 7–9. **(?)** Открыто.'), md);
   });

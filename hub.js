@@ -371,7 +371,7 @@ window.IBPHub = [
     id: 'tranche-page-v04-proposals',
     group: 'concepts',
     title: 'Post — Корректировки РСБУ v4 — Предложения',
-    desc: 'Предложения по интерфейсу корректировок РСБУ к версии v4: три предложения на обсуждении — источник строки, дублирование, выбор и удаление нескольких корректировок',
+    desc: 'Все предложения по интерфейсу корректировок РСБУ к версии v4 рассмотрены — решения в задаче RE0050',
     href: 'apps/postrade/drafts/tranche-page-v04-proposals/pages/Proposals.html',
     root: 'apps/postrade/drafts/tranche-page-v04-proposals',
     icon: 'folder',
@@ -425,10 +425,20 @@ window.IBPHubSpecs = [
     id: 'RsbuInterestAdjustmentsV4',
     title: 'Корректировки процентов РСБУ',
     module: 'postrade/drafts/tranche-page-v04',
-    version: '3.100',
+    version: '3.104',
     stage: 'Концепт v4',
     date: '05.11.2026',
     href: 'apps/postrade/drafts/dev-specs/pages/Spec.html?spec=RsbuInterestAdjustmentsV4',
+    root: 'apps/postrade/drafts/dev-specs'
+  },
+  {
+    id: 'RsbuInterestAdjustmentsV4Neo',
+    title: 'Корректировки процентов РСБУ',
+    module: 'postrade/drafts/tranche-page-v04',
+    version: '3.104',
+    stage: 'Концепт v4-NEO',
+    date: '05.11.2026',
+    href: 'apps/postrade/drafts/dev-specs/pages/Spec.html?spec=RsbuInterestAdjustmentsV4Neo',
     root: 'apps/postrade/drafts/dev-specs'
   }
 ];

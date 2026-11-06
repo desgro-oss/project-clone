@@ -41,24 +41,29 @@
                  — имитация расчёта на «бэке» с задержкой; строки появляются в истории
                  по ответу, событие change с reason 'fixation-added'
      trancheFiIds() → string[]               — ФИ сделки, к которым прикреплён транш
-                 (пересчёт с фиксацией доступен только им, RE0034/RE0050)
      fiOfTranche(trancheId) → fiId|null      — ФИ, к которому прикреплён транш (вопрос 4: первый)
+     ownerKey(fiId, trancheId) → string|null — владелец корректировок: ФИ, а без ФИ — ключ
+                 транша 'TRANCHE-<id>' (допущение прототипа, ответ человека 05.11.2026)
      rasEventDates(fiId) → string[]          — даты отчёта РСБУ ФИ (ISO, помесячная сетка RE0050)
      Пересчёт с фиксацией и корректировки процентов (RE0034 → RE0050; типы — @typedef у раздела):
      checkRasFixation({ fiId, periodFrom, periodTo, adjustmentDate }) → [{ field, code }] —
                  нарушения окна «Пересчет с фиксацией»; field: periodFrom|periodTo|adjustmentDate;
                  code: REQUIRED | PERIOD_ORDER | NOT_AFTER_FIXATION
-     recalcPayments(fiId, opts?) → Promise<{ fiId, created, withFixation }> — «Пересчитать» и
-                 «Пересчитать с фиксацией» на тайле (задержка). opts = { periodFrom, periodTo,
-                 adjustmentDate } — пересчёт с фиксацией: значения периода фиксируются по текущему
-                 расчёту, пересчитывается весь срок, по строке AUTO на каждую ненулевую дельту даты
-                 периода (на дату корректировки); прежние корректировки остаются (решение человека
-                 03.11.2026, RE0050). Без opts — обычный пересчёт, корректировок не создаёт
+     recalcPayments(owner, opts?) → Promise<{ fiId, created, withFixation }> — «Пересчитать» и
+                 «Пересчитать с фиксацией» на тайле (задержка). owner — ФИ или ключ транша
+                 (ownerKey); opts = { periodFrom, periodTo, adjustmentDate, comment } — пересчёт
+                 с фиксацией: значения периода фиксируются по текущему расчёту, пересчитывается
+                 весь срок, по строке AUTO на каждую ненулевую дельту даты периода (на дату
+                 корректировки); comment из окна попадает во все созданные строки; прежние
+                 корректировки остаются (решение человека 03.11.2026, RE0050). Без opts — обычный
+                 пересчёт, корректировок не создаёт. Без ФИ owner — ключ транша, корректировки
+                 создаются (ответ человека 05.11.2026, вторая волна)
      paymentsBusy() → boolean                — идёт пересчёт платежей
-     rasAdjustments(fiId?) → RsbuInterestAdjustmentRsDto[]
+     rasAdjustments(owner?) → RsbuInterestAdjustmentRsDto[]
      addRasAdjustment({ fiId, startDate, endDate, parts, comment }) → { ok, id } — ручная (MANUAL);
-                 сумма — сумма частей
+                 сумма — сумма частей; fiId — ФИ или ключ транша
      removeRasAdjustment(id) → { ok } | { error: 'NOT_FOUND' }
+     removeRasAdjustments(ids) → { ok, removed } — удалить пачку одним событием
      rasMarks() → { fiId: { 'ГГГГ-ММ-ДД': сумма } } — суммы корректировок на целевые даты на момент
                  последнего пересчёта метрик (отметки отчёта РСБУ)
      rasParts() → string[]                   — ключи шести частей в порядке колонок
@@ -115,11 +120,16 @@
    метрик — закрытые даты остаются как при закрытии. Система пересчитывает платёжи за весь срок,
    включая выплаченные периоды: повторные пересчёты с фиксацией добавляют корректировки, прежние
    остаются со своей целевой датой корректировки (решение человека 03.11.2026, RE0050).
-   Сценарий панели ?rasAdj=none|created|applied|multi|multi-applied|manual|manual-applied:
+   Пересчёт с фиксацией и корректировки доступны и без привязки транша к ФИ: система считает
+   процентные платежи по траншу, поэтому владелец корректировок без ФИ — ключ
+   'TRANCHE-<id>' (ответ человека 05.11.2026, вторая волна). Комментарий из окна пересчёта
+   попадает во все созданные строки.
+   Сценарий панели ?rasAdj=none|created|applied|multi|multi-applied|manual|manual-applied|no-fi:
    платежи не пересчитаны · один пересчёт с фиксацией (период 01.01.2025–31.03.2025,
    корректировки на 01.04.2025) · и метрики пересчитаны · два пересчёта с фиксацией (второй:
    период 01.01.2025–30.06.2026, корректировки на 01.07.2026) · два и метрики пересчитаны · одна
-   ручная корректировка (16.01.2025 → 01.04.2025, 12 500,00) · она же и метрики пересчитаны.
+   ручная корректировка (16.01.2025 → 01.04.2025, 12 500,00) · она же и метрики пересчитаны ·
+   корректировки первого транша сделки без ФИ.
    Адрес задаёт состояние страницы и в хранилище не пишет, пока человек сам не сделал действие —
    после него состояние сохраняется как обычно. Значения, сдвиги пересчёта и раскладка по видам —
    рыба, детерминированно (Source: invented 28.10.2026); шесть сумм вида в системе приходят с
@@ -650,7 +660,8 @@
    * при каждом пересчёте метрик.
    * @typedef {Object} RsbuInterestAdjustmentRsDto
    * @property {string} id
-   * @property {string} financialInstrumentId
+   * @property {string} financialInstrumentId — ФИ; без ФИ — ключ транша 'TRANCHE-<id>'
+   *           (допущение прототипа, ответ человека 05.11.2026)
    * @property {string} startDate — исходная дата (ГГГГ-ММ-ДД), для строк из дельт — дата отчёта
    * @property {string} endDate — целевая дата корректировки: на неё сумма прибавляется
    * @property {RsbuAdjustmentPartsDto} parts
@@ -662,7 +673,7 @@
    * Период фиксации РСБУ транша: значения индикатора «Начисленные проценты за период»
    * за период [periodFrom; periodTo] фиксируются на момент пересчёта с фиксацией.
    * @typedef {Object} RsbuFixationPeriodRsDto
-   * @property {string} financialInstrumentId
+   * @property {string} financialInstrumentId — ФИ или ключ транша 'TRANCHE-<id>'
    * @property {string} periodFrom — начало периода фиксации (ГГГГ-ММ-ДД)
    * @property {string} periodTo — конец периода фиксации (ГГГГ-ММ-ДД)
    * @property {string} adjustmentDate — целевая дата корректировки, на неё ложатся дельты
@@ -699,7 +710,6 @@
     parts: { currentInterest: 10000, currentInterestCap: 2500, capitalizedInterest: 0, capitalizedInterestCap: 0, deferredInterest: 0, deferredInterestCap: 0 },
     comment: ''
   };
-  var RAS_AUTO_COMMENT = 'Пересчёт процентных платежей';
   var PAYMENTS_DELAY_MS = 1500;
   var paymentsBusy = false;
 
@@ -743,18 +753,43 @@
   /* Снимок на последнем пересчёте метрик — по нему рисуется отчёт РСБУ. */
   function snapshot() { return current.ras.snapshot || { gen: {}, adjustments: [] }; }
 
+  /* Первый транш сделки без ФИ — для демо ?rasAdj=no-fi. Дерево берём из MOCK_DEAL_TREES:
+     стор дерева может быть ещё не готов, а снимкам панели нужен стабильный ключ. */
+  function firstNoFiTrancheId(dealId) {
+    var tree = window.MOCK_DEAL_TREES && window.MOCK_DEAL_TREES[String(dealId)];
+    if (!tree) return null;
+    var found = null;
+    (function scan(node) {
+      if (!node || found) return;
+      if (Array.isArray(node)) { node.forEach(scan); return; }
+      if (node.tranches) {
+        node.tranches.forEach(function (t) {
+          if (!found && (!t.fiIds || !t.fiIds.length)) found = t.id;
+        });
+      }
+      ['productsDid', 'products', 'instruments'].forEach(function (k) { if (node[k]) scan(node[k]); });
+    })(tree);
+    return found;
+  }
+
   /* Адрес задаёт состояние страницы: ?rasAdj=none|created|applied|multi|multi-applied|manual|
-     manual-applied — платежи не пересчитаны · один пересчёт с фиксацией (корректировки созданы) ·
-     и метрики пересчитаны · два пересчёта с фиксацией · два и метрики пересчитаны · одна ручная
-     корректировка · она же и метрики пересчитаны. */
+     manual-applied|no-fi — платежи не пересчитаны · один пересчёт с фиксацией (корректировки
+     созданы) · и метрики пересчитаны · два пересчёта с фиксацией · два и метрики пересчитаны ·
+     одна ручная корректировка · она же и метрики пересчитаны · корректировки транша без ФИ
+     (ключ TRANCHE-<id>). */
   function applyRasUrl(dealId) {
     var q = window.location && window.location.search || '';
     /* длинные значения — раньше коротких: «multi» иначе перехватит «multi-applied» */
-    var adj = /[?&]rasAdj=(none|created|applied|multi-applied|multi|manual-applied|manual)/.exec(q);
+    var adj = /[?&]rasAdj=(none|created|applied|multi-applied|multi|manual-applied|manual|no-fi)/.exec(q);
     rasFromUrl = !!adj;
     if (!rasFromUrl) return;
     var fiId = 'FI-' + dealId + '-2';
     current.ras = emptyRas();
+    if (adj[1] === 'no-fi') {
+      var trancheId = firstNoFiTrancheId(dealId);
+      if (trancheId) createAdjustments(ownerKey(null, trancheId), RAS_DEMO);
+      return;
+    }
     if (adj[1] === 'manual' || adj[1] === 'manual-applied') {
       current.ras.adjustments.push({
         id: nextAdjustmentId(), financialInstrumentId: fiId,
@@ -839,6 +874,15 @@
     return found;
   }
 
+  /* Владелец корректировок: ФИ, а без ФИ — транш. Ключ транша — 'TRANCHE-<id>': система считает
+     процентные платежи по траншу и без привязки к ФИ, поэтому корректировки создаются и без ФИ
+     (ответ человека 05.11.2026, вторая волна). Отчёт РСБУ по реальным ФИ синтетический ключ
+     не читает — строки без ФИ в нём не участвуют. */
+  function ownerKey(fiId, trancheId) {
+    if (fiId) return fiId;
+    return trancheId ? 'TRANCHE-' + trancheId : null;
+  }
+
   /* Даты отчёта РСБУ ФИ — помесячная сетка RE0050; окно «Пересчет с фиксацией» проверяет по ним
      период фиксации. */
   function rasEventDates() {
@@ -911,7 +955,8 @@
   /* Пересчёт с фиксацией: значения периода фиксируются по текущему расчёту, пересчёт поднимает gen,
      дельта на каждой дате периода = новый расчёт (с внесёнными корректировками) − зафиксированное.
      Каждая ненулевая — строка AUTO на целевую дату корректировки; прежние корректировки остаются
-     при своём пересчёте (решение человека 03.11.2026, RE0050). Возвращает число строк. */
+     при своём пересчёте (решение человека 03.11.2026, RE0050). Комментарий из окна попадает во все
+     созданные строки; пустое поле оставляет ячейку комментария пустой. Возвращает число строк. */
   function createAdjustments(fiId, fix) {
     var fx = makeFixation(fiId, fix);
     current.ras.fixationPeriods[fiId] = {
@@ -925,7 +970,7 @@
       if (!delta) return;
       current.ras.adjustments.push({
         id: nextAdjustmentId(), financialInstrumentId: fiId, startDate: d, endDate: fx.adjustmentDate,
-        parts: splitDelta(delta), adjustmentAmount: delta, comment: RAS_AUTO_COMMENT, sourceCode: 'AUTO'
+        parts: splitDelta(delta), adjustmentAmount: delta, comment: fix.comment || '', sourceCode: 'AUTO'
       });
       created++;
     });
@@ -933,23 +978,24 @@
   }
 
   /* «Пересчитать» и «Пересчитать с фиксацией» на тайле «Процентные платежи» — имитация с задержкой.
-     Пересчёт с фиксацией (opts = { periodFrom, periodTo, adjustmentDate }) пересчитывает весь срок:
-     значения зафиксированного периода возвращаются корректировками на дату корректировки. */
-  function recalcPayments(fiId, opts) {
+     owner — ФИ или ключ транша (ownerKey). Пересчёт с фиксацией (opts = { periodFrom, periodTo,
+     adjustmentDate, comment }) пересчитывает весь срок: значения зафиксированного периода
+     возвращаются корректировками на дату корректировки; comment попадает во все созданные строки. */
+  function recalcPayments(owner, opts) {
     if (paymentsBusy) return Promise.resolve({ busy: true });
     paymentsBusy = true;
     emit({ reason: 'payments-calculating' });
     return new Promise(function (resolve) {
       setTimeout(function () {
-        var withFixation = !!(fiId && opts && opts.periodFrom && opts.periodTo && opts.adjustmentDate);
+        var withFixation = !!(owner && opts && opts.periodFrom && opts.periodTo && opts.adjustmentDate);
         var created = 0;
-        if (fiId) {
-          if (withFixation) created = createAdjustments(fiId, opts);
-          else current.ras.gen[fiId] = genOf(current.ras.gen, fiId) + 1;
+        if (owner) {
+          if (withFixation) created = createAdjustments(owner, opts);
+          else current.ras.gen[owner] = genOf(current.ras.gen, owner) + 1;
         }
         paymentsBusy = false;
-        touchRas('payments-recalculated', { fiId: fiId, created: created, withFixation: withFixation });
-        resolve({ fiId: fiId, created: created, withFixation: withFixation });
+        touchRas('payments-recalculated', { fiId: owner, created: created, withFixation: withFixation });
+        resolve({ fiId: owner, created: created, withFixation: withFixation });
       }, PAYMENTS_DELAY_MS);
     });
   }
@@ -960,7 +1006,8 @@
     return clone(current.ras.adjustments.filter(function (a) { return fiId == null || a.financialInstrumentId === fiId; }));
   }
 
-  /* Ручная корректировка: rec = { fiId, startDate, endDate, parts, comment }; сумма — сумма частей. */
+  /* Ручная корректировка: rec = { fiId, startDate, endDate, parts, comment }; fiId — ФИ или ключ
+     транша без ФИ; сумма — сумма частей. */
   function addRasAdjustment(rec) {
     var fiId = rec.fiId;
     if (!fiId) return { error: 'NO_FI' };
@@ -981,6 +1028,18 @@
     current.ras.adjustments.splice(i, 1);
     touchRas('ras-adjustment', { id: id });
     return { ok: true };
+  }
+
+  /* Массовое удаление: одна запись в хранилище и одно событие на всю пачку (RE0050, вторая волна). */
+  function removeRasAdjustments(ids) {
+    var want = {};
+    (ids || []).forEach(function (id) { want[id] = true; });
+    var before = current.ras.adjustments.length;
+    current.ras.adjustments = current.ras.adjustments.filter(function (a) { return !want[a.id]; });
+    var removed = before - current.ras.adjustments.length;
+    if (!removed) return { ok: true, removed: 0 };
+    touchRas('ras-adjustment', { removed: removed });
+    return { ok: true, removed: removed };
   }
 
   /* Пересчёт метрик запоминает, что пересчитано: число пересчётов платежей и корректировки. */
@@ -1052,6 +1111,7 @@
     saveFixations: saveFixations,
     trancheFiIds: trancheFiIds,
     fiOfTranche: fiOfTranche,
+    ownerKey: ownerKey,
     rasEventDates: rasEventDates,
     rasReportDates: rasReportDates,
     rasLastFixation: rasLastFixation,
@@ -1061,6 +1121,7 @@
     rasAdjustments: rasAdjustments,
     addRasAdjustment: addRasAdjustment,
     removeRasAdjustment: removeRasAdjustment,
+    removeRasAdjustments: removeRasAdjustments,
     rasMarks: rasMarks,
     rasParts: function () { return RAS_PARTS.slice(); },
     resetRas: resetRas,

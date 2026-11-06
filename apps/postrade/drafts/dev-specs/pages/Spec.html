@@ -12,12 +12,11 @@
   body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
 
   .screen__content { gap: var(--space-12); }
-  /* спека — на всю свободную высоту; прокручивается внутри своей страницы */
+  /* спека — на всю свободную высоту, без тайла-подложки (RE0051): фон страницы, внутри — сама спека */
   .dsp-view { flex: 1; min-height: 0; display: flex; flex-direction: column; }
-  .dsp-view .tile__body { flex: 1; min-height: 0; display: flex; }
   .dsp-frame { flex: 1; min-height: 0; width: 100%; border: 0; }
   /* атрибут hidden не должен проигрывать display компонента */
-  .tabs[hidden], .es[hidden], .dsp-view[hidden] { display: none; }
+  .es[hidden], .dsp-view[hidden] { display: none; }
 </style>
 </head>
 <body>
@@ -64,13 +63,8 @@
       </div>
 
       <!-- #sec:content -->
-      <!-- вкладки — только версии (этапы) одной спеки; у спеки в одной версии их нет -->
-      <div class="tabs tabs--horiz" role="tablist" aria-label="Версии спецификации" data-tabs id="dsp-tabs" hidden></div>
-
-      <section class="tile tile--headless col-12 dsp-view" id="dsp-view">
-        <div class="tile__body">
-          <iframe class="dsp-frame" id="dsp-frame" title="Спецификация на разработку" sandbox="allow-scripts"></iframe>
-        </div>
+      <section class="dsp-view" id="dsp-view">
+        <iframe class="dsp-frame" id="dsp-frame" title="Спецификация на разработку" sandbox="allow-scripts"></iframe>
       </section>
 
       <div class="es es--l" id="dsp-empty" hidden>
@@ -89,13 +83,13 @@
 <script src="../../../../ds-body.js"></script>
 <script>
 /* Экранный скрипт: одна спека на странице — `Spec.html?spec=<id>` из window.DEV_SPECS (генераты
-   dev-spec.mjs). Показывается тот же автономный html, что уйдёт разработчикам (iframe srcdoc);
-   вкладки — только версии (этапы) спеки с тем же названием; выгрузка — Blob: .md, .html или
-   папка <Spec>/ в zip без сжатия. Работает по file://. */
+   dev-spec.mjs). Показывается тот же автономный html, что уйдёт разработчикам (iframe srcdoc).
+   Версия выбирается строкой аккордеона в хабе, поэтому вкладок версий на странице нет;
+   необязательное поле stage — подпись версии — видно в подзаголовке. Выгрузка — Blob: .md, .html
+   или папка <Spec>/ в zip без сжатия. Работает по file://. */
 (function () {
   'use strict';
   var all = window.DEV_SPECS || [];
-  var tabs = document.getElementById('dsp-tabs');
   var frame = document.getElementById('dsp-frame');
   var meta = document.getElementById('dsp-meta');
   var current = null;
@@ -112,39 +106,17 @@
     document.getElementById('dsp-empty').hidden = false;
     return;
   }
-  /* версии — спеки с тем же названием, по номеру версии */
-  var versions = all.filter(function (s) { return s.title === first.title; })
-    .sort(function (a, b) { return String(a.version).localeCompare(String(b.version), 'ru', { numeric: true }); });
+  current = first;
   document.getElementById('dsp-title').textContent = first.title;
   document.getElementById('dsp-crumb').textContent = first.title;
   document.title = first.title + ' — спецификация на разработку — IBP';
-
-  function show(id) {
-    current = versions.filter(function (s) { return s.id === id; })[0] || versions[0];
-    Array.prototype.forEach.call(tabs.querySelectorAll('.tab'), function (t) {
-      var on = t.getAttribute('data-spec') === current.id;
-      t.classList.toggle('tab--selected', on);
-      t.setAttribute('aria-selected', on ? 'true' : 'false');
-      t.setAttribute('tabindex', on ? '0' : '-1');
-    });
-    frame.srcdoc = current.html;
-    frame.title = 'Спецификация на разработку: ' + current.title + (current.stage ? ' — ' + current.stage : '');
-    meta.innerHTML = '<span class="phead__meta">Модуль ' + esc(current.module) + (current.version ? ' · версия ' + esc(current.version) : '') + (current.date ? ' · ' + esc(current.date) : '') + '</span>'
-      + '<span class="phead__meta"><span class="phead__meta-ico"><i data-icon="file"></i></span>Снимков ' + current.snaps
-      + (current.viewport ? ' · ' + current.viewport.w + '×' + current.viewport.h : '') + (current.taken ? ' · сняты ' + ruDate(current.taken) : '') + '</span>';
-    if (window.dsIcons) window.dsIcons.apply(meta);
-    try { history.replaceState(null, '', '?spec=' + encodeURIComponent(current.id)); } catch (e) { /* file:// без истории — не важно */ }
-  }
-
-  if (versions.length > 1) {
-    tabs.hidden = false;
-    tabs.innerHTML = versions.map(function (s) {
-      return '<button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-spec="' + esc(s.id) + '"><span class="tab__label">' + esc(s.stage || 'Версия ' + s.version) + '</span></button>';
-    }).join('');
-    if (window.DSTabs) window.DSTabs.tabs(tabs, { onChange: function (t) { show(t.getAttribute('data-spec')); } });
-    tabs.addEventListener('click', function (e) { var t = e.target.closest('.tab'); if (t) show(t.getAttribute('data-spec')); });
-  }
-  show(first.id);
+  frame.srcdoc = current.html;
+  frame.title = 'Спецификация на разработку: ' + current.title + (current.stage ? ' — ' + current.stage : '');
+  meta.innerHTML = '<span class="phead__meta">Модуль ' + esc(current.module) + (current.version ? ' · версия ' + esc(current.version) : '') + (current.stage ? ' · ' + esc(current.stage) : '') + (current.date ? ' · ' + esc(current.date) : '') + '</span>'
+    + '<span class="phead__meta"><span class="phead__meta-ico"><i data-icon="file"></i></span>Снимков ' + current.snaps
+    + (current.viewport ? ' · ' + current.viewport.w + '×' + current.viewport.h : '') + (current.taken ? ' · сняты ' + ruDate(current.taken) : '') + '</span>';
+  if (window.dsIcons) window.dsIcons.apply(meta);
+  try { history.replaceState(null, '', '?spec=' + encodeURIComponent(current.id)); } catch (e) { /* file:// без истории — не важно */ }
 
   /* ---------- выгрузка ---------- */
   function save(blob, name) {

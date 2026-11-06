@@ -60,13 +60,25 @@
         </div>
       </div>
 
+      <!-- Зона фильтра над таблицей (TableFilter ДС): кнопка и чип «Применено: N»;
+           чип создаёт экранный скрипт, когда фильтр не пуст. -->
+      <div class="dtable-toolbar">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" id="rh-filter-bar">
+          <button type="button" class="btn btn--outline btn--s tfilter__open" id="rh-filter-open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+
       <!-- #sec:content ── Таблица корректировок: суммы шести видов процентов и их сумма (RE0034, концепт v4).
            Таблица шире экрана — горизонтальная прокрутка Table. Сетка колонок — GRID в экранном скрипте. -->
       <div class="dtable dtable--fill">
         <div class="dtable__body">
           <div class="tbl" data-table data-sort-rows id="rh-tbl">
-              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 72px 144px 176px 176px 176px 176px 176px 176px 176px 176px 280px 64px minmax(8px,1fr);">
+              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 44px 72px 144px 176px 176px 176px 176px 176px 176px 176px 176px 280px 64px minmax(8px,1fr);">
                 <div class="th th--separator"></div>
+                <div class="th th--center" data-col="select">
+                  <label class="cb cb--no-content"><input type="checkbox" class="cb__input" aria-label="Выбрать все"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span></label>
+                  <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+                </div>
                 <div class="th th--right" data-col="num"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th" data-col="startDate"><span class="th__label">Исходная дата</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="startDate" aria-label="Сортировать: Исходная дата"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th" data-col="endDate"><span class="th__label">Целевая дата корректировки</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="endDate" aria-label="Сортировать: Целевая дата корректировки"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
@@ -86,9 +98,10 @@
                иллюстрация, текст и действие «Внести корректировку» — как кнопка в шапке страницы -->
           <div class="dtable__empty" id="rh-empty" hidden>
             <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
-            <p class="dtable__empty-title">Корректировок пока нет</p>
-            <p class="dtable__empty-text">Они появятся здесь после пересчёта процентных платежей с фиксацией — или внесите корректировку вручную.</p>
+            <p class="dtable__empty-title" id="rh-empty-title">Корректировок пока нет</p>
+            <p class="dtable__empty-text" id="rh-empty-text">Они появятся здесь после пересчёта процентных платежей с фиксацией — или внесите корректировку вручную.</p>
             <button type="button" class="btn btn--outline btn--m" id="rh-empty-add"><i data-icon="add"></i><span class="btn__label">Внести корректировку</span></button>
+            <button type="button" class="btn btn--outline btn--m" id="rh-empty-reset" hidden>Сбросить фильтр</button>
           </div>
         </div>
         <!-- Пагинация (макет: «Показывать строк: 50»): колонтитул строит скрипт (DSPagination.footer);
@@ -192,6 +205,105 @@
     </footer>
   </div>
 </div>
+<!-- Окно «Фильтр» таблицы корректировок процентов РСБУ — связанный артефакт кнопки
+     «Фильтр» (TableFilter) на странице RsbuInterestAdjustments (RE0050, вторая волна
+     05.11.2026). Фрагмент вшивается ассемблером отдельной меткой ds-include: скрим лежит
+     в конце body, а не внутри таблицы.
+
+     Структура — штатная модалка фильтра ДС: .modal--w6.tfm, тело .modal__body--flush >
+     .tfm__body = вертикальный таб-раздел .tfm__nav + .tfm__panel со своим разделом
+     .tfm__sec и сеткой .tfm__grid. Раздел один — «Корректировки»; бейдж на табе
+     показывает число заполненных групп фильтра, при нуле скрыт.
+
+     Поля: две InputDateRange (исходная дата и целевая дата корректировки), InputAmountRange
+     (сумма корректировки) и Checkbox «Только с комментарием». Значение и проверку
+     собирает RsbuAdjustmentsFilterModal.js (PostModalRsbuAdjustmentsFilter). -->
+
+<div class="modal-scrim" id="rh-filter-scrim" hidden data-widget="RsbuAdjustmentsFilterModal" data-widget-group="modals" data-widget-src="../widgets/modals/RsbuAdjustmentsFilterModal/RsbuAdjustmentsFilterModal.html">
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="rhf-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rhf-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="rhf-sec-main"><span class="tab__label">Корректировки</span><span class="tab__badge" id="rhf-badge" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel">
+          <section class="tfm__sec" id="rhf-sec-main" aria-labelledby="rhf-sec-main-t">
+            <p class="tfm__sec-title" id="rhf-sec-main-t">Корректировки</p>
+            <div class="tfm__grid" id="rhf-grid">
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Исходная дата</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">От</span>
+                      <input class="inp__control" id="rhf-start-from" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" aria-label="Исходная дата, от">
+                      <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">До</span>
+                      <input class="inp__control" id="rhf-start-to" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" aria-label="Исходная дата, до">
+                      <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Целевая дата корректировки</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">От</span>
+                      <input class="inp__control" id="rhf-target-from" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" aria-label="Целевая дата корректировки, от">
+                      <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">До</span>
+                      <input class="inp__control" id="rhf-target-to" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" aria-label="Целевая дата корректировки, до">
+                      <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="inp-range tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Сумма корректировки</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field"><span class="inp__prefix">От</span><input class="inp__control" id="rhf-amount-from" inputmode="decimal" aria-label="Сумма корректировки, от"></div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field"><span class="inp__prefix">До</span><input class="inp__control" id="rhf-amount-to" inputmode="decimal" aria-label="Сумма корректировки, до"></div>
+                  </div>
+                </div>
+              </div>
+              <label class="cb tfm__span-2">
+                <input type="checkbox" class="cb__input" id="rhf-commented">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Только с комментарием</span></span>
+              </label>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-rhf-clear disabled><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-rhf-apply><span class="btn__label">Применить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
 
 <!-- Подтверждение удаления корректировки -->
 <div class="modal-scrim" id="rh-delete-scrim" hidden>
@@ -226,6 +338,7 @@
 <script src="../data/tranche-context.js"></script>
 <script src="../data/tranche-data.js"></script>
 <script src="../widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.js"></script>
+<script src="../widgets/modals/RsbuAdjustmentsFilterModal/RsbuAdjustmentsFilterModal.js"></script>
 <script>
 /* Экранный скрипт: меню по каталогу ролей, таблица корректировок процентов РСБУ, окно ручной
    корректировки и удаление. Форматирование — только при выводе: суммы «1 000 000,00» (можно со
@@ -239,7 +352,7 @@
   var SELECTED_ID = 'current-portfolio';
   var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
   var USER_LINK_TO = ' href="../../../../../index.html" aria-label="Хаб проектов"';
-  var NBSP = ' ';
+  var NBSP = '\u00a0';
 
   function ic(name) { return '<i data-icon="' + name + '"></i>'; }
 
@@ -284,18 +397,55 @@
   /* ---------- данные ---------- */
   var data = window.MOCK_RSBU_ADJUSTMENTS;
   var store = window.FinMetricsStore;
-  var fiId = null;   // ФИ транша: его корректировки показаны
-  var rows = [];     // RsbuInterestAdjustmentRsDto[] ФИ транша (FinMetricsStore.rasAdjustments)
+  var owner = null;   // ФИ или ключ транша без ФИ (FinMetricsStore.ownerKey)
+  var rows = [];      // RsbuInterestAdjustmentRsDto[] владельца (FinMetricsStore.rasAdjustments)
   var PARTS = store.rasParts();
-  /* Состояние для панели прототипа: ?demo=delete — открыто подтверждение удаления последней строки.
+  var selected = new Set();   // id выбранных строк; выбор переживает сортировку и пагинацию
+  var deleteTargets = [];     // id, которые удалит подтверждение
+  var filter = emptyFilter();
+  /* Состояние для панели прототипа: ?demo=delete|filtered|select|bulk, ?open=add|filter.
      Сами корректировки — ?rasAdj= (FinMetricsStore). */
   function demoHas(name) { var m = /[?&]demo=([a-z,]+)/.exec(location.search); return !!m && m[1].split(',').indexOf(name) >= 0; }
 
-  function loadRows() { rows = fiId ? store.rasAdjustments(fiId) : []; }
+  function emptyFilter() {
+    return window.PostModalRsbuAdjustmentsFilter
+      ? window.PostModalRsbuAdjustmentsFilter.empty()
+      : { startFrom: '', startTo: '', targetFrom: '', targetTo: '', amountFrom: null, amountTo: null, onlyCommented: false };
+  }
+  function loadRows() { rows = owner ? store.rasAdjustments(owner) : []; }
 
-  /* «Целевая дата корректировки» — 176px: шапка в две строки иначе обрезается (05.11.2026) */
-  var GRID = '8px 72px 144px 176px 176px 176px 176px 176px 176px 176px 176px 280px 64px minmax(8px,1fr)';
-  /* Без права редактирования колонки «Действия» нет: строка короче на 64px */
+  /* ---------- фильтр: исходная дата, целевая дата, сумма, комментарий ----------
+     Две даты (ответ человека 05.11.2026, вторая волна): диапазон исходной даты отбирает
+     отчётный период, диапазон целевой — партию одного пересчёта. «Применено: N» считает
+     заполненные группы, а не отдельные поля. */
+  function filterCount() {
+    return window.PostModalRsbuAdjustmentsFilter ? window.PostModalRsbuAdjustmentsFilter.count(filter) : 0;
+  }
+  function inRange(v, from, to) {
+    if (from == null && to == null) return true;
+    if (v == null || v === '') return false;
+    if (from != null && from !== '' && v < from) return false;
+    if (to != null && to !== '' && v > to) return false;
+    return true;
+  }
+  function matchesFilter(r) {
+    if (!inRange(r.startDate, filter.startFrom, filter.startTo)) return false;
+    if (!inRange(r.endDate, filter.targetFrom, filter.targetTo)) return false;
+    if (!inRange(r.adjustmentAmount, filter.amountFrom, filter.amountTo)) return false;
+    if (filter.onlyCommented && !String(r.comment || '').trim()) return false;
+    return true;
+  }
+  function visibleRows() {
+    var out = [];
+    rows.forEach(function (r, i) { if (matchesFilter(r)) out.push({ r: r, i: i }); });
+    return out;
+  }
+
+  /* «Целевая дата корректировки» — 176px: шапка в две строки иначе обрезается (05.11.2026).
+     Первая колонка — выбор 44px: в шапке нет сортировки/закрепления, поэтому DS-порог
+     .th--select 124px не нужен; чекбокс центрируется .th--center/.tc--center. */
+  var GRID = '8px 44px 72px 144px 176px 176px 176px 176px 176px 176px 176px 176px 280px 64px minmax(8px,1fr)';
+  /* Без права редактирования колонок выбора и «Действия» нет: строка короче на 44 + 64px */
   var GRID_VIEW = '8px 72px 144px 176px 176px 176px 176px 176px 176px 176px 176px 280px minmax(8px,1fr)';
   var VIEW_MODE = /[?&]hardsMode=view/.test(location.search);
   if (VIEW_MODE) {
@@ -315,9 +465,14 @@
     + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-delete aria-label="Удалить корректировку"><i data-icon="trash"></i></button>'
     + '</span></div>';
 
-  function rowHTML(r, i) {
-    return '<div class="tbl__row" data-idx="' + i + '" style="grid-template-columns:' + GRID + ';"><div class="tc tc--separator"></div>'
-      + cell('num', String(i + 1), true)
+  function selectCell() {
+    return '<div class="tc tc--center" data-col="select"><label class="cb cb--no-content"><input type="checkbox" class="cb__input" aria-label="Выбрать строку"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span></label></div>';
+  }
+
+  function rowHTML(r, pos, idx) {
+    return '<div class="tbl__row" data-row="' + esc(r.id) + '" data-idx="' + idx + '" style="grid-template-columns:' + GRID + ';"><div class="tc tc--separator"></div>'
+      + (VIEW_MODE ? '' : selectCell())
+      + cell('num', String(pos + 1), true)
       + cell('startDate', date(r.startDate), false, r.startDate)
       + cell('endDate', date(r.endDate), false, r.endDate)
       + cell('adjustmentAmount', money(r.adjustmentAmount), true)
@@ -326,33 +481,164 @@
       + (VIEW_MODE ? '' : ROW_ACTIONS) + '<div class="tc tc--separator"></div></div>';
   }
 
-  /* шапка — в разметке; в просмотре из неё убирается колонка «Действия», перерисовываются только строки данных */
+  /* шапка — в разметке; в просмотре из неё убираются колонки выбора и «Действия», перерисовываются только строки данных */
   if (VIEW_MODE) {
-    var actionsTh = tbl.querySelector('.tbl__row--head [data-col="actions"]');
-    if (actionsTh) actionsTh.parentNode.removeChild(actionsTh);
+    ['select', 'actions'].forEach(function (key) {
+      var th = tbl.querySelector('.tbl__row--head [data-col="' + key + '"]');
+      if (th) th.parentNode.removeChild(th);
+    });
     tbl.querySelector('.tbl__row--head').style.gridTemplateColumns = GRID;
   }
+
+  /* ---------- выбор строк ----------
+     data-row — id корректировки: по нему DS Table отдаёт rowselect; data-idx остаётся
+     исходным индексом для удаления одной строки. */
+  function syncHead() {
+    var head = tbl.querySelector('.tbl__row--head .cb__input');
+    if (!head) return;
+    var boxes = dataRows().map(function (r) { return r.querySelector('.cb__input'); }).filter(Boolean);
+    var on = boxes.filter(function (b) { return b.checked; }).length;
+    head.checked = on > 0 && on === boxes.length;
+    head.indeterminate = on > 0 && on < boxes.length;
+    var cb = head.closest('.cb');
+    if (!cb) return;
+    cb.classList.toggle('cb--selected', head.checked);
+    cb.classList.toggle('cb--indeterminate', head.indeterminate);
+    var state = head.indeterminate ? 'indeterminate' : head.checked ? 'selected' : 'none';
+    if (cb.getAttribute('data-head-state') !== state) {
+      cb.setAttribute('data-head-state', state);
+      var mark = cb.querySelector('.cb__mark');
+      if (mark) {
+        mark.innerHTML = '<i data-icon="' + (state === 'indeterminate' ? 'check-box-indeterminate' : 'check') + '"></i>';
+        if (window.dsIcons) window.dsIcons.apply(mark);
+      }
+    }
+  }
+  function pruneSelection() {
+    var alive = {};
+    rows.forEach(function (r) { alive[r.id] = true; });
+    selected.forEach(function (id) { if (!alive[id]) selected.delete(id); });
+  }
+  function restoreSelection() {
+    dataRows().forEach(function (row) {
+      var id = row.getAttribute('data-row');
+      var on = selected.has(id);
+      row.classList.toggle('tbl__row--selected', on);
+      var box = row.querySelector('.cb__input');
+      if (box) {
+        box.checked = on;
+        var cb = box.closest('.cb');
+        if (cb) cb.classList.toggle('cb--selected', on);
+      }
+    });
+    syncHead();
+  }
+
+  /* Перерисованные после фильтра строки встают в порядке стора; активную сортировку
+     возвращаем через DSTable API, иначе шапка показывает сортировку, а строки — нет.
+     Номер «№» — номер строки в текущем виде: после сортировки пересчитываем. */
+  function renumber() {
+    dataRows().forEach(function (row, i) {
+      var n = row.querySelector('[data-col="num"] .tc__text');
+      if (n) n.textContent = String(i + 1);
+    });
+  }
+  function restoreTableSort(api) {
+    if (!api) return;
+    var btn = tbl.querySelector('.tbl__row--head .th--sorted [data-sort]');
+    if (!btn) return;
+    restoringSort = true;
+    api.sort(btn.getAttribute('data-sort'), btn.getAttribute('data-sort-dir') || 'asc', { restored: true });
+    restoringSort = false;
+  }
+
   function render() {
+    var vis = visibleRows();
     tbl.querySelectorAll('.tbl__row:not(.tbl__row--head)').forEach(function (r) { r.remove(); });
-    tbl.insertAdjacentHTML('beforeend', rows.map(rowHTML).join(''));
-    /* Пустой список — тело показывает .dtable__empty «Корректировок пока нет»; шапка колонок остаётся */
-    emptyBox.hidden = rows.length > 0;
+    tbl.insertAdjacentHTML('beforeend', vis.map(function (x, pos) { return rowHTML(x.r, pos, x.i); }).join(''));
     if (window.dsIcons) window.dsIcons.apply(tbl);
+    var tableApi = null;
     if (window.DSTable) {
       window.DSTable.wireAll(tbl.parentNode);
-      var api = window.DSTable.wire(tbl);
-      if (api && api.rowsChanged) api.rowsChanged();
+      tableApi = window.DSTable.wire(tbl);
+      if (tableApi && tableApi.rowsChanged) tableApi.rowsChanged();
     }
+    restoreTableSort(tableApi);
+    pruneSelection();
+    restoreSelection();
+    renumber();
+    drawEmpty(vis.length);
+    drawApplied();
     applyView();
   }
 
-  /* ---------- пагинация: корректировок могут быть сотни (ответ человека 28.10.2026) ----------
+  /* Пустой список — базовое «Корректировок пока нет»; фильтр не нашёл строк — «Ничего не найдено»
+     с кнопкой сброса. Шапка колонок и пагинация остаются. */
+  function drawEmpty(visCount) {
+    var base = rows.length === 0;
+    var filtered = !base && visCount === 0;
+    emptyBox.hidden = !base && !filtered;
+    if (emptyBox.hidden) return;
+    document.getElementById('rh-empty-title').textContent = filtered ? 'Ничего не найдено' : 'Корректировок пока нет';
+    document.getElementById('rh-empty-text').textContent = filtered
+      ? 'Измените условия фильтра или сбросьте его.'
+      : 'Они появятся здесь после пересчёта процентных платежей с фиксацией — или внесите корректировку вручную.';
+    document.getElementById('rh-empty-add').hidden = filtered || VIEW_MODE;
+    document.getElementById('rh-empty-reset').hidden = !filtered;
+  }
+
+  /* Чип «Применено: N» живёт в .tfilter и создаётся заново, как в FairValueRegister:
+     DS-runtime удаляет чип при сбросе и шлёт tfilter:reset. */
+  function drawApplied() {
+    var bar = document.getElementById('rh-filter-bar');
+    if (!bar) return;
+    var n = filterCount();
+    var chip = bar.querySelector('.tfilter__applied');
+    if (!n) { if (chip) chip.remove(); return; }
+    if (!chip) {
+      chip = document.createElement('span');
+      chip.className = 'chip chip--edit chip--m tfilter__applied';
+      chip.tabIndex = 0;
+      chip.innerHTML = '<span class="chip__label"></span><span class="chip__remove" role="button" aria-label="Сбросить все фильтры"><i data-icon="close"></i></span>';
+      bar.appendChild(chip);
+    }
+    chip.querySelector('.chip__label').textContent = 'Применено: ' + n;
+    if (window.dsIcons) window.dsIcons.apply(chip);
+  }
+  function clearFilter() {
+    filter = emptyFilter();
+    selected.clear();
+    view.page = 1;
+    render();
+  }
+  function applyFilter(v) {
+    filter = v || emptyFilter();
+    selected.clear();
+    view.page = 1;
+    render();
+  }
+
+  /* ---------- пагинация и массовые действия: корректировок могут быть сотни (ответ человека 28.10.2026) ----------
      Строки страницы — по порядку в DOM (после сортировки он другой), остальные скрыты (hidden).
-     Колонтитул — DSPagination.footer, без левой сводки, как на макете; показывается всегда,
-     в том числе без строк — с фактическими данными. */
+     Колонтитул — DSPagination.footer; при выборе над пагинацией встаёт .pgn-row--bulk
+     с «Выбрано строк: N» и «Удалить». Показывается всегда, в том числе без строк. */
   var footerHost = document.getElementById('rh-footer');
   var view = { page: 1, pageSize: 50 };
+  var restoringSort = false;
   function dataRows() { return Array.prototype.slice.call(tbl.querySelectorAll('.tbl__row:not(.tbl__row--head)')); }
+  function decorateBulk() {
+    var count = footerHost.querySelector('.pgn-bulk__count');
+    if (count) {
+      count.setAttribute('aria-live', 'polite');
+      count.setAttribute('aria-atomic', 'true');
+    }
+    var btn = footerHost.querySelector('.pgn-bulk__actions .btn');
+    if (!btn) return;
+    btn.className = 'btn btn--transparent btn--s';
+    btn.setAttribute('data-bulk-delete', '');
+    btn.innerHTML = '<i data-icon="trash"></i><span class="btn__label">Удалить</span>';
+    if (window.dsIcons) window.dsIcons.apply(btn);
+  }
   function applyView() {
     var all = dataRows();
     var total = all.length;
@@ -366,14 +652,31 @@
     footerHost.innerHTML = '';
     footerHost.appendChild(window.DSPagination.footer({
       left: 'none',
+      selectionCount: selected.size,
+      bulk: { actions: ['Удалить'] },
       pager: {
         total: total, page: view.page, pageSize: view.pageSize,
         onChange: function (p) { view.page = p; applyView(); },
         onPageSizeChange: function (v) { view.pageSize = v; view.page = 1; applyView(); }
       }
     }));
+    decorateBulk();
   }
-  tbl.addEventListener('sort', function () { view.page = 1; applyView(); });
+  tbl.addEventListener('sort', function (e) {
+    if (restoringSort) return;
+    if (!e.detail || !e.detail.restored) view.page = 1;
+    renumber();
+    applyView();
+  });
+  /* DS Table сам переключает строки и шапку; страница ведёт Set и обновляет счётчик */
+  tbl.addEventListener('rowselect', function (e) {
+    selected = new Set((e.detail && e.detail.selected) || []);
+    syncHead();
+    applyView();
+  });
+  footerHost.addEventListener('click', function (e) {
+    if (e.target.closest('[data-bulk-delete]')) openBulkDelete();
+  });
 
   /* ---------- уведомления: фоновый тост ДС, зелёный, уходит сам ---------- */
   function toast(message) {
@@ -385,41 +688,86 @@
      и принимает проверенную запись. */
   var modal = window.PostModalRsbuAdjustment.bind(document.getElementById('rsbu-adj-scrim'), {
     options: function () {
-      var fix = fiId ? store.rasLastFixation(fiId) : null;
+      var fix = owner ? store.rasLastFixation(owner) : null;
       return {
         currencyCode: data.currencyCode,
-        reportDates: fiId ? store.rasReportDates(fiId) : null,
+        reportDates: owner ? store.rasReportDates(owner) : null,
         fixationDate: fix ? fix.periodTo : null
       };
     },
     save: function (rec) {
-      store.addRasAdjustment({ fiId: fiId, startDate: rec.startDate, endDate: rec.endDate, parts: rec.parts, comment: rec.comment });
+      store.addRasAdjustment({ fiId: owner, startDate: rec.startDate, endDate: rec.endDate, parts: rec.parts, comment: rec.comment });
       toast('Корректировка добавлена');
     }
   });
 
-  document.getElementById('rh-add').addEventListener('click', function () { if (fiId) modal.open(); });
-  document.getElementById('rh-empty-add').addEventListener('click', function () { if (fiId) modal.open(); });
+  /* ---------- окно фильтра: виджет RsbuAdjustmentsFilterModal ---------- */
+  var filterModal = window.PostModalRsbuAdjustmentsFilter
+    ? window.PostModalRsbuAdjustmentsFilter.bind(document.getElementById('rh-filter-scrim'))
+    : null;
+  var filterOpen = document.getElementById('rh-filter-open');
+  function openFilter() {
+    if (!filterModal) return;
+    filterOpen.setAttribute('aria-expanded', 'true');
+    filterModal.open(filter).then(function (v) {
+      filterOpen.setAttribute('aria-expanded', 'false');
+      if (v) applyFilter(v);
+    });
+  }
+  filterOpen.addEventListener('click', openFilter);
+  document.getElementById('rh-filter-bar').addEventListener('tfilter:reset', clearFilter);
+
+  document.getElementById('rh-add').addEventListener('click', function () { if (owner) modal.open(); });
+  document.getElementById('rh-empty-add').addEventListener('click', function () { if (owner) modal.open(); });
+  document.getElementById('rh-empty-reset').addEventListener('click', clearFilter);
 
   /* ---------- удаление с подтверждением ----------
      Корректировка входит в каждый пересчёт метрик: без неё исходная дата после следующего
-     пересчёта покажет новый расчёт — об этом предупреждает окно (решение агента 29). */
-  var deleteIdx = -1;
-  function openDelete(idx) {
-    if (idx < 0) return;
-    deleteIdx = idx;
-    var r = rows[idx];
-    document.getElementById('rh-delete-text').textContent = 'Удалить корректировку с ' + date(r.startDate) + ' на ' + date(r.endDate)
+     пересчёта покажет новый расчёт — об этом предупреждает окно (решение агента 29).
+     Для пачки — то же окно, текст и заголовок про несколько строк. */
+  function singleDeleteText(r) {
+    return 'Удалить корректировку с ' + date(r.startDate) + ' на ' + date(r.endDate)
       + ' на сумму ' + money(r.adjustmentAmount) + ' ' + data.currencyCode + '? После пересчёта метрик значение на '
       + date(r.startDate) + ' в отчёте РСБУ изменится. Действие нельзя отменить.';
+  }
+  function openDelete(idx) {
+    if (idx < 0) return;
+    var r = rows[idx];
+    if (!r) return;
+    deleteTargets = [r.id];
+    document.getElementById('rh-delete-title').textContent = 'Удалить корректировку';
+    document.getElementById('rh-delete-text').textContent = singleDeleteText(r);
+    if (window.DSModal) window.DSModal.open(document.getElementById('rh-delete-scrim'));
+  }
+  function selectedIds() {
+    var out = [];
+    selected.forEach(function (id) { out.push(id); });
+    return out;
+  }
+  function openBulkDelete() {
+    var ids = selectedIds();
+    if (!ids.length) return;
+    if (ids.length === 1) {
+      var idx = rows.map(function (r) { return r.id; }).indexOf(ids[0]);
+      if (idx >= 0) { openDelete(idx); return; }
+    }
+    deleteTargets = ids;
+    document.getElementById('rh-delete-title').textContent = 'Удалить корректировки';
+    document.getElementById('rh-delete-text').textContent = 'Удалить выбранные корректировки (' + ids.length
+      + ')? После пересчёта метрик значения на исходных датах в отчёте РСБУ изменятся. Действие нельзя отменить.';
     if (window.DSModal) window.DSModal.open(document.getElementById('rh-delete-scrim'));
   }
   document.getElementById('rh-delete-confirm').addEventListener('click', function () {
-    var had = deleteIdx >= 0;
-    if (had) store.removeRasAdjustment(rows[deleteIdx].id);
-    deleteIdx = -1;
+    var ids = deleteTargets.slice();
+    var n = ids.length;
+    /* выбор снимаем до записи в стор: removeRasAdjustment синхронно перерисовывает
+       страницу — иначе bulk-строка успевает показать уже удалённые строки */
+    selected.clear();
+    if (n === 1) store.removeRasAdjustment(ids[0]);
+    else if (n > 1) store.removeRasAdjustments(ids);
+    deleteTargets = [];
     if (window.DSModal) window.DSModal.closeTop();
-    if (had) toast('Корректировка удалена');
+    if (n) toast(n === 1 ? 'Корректировка удалена' : 'Корректировки удалены');
   });
 
   /* индекс строки в rows — по data-idx (после сортировки порядок в DOM другой) */
@@ -455,20 +803,36 @@
     render();
   }
 
-  /* сторы открываются на сделке транша после дерева (FinMetricsStore берёт ФИ из стора ФИ) */
+  /* выбор первых N строк текущего вида — для снимков панели */
+  function selectFirst(n) {
+    if (VIEW_MODE) return;
+    selected.clear();
+    visibleRows().slice(0, n).forEach(function (x) { selected.add(x.r.id); });
+    restoreSelection();
+    applyView();
+  }
+
+  /* сторы открываются на сделке транша после дерева (FinMetricsStore берёт ФИ из стора ФИ).
+     Без ФИ владелец — ключ транша: корректировки создаются и без привязки (05.11.2026). */
   function openStores(ctx) {
     if (!ctx) return;
     Promise.all([window.FinInstrumentsStore.ready, store.ready]).then(function () {
       window.FinInstrumentsStore.use(ctx.openedId);
       store.use(ctx.openedId);
-      fiId = store.fiOfTranche(ctx.tranche.id);
-      /* «Внести корректировку» доступна, только когда известен ФИ транша (уроки Л235, Л268) */
-      document.getElementById('rh-add').disabled = !fiId;
-      document.getElementById('rh-empty-add').disabled = !fiId;
+      var fiId = store.fiOfTranche(ctx.tranche.id);
+      owner = store.ownerKey(fiId, ctx.tranche.id);
+      /* «Внести корректировку» доступна, когда известен владелец — ФИ или транш без ФИ */
+      document.getElementById('rh-add').disabled = !owner;
+      document.getElementById('rh-empty-add').disabled = !owner;
       store.on('change', refresh);
       refresh();
       /* ?open=add — страница открыта кнопкой «Внести корректировку» с тайла: модалка поднята сразу */
-      if (/[?&]open=add/.test(location.search) && fiId) modal.open();
+      if (/[?&]open=add/.test(location.search) && owner) modal.open();
+      /* ?open=filter — открыто окно фильтра (снимки панели) */
+      if (/[?&]open=filter/.test(location.search)) openFilter();
+      if (demoHas('filtered')) applyFilter({ targetFrom: '2026-07-01', targetTo: '2026-07-01' });
+      if (demoHas('select')) selectFirst(3);
+      if (demoHas('bulk')) { selectFirst(3); openBulkDelete(); }
       if (demoHas('delete') && rows.length) openDelete(rows.length - 1);
     });
   }

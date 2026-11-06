@@ -10,7 +10,7 @@
 # 05.11.2026: два продуктовых сценария — автоматическая корректировка через тайл «Процентные
 # платежи» (main) и корректировки вручную без него (manual); «Автопоказ» остаётся сквозным показом.
 version: 1
-lastState: 82
+lastState: 91
 flows:
   - id: main
     title: Автоматическая корректировка через тайл «Процентные платежи»
@@ -34,8 +34,24 @@ flows:
       - state: 55
         id: main-recalculated
         title: Пересчёт с фиксацией выполнен — корректировки созданы
-        page: Tranche.preview.html?id=1028&tr=1028.d1.p1.i1.t1
-        note: 'Снек «Платежи пересчитаны. Создано корректировок РСБУ: 3», тайл корректировок — «Внесено корректировок: 3». Дальше человек сам открывает тайл корректировок стрелкой.'
+        page: Tranche.preview.html?id=1028&tr=1028.d1.p1.i1.t1&open=fix
+        note: 'Снек «Платежи пересчитаны. Создано корректировок РСБУ: 3», тайл корректировок — «Внесено корректировок: 3». Дальше человек сам открывает тайл корректировок стрелкой. Состояние проигрывает «Пересчитать» в окне, чтобы снек был в кадре.'
+        do:
+          - waitFor: '#rsbu-fix-scrim:not([hidden])'
+          - fill:
+              target: '#rsbu-fix-from'
+              value: 01.01.2025
+          - fill:
+              target: '#rsbu-fix-to'
+              value: 31.03.2025
+          - fill:
+              target: '#rsbu-fix-adjust'
+              value: 01.04.2025
+          - click: '[data-rsbu-fix-submit]'
+          - waitFor:
+              target: '#tile-rsbu-adjustments[data-state="data"]'
+              timeout: 8000
+          - waitFor: '.snack'
       - state: 4
         id: main-adjustments
         title: Корректировки — строки из дельт
@@ -101,8 +117,24 @@ flows:
       - state: 80
         id: manual-saved
         title: Ручная корректировка внесена
-        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasAdj=manual
-        note: Строка ручной корректировки 16.01.2025 → 01.04.2025 на 12 500,00; тост «Корректировка добавлена».
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&open=add&rasAdj=none
+        note: Строка ручной корректировки 16.01.2025 → 01.04.2025 на 12 500,00; тост «Корректировка добавлена» — состояние проигрывает «Добавить».
+        do:
+          - waitFor: '#rsbu-adj-scrim:not([hidden])'
+          - fill:
+              target: '#rsbu-adj-start'
+              value: 16.01.2025
+          - fill:
+              target: '#rsbu-adj-end'
+              value: 01.04.2025
+          - fill:
+              target: '#rsbu-adj-p1'
+              value: '10000'
+          - fill:
+              target: '#rsbu-adj-p2'
+              value: '2500'
+          - click: '[data-rsbu-submit]'
+          - waitFor: '.toast--success'
       - state: 81
         id: manual-metrics
         title: Финансовые метрики · РСБУ до пересчёта
@@ -164,6 +196,7 @@ flows:
           - waitFor:
               target: '#tile-rsbu-adjustments[data-state="data"]'
               timeout: 8000
+          - waitFor: '.snack'
       - state: 62
         id: e2e-adjustments
         title: Страница корректировок
@@ -197,6 +230,7 @@ flows:
           - waitFor:
               target: '#rsbu-adj-scrim'
               state: hidden
+          - waitFor: '.toast--success'
       - state: 65
         id: e2e4-report
         title: Пересчёт метрик — отметка в отчёте РСБУ
@@ -223,7 +257,7 @@ flows:
         id: pay-modal
         title: Окно «Пересчет с фиксацией»
         page: Tranche.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasAdj=none&open=fix
-        note: Период фиксации (От/До, календарь) и целевая дата корректировки; по умолчанию она — первое число месяца после «До». Окно всегда открывается пустым.
+        note: Период фиксации (От/До, календарь), целевая дата корректировки вводится вручную и не подставляется, комментарий. Окно всегда открывается пустым.
         do:
           - waitFor: '#rsbu-fix-scrim:not([hidden])'
       - state: 68
@@ -270,16 +304,41 @@ flows:
           - click: '#ip-recalc'
           - waitFor: '#ip-recalc.btn--loading'
           - waitFor: '#ip-fix-recalc[disabled]'
+          - waitFor: '.snack'
       - state: 75
         id: pay-no-fi
-        title: Транш без ФИ — «Пересчитать с фиксацией» заблокирована
+        title: Транш без ФИ — обе кнопки доступны
         page: Tranche.preview.html?id=1026&tr=1026.d1.p1.i1.t1&rasAdj=none
-        note: Без ФИ «Пересчитать» доступна, «Пересчитать с фиксацией» видна и выключена; при наведении — тултип с причиной (решение человека 05.11.2026).
+        note: 'Без ФИ «Пересчитать» и «Пересчитать с фиксацией» доступны: система считает процентные платежи по траншу, корректировки создаются с ключом транша (ответ человека 05.11.2026, вторая волна).'
         do:
-          - waitFor: '#ip-fix-recalc[disabled]'
-          - waitFor: '#ip-recalc'
-          - hover: '#ip-fix-anchor'
-          - waitFor: '.tip.is-visible'
+          - waitFor: '#ip-fix-recalc:not([disabled])'
+          - waitFor: '#ip-recalc:not([disabled])'
+      - state: 83
+        id: pay-no-fi-comment
+        title: Окно пересчёта без ФИ — комментарий
+        page: Tranche.preview.html?id=1026&tr=1026.d1.p1.i1.t1&rasAdj=none&open=fix
+        note: Окно открывается и без ФИ; комментарий необязателен и попадёт во все созданные строки.
+        do:
+          - waitFor: '#rsbu-fix-scrim:not([hidden])'
+          - fill:
+              target: '#rsbu-fix-from'
+              value: 01.01.2025
+          - fill:
+              target: '#rsbu-fix-to'
+              value: 31.03.2025
+          - fill:
+              target: '#rsbu-fix-adjust'
+              value: 01.04.2025
+          - fill:
+              target: '#rsbu-fix-cmt'
+              value: Пересчёт после уточнения данных
+      - state: 84
+        id: pay-no-fi-done
+        title: Корректировки транша без ФИ созданы
+        page: Tranche.preview.html?id=1026&tr=1026.d1.p1.i1.t1&rasAdj=no-fi
+        note: 'Тайл корректировок — «Внесено корректировок: 3»: строки принадлежат траншу, отчёт РСБУ по ФИ их не моделирует.'
+        do:
+          - waitFor: '[data-rsbu-count]'
 
   - id: rsbu-tile
     title: Показ тайла корректировок — готовые виды
@@ -348,6 +407,15 @@ flows:
         note: Окно предупреждает, что после пересчёта метрик значение на исходной дате изменится.
         do:
           - waitFor: '#rh-delete-scrim:not([hidden])'
+      - state: 91
+        id: rsbu-page-deleted
+        title: Корректировка удалена
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasAdj=manual&demo=delete
+        note: Строки больше нет; тост «Корректировка удалена» — состояние проигрывает подтверждение, а не берёт строку из адреса.
+        do:
+          - waitFor: '#rh-delete-scrim:not([hidden])'
+          - click: '#rh-delete-confirm'
+          - waitFor: '.toast--success'
 
   - id: rsbu-multi
     title: Повторный пересчёт с фиксацией — накопление корректировок
@@ -366,3 +434,52 @@ flows:
         do:
           - click: '#tab-ras'
           - waitFor: '#panel-ras:not([hidden]) [data-fm-adjusted]'
+
+  - id: rsbu-bulk
+    title: Отбор и массовое удаление корректировок
+    desc: Фильтр по двум датам, сумме и комментарию, выбор строк и удаление пачкой — адресом, для показа и снимков
+    steps:
+      - state: 85
+        id: bulk-filter-modal
+        title: Окно фильтра корректировок
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasAdj=multi&open=filter
+        note: Две даты (исходная и целевая), сумма корректировки и флажок «Только с комментарием»; «Применить» сужает таблицу.
+        do:
+          - waitFor: '#rh-filter-scrim:not([hidden])'
+      - state: 86
+        id: bulk-filtered
+        title: Фильтр по целевой дате — 18 строк одного пересчёта
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasAdj=multi&demo=filtered
+        note: 'Чип «Применено: 1»; в таблице 18 строк с целевой датой корректировки 01.07.2026, прежние три строки 01.04.2025 скрыты.'
+        do:
+          - waitFor: '#rh-filter-bar .tfilter__applied'
+      - state: 87
+        id: bulk-selected
+        title: Выбраны строки — массовое удаление
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasAdj=multi&demo=select
+        note: 'Первые три строки выбраны, в колонтитуле — «Выбрано строк: 3» и «Удалить».'
+        do:
+          - waitFor: '#rh-footer .pgn-bulk__count'
+      - state: 88
+        id: bulk-delete
+        title: Подтверждение массового удаления
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasAdj=multi&demo=bulk
+        note: Окно предупреждает, что после пересчёта метрик значения на исходных датах изменятся; удаляются только выбранные строки.
+        do:
+          - waitFor: '#rh-delete-scrim:not([hidden])'
+      - state: 89
+        id: bulk-no-fi
+        title: Корректировки транша без ФИ
+        page: RsbuInterestAdjustments.preview.html?id=1026&tr=1026.d1.p1.i1.t1&rasAdj=no-fi
+        note: Три строки транша без ФИ (владелец TRANCHE-1026.d1.p1.i1.t1); фильтр и массовое удаление работают так же.
+        do:
+          - waitFor: '#rh-tbl .tbl__row[data-row]'
+      - state: 90
+        id: bulk-deleted
+        title: Массовое удаление выполнено
+        page: RsbuInterestAdjustments.preview.html?id=1028&tr=1028.d1.p1.i1.t1&rasAdj=multi&demo=bulk
+        note: Три выбранные строки удалены; тост «Корректировки удалены» — состояние проигрывает подтверждение, а не берёт строки из адреса.
+        do:
+          - waitFor: '#rh-delete-scrim:not([hidden])'
+          - click: '#rh-delete-confirm'
+          - waitFor: '.toast--success'

@@ -1,0 +1,25 @@
+{
+  "_": "Демо-данные витрины окна: объект на состояние (ключи — виды заполнения). value — значение фильтра: startFrom/startTo — исходная дата, targetFrom/targetTo — целевая дата корректировки (ISO), amountFrom/amountTo — сумма корректировки, onlyCommented — флажок. Пустые строки и null — группа не заполнена. Значения выдуманные.",
+  "empty": {
+    "value": {
+      "startFrom": "",
+      "startTo": "",
+      "targetFrom": "",
+      "targetTo": "",
+      "amountFrom": null,
+      "amountTo": null,
+      "onlyCommented": false
+    }
+  },
+  "data": {
+    "value": {
+      "startFrom": "2025-01-01",
+      "startTo": "2025-03-31",
+      "targetFrom": "2025-04-01",
+      "targetTo": "2025-04-01",
+      "amountFrom": 10000,
+      "amountTo": 15000,
+      "onlyCommented": true
+    }
+  }
+}

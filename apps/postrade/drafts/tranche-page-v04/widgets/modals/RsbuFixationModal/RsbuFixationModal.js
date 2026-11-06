@@ -2,10 +2,9 @@
    RsbuFixationModal.js — поведение окна «Пересчет с фиксацией» (RE0034 → RE0050).
 
    Делает то, чего нет в рантаймах ДС, и только это:
-   1) заполняет окно: оно всегда открывается пустым — период фиксации живёт только
-      внутри пересчёта (решение человека 03.11.2026); пока человек сам не менял
-      целевую дату корректировки, она следует за концом периода — первое число
-      следующего месяца;
+   1) заполняет окно: оно всегда открывается пустым — период фиксации и целевая дата
+      корректировки живут только внутри пересчёта (решение человека 03.11.2026); целевая
+      дата корректировки вводится вручную и не подставляется;
    2) проверяет форму по «Пересчитать» правилами, которые даёт страница, и показывает
       ошибку в Alert вверху окна с подсветкой полей; правка поля снимает подсветку.
 
@@ -17,8 +16,8 @@
        check(rec)   → [{ field: 'periodFrom'|'periodTo'|'adjustmentDate', code }] — нарушения
                       (FinMetricsStore.checkRasFixation); code: REQUIRED | PERIOD_ORDER |
                       NOT_AFTER_FIXATION
-       save(rec)    — принять запись { periodFrom, periodTo, adjustmentDate } (ISO) и запустить
-                      пересчёт с фиксацией
+       save(rec)    — принять запись { periodFrom, periodTo, adjustmentDate, comment } (ISO)
+                      и запустить пересчёт с фиксацией; comment попадает во все созданные строки
        api.open(rec|null) — заполнить окно (rec — только для витрины, на странице всегда null)
        api.fill(rec|null) — только заполнить (на витрине окно уже на экране)
        api.validate()     → boolean — проверить форму и показать ошибку
@@ -36,13 +35,6 @@
     var d = new Date(Date.UTC(+m[3], +m[2] - 1, +m[1]));
     return (d.getUTCFullYear() === +m[3] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[1]) ? m[3] + '-' + m[2] + '-' + m[1] : '';
   }
-  /* первое число месяца после даты (ISO) */
-  function nextMonthStart(iso) {
-    var y = +iso.slice(0, 4), m = +iso.slice(5, 7);
-    if (m === 12) { y++; m = 1; } else m++;
-    return y + '-' + (m < 10 ? '0' : '') + m + '-01';
-  }
-
   /* Тексты ошибок придуманы агентом (решение 29 задачи RE0034, обновлено RE0050;
      название даты — 05.11.2026). */
   var TEXTS = {
@@ -60,7 +52,6 @@
     var alertBox = scrim.querySelector('.modal__alert');
     var alertText = scrim.querySelector('.alert__text');
     var submit = scrim.querySelector('[data-rsbu-fix-submit]');
-    var adjustTouched = false;
 
     function field(k) { return form.elements[k]; }
     function boxOf(k) { return field(k).closest('.inp'); }
@@ -76,32 +67,26 @@
       (keys || []).forEach(function (k) { boxOf(k).classList.add('inp--error'); });
     }
 
-    /* целевая дата корректировки следует за концом периода фиксации, пока человек её не трогал */
-    function followPeriod() {
-      if (adjustTouched) return;
-      var iso = parseDate(field('periodTo').value);
-      if (iso) { field('adjustmentDate').value = date(nextMonthStart(iso)); if (window.DSInput) window.DSInput.syncAll(scrim); }
-    }
     form.addEventListener('input', function (e) {
-      if (e.target.name === 'adjustmentDate') adjustTouched = true;
       if (e.target.closest('.inp')) e.target.closest('.inp').classList.remove('inp--error');
-      if (e.target.name === 'periodTo') followPeriod();
     });
-    /* выбор в календаре даёт change, а не input */
-    field('periodTo').addEventListener('change', followPeriod);
-    field('adjustmentDate').addEventListener('change', function () { adjustTouched = true; });
 
     function fill(rec) {
-      adjustTouched = !!rec;
       field('periodFrom').value = rec ? date(rec.periodFrom) : '';
       field('periodTo').value = rec ? date(rec.periodTo) : '';
       field('adjustmentDate').value = rec ? date(rec.adjustmentDate) : '';
+      field('comment').value = rec ? rec.comment || '' : '';
       clearErrors();
       if (window.DSInput) window.DSInput.syncAll(scrim);
     }
 
     function read() {
-      return { periodFrom: parseDate(field('periodFrom').value), periodTo: parseDate(field('periodTo').value), adjustmentDate: parseDate(field('adjustmentDate').value) };
+      return {
+        periodFrom: parseDate(field('periodFrom').value),
+        periodTo: parseDate(field('periodTo').value),
+        adjustmentDate: parseDate(field('adjustmentDate').value),
+        comment: field('comment').value.trim()
+      };
     }
 
     function validate() {

@@ -1,0 +1,99 @@
+<!-- Окно «Фильтр» таблицы корректировок процентов РСБУ — связанный артефакт кнопки
+     «Фильтр» (TableFilter) на странице RsbuInterestAdjustments (RE0050, вторая волна
+     05.11.2026). Фрагмент вшивается ассемблером отдельной меткой ds-include: скрим лежит
+     в конце body, а не внутри таблицы.
+
+     Структура — штатная модалка фильтра ДС: .modal--w6.tfm, тело .modal__body--flush >
+     .tfm__body = вертикальный таб-раздел .tfm__nav + .tfm__panel со своим разделом
+     .tfm__sec и сеткой .tfm__grid. Раздел один — «Корректировки»; бейдж на табе
+     показывает число заполненных групп фильтра, при нуле скрыт.
+
+     Поля: две InputDateRange (исходная дата и целевая дата корректировки), InputAmountRange
+     (сумма корректировки) и Checkbox «Только с комментарием». Значение и проверку
+     собирает RsbuAdjustmentsFilterModal.js (PostModalRsbuAdjustmentsFilter). -->
+
+<div class="modal-scrim" id="rh-filter-scrim" hidden>
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="rhf-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rhf-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="rhf-sec-main"><span class="tab__label">Корректировки</span><span class="tab__badge" id="rhf-badge" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel">
+          <section class="tfm__sec" id="rhf-sec-main" aria-labelledby="rhf-sec-main-t">
+            <p class="tfm__sec-title" id="rhf-sec-main-t">Корректировки</p>
+            <div class="tfm__grid" id="rhf-grid">
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Исходная дата</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">От</span>
+                      <input class="inp__control" id="rhf-start-from" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" aria-label="Исходная дата, от">
+                      <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">До</span>
+                      <input class="inp__control" id="rhf-start-to" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" aria-label="Исходная дата, до">
+                      <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Целевая дата корректировки</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">От</span>
+                      <input class="inp__control" id="rhf-target-from" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" aria-label="Целевая дата корректировки, от">
+                      <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">До</span>
+                      <input class="inp__control" id="rhf-target-to" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" aria-label="Целевая дата корректировки, до">
+                      <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="inp-range tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Сумма корректировки</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field"><span class="inp__prefix">От</span><input class="inp__control" id="rhf-amount-from" inputmode="decimal" aria-label="Сумма корректировки, от"></div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field"><span class="inp__prefix">До</span><input class="inp__control" id="rhf-amount-to" inputmode="decimal" aria-label="Сумма корректировки, до"></div>
+                  </div>
+                </div>
+              </div>
+              <label class="cb tfm__span-2">
+                <input type="checkbox" class="cb__input" id="rhf-commented">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Только с комментарием</span></span>
+              </label>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-rhf-clear disabled><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-rhf-apply><span class="btn__label">Применить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
